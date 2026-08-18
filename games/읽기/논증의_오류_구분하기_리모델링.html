@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>논증의 오류 구분하기</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap');
+:root{
+  --bg:#f0f4ff;--card:#fff;
+  --blue:#7b9ef0;--blue-l:#dce8ff;--blue-m:#b8d0ff;
+  --orange:#f0956a;--orange-l:#ffe8da;--orange-m:#ffd0b8;
+  --green:#6bbf8e;--green-l:#d8f5e8;
+  --red:#e88080;--red-l:#fde8e8;
+  --yellow:#f5c842;
+  --purple:#9b7be0;--purple-l:#ede8ff;--purple-m:#cfc0f8;
+  --teal:#5bbfb0;--teal-l:#d8f5f0;--teal-m:#a8e0d8;
+  --pink:#e07898;--pink-l:#fce8f0;--pink-m:#f8c0d4;
+  --text:#3a3a5c;--muted:#8888aa;--border:#dde3f5;
+  --shadow:0 4px 16px rgba(120,130,200,0.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse at 15% 40%,rgba(180,200,255,.35) 0%,transparent 55%),radial-gradient(ellipse at 85% 20%,rgba(255,200,170,.28) 0%,transparent 50%),radial-gradient(ellipse at 50% 90%,rgba(200,180,255,.2) 0%,transparent 50%)}
+header{position:relative;z-index:10;width:100%;max-width:900px;padding:28px 8px 0;text-align:center}
+.header-row{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:4px}
+.mascot-img{height:90px;border-radius:12px;flex-shrink:0}
+.game-title{font-size:2.2rem;font-weight:800;letter-spacing:-.5px;color:var(--text)}
+.game-subtitle{font-size:.86rem;color:var(--muted)}
+main{position:relative;z-index:10;width:100%;max-width:900px;padding:12px 8px 10px;display:flex;flex-direction:column;gap:8px}
+footer{position:relative;z-index:10;padding:6px 0 14px;font-size:.75rem;color:var(--muted);text-align:center}
+#start-screen{background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:26px 24px 22px;text-align:center;box-shadow:var(--shadow)}
+/* 성취기준 박스 */
+.std-box{background:#ede8ff;border:1.5px solid var(--purple-m);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:.92rem;font-weight:700;color:#6040c0;text-align:center;line-height:1.6}
+.start-hero{display:flex;align-items:center;gap:20px;margin-bottom:16px;text-align:left}
+.start-emoji{font-size:3.2rem;flex-shrink:0;line-height:1}
+.start-desc{color:var(--muted);font-size:1rem;line-height:2;word-break:keep-all}
+.start-desc strong{color:var(--text)}
+/* 게임 방법 박스 */
+.howto-box{background:#e8f4ff;border:1.5px solid var(--blue-m);border-radius:12px;padding:12px 16px;margin-bottom:14px;text-align:left}
+.howto-box h3{font-size:.95rem;font-weight:800;color:#4a6fd4;margin-bottom:6px}
+.howto-box p{font-size:.85rem;color:#5a7ac0;line-height:1.7}
+/* 오류 유형 목록 */
+.concept-box{display:flex;flex-direction:column;gap:0;margin-bottom:16px;border:1.5px solid var(--border);border-radius:14px;overflow:hidden}
+.concept{display:flex;align-items:center;gap:12px;padding:8px 14px;border-bottom:1px solid var(--border);text-align:left}
+.concept:last-child{border-bottom:none}
+.concept-title{font-size:.92rem;font-weight:800;min-width:110px;flex-shrink:0}
+.concept-desc{font-size:.82rem;color:var(--muted);line-height:1.4}
+.c1 .concept-title{color:#3a6fd4}
+.c2 .concept-title{color:#2a8f80}
+.c3 .concept-title{color:#c05020}
+.c4 .concept-title{color:#b04070}
+.c5 .concept-title{color:#6040c0}
+.c6 .concept-title{color:#906010}
+/* 단계 선택 영역 */
+.stage-section{background:var(--bg);border-radius:14px;padding:14px 14px 12px;border:1.5px solid var(--border)}
+.stage-title{font-size:1rem;font-weight:800;color:var(--text);margin-bottom:10px}
+.stage-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.stage-btn{border:none;border-radius:12px;padding:14px 10px 12px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-weight:800;font-size:1rem;color:white;transition:all .2s;box-shadow:var(--shadow);text-align:center}
+.stage-btn:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(120,130,220,.35)}
+.stage-btn.s1{background:linear-gradient(135deg,#7bc8f0,#7b9ef0)}
+.stage-btn.s2{background:linear-gradient(135deg,var(--blue),var(--purple))}
+.stage-btn.s3{background:linear-gradient(135deg,var(--purple),#c050a0)}
+.stage-badge{font-size:.70rem;font-weight:400;opacity:.88;margin-top:5px;line-height:1.5}
+.start-creator{font-size:.78rem;color:var(--muted);margin-top:12px;padding-top:10px;border-top:1px solid var(--border);line-height:1.6}
+/* 개인정보 보호 안내 */
+.privacy-box{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px 16px;margin-top:8px;font-size:.78rem;color:var(--muted);line-height:1.7;text-align:left}
+.privacy-box strong{color:#8888aa}
+.ingame-credit{position:fixed;right:12px;bottom:8px;z-index:6;font-size:.68rem;color:var(--muted);opacity:.5;pointer-events:none;display:none;letter-spacing:.2px}
+.ingame-credit.show{display:block}
+.progress-wrap{background:var(--card);border-radius:12px;padding:10px 16px;border:1px solid var(--border);box-shadow:var(--shadow)}
+.progress-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;flex-wrap:wrap;gap:4px}
+.progress-label{color:var(--text);font-weight:700;font-size:1.05rem}
+.progress-right{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.score-badge{background:var(--blue-l);border:1.5px solid var(--blue-m);padding:2px 10px;border-radius:20px;font-weight:800;color:var(--blue);font-size:.98rem}
+.combo-badge{background:var(--orange-l);border:1.5px solid var(--orange-m);padding:2px 10px;border-radius:20px;font-weight:800;color:var(--orange);font-size:.98rem}
+.combo-badge.hidden{opacity:0;pointer-events:none}
+.progress-bar-bg{background:var(--border);border-radius:6px;height:8px;overflow:hidden}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--purple));border-radius:6px;transition:width .4s ease}
+.sentence-card{background:var(--card);border:2px solid var(--blue-m);border-radius:14px;padding:24px 20px 20px;text-align:center;min-height:110px;display:flex;align-items:center;justify-content:center;transition:all .2s;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.sentence-card:hover{border-color:var(--blue);transform:translateY(-1px)}
+.sentence-num{position:absolute;top:10px;left:12px;font-size:.88rem;color:var(--blue);background:var(--blue-l);padding:2px 9px;border-radius:10px;font-weight:800}
+.sentence-text{font-size:1.38rem;line-height:2.1;font-weight:700;color:var(--text);word-break:keep-all;padding-top:8px}
+.cups-area{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.cup-btn{border:2.5px solid transparent;border-radius:13px;padding:11px 10px;cursor:pointer;transition:all .2s;text-align:left;display:flex;flex-direction:row;align-items:center;gap:9px;box-shadow:var(--shadow);font-family:'Noto Sans KR',sans-serif}
+.cup-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 20px rgba(120,130,200,.2)}
+.cup-btn.c-hasty{background:var(--blue-l);border-color:var(--blue-m)}.cup-btn.c-hasty:hover:not(:disabled){background:#ccdaff;border-color:var(--blue)}
+.cup-btn.c-false{background:var(--teal-l);border-color:var(--teal-m)}.cup-btn.c-false:hover:not(:disabled){background:#b8ede8;border-color:var(--teal)}
+.cup-btn.c-tuquoque{background:var(--orange-l);border-color:var(--orange-m)}.cup-btn.c-tuquoque:hover:not(:disabled){background:#ffc8a8;border-color:var(--orange)}
+.cup-btn.c-red{background:var(--pink-l);border-color:var(--pink-m)}.cup-btn.c-red:hover:not(:disabled){background:#f8b0cc;border-color:var(--pink)}
+.cup-btn.c-circular{background:var(--purple-l);border-color:var(--purple-m)}.cup-btn.c-circular:hover:not(:disabled){background:#d8ccf8;border-color:var(--purple)}
+.cup-btn.c-adhominem{background:#fff0d8;border-color:#f8d8a0}.cup-btn.c-adhominem:hover:not(:disabled){background:#ffe4b0;border-color:var(--yellow)}
+.cup-icon{font-size:1.7rem;flex-shrink:0}
+.cup-text-wrap{display:flex;flex-direction:column;gap:2px}
+.cup-label{font-size:.92rem;font-weight:800;letter-spacing:-.3px}
+.cup-desc{font-size:.72rem;color:var(--muted);line-height:1.3}
+.cup-btn.c-hasty .cup-label{color:#3a6fd4}
+.cup-btn.c-false .cup-label{color:#2a8f80}
+.cup-btn.c-tuquoque .cup-label{color:#c05020}
+.cup-btn.c-red .cup-label{color:#b04070}
+.cup-btn.c-circular .cup-label{color:#6040c0}
+.cup-btn.c-adhominem .cup-label{color:#906010}
+.feedback{border-radius:12px;padding:11px 16px;display:none;align-items:center;gap:10px;font-weight:700;font-size:1.05rem;animation:slideIn .3s ease}
+.feedback.show{display:flex}
+.feedback.correct{background:var(--green-l);border:1.5px solid #a8dfc0;color:#3a8f60}
+.feedback.wrong{background:var(--red-l);border:1.5px solid #f0b8b8;color:#c05050}
+@keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.feedback-icon{font-size:1.4rem;flex-shrink:0}
+.feedback-text{flex:1}
+.feedback-detail{display:none;background:#f8fbff;border:1.5px solid var(--blue-m);border-radius:12px;padding:12px 16px;font-size:.95rem;line-height:1.8;color:var(--text);word-break:keep-all}
+.feedback-detail.show{display:block}
+.feedback-detail .detail-title{font-weight:800;font-size:.98rem;margin-bottom:6px}
+#game-area{display:none}
+#game-area.show{display:grid;grid-template-columns:1fr 90px;grid-template-areas:"progress progress""sentence sidebar""cups sidebar""feedback sidebar""detail sidebar""retry sidebar";gap:8px;align-items:start}
+#game-area .progress-wrap{grid-area:progress}
+#game-area .sentence-card{grid-area:sentence}
+#game-area .cups-area{grid-area:cups}
+#game-area .feedback{grid-area:feedback}
+#game-area .feedback-detail{grid-area:detail}
+#game-area .retry-btn{grid-area:retry}
+#game-area .nav-sidebar{grid-area:sidebar}
+.nav-sidebar{display:flex;flex-direction:column;gap:8px;align-self:start;position:sticky;top:12px}
+.nav-btn{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:12px 6px;font-family:'Noto Sans KR',sans-serif;font-size:.80rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;box-shadow:var(--shadow);writing-mode:horizontal-tb;width:100%;text-align:center;word-break:keep-all;line-height:1.5}
+.nav-btn:hover{background:var(--blue-l);border-color:var(--blue);color:#4a6fd4}
+.nav-btn:disabled{opacity:.3;cursor:not-allowed}
+.finish-btn{background:linear-gradient(135deg,var(--blue),var(--purple))!important;border-color:transparent!important;color:white!important;font-size:.78rem!important;line-height:1.5}
+.finish-btn:hover{opacity:.9;transform:translateY(-1px)}
+.stage-jump-btn{background:var(--purple-l);border:1.5px solid var(--purple-m);border-radius:10px;padding:12px 6px;font-family:'Noto Sans KR',sans-serif;font-size:.78rem;font-weight:700;color:#6040c0;cursor:pointer;transition:all .2s;box-shadow:var(--shadow);width:100%;text-align:center;word-break:keep-all;line-height:1.5}
+.stage-jump-btn:hover{background:var(--purple-m)}
+.retry-btn{background:var(--orange-l);border:1.5px solid var(--orange-m);border-radius:10px;padding:10px 16px;font-family:'Noto Sans KR',sans-serif;font-size:.98rem;font-weight:700;color:#d06030;cursor:pointer;transition:all .2s;text-align:center}
+.retry-btn:hover{background:#ffc8a8}
+#complete-screen{display:none;background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:24px 22px 20px;box-shadow:var(--shadow);animation:fadeIn .5s ease}
+#complete-screen.show{display:block}
+@keyframes fadeIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.complete-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:center;margin-bottom:12px}
+.complete-left{text-align:center}
+.complete-emoji{font-size:2.4rem;margin-bottom:4px}
+.complete-title{font-size:1.4rem;font-weight:800;color:var(--text);margin-bottom:4px}
+.complete-desc{color:var(--muted);font-size:.88rem;line-height:1.6;word-break:keep-all}
+.complete-right{text-align:center}
+.final-score{font-size:2.6rem;font-weight:800;color:var(--orange);line-height:1;margin-bottom:3px}
+.final-score-label{color:var(--muted);font-size:.85rem;margin-bottom:10px}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:10px}
+.stat-box{border-radius:10px;padding:8px 5px;text-align:center}
+.stat-val{font-size:1.3rem;font-weight:800}
+.stat-lbl{font-size:.76rem;color:var(--muted);margin-top:2px}
+.stat-box.correct-stat{background:var(--green-l)}.stat-box.correct-stat .stat-val{color:#3a8f60}
+.stat-box.wrong-stat{background:var(--red-l)}.stat-box.wrong-stat .stat-val{color:#c05050}
+.stat-box.combo-stat{background:var(--orange-l)}.stat-box.combo-stat .stat-val{color:var(--orange)}
+/* 이름·소감 입력 영역 */
+.input-section{background:var(--purple-l);border:1.5px solid var(--purple-m);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+.input-section h3{font-size:.92rem;font-weight:800;color:#6040c0;margin-bottom:10px}
+.input-row{display:flex;gap:10px;margin-bottom:8px;align-items:center}
+.input-row label{font-size:.80rem;font-weight:700;color:#6040c0;min-width:40px;flex-shrink:0}
+.input-row input,.input-row textarea{flex:1;border:1.5px solid var(--purple-m);border-radius:8px;padding:7px 10px;font-family:'Noto Sans KR',sans-serif;font-size:.88rem;font-weight:500;color:var(--text);outline:none}
+.input-row input:focus,.input-row textarea:focus{border-color:var(--purple)}
+.input-row textarea{resize:vertical;min-height:44px}
+.input-privacy{font-size:.72rem;color:#8888aa;margin-top:4px;line-height:1.5}
+/* 다운로드 버튼 */
+.dl-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.dl-btn{border:none;border-radius:12px;padding:12px 10px;font-family:'Noto Sans KR',sans-serif;font-size:.92rem;font-weight:800;color:white;cursor:pointer;transition:all .2s;box-shadow:var(--shadow);text-align:center}
+.dl-btn:hover{transform:translateY(-2px)}
+.dl-btn.wrong-dl{background:linear-gradient(135deg,#e88080,#e07898)}
+.dl-btn.report-dl{background:linear-gradient(135deg,var(--blue),var(--purple))}
+.complete-btns{display:flex;gap:10px;margin-top:8px}
+.restart-btn{flex:1;background:linear-gradient(135deg,var(--blue),var(--purple));border:none;border-radius:12px;padding:12px 10px;font-family:'Noto Sans KR',sans-serif;font-size:.95rem;font-weight:800;color:white;cursor:pointer;transition:all .2s}
+.restart-btn:hover{transform:translateY(-2px)}
+.back-btn{flex:1;background:var(--green-l);border:1.5px solid #a8dfc0;border-radius:12px;padding:12px 10px;font-family:'Noto Sans KR',sans-serif;font-size:.95rem;font-weight:800;color:#3a8f60;cursor:pointer;transition:all .2s}
+.back-btn:hover{background:#c0ecd4}
+.wrong-report{margin-top:16px;text-align:left}
+.wrong-report-title{font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--red-l);display:flex;align-items:center;gap:6px}
+.wrong-item{background:var(--red-l);border:1.5px solid #f0b8b8;border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.wrong-item-num{font-size:.92rem;font-weight:800;color:#c05050;background:rgba(255,255,255,.6);padding:2px 10px;border-radius:8px;display:inline-block;margin-bottom:6px}
+.wrong-item-text{font-size:.95rem;line-height:1.7;font-weight:700;color:var(--text);margin-bottom:6px;word-break:keep-all}
+.wrong-item-answer{font-size:.92rem;color:#3a8f60;font-weight:800}
+.wrong-item-answer span{color:#c05050;margin-right:8px;font-weight:400}
+#toast{position:fixed;top:28px;right:24px;left:auto;transform:none;background:var(--yellow);color:#3a3a00;font-weight:800;font-size:.92rem;padding:9px 20px;border-radius:30px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;box-shadow:0 4px 16px rgba(240,200,50,.4)}
+#toast.show{opacity:1}
+@media(max-width:600px){.cups-area{grid-template-columns:1fr 1fr}.concept-box,.stage-btns{grid-template-columns:1fr 1fr}.game-title{font-size:1.7rem}.header-row{gap:10px}.mascot-img{height:70px}.dl-btns{grid-template-columns:1fr}}
+@media(max-width:380px){.cups-area{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="stars"></div>
+<div id="toast"></div>
+<header>
+  <div class="header-row">
+    <img class="mascot-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAI8AAAC0CAMAAACaAI/PAAABgFBMVEXTm2evn448MS1lT0Cmf2HAZh3An4D7+vpMNSXZ1s7Gxsa4urzo6OfhupPcto7NxbbalVmMqcKptsKTp7jQiEzTmmfXpXTkwZxGLBvipW3i2snLeDWcscPUrIR8osLFvbKoq6vnx6NqSDBNMR7b0b2telCvpJaHm6jk4dmth2eMZ0qLeGnhmlu+wL3gnWG2g1ipmoySlpVtWEjGfULTgTxaRDSVhXa2lHWdsL50Ujm8wcJELiDFbCd4mraGWDd4ZVaXc1Z8oL46JhhiPSWTjIaDXELwsnh6bWK8dTuSYzwIBQUbFRNuOBZ3Qh3groDi0rsqHRecoJve3+B1nsKzajLawZ7f4N/Av8Dd4eIxIyF7c2l+lJ2BTSe2WBG8YhyjbUUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPmQJeAAAAYHRSTlP///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////9ebwvOAAAdVklEQVR42r1cB3viSNL2fQmkRmoUAQlZIoONDTjbY3vybE53ezn9/3/xVVV3Kws8u/ucdkdgUr9UvRW7xJGu661Wq3rWdL1Te2YMzh31iNbROnVv/2VnTT/ijP4snFnpLDDUngFP5e2/7CyWO9I0rdPpfO65o+4vl7/k7c3no71o5bnTLKKOrkmB/zYiOoxH+8/i+TUSVje/ocqOfo2yxDl9o6bn3169/yI+/0o8S8KjccbjZPthG/9y9f0q+8rOrdaSb08v2ukxvjid65kB/ub2tV9Z+s1Fe9JvF49+e3zDQX02fQj/T9mX3tFPr/uv2vXH9WnymSqzBR4lKz13zj+i6blHxH3xRPK63W/vOy4YkrzuY1tFNeEjIh4dNdMvM41a4ein7YNH/2L7UuGo+LWf8Bppv84N7g7IRh2nnWYMvHwf8EjpZRJ72fmLl6FptyfXvCM/XC7UkueWlj3eAsXhI/vtS29Q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" alt="보라라샘"/>
+    <div>
+      <div class="game-title">🧩 논증의 오류 구분하기</div>
+      <div class="game-subtitle">예문을 읽고 어떤 논증의 오류에 해당하는지 구분해보세요!</div>
+    </div>
+  </div>
+</header>
+<main>
+<div id="start-screen">
+  <div class="std-box">[9국02-05] 글에 사용된 다양한 설명 방법과 논증 방법을 파악하고, 그 타당성을 평가하며 읽는다.</div>
+  <div class="start-hero">
+    <div class="start-emoji">🔍</div>
+    <p class="start-desc">제시된 예문을 읽고,<br><strong>어떤 논증의 오류에 해당하는지</strong>를 구분해보세요.<br>단계당 20문제 · 문제당 10점 · 콤보 보너스 있음!</p>
+  </div>
+  <div class="howto-box">
+    <h3>📖 게임 방법</h3>
+    <p>예문을 읽고 6가지 오류 유형 중 해당하는 버튼을 클릭하세요. 정답 +10점, 콤보 보너스(3연속 +5점, 5연속 +10점)가 적용됩니다. 오답 시 -10점(0점 하한)이며, 다시 풀기 기회가 주어집니다. 이전·다음 버튼으로 자유롭게 이동할 수 있습니다.</p>
+  </div>
+  <div class="concept-box">
+    <div class="concept c1"><div class="concept-title">🔵 성급한 일반화</div><div class="concept-desc">적은 사례로 전체를 단정짓는 오류</div></div>
+    <div class="concept c2"><div class="concept-title">🟢 흑백논리</div><div class="concept-desc">중간 가능성 없이 두 극단만 존재한다고 보는 오류</div></div>
+    <div class="concept c3"><div class="concept-title">🟠 피장파장</div><div class="concept-desc">"너도 마찬가지잖아"로 주장을 무력화하는 오류</div></div>
+    <div class="concept c4"><div class="concept-title">🩷 논점 일탈</div><div class="concept-desc">핵심 논점을 피해 다른 주제로 넘어가는 오류</div></div>
+    <div class="concept c5"><div class="concept-title">🟣 순환논증</div><div class="concept-desc">주장과 근거가 사실상 같은 말인 동어반복 오류</div></div>
+    <div class="concept c6"><div class="concept-title">🟡 인신공격</div><div class="concept-desc">주장 내용이 아닌 말하는 사람을 공격하는 오류</div></div>
+  </div>
+  <div class="stage-section">
+    <div class="stage-title">🎯 단계를 선택하세요</div>
+    <div class="stage-btns">
+      <button class="stage-btn s1" onclick="startGame(0)">1단계 · 기본<div class="stage-badge">짧고 구조가 명확한 예문<br>오류 특징이 바로 보여요</div></button>
+      <button class="stage-btn s2" onclick="startGame(1)">2단계 · 심화<div class="stage-badge">조금 더 길고 맥락 있는 예문<br>비슷한 오류와 헷갈릴 수 있어요</div></button>
+      <button class="stage-btn s3" onclick="startGame(2)">3단계 · 고급<div class="stage-badge">길고 복잡한 예문<br>경계선상 오류 포함</div></button>
+    </div>
+    <div class="start-creator">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.06.09 · Made with Claude</div>
+  </div>
+  <div class="privacy-box">🔒 <strong>개인정보 보호 안내</strong><br>본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다. 게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.</div>
+</div>
+
+<div id="game-area">
+  <div class="progress-wrap">
+    <div class="progress-top">
+      <span class="progress-label" id="progress-label">문제 1 / 20</span>
+      <div class="progress-right">
+        <span id="growth-display" style="font-size:1.15rem">🌱</span>
+        <span class="score-badge">🏅 <span id="score-val">0</span> / <span id="score-max">200</span>점</span>
+        <span class="combo-badge hidden" id="combo-badge">🔥 <span id="combo-val">0</span>콤보</span>
+      </div>
+    </div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+  <div class="sentence-card" id="sentence-card">
+    <span class="sentence-num" id="sentence-num">1번</span>
+    <div><div class="sentence-text" id="sentence-text"></div></div>
+  </div>
+  <div class="cups-area">
+    <button class="cup-btn c-hasty"     onclick="answer('성급한 일반화의 오류')"><div class="cup-icon">🔵</div><div class="cup-text-wrap"><div class="cup-label">성급한 일반화</div><div class="cup-desc">적은 사례로 전체 단정</div></div></button>
+    <button class="cup-btn c-false"     onclick="answer('흑백논리의 오류')"><div class="cup-icon">🟢</div><div class="cup-text-wrap"><div class="cup-label">흑백논리</div><div class="cup-desc">중간 없이 둘 중 하나만</div></div></button>
+    <button class="cup-btn c-tuquoque"  onclick="answer('피장파장의 오류')"><div class="cup-icon">🟠</div><div class="cup-text-wrap"><div class="cup-label">피장파장</div><div class="cup-desc">"너도 마찬가지잖아"</div></div></button>
+    <button class="cup-btn c-red"       onclick="answer('논점 일탈의 오류')"><div class="cup-icon">🩷</div><div class="cup-text-wrap"><div class="cup-label">논점 일탈</div><div class="cup-desc">핵심 피해 딴 얘기로</div></div></button>
+    <button class="cup-btn c-circular"  onclick="answer('순환논증의 오류')"><div class="cup-icon">🟣</div><div class="cup-text-wrap"><div class="cup-label">순환논증</div><div class="cup-desc">주장=근거, 동어반복</div></div></button>
+    <button class="cup-btn c-adhominem" onclick="answer('인신공격의 오류')"><div class="cup-icon">🟡</div><div class="cup-text-wrap"><div class="cup-label">인신공격</div><div class="cup-desc">내용 말고 사람 공격</div></div></button>
+  </div>
+  <div class="feedback" id="feedback"><div class="feedback-icon" id="fb-icon"></div><div class="feedback-text" id="fb-msg"></div></div>
+  <div class="feedback-detail" id="feedback-detail"></div>
+  <button class="retry-btn" id="retry-btn" style="display:none" onclick="retryQuestion()">↺ 문제 다시 풀기</button>
+  <div class="nav-sidebar">
+    <button class="nav-btn" id="prev-btn" onclick="navigate(-1)" disabled>◀ 이전<br>문제</button>
+    <button class="nav-btn" id="next-btn" onclick="navigate(1)">다음<br>문제 ▶</button>
+    <button class="stage-jump-btn" id="jump2-btn" onclick="startGame(1)" style="display:none">2단계로<br>이동</button>
+    <button class="stage-jump-btn" id="jump3-btn" onclick="startGame(2)" style="display:none">3단계로<br>이동</button>
+    <button class="nav-btn finish-btn" onclick="finishGame()">게임<br>종료</button>
+  </div>
+</div>
+
+<div id="complete-screen">
+  <div class="complete-layout">
+    <div class="complete-left">
+      <div class="complete-emoji" id="complete-emoji">🎉</div>
+      <div class="complete-title" id="complete-title">학습 완료!</div>
+      <div class="complete-desc">논증의 오류를 잘 구분할 수 있나요?<br>아직 어렵다면 다시 한 번 풀어보세요!</div>
+    </div>
+    <div class="complete-right">
+      <div class="final-score" id="final-score">0</div>
+      <div class="final-score-label" id="final-score-label">최종 점수 (만점 200점)</div>
+      <div class="stats-grid">
+        <div class="stat-box correct-stat"><div class="stat-val" id="stat-correct">0</div><div class="stat-lbl">정답</div></div>
+        <div class="stat-box wrong-stat"><div class="stat-val" id="stat-wrong">0</div><div class="stat-lbl">오답</div></div>
+        <div class="stat-box combo-stat"><div class="stat-val" id="stat-combo">0</div><div class="stat-lbl">최고 콤보</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="input-section">
+    <h3>✏️ 이름과 학습 소감을 입력하세요</h3>
+    <div class="input-row"><label>이름 *</label><input type="text" id="name-input" placeholder="이름을 입력하세요"></div>
+    <div class="input-row"><label>소감</label><textarea id="feeling-input" rows="2" placeholder="오늘 학습한 소감을 적어주세요"></textarea></div>
+    <div class="input-privacy">입력하신 이름과 소감은 서버에 저장되지 않으며, 리포트 이미지(JPG) 생성용으로만 쓰입니다.</div>
+  </div>
+  <div class="dl-btns">
+    <button class="dl-btn wrong-dl" onclick="generateWrongNote()">📝 오답노트 JPG 다운로드</button>
+    <button class="dl-btn report-dl" onclick="generateReport()">📊 학습 리포트 JPG 다운로드</button>
+  </div>
+  <div class="complete-btns">
+    <button class="back-btn" onclick="goStart()">🏠 단계 선택으로</button>
+    <button class="restart-btn" onclick="restartGame()">🔄 이 단계 다시하기</button>
+  </div>
+  <div class="wrong-report" id="wrong-report"></div>
+</div>
+</main>
+<div class="ingame-credit" id="ingame-credit">제작 · 보라라샘 / 2026.06.09</div>
+
+<script>
+const STAGES=[
+[
+  {id:1,answer:'성급한 일반화의 오류',text:'우리 반 남학생 두 명이 수학을 못하던데, 남자들은 수학에 약한 것 같아.',detail:'🔵 성급한 일반화의 오류 — 단 두 명의 사례로 남학생 전체를 단정하는 오류예요. 표본이 너무 적어요.'},
+  {id:2,answer:'흑백논리의 오류',text:'공부를 열심히 안 하면 평생 실패자로 살게 돼. 지금 최선을 다하지 않으면 나중에 후회해도 소용없어.',detail:'🟢 흑백논리의 오류 — "열심히 안 하면 실패자"라는 두 극단만 설정하고 다양한 중간 가능성을 무시하는 오류예요.'},
+  {id:3,answer:'피장파장의 오류',text:'"욕설은 쓰면 안 돼." → "너도 화났을 때 쓰잖아. 나한테만 뭐라고 하는 거야?"',detail:'🟠 피장파장의 오류 — 욕설 사용 금지 주장에 대해 상대방도 같은 행동을 한다고 지적하며 무력화하는 오류예요.'},
+  {id:4,answer:'논점 일탈의 오류',text:'"성적이 왜 이렇게 많이 떨어졌어?"라고 묻자 학생은 "저 이번에 반장 선거에서 당선됐어요. 반 아이들이 저를 믿고 뽑아줬어요"라고 답했다.',detail:'🩷 논점 일탈의 오류 — 성적 하락이라는 논점에 답하지 않고 반장 당선 이야기로 주의를 돌리는 오류예요.'},
+  {id:5,answer:'순환논증의 오류',text:'성경은 진실이다. 왜냐하면 성경에 "이 말씀은 진리이다"라고 분명히 쓰여 있기 때문이다.',detail:'🟣 순환논증의 오류 — "성경이 진실"의 근거가 "성경에 그렇게 쓰여 있다"로 주장과 근거가 동일한 오류예요.'},
+  {id:6,answer:'인신공격의 오류',text:'그 친구가 토론 시간에 꽤 설득력 있는 주장을 했는데, 평소에 인기도 없고 좀 별난 애잖아. 저런 애 말을 뭐 하러 들어.',detail:'🟡 인신공격의 오류 — 주장의 설득력은 따지지 않고 말하는 사람의 평판과 성격을 공격하는 오류예요.'},
+  {id:7,answer:'성급한 일반화의 오류',text:'택시를 두 번 탔는데 두 번 모두 불친절한 기사를 만났어. 택시 기사들은 다 불친절해.',detail:'🔵 성급한 일반화의 오류 — 두 번의 경험으로 모든 택시 기사를 불친절하다고 단정하는 오류예요.'},
+  {id:8,answer:'흑백논리의 오류',text:'내 말에 동의하지 않으면 넌 내 편이 아니야. 친구라면 내 생각을 지지해줘야 하는 거 아니야?',detail:'🟢 흑백논리의 오류 — "동의=내 편, 비동의=적"이라는 이분법적 사고의 오류예요. 친구도 의견이 다를 수 있어요.'},
+  {id:9,answer:'피장파장의 오류',text:'"너 왜 이렇게 군것질을 많이 하니?" → "형도 매일 초콜릿이랑 젤리 달고 살잖아."',detail:'🟠 피장파장의 오류 — 군것질 지적에 대해 상대방도 같은 행동을 한다고 되받아치는 오류예요.'},
+  {id:10,answer:'논점 일탈의 오류',text:'"구매한 지 일주일도 안 됐는데 왜 환불이 안 된다는 거예요?"라는 항의에 직원은 "이 상품은 출시 첫날 완판된 인기 제품이에요"라고 답했다.',detail:'🩷 논점 일탈의 오류 — 환불 불가 이유라는 논점에 답하지 않고 제품 인기 이야기로 주의를 돌리는 오류예요.'},
+  {id:11,answer:'순환논증의 오류',text:'우리 학교가 최고야. 왜냐하면 최고가 아닌 학교에 내가 다닐 리 없잖아. 내가 다니는 학교니까 최고인 거야.',detail:'🟣 순환논증의 오류 — "우리 학교=최고"의 근거가 "내가 다니니까 최고"로 아무것도 증명하지 못하는 오류예요.'},
+  {id:12,answer:'인신공격의 오류',text:'그 학생이 교칙 개선안을 진지하게 제안했는데, 반에서 성적도 별로고 평소 행동도 그러는 애가 무슨 말을 하겠어. 그냥 무시해.',detail:'🟡 인신공격의 오류 — 교칙 개선안의 내용을 따지지 않고 학생의 성적·행동을 공격하는 오류예요.'},
+  {id:13,answer:'성급한 일반화의 오류',text:'우리 동네 고양이 두 마리가 다가가니까 할퀴고 도망갔어. 고양이는 다 사납고 위험한 동물이야.',detail:'🔵 성급한 일반화의 오류 — 두 마리의 행동으로 고양이 전체를 위험하다고 단정하는 오류예요.'},
+  {id:14,answer:'흑백논리의 오류',text:'스마트폰을 완전히 끊거나, 아니면 결국 중독자가 되거나 둘 중 하나야. 적당히 쓰는 게 가능할 리가 없어.',detail:'🟢 흑백논리의 오류 — 적당한 사용이라는 중간 선택지를 무시하고 두 극단만 제시하는 오류예요.'},
+  {id:15,answer:'피장파장의 오류',text:'"스마트폰 하루 사용 시간을 줄여라." → "아빠는 밥 먹을 때도 핸드폰 보시잖아요. 왜 저한테만 그러세요?"',detail:'🟠 피장파장의 오류 — 스마트폰 사용 제한 주장에 대해 상대방의 동일한 행동을 지적해 무력화하는 오류예요.'},
+  {id:16,answer:'논점 일탈의 오류',text:'"그 배우 연기가 좀 어색하지 않아?"라고 하자 팬이 "그 사람이 얼마나 어려운 환경에서 자랐는지 알아요? 정말 힘들게 여기까지 온 사람인데"라고 맞받았다.',detail:'🩷 논점 일탈의 오류 — 연기력이라는 논점에 답하지 않고 성장 배경 이야기로 주의를 돌리는 오류예요.'},
+  {id:17,answer:'순환논증의 오류',text:'법은 무조건 지켜야 해. 왜냐하면 법을 안 지키는 건 불법이기 때문이야. 불법이니까 당연히 안 되는 거지.',detail:'🟣 순환논증의 오류 — "법을 지켜야 한다"의 근거가 "법을 어기면 불법"으로, 결국 같은 말을 반복하는 오류예요.'},
+  {id:18,answer:'인신공격의 오류',text:'그 의사가 치료 방법을 자세히 설명해 주는데, 옷차림이 늘 촌스럽고 인상도 차가워 보이잖아요. 저런 사람 말을 어떻게 믿어요.',detail:'🟡 인신공격의 오류 — 치료 방법의 타당성은 따지지 않고 의사의 옷차림과 인상을 공격하는 오류예요.'},
+  {id:19,answer:'성급한 일반화의 오류',text:'내 친구들은 대부분 유튜브만 보지 책은 안 읽던데, 요즘 10대는 책을 전혀 안 읽는다고.',detail:'🔵 성급한 일반화의 오류 — 주변 친구들만 보고 모든 10대를 단정하는 오류예요. 표본이 편향되어 있어요.'},
+  {id:20,answer:'흑백논리의 오류',text:'이번 시험에서 1등을 못 하면 이번 학기는 완전히 망한 거야. 1등 아니면 의미 없는 거잖아.',detail:'🟢 흑백논리의 오류 — "1등=성공, 그 외=실패"라는 이분법적 사고의 오류예요.'}
+],
+[
+  {id:21,answer:'피장파장의 오류',text:'"게임을 너무 많이 하면 건강에도 나쁘고 공부에도 방해가 돼." → "그럼 엄마는 왜 매일 드라마를 몇 시간씩 봐요? 그것도 똑같은 거 아니에요?"',detail:'🟠 피장파장의 오류 — 게임 과다 사용의 문제를 반박하지 않고 "너도 마찬가지"로 논점을 돌리는 오류예요.'},
+  {id:22,answer:'성급한 일반화의 오류',text:'내가 마주치는 외제차 운전자들이 다들 끼어들기를 밥 먹듯 하던데, 외제차 타는 사람들은 다 난폭운전을 해.',detail:'🔵 성급한 일반화의 오류 — 일부 운전자 경험으로 외제차 운전자 전체를 단정하는 오류예요.'},
+  {id:23,answer:'흑백논리의 오류',text:'우리 팀 경기를 응원하지 않는다면 우리 학교 학생이라고 할 수 없어. 학교 팀을 응원하는 게 당연한 거 아니야?',detail:'🟢 흑백논리의 오류 — "응원=학교 소속, 미응원=학교 소속 아님"이라는 이분법적 오류예요.'},
+  {id:24,answer:'순환논증의 오류',text:'이 브랜드 제품은 비싸니까 좋은 거야. 좋으니까 비싼 거고, 비싸니까 좋은 게 맞지. 가격이 품질을 증명하는 거잖아.',detail:'🟣 순환논증의 오류 — "비싸서 좋다" ↔ "좋으니까 비싸다"가 서로를 근거로 삼는 순환 오류예요.'},
+  {id:25,answer:'논점 일탈의 오류',text:'"이번 수행평가 기준이 불공정한 것 같아요"라는 항의에 선생님은 "너희 반이 작년 교내 합창 대회에서 1등 했던 거 기억하지? 선생님이 그때 정말 뿌듯했는데"라고 했다.',detail:'🩷 논점 일탈의 오류 — 평가 기준의 공정성이라는 논점에 답하지 않고 합창 대회 이야기로 주의를 돌리는 오류예요.'},
+  {id:26,answer:'인신공격의 오류',text:'저 정치인이 서민 경제를 위한 정책을 말하는데, 대대로 부잣집 출신이라 서민 삶이 어떤지 알기나 하겠어요? 신뢰가 안 가죠.',detail:'🟡 인신공격의 오류 — 정책 내용은 따지지 않고 정치인의 출신 배경을 공격하는 오류예요.'},
+  {id:27,answer:'피장파장의 오류',text:'"지각하지 마. 수업 시작 전에 와 있어야 예의지." → "선생님도 지난주 월요일에 10분 늦게 오셨잖아요."',detail:'🟠 피장파장의 오류 — 지각하지 말라는 주장에 대해 상대방의 동일한 행동을 들어 무력화하는 오류예요.'},
+  {id:28,answer:'성급한 일반화의 오류',text:'우리 학교 선생님 세 분이 숙제를 엄청 많이 내주셔. 선생님들은 학생들이 힘들든 말든 숙제를 무조건 많이 내는 사람들이야.',detail:'🔵 성급한 일반화의 오류 — 세 분의 선생님 경험으로 모든 선생님을 단정하는 오류예요.'},
+  {id:29,answer:'흑백논리의 오류',text:'저 가수를 좋아하지 않는다고? 그럼 넌 음악을 전혀 모르는 거네. 요즘 이 가수가 최고인데 이걸 모른다는 건 말이 안 돼.',detail:'🟢 흑백논리의 오류 — "특정 가수를 좋아하지 않으면=음악을 모름"이라는 이분법적 오류예요.'},
+  {id:30,answer:'논점 일탈의 오류',text:'"급식 메뉴가 왜 이렇게 맛없어요?"라는 문제 제기에 교장 선생님은 "우리 학교 운동장이 전국에서 가장 넓고, 도서관도 작년에 새로 지었잖니. 시설이 좋은 학교에서 공부할 수 있어서 좋지 않아?"라고 답했다.',detail:'🩷 논점 일탈의 오류 — 급식 맛이라는 논점에 답하지 않고 학교 시설 자랑으로 주의를 돌리는 오류예요.'},
+  {id:31,answer:'순환논증의 오류',text:'걔는 나쁜 애야. 나쁜 짓을 하잖아. 나쁜 애니까 나쁜 짓을 하는 거지. 그게 그 애 본성이야.',detail:'🟣 순환논증의 오류 — "나쁜 애"의 근거가 "나쁜 짓을 한다"이고, 나쁜 짓의 이유가 "나쁜 애이기 때문"으로 순환하는 오류예요.'},
+  {id:32,answer:'인신공격의 오류',text:'걔가 아무리 참신한 아이디어를 내도, 평소 학교에서 행동이 그러니까 어차피 쓸모없는 소리야. 그냥 무시해도 돼.',detail:'🟡 인신공격의 오류 — 아이디어의 가치는 따지지 않고 평소 행동을 근거로 무시하는 오류예요.'},
+  {id:33,answer:'피장파장의 오류',text:'"길에 쓰레기를 함부로 버리면 안 되지. 공중도덕이잖아." → "네가 어제 편의점 앞에서 껌 뱉는 거 내가 봤는데?"',detail:'🟠 피장파장의 오류 — 쓰레기 투기 금지 주장에 상대방의 동일한 행동을 지적해 무력화하는 오류예요.'},
+  {id:34,answer:'성급한 일반화의 오류',text:'내가 아는 채식주의자 한 명이 항상 피곤하고 몸이 약하던데, 채식을 하면 건강이 나빠지는 거야. 고기를 안 먹으면 몸이 버티질 못하는 거지.',detail:'🔵 성급한 일반화의 오류 — 단 한 명의 사례로 채식 전체를 단정하는 오류예요.'},
+  {id:35,answer:'순환논증의 오류',text:'이 약은 건강에 아주 유익해. 왜냐하면 몸에 좋은 성분들로만 가득 차 있거든.',detail:'🟣 순환논증의 오류 — "유익하다(건강에 좋다)"는 주장의 근거가 "몸에 좋다"로, 결국 같은 말을 반복하는 오류예요.'},
+  {id:36,answer:'흑백논리의 오류',text:'문자 보냈는데 바로 답장을 안 했다고? 그건 나를 싫어한다는 거잖아. 좋아하는 사람이라면 바로 답장하는 게 당연하지.',detail:'🟢 흑백논리의 오류 — "바로 답장=좋아함, 늦은 답장=싫어함"이라는 이분법적 오류예요. 바빠서 늦을 수도 있어요.'},
+  {id:37,answer:'논점 일탈의 오류',text:'"이 음식이 건강에 안 좋다고 하던데요"라고 하자 사장님은 "우리 식당이 이 동네에서 20년 넘게 영업했어요. 어르신들 무료 식사 봉사도 매달 하고 있습니다"라고 답했다.',detail:'🩷 논점 일탈의 오류 — 음식의 건강 문제라는 논점에 답하지 않고 식당의 역사·봉사로 주의를 돌리는 오류예요.'},
+  {id:38,answer:'인신공격의 오류',text:'그 소설가가 사랑에 대해 감동적인 글을 썼는데, 혈액형이 B형이잖아. B형은 이기적이라던데, 사랑을 제대로 알겠어?',detail:'🟡 인신공격의 오류 — 소설의 내용은 따지지 않고 작가의 혈액형이라는 무관한 특성을 공격하는 오류예요.'},
+  {id:39,answer:'피장파장의 오류',text:'"음식을 골고루 먹어야지. 편식하면 영양 불균형이 온다고." → "아빠는 매일 고기만 드시면서 왜 저한테만 골고루 먹으라고 해요?"',detail:'🟠 피장파장의 오류 — 골고루 먹으라는 주장에 대해 상대방의 동일한 편식 행동을 지적해 무력화하는 오류예요.'},
+  {id:40,answer:'순환논증의 오류',text:'저 사람은 믿을 수 있어. 왜냐하면 거짓말을 절대 안 하는 사람이거든. 거짓말을 안 하니까 믿을 수 있는 거지.',detail:'🟣 순환논증의 오류 — "믿을 수 있다"의 근거가 "거짓말을 안 한다"인데, 이것이 곧 "믿을 수 있다"와 같은 말인 오류예요.'}
+],
+[
+  {id:41,answer:'논점 일탈의 오류',text:'"이 약이 정말 효과가 있기는 한 건가요?"라고 묻자 약사는 "이 약을 만든 제약회사는 30년 전통의 곳이에요. 작년에 불우이웃 기부도 많이 했고, 사회적으로 정말 모범적인 기업입니다"라고 답했다.',detail:'🩷 논점 일탈의 오류 — 약의 효과라는 논점에 답하지 않고 회사의 역사·기부로 주의를 돌리는 오류예요. (인신공격과 헷갈릴 수 있지만, 사람이 아닌 화제 자체를 바꾼다는 점에서 논점 일탈이에요.)'},
+  {id:42,answer:'인신공격의 오류',text:'저 사람이 환경 보호를 열심히 주장하던데, 평소에 이기적이고 욕심 많기로 소문난 사람이잖아요. 그런 사람이 하는 주장을 어떻게 믿겠어요?',detail:'🟡 인신공격의 오류 — 환경 보호 주장의 내용은 따지지 않고 그 사람의 성격을 공격하는 오류예요. (논점 일탈과 헷갈릴 수 있지만, "말하는 사람" 자체를 공격한다는 점에서 인신공격이에요.)'},
+  {id:43,answer:'성급한 일반화의 오류',text:'지난주에 편의점 알바생이 퉁명스럽게 대해서 기분이 너무 나빴어. 오늘도 또 다른 곳에서 그랬고. 편의점 알바생들은 다 손님한테 불친절해. 아르바이트생 교육이 문제인 것 같아.',detail:'🔵 성급한 일반화의 오류 — 두 번의 경험으로 편의점 알바생 전체를 단정하는 오류예요. 두 번이라도 여전히 표본이 너무 적어요.'},
+  {id:44,answer:'순환논증의 오류',text:'이 작가는 정말 훌륭해. 왜냐하면 이런 훌륭한 작품은 훌륭한 작가만이 쓸 수 있거든. 이 작품이 훌륭하다는 게 바로 그 증거야.',detail:'🟣 순환논증의 오류 — "작가가 훌륭하다" → 근거: "훌륭한 작품을 썼다" → 이유: "훌륭한 작가이기 때문"으로 순환하는 오류예요.'},
+  {id:45,answer:'흑백논리의 오류',text:'환경 보호 캠페인에 참여하지 않는다면 환경을 망치는 데 동참하는 거야. 관심이 없는 것도 결국 찬성하는 것과 마찬가지야.',detail:'🟢 흑백논리의 오류 — "캠페인 참여=환경 보호, 미참여=환경 파괴"라는 이분법적 오류예요. 관심은 있어도 캠페인 방식이 다를 수 있어요.'},
+  {id:46,answer:'피장파장의 오류',text:'"수업 시간에 친구랑 떠들면 안 돼." → "선생님도 아까 다른 선생님 들어오셨을 때 수업 중에 잡담하셨잖아요."',detail:'🟠 피장파장의 오류 — 수업 중 잡담 금지 주장에 대해 상대방도 같은 행동을 했다며 무력화하는 오류예요.'},
+  {id:47,answer:'논점 일탈의 오류',text:'"이 정책이 왜 필요한지 구체적인 근거를 설명해 달라"는 요청에 의원은 자신의 지역구에 새 공원과 문화센터가 생긴 이야기를 20분 동안 자세하게 설명했다.',detail:'🩷 논점 일탈의 오류 — 정책의 필요성이라는 논점에 답하지 않고 지역구 사업 이야기로 주의를 돌리는 오류예요.'},
+  {id:48,answer:'인신공격의 오류',text:'그 사람이 평화와 비폭력을 외치고 있는데, 젊을 때 싸움꾼에 문제아였다고 동네에서 유명하다던데요. 그런 과거가 있는 사람 말을 믿을 수 있겠어요?',detail:'🟡 인신공격의 오류 — 평화 주장의 내용은 따지지 않고 과거 행동을 근거로 공격하는 오류예요.'},
+  {id:49,answer:'성급한 일반화의 오류',text:'내가 읽은 한국 소설 두 권이 모두 결말이 슬프게 끝나던데, 한국 소설은 전부 비극으로 끝나는 것 같아. 한국인 정서가 원래 그런 게 아닐까?',detail:'🔵 성급한 일반화의 오류 — 두 권의 소설로 한국 소설 전체의 경향을 단정하는 오류예요. 문화적 원인까지 확대하면 오류가 더욱 커져요.'},
+  {id:50,answer:'순환논증의 오류',text:'그 영화는 정말 관객을 웃기는데 천재적이야. 왜냐하면 영화 모든 장면이 다 엄청나게 코믹하거든.',detail:'🟣 순환논증의 오류 — "웃긴다"는 주장의 근거가 "코믹하다"로, 결국 같은 말을 반복하는 오류예요.'},
+  {id:51,answer:'흑백논리의 오류',text:'고기를 먹지 않으면 영양이 부족해서 반드시 병에 걸리게 돼 있어. 건강하게 살려면 고기는 꼭 먹어야 해. 채식은 장기적으로 지속될 수가 없어.',detail:'🟢 흑백논리의 오류 — "고기 섭취=건강, 채식=병"이라는 극단적 이분법의 오류예요. 균형 잡힌 채식도 건강할 수 있어요.'},
+  {id:52,answer:'피장파장의 오류',text:'"거짓말은 나쁜 거야. 한번 거짓말하면 계속 거짓말을 해야 해." → "형도 어제 친구한테 아프다고 거짓말하고 집에서 게임했잖아."',detail:'🟠 피장파장의 오류 — 거짓말 금지 주장에 대해 상대방의 동일한 행동을 들어 주장을 무력화하는 오류예요.'},
+  {id:53,answer:'논점 일탈의 오류',text:'"그 회사 제품 품질이 자꾸 떨어지는 것 같던데요"라고 하자 직원은 "저희 회사가 국내에서 가장 많은 사람을 고용하고 있어요. 지역 경제에도 정말 크게 기여하고 있고, 협력업체와의 상생에도 앞장서고 있습니다"라고 했다.',detail:'🩷 논점 일탈의 오류 — 제품 품질이라는 논점에 답하지 않고 고용·경제 기여 이야기로 주의를 돌리는 오류예요.'},
+  {id:54,answer:'인신공격의 오류',text:'그 과학자가 중요한 연구 결과를 발표했는데, 이혼 경력이 두 번이나 있다더라고요. 인격적으로 문제 있는 사람 연구가 제대로 됐겠어요?',detail:'🟡 인신공격의 오류 — 연구 내용의 타당성은 따지지 않고 과학자의 사생활을 공격하는 오류예요.'},
+  {id:55,answer:'성급한 일반화의 오류',text:'내가 마주친 그 나라 사람들 서너 명이 다 약속 시간을 지키지 않던데, 그 나라 사람들은 원래 시간 개념이 없는 것 같아.',detail:'🔵 성급한 일반화의 오류 — 서너 명의 경험으로 특정 나라 전체의 특성을 단정하는 오류예요. 개인차를 무시한 편향된 일반화예요.'},
+  {id:56,answer:'순환논증의 오류',text:'민주주의는 옳은 제도야. 왜냐하면 민주주의는 원래부터 옳은 제도이기 때문이야. 이건 두말할 필요도 없어.',detail:'🟣 순환논증의 오류 — "민주주의가 옳다"의 근거가 "민주주의는 옳은 제도"로 주장을 그대로 반복하는 오류예요.'},
+  {id:57,answer:'흑백논리의 오류',text:'그 영화가 역대 최고 걸작이 아니라면 볼 가치도 없는 거지. 최고가 아니면 시간 낭비야. 평범한 걸 왜 봐?',detail:'🟢 흑백논리의 오류 — "역대 최고=가치 있음, 그 외=가치 없음"이라는 이분법적 오류예요.'},
+  {id:58,answer:'피장파장의 오류',text:'"방 좀 깨끗하게 정리하고 살아. 어지르면 필요한 걸 못 찾잖아." → "형 방은 발 디딜 틈도 없으면서 왜 나한테만 그래?"',detail:'🟠 피장파장의 오류 — 방 정리를 하라는 주장에 대해 상대방도 똑같이 어질러 산다고 지적해 무력화하는 오류예요.'},
+  {id:59,answer:'논점 일탈의 오류',text:'"전동킥보드 사고가 왜 이렇게 자주 나는 건가요? 안전 대책이 필요한 것 아닌가요?"라는 지적에 업체 대표는 "저희 직원들이 정말 열심히 일하고 있어요. 직원 복지에도 많이 투자하고 있고, 사내 만족도 조사에서도 높은 점수를 받았습니다"라고 답했다.',detail:'🩷 논점 일탈의 오류 — 사고 원인과 안전 대책이라는 논점에 답하지 않고 직원 복지 이야기로 주의를 돌리는 오류예요.'},
+  {id:60,answer:'인신공격의 오류',text:'그 선수가 팀 전략에 대해 조언하는데, 평소에 인터뷰 태도가 거만하고 건방지기로 유명하잖아요. 그런 사람 말을 뭐 하러 들어요.',detail:'🟡 인신공격의 오류 — 전략의 타당성은 따지지 않고 선수의 평소 태도를 공격하는 오류예요.'}
+]
+];
+
+const STAGE_INFO=[{label:'1단계 · 기본'},{label:'2단계 · 심화'},{label:'3단계 · 고급'}];
+const MAX_SCORE=370;
+const GROWTH=['🌱','🌿','🌾','🌻','🏆'];
+function growthEmoji(s){const r=s/MAX_SCORE;return r<.2?GROWTH[0]:r<.4?GROWTH[1]:r<.6?GROWTH[2]:r<.85?GROWTH[3]:GROWTH[4]}
+
+let questions=[],current=0,score=0,combo=0,maxCombo=0,correctCount=0,wrongCount=0,answered=[],usedRetry=[],currentStage=0;
+
+const AudioCtx=window.AudioContext||window.webkitAudioContext;let ctx;
+function getCtx(){if(!ctx)ctx=new AudioCtx();return ctx}
+function playCorrect(){try{const c=getCtx(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.setValueAtTime(523,c.currentTime);o.frequency.setValueAtTime(659,c.currentTime+.1);o.frequency.setValueAtTime(784,c.currentTime+.2);g.gain.setValueAtTime(.3,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.5);o.start(c.currentTime);o.stop(c.currentTime+.5)}catch(e){}}
+function playWrong(){try{const c=getCtx(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.setValueAtTime(220,c.currentTime);o.frequency.setValueAtTime(180,c.currentTime+.15);g.gain.setValueAtTime(.25,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.4);o.start(c.currentTime);o.stop(c.currentTime+.4)}catch(e){}}
+function playCombo(){try{const c=getCtx();[523,659,784,1047].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(.2,c.currentTime+i*.08);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+i*.08+.25);o.start(c.currentTime+i*.08);o.stop(c.currentTime+i*.08+.25)})}catch(e){}}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
+
+function startGame(si){
+  currentStage=si;questions=STAGES[si];
+  current=0;score=0;combo=0;maxCombo=0;correctCount=0;wrongCount=0;
+  answered=new Array(20).fill(null);usedRetry=new Array(20).fill(false);
+  document.getElementById('score-val').textContent='0';
+  document.getElementById('growth-display').textContent='🌱';
+  document.getElementById('combo-badge').classList.add('hidden');
+  document.getElementById('jump2-btn').style.display=(si===0)?'':'none';
+  document.getElementById('jump3-btn').style.display=(si<=1)?'':'none';
+  document.getElementById('start-screen').style.display='none';
+  document.getElementById('complete-screen').classList.remove('show');
+  document.getElementById('game-area').classList.add('show');
+  document.getElementById('ingame-credit').classList.add('show');
+  renderQuestion();
+}
+
+function renderSentences(text,elId){
+  const el=document.getElementById(elId);
+  let formatted=text
+    .replace(/→/g,'<br><span style="color:#7b9ef0;font-weight:800">→</span> ')
+    .replace(/([.!?])\s+(?=[^<])/g,'$1<br>');
+  el.innerHTML=formatted;
+  el.style.fontSize=text.length>130?'1.10rem':text.length>90?'1.22rem':text.length>60?'1.32rem':'1.42rem';
+}
+function showDetail(q){
+  const el=document.getElementById('feedback-detail');
+  const parts=q.detail.split(' — ');
+  el.innerHTML=`<div class="detail-title">${parts[0]}</div>${parts.slice(1).join(' — ')}`;
+  el.classList.add('show');
+}
+function hideDetail(){const el=document.getElementById('feedback-detail');el.classList.remove('show');el.innerHTML=''}
+
+function renderQuestion(){
+  const q=questions[current];
+  document.getElementById('sentence-num').textContent=`${q.id}번`;
+  renderSentences(q.text,'sentence-text');
+  document.getElementById('progress-label').textContent=`${STAGE_INFO[currentStage].label} · 문제 ${current+1} / 20`;
+  document.getElementById('progress-fill').style.width=`${((current+1)/20)*100}%`;
+  document.getElementById('feedback').className='feedback';
+  hideDetail();
+  document.getElementById('retry-btn').style.display='none';
+  const btns=document.querySelectorAll('.cup-btn');
+  btns.forEach(b=>{b.disabled=false;b.style.opacity='1'});
+  if(answered[current]==='correct'){showFeedback(true,'정답!  (이미 맞힌 문제예요)',false);showDetail(q);btns.forEach(b=>b.disabled=true)}
+  else if(answered[current]==='wrong-final'){showFeedback(false,`틀렸어요!  정답은 [${q.answer}]`,false);showDetail(q);btns.forEach(b=>b.disabled=true)}
+  else if(answered[current]==='wrong'){showFeedback(false,'틀렸어요!  (-10점)  다시 도전해 보세요.',false);document.getElementById('retry-btn').style.display='block';btns.forEach(b=>b.disabled=true)}
+  document.getElementById('prev-btn').disabled=(current===0);
+  document.getElementById('next-btn').disabled=(current===19);
+}
+
+function answer(choice){
+  if(answered[current]==='correct'||answered[current]==='wrong-final')return;
+  const q=questions[current],isCorrect=choice===q.answer,isRetry=usedRetry[current];
+  document.querySelectorAll('.cup-btn').forEach(b=>b.disabled=true);
+  if(isCorrect){
+    answered[current]='correct';
+    if(!isRetry){
+      combo++;if(combo>maxCombo)maxCombo=combo;correctCount++;
+      const bonus=combo>=5?10:combo>=3?5:0;
+      score+=10+bonus;
+      if(combo>=3){playCombo();showToast(`🔥 ${combo}콤보! +${10+bonus}점`)}else{playCorrect()}
+      if(combo>=2){document.getElementById('combo-badge').classList.remove('hidden');document.getElementById('combo-val').textContent=combo}
+      document.getElementById('score-val').textContent=score;
+      document.getElementById('growth-display').textContent=growthEmoji(score);
+      showFeedback(true,`정답!  (+${10+bonus}점${bonus>0?' (+콤보 '+bonus+'점)':''})`,true);
+    }else{playCorrect();showFeedback(true,'정답!  (다시풀기 — 점수 없음)',true)}
+    showDetail(q);
+  }else{
+    playWrong();
+    if(!isRetry){
+      combo=0;wrongCount++;score=Math.max(0,score-10);
+      document.getElementById('combo-badge').classList.add('hidden');
+      document.getElementById('score-val').textContent=score;
+      document.getElementById('growth-display').textContent=growthEmoji(score);
+      answered[current]='wrong';
+      showFeedback(false,'틀렸어요!  (-10점)  다시 도전해 보세요.',true);
+      document.getElementById('retry-btn').style.display='block';
+    }else{answered[current]='wrong-final';showFeedback(false,`틀렸어요!  정답은 [${q.answer}]`,true);showDetail(q)}
+  }
+  if(answered.every(a=>a==='correct'||a==='wrong-final')){setTimeout(()=>showComplete(),1500)}
+  else{document.getElementById('prev-btn').disabled=(current===0);document.getElementById('next-btn').disabled=(current===19)}
+}
+
+function finishGame(){answered=answered.map(a=>a==='wrong'?'wrong-final':a);showComplete()}
+function showFeedback(correct,msg,animate){const fb=document.getElementById('feedback');document.getElementById('fb-icon').textContent=correct?'✅':'❌';document.getElementById('fb-msg').textContent=msg;fb.className='feedback show '+(correct?'correct':'wrong');fb.style.animation=animate?'':'none'}
+function retryQuestion(){usedRetry[current]=true;answered[current]=null;document.getElementById('retry-btn').style.display='none';document.getElementById('feedback').className='feedback';hideDetail();document.querySelectorAll('.cup-btn').forEach(b=>{b.disabled=false;b.style.opacity='1'})}
+function navigate(dir){const n=current+dir;if(n<0||n>19)return;current=n;renderQuestion()}
+
+function showComplete(){
+  document.getElementById('game-area').classList.remove('show');
+  document.getElementById('complete-screen').classList.add('show');
+  const ratio=score/MAX_SCORE;
+  document.getElementById('final-score').textContent=score+'점';
+  document.getElementById('final-score-label').textContent=`최종 점수 (만점 ${MAX_SCORE}점) — ${STAGE_INFO[currentStage].label}`;
+  document.getElementById('stat-correct').textContent=correctCount;
+  document.getElementById('stat-wrong').textContent=wrongCount;
+  document.getElementById('stat-combo').textContent=maxCombo;
+  document.getElementById('complete-emoji').textContent=ratio>=.9?'🏆':ratio>=.7?'🎉':ratio>=.5?'😊':'💪';
+  document.getElementById('complete-title').textContent=ratio>=.9?'완벽해요!':ratio>=.7?'잘 했어요!':ratio>=.5?'절반 이상!':'다시 도전!';
+  window.scrollTo({top:0,behavior:'smooth'});
+  // 이름·소감 초기화
+  document.getElementById('name-input').value='';
+  document.getElementById('feeling-input').value='';
+  // 오답 목록 표시
+  const wrongList=questions.filter((_,i)=>answered[i]==='wrong-final');
+  const reportEl=document.getElementById('wrong-report');reportEl.innerHTML='';
+  if(!wrongList.length){
+    reportEl.innerHTML='<div style="text-align:center;padding:14px;background:var(--green-l);border-radius:10px;color:#3a8f60;font-weight:800;">🎊 모든 문제를 맞혔어요! 완벽해요!</div>';
+  }else{
+    const t=document.createElement('div');t.className='wrong-report-title';
+    t.innerHTML=`❌ 틀린 문제 다시 보기 <span style="font-size:.8rem;font-weight:400;color:var(--muted)">(${wrongList.length}문제)</span>`;
+    reportEl.appendChild(t);
+    wrongList.forEach(q=>{
+      const item=document.createElement('div');item.className='wrong-item';
+      item.innerHTML=`<div class="wrong-item-num">${q.id}번 문제</div><div class="wrong-item-text">${q.text.replace(/→/g,'<br>→')}</div><div class="wrong-item-answer">✅ 정답: ${q.answer}</div>`;
+      reportEl.appendChild(item);
+    });
+  }
+}
+
+function getDateTimeInfo(){
+  const now=new Date();
+  const dateStr=now.getFullYear()+'.'+(now.getMonth()+1).toString().padStart(2,'0')+'.'+now.getDate().toString().padStart(2,'0');
+  const timeStr=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+  const fileDate=dateStr.replace(/\./g,'')+'-'+timeStr.replace(':','');
+  return {dateStr,timeStr,fileDate};
+}
+function downloadJPG(canvas,filename){const link=document.createElement('a');link.download=filename;link.href=canvas.toDataURL('image/jpeg',0.92);link.click()}
+function wrapText(g,text,x,y,maxW,lineH){
+  const chars=text.split('');let line='';let cy=y;
+  for(let i=0;i<chars.length;i++){
+    line+=chars[i];
+    if(g.measureText(line).width>maxW||chars[i]==='\n'){
+      g.fillText(line.replace('\n',''),x,cy);cy+=lineH;line='';
+    }
+  }
+  if(line){g.fillText(line,x,cy);cy+=lineH;}
+  return cy;
+}
+
+function generateWrongNote(){
+  const name=document.getElementById('name-input').value.trim();
+  if(!name){alert('이름을 입력해주세요.');return}
+  const {dateStr,timeStr,fileDate}=getDateTimeInfo();
+  const stageLabel=STAGE_INFO[currentStage].label;
+  const wrongList=questions.filter((_,i)=>answered[i]==='wrong-final');
+  const W=900,padX=40,lineH=28;
+  let totalH=250;wrongList.forEach(q=>{totalH+=Math.max(100,Math.ceil(q.text.length/35)*lineH+80)});
+  if(!wrongList.length)totalH=320;
+  const c=document.createElement('canvas');c.width=W;c.height=Math.max(totalH,400);const g=c.getContext('2d');
+  g.fillStyle='#f8f9ff';g.fillRect(0,0,W,c.height);
+  g.fillStyle='#9b7be0';g.fillRect(0,0,W,6);
+  g.font='bold 24px sans-serif';g.fillStyle='#1e293b';g.fillText('📝 오답노트 · 논증의 오류 구분하기 ('+stageLabel+')',padX,50);
+  g.font='14px sans-serif';g.fillStyle='#64748b';g.fillText(name+' · '+dateStr+' '+timeStr,padX,78);
+  g.fillText('점수: '+score+'점 · 정답 '+correctCount+'/20 · 최고 콤보 '+maxCombo,padX,98);
+  g.strokeStyle='#e2e8f0';g.lineWidth=1;g.beginPath();g.moveTo(padX,115);g.lineTo(W-padX,115);g.stroke();
+  let y=140;
+  if(!wrongList.length){
+    g.font='bold 20px sans-serif';g.fillStyle='#16a34a';g.fillText('🎊 모든 문제를 맞혔어요! 완벽해요!',padX,y+20);
+  }else{
+    wrongList.forEach((q,i)=>{
+      const blockH=Math.max(90,Math.ceil(q.text.length/35)*lineH+70);
+      g.fillStyle='#fef2f2';g.fillRect(padX-10,y-5,W-2*padX+20,blockH);
+      g.font='bold 15px sans-serif';g.fillStyle='#dc2626';g.fillText(q.id+'번',padX,y+18);
+      g.font='14px sans-serif';g.fillStyle='#475569';
+      let ty=wrapText(g,q.text,padX,y+40,W-2*padX-20,20);
+      g.font='bold 14px sans-serif';g.fillStyle='#16a34a';g.fillText('✅ 정답: '+q.answer,padX,ty+4);
+      y+=blockH+12;
+    });
+  }
+  g.font='11px sans-serif';g.fillStyle='#94a3b8';g.fillText('제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com',padX,c.height-15);
+  downloadJPG(c,name+'_오답노트_'+stageLabel+'_'+fileDate+'.jpg');
+}
+
+function generateReport(){
+  const name=document.getElementById('name-input').value.trim();
+  const feeling=document.getElementById('feeling-input').value.trim()||'';
+  if(!name){alert('이름을 입력해주세요.');return}
+  const {dateStr,timeStr,fileDate}=getDateTimeInfo();
+  const stageLabel=STAGE_INFO[currentStage].label;
+  const wrongList=questions.filter((_,i)=>answered[i]==='wrong-final');
+  const acc=Math.round((correctCount/20)*100);
+  const c=document.createElement('canvas');c.width=900;c.height=650;const g=c.getContext('2d');
+  g.fillStyle='#f8f9ff';g.fillRect(0,0,900,650);
+  g.fillStyle='#9b7be0';g.fillRect(0,0,900,6);
+  const px=40;
+  g.font='bold 24px sans-serif';g.fillStyle='#1e293b';g.fillText('📊 학습 결과 리포트 · 논증의 오류 구분하기 ('+stageLabel+')',px,50);
+  g.font='14px sans-serif';g.fillStyle='#64748b';g.fillText(name+' · '+dateStr+' '+timeStr,px,78);
+  g.strokeStyle='#e2e8f0';g.beginPath();g.moveTo(px,95);g.lineTo(860,95);g.stroke();
+  const boxes=[{label:'최종 점수',val:score+'점',bg:'#f5f3ff',color:'#7c3aed'},{label:'정답',val:correctCount+'문제',bg:'#f0fdf4',color:'#16a34a'},{label:'오답',val:wrongCount+'문제',bg:'#fef2f2',color:'#dc2626'},{label:'최고 콤보',val:maxCombo+'회',bg:'#fff7ed',color:'#ea580c'},{label:'정확도',val:acc+'%',bg:'#eff6ff',color:'#2563eb'}];
+  boxes.forEach((b,i)=>{const bx=px+i*165;g.fillStyle=b.bg;g.fillRect(bx,110,150,70);g.font='bold 22px sans-serif';g.fillStyle=b.color;g.fillText(b.val,bx+15,148);g.font='12px sans-serif';g.fillStyle='#64748b';g.fillText(b.label,bx+15,168)});
+  g.font='bold 16px sans-serif';g.fillStyle='#1e293b';g.fillText('📈 학습 분석',px,220);
+  g.font='14px sans-serif';g.fillStyle='#475569';
+  let ay=245;
+  if(acc>=90)g.fillText('✅ 논증의 오류를 정확하게 구분하고 있어요! 훌륭합니다.',px,ay);
+  else if(acc>=70)g.fillText('✅ 대부분 잘 구분하고 있어요. 틀린 유형만 복습하면 완벽해질 거예요.',px,ay);
+  else if(acc>=50)g.fillText('⚠️ 절반 이상 맞혔어요. 헷갈리는 유형을 정리하고 다시 도전해보세요.',px,ay);
+  else g.fillText('💪 아직 어려운 부분이 많아요. 각 오류 유형의 특징을 복습한 뒤 다시 풀어보세요.',px,ay);
+  // 오류 유형별 분석
+  if(wrongList.length>0){
+    ay+=35;g.font='bold 14px sans-serif';g.fillStyle='#dc2626';
+    const wrongTypes={};wrongList.forEach(q=>{const t=q.answer;wrongTypes[t]=(wrongTypes[t]||0)+1});
+    const typeList=Object.entries(wrongTypes).sort((a,b)=>b[1]-a[1]).map(([k,v])=>k.replace('의 오류','')+' '+v+'회').join(', ');
+    g.fillText('❌ 틀린 유형: '+typeList,px,ay);
+    ay+=28;g.font='14px sans-serif';g.fillStyle='#475569';
+    const topWrong=Object.entries(wrongTypes).sort((a,b)=>b[1]-a[1])[0];
+    g.fillText('→ '+topWrong[0].replace('의 오류','')+' 유형을 중점적으로 복습하세요.',px,ay);
+  }
+  if(feeling){ay+=40;g.font='bold 14px sans-serif';g.fillStyle='#1e293b';g.fillText('💬 학습 소감',px,ay);ay+=22;g.font='14px sans-serif';g.fillStyle='#475569';
+    ay=wrapText(g,feeling,px,ay,780,22);
+  }
+  g.font='11px sans-serif';g.fillStyle='#94a3b8';
+  g.fillText('제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com',px,620);
+  g.fillText('입력하신 이름과 소감은 서버에 저장되지 않으며, 리포트 이미지(JPG) 생성용으로만 쓰입니다.',px,605);
+  downloadJPG(c,name+'_학습리포트_'+stageLabel+'_'+fileDate+'.jpg');
+}
+
+function goStart(){document.getElementById('complete-screen').classList.remove('show');document.getElementById('game-area').classList.remove('show');document.getElementById('ingame-credit').classList.remove('show');document.getElementById('start-screen').style.display=''}
+function restartGame(){startGame(currentStage)}
+</script>
+</body>
+</html>

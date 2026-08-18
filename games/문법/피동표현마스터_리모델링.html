@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>피동 표현 마스터</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#eaf6fb; --bg2:#fdeef4;
+    --ink:#54505f; --ink2:#8a8597; --line:#eadff0;
+    --sky-bg:#bfe3f5; --sky-bd:#7fc6e8; --sky-tx:#2f7ba0;
+    --pink-bg:#f9c9da; --pink-bd:#f08fb0; --pink-tx:#b25178;
+    --yellow-bg:#ffe9a8; --yellow-bd:#f3c64d; --yellow-tx:#9a781f;
+    --green-bg:#c8ebcf; --green-bd:#84d59c; --green-tx:#3f8a5b;
+    --amber-bg:#fcdcab; --amber-bd:#f3bd6e; --amber-tx:#a8742a;
+    --accent:#f48fb1;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;margin:0}
+  body{
+    font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    color:var(--ink);
+    background:linear-gradient(135deg,var(--bg) 0%, var(--bg2) 100%);
+    display:flex;align-items:center;justify-content:center;
+    padding:12px;overflow:hidden;
+  }
+  .card{
+    width:min(1120px,98vw);height:min(760px,96vh);
+    background:#fff;border-radius:28px;
+    border:8px solid #fff;box-shadow:0 24px 60px rgba(150,160,200,.28);
+    position:relative;overflow:hidden;
+  }
+  .blob{position:absolute;border-radius:50%;filter:blur(40px);opacity:.5;z-index:0;pointer-events:none}
+  .blob.a{width:280px;height:280px;background:#cdeafc;top:-90px;right:-70px}
+  .blob.b{width:320px;height:320px;background:#fcd9e8;bottom:-110px;left:-90px}
+  .screen{position:absolute;inset:0;z-index:1;display:none;overflow-y:auto}
+  .screen.on{display:flex}
+
+  /* ===== START ===== */
+  #start{flex-direction:column;align-items:center;justify-content:flex-start;gap:10px;text-align:center;padding:20px 28px 16px}
+  .title-row{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:2px}
+  .mascot{height:90px;border-radius:12px;flex:none}
+  .title{font-size:clamp(28px,5vw,48px);font-weight:700;color:var(--pink-tx);letter-spacing:-1px;line-height:1.1;margin:0}
+  .title .star{color:#f7c948}
+  .subtitle{font-size:clamp(14px,2.5vw,19px);color:var(--sky-tx);font-weight:700;margin:0 0 4px}
+  .subtitle b{background:#fff3c4;border-radius:8px;padding:0 6px}
+  .std-box{background:#f3f0ff;border:2px solid #d8d0f0;border-radius:14px;padding:8px 16px;font-size:13px;color:#6b5fa0;max-width:720px;width:100%;text-align:left;line-height:1.5}
+  .std-box b{color:#7c5cbf}
+  .start-grid{display:flex;gap:14px;width:100%;max-width:720px;align-items:stretch;justify-content:center}
+  .info-box{flex:1;background:#f4fbff;border:2px solid #d6eefb;border-radius:18px;padding:12px 14px;text-align:left}
+  .info-box.rule{background:#fff6fb;border-color:#f6d6e6}
+  .info-box h3{margin:0 0 6px;font-size:15px;color:var(--ink);display:flex;align-items:center;gap:6px}
+  .info-box h3 .dot{width:9px;height:9px;border-radius:50%;background:var(--sky-bd)}
+  .info-box.rule h3 .dot{background:var(--pink-bd)}
+  .info-box p,.info-box li{font-size:13px;line-height:1.6;color:#615c6c;margin:3px 0}
+  .info-box ul{margin:0;padding-left:16px}
+  .pill{display:inline-block;font-weight:700;border-radius:6px;padding:1px 6px;font-size:12px}
+  .pill.y{background:var(--yellow-bg);color:var(--yellow-tx)}
+  .pill.p{background:var(--pink-bg);color:var(--pink-tx)}
+  .pill.s{background:var(--sky-bg);color:var(--sky-tx)}
+  .pill.g{background:var(--green-bg);color:var(--green-tx)}
+  .start-btn{
+    border:none;cursor:pointer;font-family:inherit;
+    background:linear-gradient(135deg,#f8a5c2,#f48fb1);color:#fff;
+    font-size:clamp(18px,3vw,24px);font-weight:700;padding:14px 48px;border-radius:999px;
+    box-shadow:0 10px 24px rgba(244,143,177,.45);transition:transform .12s, box-shadow .12s;
+  }
+  .start-btn:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 16px 30px rgba(244,143,177,.5)}
+  .start-btn:active{transform:scale(.97)}
+  .maker{background:#fbfaff;border:2px dashed #e3def0;border-radius:14px;padding:8px 16px;font-size:12px;color:var(--ink2);line-height:1.6;max-width:720px;width:100%;text-align:center}
+  .maker b{color:var(--pink-tx);font-weight:700}
+  .privacy{background:#f8f6ff;border:1.5px solid #e8e2f4;border-radius:12px;padding:8px 14px;font-size:11px;color:#9990b0;max-width:720px;width:100%;text-align:left;line-height:1.5}
+  .privacy b{color:#7c6fa0;font-weight:600}
+
+  /* ===== GAME ===== */
+  #game{flex-direction:row;gap:16px;padding:20px 24px}
+  .play-main{flex:1;display:flex;flex-direction:column;min-width:0}
+  .topbar{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+  .chip{font-weight:700;font-size:14px;border-radius:999px;padding:6px 14px;border:2px solid}
+  .chip.prog{background:#eef9ff;color:var(--sky-tx);border-color:#c8e9fa}
+  .chip.score{background:#fff7e6;color:var(--yellow-tx);border-color:#fbe2a6}
+  .chip.combo{background:#fff0f6;color:var(--pink-tx);border-color:#f9cfe2;margin-left:auto;opacity:.45;transition:opacity .2s, transform .2s}
+  .chip.combo.live{opacity:1;transform:scale(1.05)}
+  .progress{height:8px;border-radius:99px;background:#eef0f6;overflow:hidden;margin-bottom:12px}
+  .progress > i{display:block;height:100%;width:0;background:var(--sky-bd);transition:width .35s, background .4s;border-radius:99px}
+  .qwrap{flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px;min-height:0}
+  .sent{background:#fff;border-radius:18px;padding:14px 18px;box-shadow:0 6px 18px rgba(150,160,200,.12)}
+  .sent.act{border-left:7px solid var(--sky-bd)}
+  .sent.pas{border-left:7px solid var(--pink-bd);transition:border-color .4s}
+  .sent.pas.revealed{border-left-color:var(--green-bd)}
+  .sent .lab{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;display:block;margin-bottom:3px}
+  .sent.act .lab{color:var(--sky-tx)}
+  .sent.pas .lab{color:var(--pink-tx)}
+  .sent.pas.revealed .lab{color:var(--green-tx)}
+  .sent .txt{font-size:clamp(16px,2.8vw,24px);font-weight:700;color:#5a5566;line-height:1.4}
+  .sent .txt .q{color:var(--accent);font-weight:700;margin-left:6px;font-size:clamp(14px,2.2vw,19px)}
+  .sent .txt .ans{color:var(--green-tx)}
+  .struct{margin-top:8px;background:#f1fbf3;border:2px solid #cdebd5;border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:10px}
+  .struct .ic{width:30px;height:30px;flex:none;border-radius:50%;background:var(--green-bd);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+  .struct .st{font-size:clamp(14px,2vw,18px);font-weight:700;color:var(--green-tx);letter-spacing:1px}
+  .struct .st .hit{color:#e0556e}
+  .struct .sub{font-size:11px;color:#6aa97f;margin-top:2px}
+  .hint{margin-top:4px;background:#fff5e6;border:2px solid var(--amber-bd);border-radius:14px;padding:10px 14px;color:var(--amber-tx);font-size:14px;font-weight:500;line-height:1.5;display:flex;align-items:center;gap:8px}
+  .hint .ic{font-size:18px}
+  .answers{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:12px}
+  .ans-btn{
+    cursor:pointer;font-family:inherit;border:none;border-bottom:6px solid;
+    border-radius:18px;padding:16px 0;font-size:clamp(18px,3.5vw,28px);font-weight:700;
+    transition:transform .1s, box-shadow .1s, opacity .2s;box-shadow:0 6px 14px rgba(150,160,200,.16);
+  }
+  .ans-btn:hover:not(:disabled){transform:translateY(-3px)}
+  .ans-btn:active:not(:disabled){transform:scale(.96)}
+  .ans-btn:disabled{cursor:default}
+  .ans-btn.y{background:var(--yellow-bg);border-color:var(--yellow-bd);color:var(--yellow-tx)}
+  .ans-btn.p{background:var(--pink-bg);border-color:var(--pink-bd);color:var(--pink-tx)}
+  .ans-btn.s{background:var(--sky-bg);border-color:var(--sky-bd);color:var(--sky-tx)}
+  .ans-btn.g{background:var(--green-bg);border-color:var(--green-bd);color:var(--green-tx)}
+  .ans-btn.dim{opacity:.4}
+  .ans-btn.correct{outline:4px solid #5cc47e;outline-offset:-2px;background:#d7f4de;color:var(--green-tx);animation:pop .35s}
+  .ans-btn.wrong{outline:4px solid #ef7a8e;outline-offset:-2px;animation:shake .35s}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px)}40%{transform:translateX(9px)}60%{transform:translateX(-7px)}80%{transform:translateX(7px)}}
+  @keyframes pop{0%{transform:scale(1)}45%{transform:scale(1.12)}100%{transform:scale(1)}}
+  /* sidebar */
+  .sidebar{width:120px;display:flex;flex-direction:column;gap:10px;justify-content:center;flex:none}
+  .nav-btn{
+    cursor:pointer;font-family:inherit;border:2px solid var(--line);background:#fbfaff;
+    color:var(--ink);font-size:15px;font-weight:700;border-radius:16px;padding:14px 0;
+    display:flex;flex-direction:column;align-items:center;gap:4px;transition:transform .1s, background .15s, opacity .15s;
+  }
+  .nav-btn .big{font-size:20px}
+  .nav-btn:hover:not(:disabled){transform:translateY(-2px);background:#f4f1ff}
+  .nav-btn:active:not(:disabled){transform:scale(.96)}
+  .nav-btn.next{background:#eafaf0;border-color:#cdebd5;color:var(--green-tx)}
+  .nav-btn.end{background:#fff0f4;border-color:#f6d4e2;color:var(--pink-tx)}
+  .credit{position:absolute;right:14px;bottom:10px;font-size:10px;color:#c3bdd0;z-index:2}
+
+  /* ===== RESULT ===== */
+  #result{flex-direction:column;padding:20px 28px}
+  .res-head{text-align:center;margin-bottom:10px}
+  .res-head .trophy{font-size:40px}
+  .res-head h2{margin:4px 0 2px;font-size:clamp(22px,4vw,30px);color:var(--pink-tx);font-weight:700}
+  .res-head .fin{font-size:clamp(16px,3vw,22px);color:var(--sky-tx);font-weight:700}
+  .res-body{flex:1;overflow-y:auto;min-height:0;display:flex;flex-direction:column;gap:12px}
+  .input-row{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
+  .input-group{display:flex;flex-direction:column;gap:4px}
+  .input-group label{font-size:13px;font-weight:700;color:var(--ink)}
+  .input-group input,.input-group textarea{font-family:inherit;font-size:14px;border:2px solid var(--line);border-radius:12px;padding:8px 12px;outline:none;transition:border-color .2s}
+  .input-group input:focus,.input-group textarea:focus{border-color:var(--pink-bd)}
+  .input-group input{width:180px}
+  .input-group textarea{width:100%;min-height:50px;resize:vertical}
+  .note-box{background:#fff8fb;border:3px solid #f6d6e6;border-radius:20px;padding:14px 18px;overflow:auto;min-height:0}
+  .note-box h3{margin:0 0 10px;font-size:17px;color:#6a6577;font-weight:700;display:flex;align-items:center;gap:6px}
+  .note-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .note-item{background:#fff;border:2px solid #f3e6ee;border-radius:14px;padding:10px 12px}
+  .note-item .ac{font-size:13px;color:#8a8597}
+  .note-item .pa{font-size:14px;color:#5a5566;font-weight:700;margin:2px 0}
+  .note-item .pa .ans{color:var(--green-tx)}
+  .note-item .tag{display:inline-block;background:var(--pink-bg);color:var(--pink-tx);font-weight:700;border-radius:99px;padding:2px 10px;font-size:12px;margin-top:2px}
+  .perfect{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--green-tx);padding:20px}
+  .perfect .em{font-size:50px}
+  .perfect p{font-size:18px;font-weight:700;margin:0}
+  .res-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+  .act-btn{cursor:pointer;font-family:inherit;border:none;font-size:15px;font-weight:700;border-radius:999px;padding:12px 24px;transition:transform .12s, box-shadow .12s}
+  .act-btn:hover{transform:translateY(-2px)}
+  .act-btn:active{transform:scale(.97)}
+  .act-btn.save{background:linear-gradient(135deg,#8fd0f0,#6fc1e6);color:#fff;box-shadow:0 8px 18px rgba(111,193,230,.4)}
+  .act-btn.report{background:linear-gradient(135deg,#c5a5f5,#a78bfa);color:#fff;box-shadow:0 8px 18px rgba(167,139,250,.4)}
+  .act-btn.again{background:#f4f1ff;color:var(--ink);border:2px solid var(--line)}
+  .act-btn:disabled{opacity:.4;cursor:default;transform:none}
+  .res-privacy{font-size:11px;color:#9990b0;text-align:center;margin-top:6px;line-height:1.4}
+
+  /* ===== MOBILE ===== */
+  @media (max-width:768px){
+    body{padding:4px;align-items:flex-start}
+    .card{width:100vw;height:100vh;border-radius:0;border:none;box-shadow:none}
+    #start{padding:14px 16px 12px;gap:8px}
+    .mascot{height:60px}
+    .title{font-size:24px}
+    .start-grid{flex-direction:column;gap:8px}
+    .info-box{padding:10px 12px}
+    #game{flex-direction:column;padding:12px 14px;gap:8px}
+    .sidebar{width:100%;flex-direction:row;justify-content:center;order:10}
+    .nav-btn{flex:1;padding:10px 0;flex-direction:row;gap:6px;font-size:13px}
+    .nav-btn .big{font-size:16px}
+    .answers{grid-template-columns:repeat(2,1fr);gap:8px}
+    .ans-btn{padding:14px 0;font-size:20px}
+    .note-grid{grid-template-columns:1fr}
+    .input-row{flex-direction:column}
+    .input-group input{width:100%}
+    .credit{right:10px;bottom:6px;font-size:9px}
+  }
+  @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="blob a"></div><div class="blob b"></div>
+
+  <!-- START -->
+  <section id="start" class="screen on">
+    <div class="title-row">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAI8AAAC0CAMAAACaAI/PAAABgFBMVEXTm2evn448MS1lT0Cmf2HAZh3An4D7+vpMNSXZ1s7Gxsa4urzo6OfhupPcto7NxbbalVmMqcKptsKTp7jQiEzTmmfXpXTkwZxGLBvipW3i2snLeDWcscPUrIR8osLFvbKoq6vnx6NqSDBNMR7b0b2telCvpJaHm6jk4dmth2eMZ0qLeGnhmlu+wL3gnWG2g1ipmoySlpVtWEjGfULTgTxaRDSVhXa2lHWdsL50Ujm8wcJELiDFbCd4mraGWDd4ZVaXc1Z8oL46JhhiPSWTjIaDXELwsnh6bWK8dTuSYzwIBQUbFRNuOBZ3Qh3groDi0rsqHRecoJve3+B1nsKzajLawZ7f4N/Av8Dd4eIxIyF7c2l+lJ2BTSe2WBG8YhyjbUUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPmQJeAAAAYHRSTlP///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////9ebwvOAAAdVklEQVR42r1cB3viSNL2fQmkRmoUAQlZIoONDTjbY3vybE53ezn9/3/xVVV3Kws8u/ucdkdgUr9UvRW7xJGu661Wq3rWdL1Te2YMzh31iNbROnVv/2VnTT/ijP4snFnpLDDUngFP5e2/7CyWO9I0rdPpfO65o+4vl7/k7c3no71o5bnTLKKOrkmB/zYiOoxH+8/i+TUSVje/ocqOfo2yxDl9o6bn3169/yI+/0o8S8KjccbjZPthG/9y9f0q+8rOrdaSb08v2ukxvjid65kB/ub2tV9Z+s1Fe9JvF49+e3zDQX02fQj/T9mX3tFPr/uv2vXH9WnymSqzBR4lKz13zj+i6blHxH3xRPK63W/vOy4YkrzuY1tFNeEjIh4dNdMvM41a4ein7YNH/2L7UuGo+LWf8Bppv84N7g7IRh2nnWYMvHwf8EjpZRJ72fmLl6FptyfXvCM/XC7UkueWlj3eAsXhI/vtS29Q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" alt="보라라샘" class="mascot"/>
+      <h1 class="title"><span class="star">★</span> 피동 표현 마스터 <span class="star">★</span></h1>
+    </div>
+    <div class="subtitle">알맞은 <b>피동 접미사 ( 이 · 히 · 리 · 기 )</b> 를 골라요</div>
+    <div class="std-box">
+      <b>[9국04-05]</b> 피동 표현과 인용 표현의 의도와 효과를 분석하고 상황에 맞게 활용한다.
+    </div>
+    <div class="start-grid">
+      <div class="info-box">
+        <h3><span class="dot"></span> 게임 방법</h3>
+        <ul>
+          <li>능동문을 피동문으로 바꿀 때,</li>
+          <li>빈칸(??)에 들어갈 알맞은 <b>피동 접미사</b>를 고르세요.</li>
+          <li>정답을 맞히면 단어의 짜임새를 확인할 수 있어요.</li>
+          <li>모두 <b>36문제</b>, 옆 버튼으로 이동해요.</li>
+        </ul>
+      </div>
+      <div class="info-box rule">
+        <h3><span class="dot"></span> 점수 규칙</h3>
+        <ul>
+          <li>첫 시도 정답 <span class="pill g">+10점</span> · 연속 정답 <span class="pill p">콤보 보너스</span></li>
+          <li>다시 도전해서 정답 <span class="pill y">+5점</span></li>
+          <li>틀린 답 <span class="pill s">-3점</span> (0점 아래로는 안 내려가요)</li>
+          <li>맞힌 문제는 다시 채점되지 않아요.</li>
+        </ul>
+      </div>
+    </div>
+    <button class="start-btn" onclick="startGame()">시작하기 ▶</button>
+    <div class="maker">
+      제작 <b>보라라샘</b> · 전주서신중학교 교사 · siaawase@gmail.com<br>
+      제작일 2026.04.01 · Made with Claude
+    </div>
+    <div class="privacy">
+      <b>🔒 개인정보 보호 안내</b><br>
+      본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다. 게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.
+    </div>
+  </section>
+
+  <!-- GAME -->
+  <section id="game" class="screen">
+    <div class="play-main">
+      <div class="topbar">
+        <span class="chip prog" id="chipProg">문제 1 / 36</span>
+        <span class="chip score" id="chipScore">점수 0</span>
+        <span class="chip combo" id="chipCombo">🔥 콤보 0</span>
+      </div>
+      <div class="progress"><i id="progBar"></i></div>
+      <div class="qwrap">
+        <div class="sent act">
+          <span class="lab">능동문</span>
+          <div class="txt" id="actSent"></div>
+        </div>
+        <div class="sent pas" id="pasCard">
+          <span class="lab">피동문</span>
+          <div class="txt" id="pasSent"></div>
+          <div id="reveal"></div>
+        </div>
+      </div>
+      <div class="answers" id="answers"></div>
+    </div>
+    <div class="sidebar">
+      <button class="nav-btn" id="btnPrev" onclick="goPrev()"><span class="big">◀</span>이전 문제</button>
+      <button class="nav-btn next" id="btnNext" onclick="goNext()"><span class="big">▶</span><span>다음 문제</span></button>
+      <button class="nav-btn end" onclick="endGame()"><span class="big">■</span>게임 끝내기</button>
+    </div>
+    <div class="credit">제작 · 보라라샘 / 2026.04.01</div>
+  </section>
+
+  <!-- RESULT -->
+  <section id="result" class="screen">
+    <div class="res-head">
+      <div class="trophy">🏆</div>
+      <h2>게임 끝! 수고했어요</h2>
+      <div class="fin" id="finScore">최종 점수: 0점</div>
+    </div>
+    <div class="res-body">
+      <div class="input-row">
+        <div class="input-group">
+          <label>📝 이름 <span style="color:#e0556e;font-size:11px">(필수)</span></label>
+          <input type="text" id="userName" placeholder="이름을 입력하세요" maxlength="20"/>
+        </div>
+        <div class="input-group" style="flex:1">
+          <label>💬 학습 소감 <span style="color:#e0556e;font-size:11px">(필수)</span></label>
+          <textarea id="userReflection" placeholder="피동 표현에 대해 새롭게 알게 된 점, 느낀 점 등을 적어 보세요." maxlength="200"></textarea>
+        </div>
+      </div>
+      <div id="noteArea"></div>
+    </div>
+    <div class="res-actions">
+      <button class="act-btn save" onclick="saveNote()">🖼️ 오답노트 저장</button>
+      <button class="act-btn report" onclick="saveReport()">📊 학습 리포트 저장</button>
+      <button class="act-btn again" onclick="resetGame()">↺ 처음으로</button>
+    </div>
+    <div class="res-privacy">입력하신 이름과 소감은 서버에 저장되지 않으며, 리포트 이미지(JPG) 생성용으로만 쓰입니다.</div>
+    <div class="credit">제작 · 보라라샘 / 2026.04.01</div>
+  </section>
+</div>
+
+<script>
+/* ===================== DATA ===================== */
+var QUESTIONS = [
+ {id:1,verb:"잡다",active:"경찰이 도둑을 잡았다.",passive:"도둑이 경찰에게 잡혔다.",suffix:"-히-",structure:"잡- + -히- + -었- + -다"},
+ {id:2,verb:"밀다",active:"친구가 내 등을 밀었다.",passive:"내 등이 친구에게 밀렸다.",suffix:"-리-",structure:"밀- + -리- + -었- + -다"},
+ {id:3,verb:"보다",active:"아이가 멀리 있는 산을 본다.",passive:"멀리 있는 산이 아이에게 보인다.",suffix:"-이-",structure:"보- + -이- + -ㄴ- + -다"},
+ {id:4,verb:"듣다",active:"그가 내 목소리를 들었다.",passive:"내 목소리가 그에게 들렸다.",suffix:"-리-",structure:"들- + -리- + -었- + -다"},
+ {id:5,verb:"쓰다",active:"학생이 감상문을 썼다.",passive:"감상문이 학생에 의해 쓰였다.",suffix:"-이-",structure:"쓰- + -이- + -었- + -다"},
+ {id:6,verb:"읽다",active:"사람들이 이 책을 많이 읽는다.",passive:"이 책은 사람들에게 많이 읽힌다.",suffix:"-히-",structure:"읽- + -히- + -ㄴ- + -다"},
+ {id:7,verb:"열다",active:"주인이 가게 문을 열었다.",passive:"가게 문이 주인에 의해 열렸다.",suffix:"-리-",structure:"열- + -리- + -었- + -다"},
+ {id:8,verb:"닫다",active:"바람이 창문을 세게 닫았다.",passive:"창문이 바람에 세게 닫혔다.",suffix:"-히-",structure:"닫- + -히- + -었- + -다"},
+ {id:9,verb:"먹다",active:"고양이가 생선을 먹었다.",passive:"생선이 고양이에게 먹혔다.",suffix:"-히-",structure:"먹- + -히- + -었- + -다"},
+ {id:10,verb:"쫓다",active:"사자가 얼룩말을 쫓는다.",passive:"얼룩말이 사자에게 쫓긴다.",suffix:"-기-",structure:"쫓- + -기- + -ㄴ- + -다"},
+ {id:11,verb:"안다",active:"엄마가 아기를 품에 안았다.",passive:"아기가 엄마 품에 안겼다.",suffix:"-기-",structure:"안- + -기- + -었- + -다"},
+ {id:12,verb:"풀다",active:"학생이 어려운 수학 문제를 풀었다.",passive:"어려운 수학 문제가 학생에 의해 풀렸다.",suffix:"-리-",structure:"풀- + -리- + -었- + -다"},
+ {id:13,verb:"쌓다",active:"쇼핑몰이 고객에게 포인트를 쌓아주었다.",passive:"결제했더니 포인트가 쌓였다.",suffix:"-이-",structure:"쌓- + -이- + -었- + -다"},
+ {id:14,verb:"끊다",active:"그가 갑자기 전화를 끊었다.",passive:"전화가 그에 의해 갑자기 끊겼다.",suffix:"-기-",structure:"끊- + -기- + -었- + -다"},
+ {id:15,verb:"걸다",active:"화가가 벽에 그림을 걸었다.",passive:"그림이 화가에 의해 벽에 걸렸다.",suffix:"-리-",structure:"걸- + -리- + -었- + -다"},
+ {id:16,verb:"놓다",active:"아이가 책상 위에 책을 놓았다.",passive:"책이 아이에 의해 책상 위에 놓였다.",suffix:"-이-",structure:"놓- + -이- + -었- + -다"},
+ {id:17,verb:"바꾸다",active:"회사가 내부 규칙을 바꾸었다.",passive:"내부 규칙이 회사에 의해 바뀌었다.",suffix:"-이-",structure:"바꾸- + -이- + -었- + -다"},
+ {id:18,verb:"팔다",active:"상인이 낡은 물건을 팔았다.",passive:"낡은 물건이 상인에게 팔렸다.",suffix:"-리-",structure:"팔- + -리- + -었- + -다"},
+ {id:19,verb:"덮다",active:"눈이 온 세상을 하얗게 덮었다.",passive:"온 세상이 눈에 하얗게 덮였다.",suffix:"-이-",structure:"덮- + -이- + -었- + -다"},
+ {id:20,verb:"누르다",active:"두꺼운 책이 장난감을 눌렀다.",passive:"두꺼운 책 밑에 장난감이 눌려 있다.",suffix:"-리-",structure:"누르- + -리- + -어 + 있- + -다",masked:"두꺼운 책 밑에 장난감이 ?? 있다."},
+ {id:21,verb:"업다",active:"아빠가 아들을 등에 업었다.",passive:"아들이 아빠 등에 업혔다.",suffix:"-히-",structure:"업- + -히- + -었- + -다"},
+ {id:22,verb:"파다",active:"인부들이 땅에 구덩이를 팠다.",passive:"구덩이가 인부들에 의해 땅에 파였다.",suffix:"-이-",structure:"파- + -이- + -었- + -다"},
+ {id:23,verb:"밟다",active:"코끼리가 실수로 꽃을 밟았다.",passive:"꽃이 코끼리에게 실수로 밟혔다.",suffix:"-히-",structure:"밟- + -히- + -었- + -다"},
+ {id:24,verb:"찢다",active:"화가 난 아이가 종이를 찢었다.",passive:"종이가 화가 난 아이에 의해 찢겼다.",suffix:"-기-",structure:"찢- + -기- + -었- + -다"},
+ {id:25,verb:"섞다",active:"그는 두 가지 액체를 섞었다.",passive:"두 가지 액체가 그에 의해 섞였다.",suffix:"-이-",structure:"섞- + -이- + -었- + -다"},
+ {id:26,verb:"가두다",active:"관리인이 동물을 우리에 가두었다.",passive:"동물이 관리인에 의해 우리에 갇혔다.",suffix:"-히-",structure:"갇- + -히- + -었- + -다"},
+ {id:27,verb:"깎다",active:"미용사가 손님의 머리를 깎았다.",passive:"손님의 머리가 미용사에게 깎였다.",suffix:"-이-",structure:"깎- + -이- + -었- + -다"},
+ {id:28,verb:"담다",active:"엄마가 도시락에 과일을 담았다.",passive:"과일이 엄마에 의해 도시락에 담겼다.",suffix:"-기-",structure:"담- + -기- + -었- + -다"},
+ {id:29,verb:"물다",active:"모기가 내 팔을 물었다.",passive:"내 팔이 모기에게 물렸다.",suffix:"-리-",structure:"물- + -리- + -었- + -다"},
+ {id:30,verb:"막다",active:"큰 바위가 길을 막았다.",passive:"길이 큰 바위에 의해 막혔다.",suffix:"-히-",structure:"막- + -히- + -었- + -다"},
+ {id:31,verb:"빼앗다",active:"강도가 행인의 가방을 빼앗았다.",passive:"행인의 가방이 강도에게 빼앗겼다.",suffix:"-기-",structure:"빼앗- + -기- + -었- + -다"},
+ {id:32,verb:"뽑다",active:"심사위원이 우승자를 뽑았다.",passive:"우승자가 심사위원에 의해 뽑혔다.",suffix:"-히-",structure:"뽑- + -히- + -었- + -다"},
+ {id:33,verb:"싣다",active:"인부들이 트럭에 짐을 실었다.",passive:"짐이 인부들에 의해 트럭에 실렸다.",suffix:"-리-",structure:"싣- + -리- + -었- + -다"},
+ {id:34,verb:"이끌다",active:"알 수 없는 운명이 나를 이곳으로 이끌었다.",passive:"나는 알 수 없는 운명에 이끌려 이곳에 오게 되었다.",suffix:"-리-",structure:"이끌- + -리- + -어",masked:"나는 알 수 없는 운명에 이?? 이곳에 오게 되었다."},
+ {id:35,verb:"차다",active:"왕자가 인어공주를 찼다.",passive:"인어공주가 왕자에게 차였다.",suffix:"-이-",structure:"차- + -이- + -었- + -다"},
+ {id:36,verb:"흔들다",active:"바람이 나뭇가지를 심하게 흔들었다.",passive:"나뭇가지가 바람에 심하게 흔들렸다.",suffix:"-리-",structure:"흔들- + -리- + -었- + -다"}
+];
+var SUFFIXES = [{s:"-이-",c:"y"},{s:"-히-",c:"p"},{s:"-리-",c:"s"},{s:"-기-",c:"g"}];
+var PHASE = ["#7fc6e8","#f0a0bd","#84d59c","#f3bd6e"];
+
+/* ===================== STATE ===================== */
+var idx=0, score=0, streak=0;
+var qstat=[];
+var wrongFlag=[];
+var wrongList=[];
+
+/* ===================== AUDIO ===================== */
+var actx=null;
+function ac(){ if(!actx){try{actx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}} return actx; }
+function tone(type,f1,f2,dur,vol){var c=ac();if(!c)return;var o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(f1,c.currentTime);if(f2)o.frequency.exponentialRampToValueAtTime(f2,c.currentTime+dur*0.7);g.gain.setValueAtTime(vol||0.12,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+dur);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+dur);}
+function sCorrect(){tone('sine',523.25,880,0.3);}
+function sWrong(){tone('triangle',220,110,0.25);}
+function sCombo(){tone('sine',784,1175,0.18,0.1);}
+
+/* ===================== HELPERS ===================== */
+function maskedOf(q){ if(q.masked) return q.masked; var w=q.passive.split(' '); return w.slice(0,-1).join(' ')+' ??다.'; }
+function show(id){ ['start','game','result'].forEach(function(s){document.getElementById(s).classList.toggle('on',s===id);}); }
+
+/* ===================== RENDER ===================== */
+function render(){
+  var q=QUESTIONS[idx], st=qstat[idx], ph=Math.floor(idx/9), col=PHASE[ph];
+  document.getElementById('chipProg').textContent='문제 '+(idx+1)+' / '+QUESTIONS.length;
+  document.getElementById('chipScore').textContent='점수 '+score;
+  var cb=document.getElementById('chipCombo');
+  cb.textContent='🔥 콤보 '+streak; cb.classList.toggle('live',streak>=2);
+  var bar=document.getElementById('progBar'); bar.style.width=((idx+1)/QUESTIONS.length*100)+'%'; bar.style.background=col;
+  document.querySelector('.chip.prog').style.borderColor=col;
+
+  document.getElementById('actSent').textContent=q.active;
+
+  var pasCard=document.getElementById('pasCard');
+  var pas=document.getElementById('pasSent');
+  var reveal=document.getElementById('reveal');
+  var answered=(st==='c1'||st==='c2');
+
+  if(answered){
+    pasCard.classList.add('revealed');
+    pas.innerHTML='<span class="ans">'+q.passive+'</span>';
+    reveal.innerHTML=structHTML(q);
+  }else{
+    pasCard.classList.remove('revealed');
+    pas.innerHTML=maskedOf(q)+' <span class="q">( '+q.verb+' → ? )</span>';
+    reveal.innerHTML='';
+  }
+
+  var box=document.getElementById('answers'); box.innerHTML='';
+  SUFFIXES.forEach(function(o){
+    var b=document.createElement('button');
+    b.className='ans-btn '+o.c; b.textContent=o.s;
+    if(answered){ b.disabled=true; if(o.s===q.suffix){b.classList.add('correct');} else {b.classList.add('dim');} }
+    else { b.onclick=function(){answer(o.s,b);}; }
+    box.appendChild(b);
+  });
+
+  document.getElementById('btnPrev').disabled=(idx===0);
+  /* 다음 버튼은 항상 활성화 — 미답 상태에서도 이동 가능 */
+  var nextBtn=document.getElementById('btnNext');
+  nextBtn.querySelector('span:last-child').textContent = (idx===QUESTIONS.length-1)?'결과 보기':'다음 문제';
+}
+function structHTML(q){
+  var parts=q.structure.split(' + ').map(function(p){ return p.indexOf(q.suffix)>-1 ? '<span class="hit">'+p+'</span>' : p; });
+  return '<div class="struct"><div class="ic">짜임</div><div><div class="st">'+parts.join(' + ')+'</div><div class="sub">단어의 짜임새를 확인해 보세요!</div></div></div>';
+}
+
+/* ===================== ANSWER ===================== */
+function answer(sfx,btn){
+  var q=QUESTIONS[idx];
+  if(sfx===q.suffix){
+    var firstTry=(qstat[idx]==='todo' && !wrongFlag[idx]);
+    if(firstTry){
+      streak++;
+      var bonus = streak>=2 ? Math.min((streak-1)*2,10) : 0;
+      score += 10 + bonus;
+      qstat[idx]='c1';
+      if(bonus>0) sCombo(); else sCorrect();
+    }else{
+      score += 5; qstat[idx]='c2'; streak=0; sCorrect();
+    }
+    btn.classList.add('correct');
+    render();
+  }else{
+    sWrong();
+    score=Math.max(0,score-3);
+    streak=0;
+    btn.classList.add('wrong'); btn.disabled=true;
+    if(!wrongFlag[idx]){
+      wrongFlag[idx]=true;
+      wrongList.push({active:q.active,passive:q.passive,suffix:q.suffix,structure:q.structure});
+    }
+    document.getElementById('chipScore').textContent='점수 '+score;
+    var ccb=document.getElementById('chipCombo'); ccb.textContent='🔥 콤보 0'; ccb.classList.remove('live');
+    var reveal=document.getElementById('reveal');
+    reveal.innerHTML='<div class="hint"><span class="ic">🤔</span><span>다시 한 번! 동사 <b>\''+q.verb+'\'</b>의 어간 끝소리를 떠올려 보면 알맞은 접미사를 찾을 수 있어요.</span></div>';
+    setTimeout(function(){ btn.classList.remove('wrong'); },400);
+  }
+}
+
+/* ===================== NAV ===================== */
+function goPrev(){ if(idx>0){idx--;render();} }
+function goNext(){ if(idx<QUESTIONS.length-1){idx++;render();} else {endGame();} }
+function endGame(){ currentScreen='result'; buildResult(); show('result'); }
+
+/* ===================== RESULT ===================== */
+function buildResult(){
+  document.getElementById('finScore').textContent='최종 점수: '+score+'점';
+  var area=document.getElementById('noteArea');
+  if(wrongList.length===0){
+    area.innerHTML='<div class="perfect"><div class="em">🌟</div><p>틀린 문제가 없어요! 피동 표현 완벽 정복!</p></div>';
+  }else{
+    var items=wrongList.map(function(w){
+      return '<div class="note-item"><div class="ac">'+w.active+'</div>'+
+             '<div class="pa"><span class="ans">'+w.passive+'</span></div>'+
+             '<span class="tag">'+w.suffix+'</span> '+
+             '<span style="font-size:12px;color:#9a94a8">'+w.structure+'</span></div>';
+    }).join('');
+    area.innerHTML='<div class="note-box"><h3>📒 오답노트 <span style="font-size:13px;color:#b09bbf;font-weight:500">다시 한 번 살펴봐요 ('+wrongList.length+'개)</span></h3><div class="note-grid">'+items+'</div></div>';
+  }
+}
+
+/* ===================== VALIDATION ===================== */
+function getName(){
+  var n=document.getElementById('userName').value.trim();
+  if(!n){alert('이름을 입력해 주세요.');document.getElementById('userName').focus();return null;}
+  var r=document.getElementById('userReflection').value.trim();
+  if(!r){alert('학습 소감을 입력해 주세요.');document.getElementById('userReflection').focus();return null;}
+  return n;
+}
+function getTimestamp(){
+  var t=new Date();
+  return {
+    display: t.getFullYear()+'.'+(t.getMonth()+1)+'.'+t.getDate()+' '+t.getHours()+':'+String(t.getMinutes()).padStart(2,'0'),
+    file: t.getFullYear()+String(t.getMonth()+1).padStart(2,'0')+String(t.getDate()).padStart(2,'0')+'_'+String(t.getHours()).padStart(2,'0')+String(t.getMinutes()).padStart(2,'0')
+  };
+}
+
+/* ===================== CANVAS HELPERS ===================== */
+function roundBox(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+function wrapText(ctx,text,maxW){var words=text.split(' '),lines=[],cur='';for(var i=0;i<words.length;i++){var t=cur?cur+' '+words[i]:words[i];if(ctx.measureText(t).width>maxW&&cur){lines.push(cur);cur=words[i];}else cur=t;}if(cur)lines.push(cur);return lines;}
+
+/* ===================== SAVE NOTE (canvas → JPG) ===================== */
+function saveNote(){
+  var name=getName(); if(!name) return;
+  var ts=getTimestamp();
+  var pad=40, W=900, lineH=26;
+  var probe=document.createElement('canvas').getContext('2d');
+  probe.font="700 18px 'Noto Sans KR',sans-serif";
+  var blocks=wrongList.map(function(w,i){
+    var l1=wrapText(probe,(i+1)+'. '+w.active,W-pad*2-30);
+    var l2=wrapText(probe,'→ '+w.passive,W-pad*2-30);
+    var h=(l1.length+l2.length)*lineH+30+24;
+    return {w:w,l1:l1,l2:l2,h:h};
+  });
+  var bodyH = wrongList.length? blocks.reduce(function(a,b){return a+b.h;},0) : 70;
+  var H = 180 + bodyH + 70;
+  var cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+  var ctx=cv.getContext('2d');
+  ctx.fillStyle='#fdf2f8'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#ffffff'; roundBox(ctx,24,24,W-48,H-48,28); ctx.fill();
+  ctx.strokeStyle='#f6d6e6'; ctx.lineWidth=4; roundBox(ctx,24,24,W-48,H-48,28); ctx.stroke();
+  ctx.fillStyle='#b25178'; ctx.font="700 30px 'Noto Sans KR',sans-serif"; ctx.textBaseline='top';
+  ctx.fillText('📒 피동 표현 마스터 · 오답노트', pad, 46);
+  ctx.fillStyle='#8a8597'; ctx.font="500 15px 'Noto Sans KR',sans-serif";
+  ctx.fillText(name+' · '+ts.display, pad, 86);
+  ctx.strokeStyle='#f0e0ea'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(pad,112); ctx.lineTo(W-pad,112); ctx.stroke();
+
+  var y=130;
+  if(wrongList.length===0){
+    ctx.fillStyle='#3f8a5b'; ctx.font="700 22px 'Noto Sans KR',sans-serif";
+    ctx.fillText('🌟 틀린 문제가 없어요! 완벽합니다!', pad, y+10);
+  }else{
+    blocks.forEach(function(bk){
+      ctx.fillStyle='#5a5566'; ctx.font="700 18px 'Noto Sans KR',sans-serif";
+      bk.l1.forEach(function(ln){ ctx.fillText(ln,pad,y); y+=lineH; });
+      ctx.fillStyle='#3f8a5b'; ctx.font="700 18px 'Noto Sans KR',sans-serif";
+      bk.l2.forEach(function(ln){ ctx.fillText(ln,pad+14,y); y+=lineH; });
+      ctx.fillStyle='#b25178'; ctx.font="700 15px 'Noto Sans KR',sans-serif";
+      ctx.fillText('정답 접미사 '+bk.w.suffix+'   |   짜임새: '+bk.w.structure, pad+14, y);
+      y+=30;
+      ctx.strokeStyle='#f4eaf0'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(W-pad,y); ctx.stroke();
+      y+=18;
+    });
+  }
+  ctx.fillStyle='#bdb7cc'; ctx.font="500 13px 'Noto Sans KR',sans-serif";
+  ctx.fillText('제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com · 2026.04.01', pad, H-56);
+
+  var url=cv.toDataURL('image/jpeg',0.95);
+  var a=document.createElement('a'); a.href=url; a.download='피동표현마스터_오답노트_'+name+'_'+ts.file+'.jpg'; a.click();
+}
+
+/* ===================== SAVE REPORT (canvas → JPG) ===================== */
+function saveReport(){
+  var name=getName(); if(!name) return;
+  var ts=getTimestamp();
+  var reflection=document.getElementById('userReflection').value.trim();
+  var W=900, H=660, pad=40;
+  var cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+  var ctx=cv.getContext('2d');
+  ctx.fillStyle='#f0f4ff'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#ffffff'; roundBox(ctx,24,24,W-48,H-48,28); ctx.fill();
+  ctx.strokeStyle='#d8d0f0'; ctx.lineWidth=4; roundBox(ctx,24,24,W-48,H-48,28); ctx.stroke();
+
+  ctx.textBaseline='top';
+  ctx.fillStyle='#5b4a9e'; ctx.font="700 28px 'Noto Sans KR',sans-serif";
+  ctx.fillText('📊 피동 표현 마스터 · 학습 리포트', pad, 46);
+  ctx.fillStyle='#8a8597'; ctx.font="500 15px 'Noto Sans KR',sans-serif";
+  ctx.fillText(name+' · '+ts.display, pad, 84);
+  ctx.strokeStyle='#e8e2f4'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(pad,112); ctx.lineTo(W-pad,112); ctx.stroke();
+
+  // suffix stats
+  var stats={'-이-':{total:0,correct:0},'-히-':{total:0,correct:0},'-리-':{total:0,correct:0},'-기-':{total:0,correct:0}};
+  QUESTIONS.forEach(function(q,i){
+    stats[q.suffix].total++;
+    if(qstat[i]==='c1') stats[q.suffix].correct++;
+    else if(qstat[i]==='c2') stats[q.suffix].correct++;
+  });
+
+  var y=130;
+  ctx.fillStyle='#5a5566'; ctx.font="700 20px 'Noto Sans KR',sans-serif";
+  ctx.fillText('🏆 최종 점수: '+score+'점    |    전체 '+QUESTIONS.length+'문제 중 오답 '+wrongList.length+'개', pad, y);
+  y+=48;
+
+  // bar chart for each suffix
+  var barW=180, barH=24, barX=pad+110;
+  var colors={'-이-':'#f3c64d','-히-':'#f08fb0','-리-':'#7fc6e8','-기-':'#84d59c'};
+  ctx.font="700 16px 'Noto Sans KR',sans-serif";
+  ['-이-','-히-','-리-','-기-'].forEach(function(sfx){
+    var s=stats[sfx]; var pct=s.total?Math.round(s.correct/s.total*100):0;
+    ctx.fillStyle='#5a5566'; ctx.fillText(sfx, pad, y+3);
+    // bg bar
+    ctx.fillStyle='#eef0f6'; roundBox(ctx,barX,y,barW,barH,12); ctx.fill();
+    // fill bar
+    if(pct>0){ ctx.fillStyle=colors[sfx]; roundBox(ctx,barX,y,Math.max(barW*pct/100,barH),barH,12); ctx.fill(); }
+    ctx.fillStyle='#5a5566'; ctx.font="500 14px 'Noto Sans KR',sans-serif";
+    ctx.fillText(s.correct+'/'+s.total+' ('+pct+'%)', barX+barW+14, y+4);
+    ctx.font="700 16px 'Noto Sans KR',sans-serif";
+    y+=40;
+  });
+
+  y+=10;
+  // strengths & weaknesses
+  var sorted=Object.keys(stats).map(function(k){return{sfx:k,pct:stats[k].total?stats[k].correct/stats[k].total:0};}).sort(function(a,b){return b.pct-a.pct;});
+  ctx.fillStyle='#3f8a5b'; ctx.font="700 17px 'Noto Sans KR',sans-serif";
+  ctx.fillText('✅ 잘하는 분야: '+sorted[0].sfx+', '+sorted[1].sfx, pad, y);
+  y+=32;
+  ctx.fillStyle='#b25178'; ctx.font="700 17px 'Noto Sans KR',sans-serif";
+  ctx.fillText('📌 보완이 필요한 분야: '+sorted[sorted.length-1].sfx, pad, y);
+  y+=44;
+
+  // reflection
+  ctx.fillStyle='#6b5fa0'; ctx.font="700 16px 'Noto Sans KR',sans-serif";
+  ctx.fillText('💬 학습 소감', pad, y);
+  y+=26;
+  ctx.fillStyle='#f8f6ff'; roundBox(ctx,pad,y,W-pad*2,80,14); ctx.fill();
+  ctx.strokeStyle='#e8e2f4'; ctx.lineWidth=1.5; roundBox(ctx,pad,y,W-pad*2,80,14); ctx.stroke();
+  ctx.fillStyle='#5a5566'; ctx.font="500 14px 'Noto Sans KR',sans-serif";
+  var rLines=wrapText(ctx,reflection||'(소감 없음)',W-pad*2-24);
+  rLines.slice(0,3).forEach(function(ln,i){ ctx.fillText(ln,pad+12,y+12+i*22); });
+
+  // footer
+  ctx.fillStyle='#bdb7cc'; ctx.font="500 13px 'Noto Sans KR',sans-serif";
+  ctx.fillText('제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com · 2026.04.01', pad, H-56);
+
+  var url=cv.toDataURL('image/jpeg',0.95);
+  var a=document.createElement('a'); a.href=url; a.download='피동표현마스터_학습리포트_'+name+'_'+ts.file+'.jpg'; a.click();
+}
+
+/* ===================== KEYBOARD NAV ===================== */
+var currentScreen = 'start';
+document.addEventListener('keydown', function(e){
+  if(currentScreen !== 'game') return;
+  /* 이름/소감 입력 중에는 키보드 네비 비활성 */
+  var tag = document.activeElement && document.activeElement.tagName;
+  if(tag === 'INPUT' || tag === 'TEXTAREA') return;
+
+  if(e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowRight'){
+    e.preventDefault();
+    goNext();
+  } else if(e.key === 'ArrowLeft'){
+    e.preventDefault();
+    goPrev();
+  }
+});
+
+/* ===================== FLOW ===================== */
+function startGame(){ ac(); resetState(); currentScreen='game'; show('game'); render(); }
+function resetState(){ idx=0;score=0;streak=0;qstat=QUESTIONS.map(function(){return 'todo';});wrongFlag=QUESTIONS.map(function(){return false;});wrongList=[]; }
+function resetGame(){ resetState(); currentScreen='start'; show('start'); }
+</script>
+</body>
+</html>

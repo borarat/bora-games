@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>이어진 문장 학습 게임</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#f0eaf8;--card:#fff;
+  --primary:#7c5cbf;--primary-l:#ede8ff;--primary-m:#cfc0f8;
+  --blue:#5b8fd4;--blue-l:#dce8ff;--blue-m:#b8d0ff;
+  --green:#5baf7e;--green-l:#d8f5e8;--green-m:#a8dfc0;
+  --red:#d45b5b;--red-l:#fde8e8;--red-m:#f0b8b8;
+  --orange:#d4875b;--orange-l:#ffe8da;--orange-m:#ffd0b8;
+  --yellow:#c8a020;--yellow-l:#fff8d8;
+  --teal:#4a9f90;--teal-l:#d8f5f0;--teal-m:#a8e0d8;
+  --text:#3a3a5c;--muted:#8888aa;--border:#dde0f0;
+  --shadow:0 4px 16px rgba(100,80,160,0.10);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+.bg-deco{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse at 20% 30%,rgba(180,160,255,.25) 0%,transparent 55%),radial-gradient(ellipse at 80% 70%,rgba(160,200,255,.20) 0%,transparent 50%)}
+
+/* ===== 시작화면 ===== */
+#start-screen{position:relative;z-index:10;width:100%;max-width:960px;padding:85px 20px 0}
+.start-card{background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:28px 28px 22px;box-shadow:var(--shadow)}
+.start-header{display:flex;align-items:center;gap:16px;margin-bottom:14px}
+.start-header img{height:90px;border-radius:12px;flex-shrink:0}
+.start-titles{flex:1}
+.game-title{font-size:1.9rem;font-weight:900;color:var(--text);line-height:1.3;letter-spacing:-.5px}
+.game-subtitle{font-size:.88rem;color:var(--muted);margin-top:2px}
+
+.standard-box{background:var(--primary-l);border:1.5px solid var(--primary-m);border-radius:10px;padding:8px 14px;margin-bottom:14px;font-size:.85rem;color:var(--primary);font-weight:700;line-height:1.5}
+
+.how-to-play{background:#f8f6ff;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.how-title{font-size:.95rem;font-weight:900;color:var(--text);margin-bottom:8px}
+.how-content{font-size:.84rem;color:var(--muted);line-height:1.8}
+.how-content strong{color:var(--text)}
+
+.concept-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px}
+.concept-item{padding:9px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.concept-item:nth-child(odd){border-right:1px solid var(--border)}
+.concept-item:nth-last-child(-n+2){border-bottom:none}
+.concept-icon{font-size:1.1rem;flex-shrink:0}
+.concept-info .ci-title{font-size:.85rem;font-weight:700}
+.concept-info .ci-desc{font-size:.75rem;color:var(--muted)}
+
+.stage-section{margin-bottom:12px}
+.stage-title{font-size:.95rem;font-weight:900;color:var(--text);margin-bottom:10px}
+.stage-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.stage-btn{border:none;border-radius:12px;padding:14px 10px 12px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-weight:900;font-size:1rem;color:white;transition:all .2s;box-shadow:var(--shadow);text-align:center}
+.stage-btn:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(100,80,180,.3)}
+.stage-btn.s1{background:linear-gradient(135deg,#7bc8f0,var(--blue))}
+.stage-btn.s2{background:linear-gradient(135deg,var(--blue),var(--primary))}
+.stage-btn.s3{background:linear-gradient(135deg,var(--primary),#a050b0)}
+.stage-badge{font-size:.72rem;font-weight:400;opacity:.9;margin-top:4px;line-height:1.5}
+
+.score-info{font-size:.78rem;color:var(--muted);line-height:1.6;margin-bottom:12px;padding:8px 12px;background:#f8f6ff;border-radius:8px;border:1px solid var(--border)}
+
+.credit-box{font-size:.78rem;color:var(--muted);text-align:center;padding-top:10px;border-top:1px solid var(--border);line-height:1.6}
+
+.privacy-box{margin-top:14px;padding:10px 14px;background:#f8f6ff;border:1px solid var(--border);border-radius:10px;font-size:.75rem;color:var(--muted);line-height:1.6}
+.privacy-box strong{color:var(--text);font-size:.78rem}
+
+/* ===== 인게임 크레딧 ===== */
+.ingame-credit{position:fixed;right:12px;bottom:8px;z-index:6;font-size:.68rem;color:var(--muted);opacity:.4;pointer-events:none;display:none;letter-spacing:.2px}
+.ingame-credit.show{display:block}
+
+/* ===== 게임 화면 ===== */
+#game-area{display:none;position:relative;z-index:10;width:100%;max-width:960px;padding:85px 20px 20px}
+#game-area.show{display:grid;grid-template-columns:1fr 90px;grid-template-areas:"progress progress""question sidebar""input sidebar""feedback sidebar""detail sidebar";gap:8px;align-items:start}
+
+.progress-wrap{grid-area:progress;background:var(--card);border-radius:12px;padding:10px 16px;border:1px solid var(--border);box-shadow:var(--shadow)}
+.progress-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:4px}
+.progress-label{color:var(--text);font-weight:700;font-size:.95rem}
+.progress-right{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.score-badge{background:var(--primary-l);border:1.5px solid var(--primary-m);padding:2px 10px;border-radius:20px;font-weight:900;color:var(--primary);font-size:.9rem}
+.combo-badge{background:var(--orange-l);border:1.5px solid var(--orange-m);padding:2px 10px;border-radius:20px;font-weight:900;color:var(--orange);font-size:.9rem;transition:opacity .3s}
+.combo-badge.hidden{opacity:0;pointer-events:none}
+.progress-bar-bg{background:var(--border);border-radius:6px;height:7px;overflow:hidden}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--primary));border-radius:6px;transition:width .4s ease}
+
+/* 문제 카드 */
+.question-card{grid-area:question;background:var(--card);border:2px solid var(--primary-m);border-radius:14px;padding:20px 20px 16px;box-shadow:var(--shadow);position:relative}
+.q-num{position:absolute;top:10px;left:12px;font-size:.82rem;color:var(--primary);background:var(--primary-l);padding:2px 9px;border-radius:8px;font-weight:900}
+.q-type-badge{position:absolute;top:10px;right:12px;font-size:.72rem;padding:2px 8px;border-radius:8px;font-weight:700}
+.q-type-badge.type-b{background:var(--blue-l);color:var(--blue)}
+.q-type-badge.type-a{background:var(--teal-l);color:var(--teal)}
+.q-type-badge.type-select{background:var(--primary-l);color:var(--primary)}
+
+.q-instruction{font-size:.88rem;color:var(--muted);margin:22px 0 10px;line-height:1.6;text-align:center}
+.q-instruction strong{color:var(--text)}
+
+.q-sentences{background:#f8f6ff;border:1.5px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px;text-align:center}
+.q-sent{font-size:1.15rem;font-weight:700;line-height:1.9;color:var(--text)}
+.q-sent .emi{color:var(--primary);font-weight:900;background:var(--primary-l);padding:1px 8px;border-radius:6px;font-size:1rem}
+.q-divider{color:var(--muted);font-size:.85rem;margin:4px 0}
+
+/* 빈칸 표시 */
+.q-blank-area{text-align:center;font-size:1.15rem;font-weight:700;line-height:2;color:var(--text);padding:10px 0}
+.q-blank{display:inline-block;border-bottom:3px solid var(--primary);min-width:70px;margin:0 2px;color:var(--primary)}
+
+/* 2단계: 완성 문장 표시 */
+.q-full-sentence{background:#f8f6ff;border:1.5px solid var(--border);border-radius:10px;padding:16px;text-align:center;font-size:1.2rem;font-weight:700;line-height:2;color:var(--text);margin-bottom:8px}
+.q-full-sentence .emi-highlight{color:var(--primary);text-decoration:underline;text-underline-offset:4px}
+
+/* 입력 영역 */
+.input-area{grid-area:input}
+
+/* 1단계 서술형 입력 */
+.text-input-wrap{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px;box-shadow:var(--shadow)}
+.text-input-wrap label{font-size:.85rem;font-weight:700;color:var(--text);display:block;margin-bottom:6px}
+.text-input{width:100%;border:2px solid var(--border);border-radius:8px;padding:10px 12px;font-family:'Noto Sans KR',sans-serif;font-size:1.05rem;color:var(--text);outline:none;transition:border-color .2s}
+.text-input:focus{border-color:var(--primary)}
+.submit-btn{margin-top:8px;width:100%;border:none;border-radius:10px;padding:11px;font-family:'Noto Sans KR',sans-serif;font-size:1rem;font-weight:900;color:white;background:linear-gradient(135deg,var(--blue),var(--primary));cursor:pointer;transition:all .2s;box-shadow:var(--shadow)}
+.submit-btn:hover{transform:translateY(-1px)}
+.submit-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+/* 2단계 2단 선택 */
+.step-select-wrap{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px;box-shadow:var(--shadow)}
+.step-label{font-size:.85rem;font-weight:700;color:var(--text);margin-bottom:8px}
+.step-btns{display:grid;gap:8px}
+.step-btns.two-col{grid-template-columns:1fr 1fr}
+.step-btns.three-col{grid-template-columns:1fr 1fr 1fr}
+.step-btn{border:2px solid var(--border);border-radius:10px;padding:10px 8px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:.92rem;font-weight:700;color:var(--text);background:var(--card);transition:all .2s;text-align:center;box-shadow:var(--shadow)}
+.step-btn:hover:not(:disabled){background:var(--primary-l);border-color:var(--primary-m);transform:translateY(-1px)}
+.step-btn:disabled{opacity:.35;cursor:not-allowed}
+.step-btn.selected{background:var(--primary-l);border-color:var(--primary);color:var(--primary)}
+.step-btn.correct-choice{background:var(--green-l)!important;border-color:var(--green)!important;color:#3a8f60!important}
+.step-btn.wrong-choice{background:var(--red-l)!important;border-color:var(--red)!important;color:#c05050!important}
+
+/* 3단계 연결 어미 선택 */
+.emi-select-wrap{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px;box-shadow:var(--shadow)}
+.emi-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.emi-btn{border:2px solid var(--border);border-radius:10px;padding:10px 8px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:1rem;font-weight:700;color:var(--text);background:var(--card);transition:all .2s;text-align:center;box-shadow:var(--shadow)}
+.emi-btn:hover:not(:disabled){background:var(--primary-l);border-color:var(--primary-m);transform:translateY(-1px)}
+.emi-btn:disabled{opacity:.35;cursor:not-allowed}
+.emi-btn.correct-choice{background:var(--green-l)!important;border-color:var(--green)!important;color:#3a8f60!important}
+.emi-btn.wrong-choice{background:var(--red-l)!important;border-color:var(--red)!important;color:#c05050!important}
+
+/* 피드백 */
+.feedback{grid-area:feedback;border-radius:12px;padding:11px 16px;display:none;align-items:center;gap:10px;font-weight:700;font-size:.98rem;animation:slideIn .3s ease}
+.feedback.show{display:flex}
+.feedback.correct{background:var(--green-l);border:1.5px solid var(--green-m);color:#3a8f60}
+.feedback.wrong{background:var(--red-l);border:1.5px solid var(--red-m);color:#c05050}
+@keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.feedback-icon{font-size:1.3rem;flex-shrink:0}
+.feedback-text{flex:1;line-height:1.5}
+
+.feedback-detail{grid-area:detail;display:none;background:#f8f6ff;border:1.5px solid var(--primary-m);border-radius:12px;padding:12px 16px;font-size:.9rem;line-height:1.8;color:var(--text)}
+.feedback-detail.show{display:block}
+.detail-label{font-weight:900;color:var(--primary);margin-bottom:4px}
+
+/* 사이드바 */
+.nav-sidebar{grid-area:sidebar;display:flex;flex-direction:column;gap:8px;position:sticky;top:90px}
+.nav-btn{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:12px 6px;font-family:'Noto Sans KR',sans-serif;font-size:.78rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;box-shadow:var(--shadow);width:100%;text-align:center;word-break:keep-all;line-height:1.5}
+.nav-btn:hover:not(:disabled){background:var(--primary-l);border-color:var(--primary);color:var(--primary)}
+.nav-btn:disabled{opacity:.3;cursor:not-allowed}
+.finish-btn{background:linear-gradient(135deg,var(--blue),var(--primary))!important;border-color:transparent!important;color:white!important;font-size:.76rem!important;line-height:1.5}
+.finish-btn:hover{opacity:.9;transform:translateY(-1px)}
+
+/* ===== 종료 화면 ===== */
+#complete-screen{display:none;position:relative;z-index:10;width:100%;max-width:960px;padding:85px 20px 30px}
+#complete-screen.show{display:block}
+.complete-card{background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:26px 24px 22px;box-shadow:var(--shadow);animation:fadeIn .5s ease}
+@keyframes fadeIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+
+.complete-top{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:center;margin-bottom:16px}
+.complete-left{text-align:center}
+.complete-emoji{font-size:2.4rem;margin-bottom:4px}
+.complete-title{font-size:1.4rem;font-weight:900;color:var(--text);margin-bottom:4px}
+.complete-desc{color:var(--muted);font-size:.88rem;line-height:1.6}
+.complete-right{text-align:center}
+.final-score{font-size:2.6rem;font-weight:900;color:var(--primary);line-height:1;margin-bottom:3px}
+.final-score-label{color:var(--muted);font-size:.85rem;margin-bottom:10px}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+.stat-box{border-radius:10px;padding:8px 5px;text-align:center}
+.stat-val{font-size:1.3rem;font-weight:900}
+.stat-lbl{font-size:.75rem;color:var(--muted);margin-top:2px}
+.stat-box.s-correct{background:var(--green-l)}.stat-box.s-correct .stat-val{color:#3a8f60}
+.stat-box.s-wrong{background:var(--red-l)}.stat-box.s-wrong .stat-val{color:#c05050}
+.stat-box.s-combo{background:var(--orange-l)}.stat-box.s-combo .stat-val{color:var(--orange)}
+
+/* 이름/소감 입력 */
+.report-input-section{margin-top:16px;background:#f8f6ff;border:1.5px solid var(--border);border-radius:12px;padding:16px}
+.report-input-section label{display:block;font-size:.85rem;font-weight:700;color:var(--text);margin-bottom:4px}
+.report-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:'Noto Sans KR',sans-serif;font-size:.95rem;color:var(--text);outline:none;margin-bottom:10px}
+.report-input:focus{border-color:var(--primary)}
+textarea.report-input{height:60px;resize:vertical}
+.report-privacy{font-size:.72rem;color:var(--muted);line-height:1.5;margin-bottom:10px}
+
+.complete-btns{display:flex;gap:10px;margin-top:4px}
+.dl-btn{flex:1;border:none;border-radius:12px;padding:12px 10px;font-family:'Noto Sans KR',sans-serif;font-size:.92rem;font-weight:900;cursor:pointer;transition:all .2s;text-align:center}
+.dl-btn:hover:not(:disabled){transform:translateY(-2px)}
+.dl-btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.dl-btn.btn-note{background:var(--orange-l);border:1.5px solid var(--orange-m);color:var(--orange)}
+.dl-btn.btn-report{background:linear-gradient(135deg,var(--blue),var(--primary));color:white}
+.restart-btn{flex:1;background:var(--green-l);border:1.5px solid var(--green-m);border-radius:12px;padding:12px 10px;font-family:'Noto Sans KR',sans-serif;font-size:.92rem;font-weight:900;color:#3a8f60;cursor:pointer;transition:all .2s}
+.restart-btn:hover{transform:translateY(-2px)}
+.back-btn{flex:1;background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:12px 10px;font-family:'Noto Sans KR',sans-serif;font-size:.92rem;font-weight:900;color:var(--text);cursor:pointer;transition:all .2s}
+
+.wrong-report{margin-top:18px;text-align:left}
+.wrong-report-title{font-size:1.05rem;font-weight:900;color:var(--text);margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--red-l);display:flex;align-items:center;gap:6px}
+.wrong-item{background:var(--red-l);border:1.5px solid var(--red-m);border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.wrong-item-num{font-size:.88rem;font-weight:900;color:#c05050;background:rgba(255,255,255,.6);padding:2px 10px;border-radius:8px;display:inline-block;margin-bottom:6px}
+.wrong-item-text{font-size:.92rem;line-height:1.7;font-weight:700;color:var(--text);margin-bottom:6px}
+.wrong-item-answer{font-size:.88rem;line-height:1.5}
+.wrong-item-answer .wa-wrong{color:#c05050}
+.wrong-item-answer .wa-correct{color:#3a8f60;font-weight:900}
+
+#toast{position:fixed;top:28px;left:50%;transform:translateX(-50%);background:var(--primary);color:white;font-weight:900;font-size:.88rem;padding:8px 20px;border-radius:30px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;box-shadow:0 4px 16px rgba(100,80,160,.35)}
+#toast.show{opacity:1}
+
+@media(max-width:700px){
+  #game-area.show{grid-template-columns:1fr;grid-template-areas:"progress""question""input""feedback""detail"}
+  .nav-sidebar{display:none}
+  .stage-btns{grid-template-columns:1fr}
+  .concept-grid{grid-template-columns:1fr}
+  .concept-item:nth-child(odd){border-right:none}
+  .complete-top{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="bg-deco"></div>
+<div id="toast"></div>
+
+<!-- ===== 시작 화면 ===== -->
+<div id="start-screen">
+<div class="start-card">
+  <div class="start-header">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAI8AAAC0CAMAAACaAI/PAAABgFBMVEXTm2evn448MS1lT0Cmf2HAZh3An4D7+vpMNSXZ1s7Gxsa4urzo6OfhupPcto7NxbbalVmMqcKptsKTp7jQiEzTmmfXpXTkwZxGLBvipW3i2snLeDWcscPUrIR8osLFvbKoq6vnx6NqSDBNMR7b0b2telCvpJaHm6jk4dmth2eMZ0qLeGnhmlu+wL3gnWG2g1ipmoySlpVtWEjGfULTgTxaRDSVhXa2lHWdsL50Ujm8wcJELiDFbCd4mraGWDd4ZVaXc1Z8oL46JhhiPSWTjIaDXELwsnh6bWK8dTuSYzwIBQUbFRNuOBZ3Qh3groDi0rsqHRecoJve3+B1nsKzajLawZ7f4N/Av8Dd4eIxIyF7c2l+lJ2BTSe2WBG8YhyjbUUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPmQJeAAAAYHRSTlP///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////9ebwvOAAAdVklEQVR42r1cB3viSNL2fQmkRmoUAQlZIoONDTjbY3vybE53ezn9/3/xVVV3Kws8u/ucdkdgUr9UvRW7xJGu661Wq3rWdL1Te2YMzh31iNbROnVv/2VnTT/ijP4snFnpLDDUngFP5e2/7CyWO9I0rdPpfO65o+4vl7/k7c3no71o5bnTLKKOrkmB/zYiOoxH+8/i+TUSVje/ocqOfo2yxDl9o6bn3169/yI+/0o8S8KjccbjZPthG/9y9f0q+8rOrdaSb08v2ukxvjid65kB/ub2tV9Z+s1Fe9JvF49+e3zDQX02fQj/T9mX3tFPr/uv2vXH9WnymSqzBR4lKz13zj+i6blHxH3xRPK63W/vOy4YkrzuY1tFNeEjIh4dNdMvM41a4ein7YNH/2L7UuGo+LWf8Bppv84N7g7IRh2nnWYMvHwf8EjpZRJ72fmLl6FptyfXvCM/XC7UkueWlj3eAsXhI/vtS29Q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" alt="보라라샘" style="height:90px;border-radius:12px"/>
+    <div class="start-titles">
+      <div class="game-title">✏️ 이어진 문장 만들기</div>
+      <div class="game-subtitle">두 홑문장을 연결 어미로 이어서 하나의 문장을 완성해 보세요!</div>
+    </div>
+  </div>
+
+  <div class="standard-box">📋 성취기준 [9국04-06] 문장의 짜임과 양상을 탐구하고 활용한다.</div>
+
+  <div class="how-to-play">
+    <div class="how-title">🎮 게임 방법</div>
+    <div class="how-content">
+      <strong>1단계</strong> — 두 홑문장과 연결 어미가 주어지면, 빈칸을 채우거나 완성된 문장을 직접 써 보세요.<br>
+      <strong>2단계</strong> — 완성된 이어진 문장을 보고, 대등/종속 → 세부 유형을 순서대로 골라요.<br>
+      <strong>3단계</strong> — 이어진 문장의 종류에 맞는 연결 어미를 보기에서 골라요.
+    </div>
+  </div>
+
+  <div class="concept-grid">
+    <div class="concept-item"><div class="concept-icon">📝</div><div class="concept-info"><div class="ci-title" style="color:#5b8fd4">대등 — 나열</div><div class="ci-desc">-고 (앞뒤 절을 나란히)</div></div></div>
+    <div class="concept-item"><div class="concept-icon">⚖️</div><div class="concept-info"><div class="ci-title" style="color:#4a9f90">대등 — 대조</div><div class="ci-desc">-지만, -(으)나</div></div></div>
+    <div class="concept-item"><div class="concept-icon">🔀</div><div class="concept-info"><div class="ci-title" style="color:#d4875b">대등 — 선택</div><div class="ci-desc">-거나, -든지</div></div></div>
+    <div class="concept-item"><div class="concept-icon">💡</div><div class="concept-info"><div class="ci-title" style="color:#c8a020">종속 — 원인</div><div class="ci-desc">-아서/-어서, -(으)니</div></div></div>
+    <div class="concept-item"><div class="concept-icon">❓</div><div class="concept-info"><div class="ci-title" style="color:#7c5cbf">종속 — 조건</div><div class="ci-desc">-(으)면, -거든</div></div></div>
+    <div class="concept-item"><div class="concept-icon">🎯</div><div class="concept-info"><div class="ci-title" style="color:#d45b5b">종속 — 목적·의도</div><div class="ci-desc">-(으)러, -(으)려고</div></div></div>
+  </div>
+
+  <div class="score-info">
+    정답 <strong>+100점</strong> · 오답 <strong>−30점</strong>(0점 하한) · 3연속 정답 <strong>+50 보너스</strong> · 5연속 정답 <strong>+100 보너스</strong>
+  </div>
+
+  <div class="stage-section">
+    <div class="stage-title">🎯 단계를 선택하세요</div>
+    <div class="stage-btns">
+      <button class="stage-btn s1" onclick="startGame(0)">1단계 · 문장 만들기<div class="stage-badge">빈칸 채우기 + 서술형</div></button>
+      <button class="stage-btn s2" onclick="startGame(1)">2단계 · 유형 판별<div class="stage-badge">대등/종속 → 세부 유형</div></button>
+      <button class="stage-btn s3" onclick="startGame(2)">3단계 · 어미 고르기<div class="stage-badge">알맞은 연결 어미 선택</div></button>
+    </div>
+  </div>
+
+  <div class="credit-box">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2025.08.12 · Made with Claude</div>
+</div>
+
+<div class="privacy-box">
+  <strong>🔒 개인정보 보호 안내</strong><br>
+  본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다. 게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.
+</div>
+</div>
+
+<!-- ===== 게임 화면 ===== -->
+<div id="game-area">
+  <div class="progress-wrap">
+    <div class="progress-top">
+      <span class="progress-label" id="progress-label">문제 1 / 10</span>
+      <div class="progress-right">
+        <span class="score-badge">🏅 <span id="score-val">0</span>점</span>
+        <span class="combo-badge hidden" id="combo-badge">🔥 <span id="combo-val">0</span>콤보</span>
+      </div>
+    </div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  <div class="question-card" id="question-card"></div>
+  <div class="input-area" id="input-area"></div>
+  <div class="feedback" id="feedback"><div class="feedback-icon" id="fb-icon"></div><div class="feedback-text" id="fb-msg"></div></div>
+  <div class="feedback-detail" id="feedback-detail"></div>
+
+  <div class="nav-sidebar">
+    <button class="nav-btn" id="prev-btn" onclick="navigate(-1)" disabled>◀ 이전<br>문제</button>
+    <button class="nav-btn" id="next-btn" onclick="navigate(1)" disabled>다음<br>문제 ▶</button>
+    <button class="nav-btn finish-btn" onclick="finishGame()">게임<br>종료</button>
+  </div>
+</div>
+
+<!-- ===== 종료 화면 ===== -->
+<div id="complete-screen">
+<div class="complete-card">
+  <div class="complete-top">
+    <div class="complete-left">
+      <div class="complete-emoji" id="complete-emoji">🎉</div>
+      <div class="complete-title" id="complete-title">학습 완료!</div>
+      <div class="complete-desc">이어진 문장의 구조를 잘 이해했나요?<br>아직 어렵다면 다시 한 번 도전해 보세요!</div>
+    </div>
+    <div class="complete-right">
+      <div class="final-score" id="final-score">0</div>
+      <div class="final-score-label" id="final-score-label">최종 점수</div>
+      <div class="stats-grid">
+        <div class="stat-box s-correct"><div class="stat-val" id="stat-correct">0</div><div class="stat-lbl">정답</div></div>
+        <div class="stat-box s-wrong"><div class="stat-val" id="stat-wrong">0</div><div class="stat-lbl">오답</div></div>
+        <div class="stat-box s-combo"><div class="stat-val" id="stat-combo">0</div><div class="stat-lbl">최고 콤보</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="report-input-section">
+    <label for="inp-name">✏️ 이름</label>
+    <input class="report-input" id="inp-name" type="text" placeholder="이름을 입력하세요" maxlength="20"/>
+    <label for="inp-comment">💬 학습 소감</label>
+    <textarea class="report-input" id="inp-comment" placeholder="오늘 학습 소감을 적어 보세요"></textarea>
+    <div class="report-privacy">🔒 입력하신 이름과 소감은 서버에 저장되지 않으며, 리포트 이미지(JPG) 생성용으로만 쓰입니다.</div>
+    <div class="complete-btns">
+      <button class="dl-btn btn-note" id="btn-note" onclick="downloadWrongNote()" disabled>📋 오답노트 저장</button>
+      <button class="dl-btn btn-report" id="btn-report" onclick="downloadReport()" disabled>📊 리포트 저장</button>
+    </div>
+  </div>
+
+  <div class="complete-btns" style="margin-top:10px">
+    <button class="back-btn" onclick="goStart()">🏠 단계 선택</button>
+    <button class="restart-btn" onclick="restartGame()">🔄 다시하기</button>
+  </div>
+
+  <div class="wrong-report" id="wrong-report"></div>
+</div>
+</div>
+
+<div class="ingame-credit" id="ingame-credit">제작 · 보라라샘 / 2025.08.12</div>
+
+<script>
+/* ===== 데이터 ===== */
+const STAGES = [
+// ── 1단계: 문장 만들기 (B안 5문제 + A안 5문제) ──
+[
+  {id:1,type:'B',sent1:'인생은 짧다',sent2:'예술은 길다',emi:'-고',
+   display:'인생은 짧____ 예술은 길다.',blank:'고',
+   subtype:'대등-나열',detail:'연결 어미 "-고"로 두 문장을 대등하게 나열했어요. 앞뒤 절의 순서를 바꿔도 의미가 달라지지 않아요.',src:'📘교과서'},
+  {id:2,type:'B',sent1:'길이 너무 좁다',sent2:'차가 못 지나간다',emi:'-아서',
+   display:'길이 너무 좁____ 차가 못 지나간다.',blank:'아서',
+   subtype:'종속-원인',detail:'연결 어미 "-아서"로 앞 절(원인)과 뒤 절(결과)을 종속적으로 이었어요.',src:'📘교과서'},
+  {id:3,type:'B',sent1:'형은 축구를 좋아한다',sent2:'동생은 야구를 좋아한다',emi:'-지만',
+   display:'형은 축구를 좋아하____ 동생은 야구를 좋아한다.',blank:'지만',
+   subtype:'대등-대조',detail:'연결 어미 "-지만"으로 앞뒤 절의 내용을 대조했어요.',src:'창작'},
+  {id:4,type:'B',sent1:'내일 비가 온다',sent2:'소풍을 취소하겠다',emi:'-(으)면',
+   display:'내일 비가 오____ 소풍을 취소하겠다.',blank:'면',
+   subtype:'종속-조건',detail:'연결 어미 "-(으)면"으로 앞 절이 뒤 절의 조건이 되도록 이었어요.',src:'창작'},
+  {id:5,type:'B',sent1:'맛있는 음식을 먹다',sent2:'식당에 갔다',emi:'-(으)러',
+   display:'맛있는 음식을 먹____ 식당에 갔다.',blank:'으러',
+   subtype:'종속-목적',detail:'연결 어미 "-(으)러"로 앞 절이 뒤 절의 목적이 되도록 이었어요.',src:'창작'},
+  {id:6,type:'A',sent1:'나는 밥을 먹다',sent2:'동생은 빵을 먹었다',emi:'-고',
+   answer:'나는 밥을 먹고 동생은 빵을 먹었다.',altAnswers:['나는 밥을 먹고 동생은 빵을 먹었다','나는 밥을 먹고, 동생은 빵을 먹었다.','나는 밥을 먹고, 동생은 빵을 먹었다'],
+   subtype:'대등-나열',detail:'연결 어미 "-고"로 두 행동을 나열했어요. "먹다"의 어간 "먹" + "-고" = "먹고"예요.',src:'창작'},
+  {id:7,type:'A',sent1:'날씨가 맑다',sent2:'기분이 좋아졌다',emi:'-아서',
+   answer:'날씨가 맑아서 기분이 좋아졌다.',altAnswers:['날씨가 맑아서 기분이 좋아졌다','날씨가 맑아서, 기분이 좋아졌다.','날씨가 맑아서, 기분이 좋아졌다'],
+   subtype:'종속-원인',detail:'"맑다"의 어간 "맑" + "-아서" = "맑아서"로, 앞 절이 원인이 되어요.',src:'창작'},
+  {id:8,type:'A',sent1:'주말에 영화를 보다',sent2:'책을 읽겠다',emi:'-거나',
+   answer:'주말에 영화를 보거나 책을 읽겠다.',altAnswers:['주말에 영화를 보거나 책을 읽겠다','주말에 영화를 보거나, 책을 읽겠다.','주말에 영화를 보거나, 책을 읽겠다'],
+   subtype:'대등-선택',detail:'"보다"의 어간 "보" + "-거나" = "보거나"로, 둘 중 하나를 선택하는 의미예요.',src:'창작'},
+  {id:9,type:'A',sent1:'친구를 만나다',sent2:'학교에 일찍 갔다',emi:'-(으)려고',
+   answer:'친구를 만나려고 학교에 일찍 갔다.',altAnswers:['친구를 만나려고 학교에 일찍 갔다','친구를 만나려고, 학교에 일찍 갔다.','친구를 만나려고, 학교에 일찍 갔다'],
+   subtype:'종속-목적',detail:'"만나다"의 어간 "만나" + "-(으)려고" = "만나려고"로, 앞 절이 뒤 절의 목적이에요.',src:'창작'},
+  {id:10,type:'A',sent1:'산이 높다',sent2:'골짜기가 깊다',emi:'-(으)면',
+   answer:'산이 높으면 골짜기가 깊다.',altAnswers:['산이 높으면 골짜기가 깊다','산이 높으면, 골짜기가 깊다.','산이 높으면, 골짜기가 깊다'],
+   subtype:'종속-조건',detail:'"높다"의 어간 "높" + "-(으)면" = "높으면"으로, 앞 절이 조건이 되어요.',src:'📘교과서'}
+],
+// ── 2단계: 유형 판별 (2단 선택) ──
+[
+  {id:1,sentence:'하늘이 맑고 바람이 시원하다.',emiHighlight:'-고',step1:'대등',step2:'나열',
+   detail:'"-고"는 앞뒤 절을 나란히 늘어놓는 대등적 연결 어미(나열)예요.',src:'창작'},
+  {id:2,sentence:'윤지는 웃었지만 민서는 울었다.',emiHighlight:'-지만',step1:'대등',step2:'대조',
+   detail:'"-지만"은 앞뒤 절의 내용이 서로 반대되는 대등적 연결 어미(대조)예요.',src:'📘교과서'},
+  {id:3,sentence:'주말에 영화를 보거나 책을 읽겠다.',emiHighlight:'-거나',step1:'대등',step2:'선택',
+   detail:'"-거나"는 둘 중 하나를 선택하는 대등적 연결 어미(선택)예요.',src:'창작'},
+  {id:4,sentence:'공원에 놀이기구가 많아서 동생의 기분이 좋다.',emiHighlight:'-아서',step1:'종속',step2:'원인',
+   detail:'"-아서"는 앞 절이 뒤 절의 원인이 되는 종속적 연결 어미(원인)예요.',src:'📘교과서'},
+  {id:5,sentence:'산이 높으면 골짜기가 깊다.',emiHighlight:'-(으)면',step1:'종속',step2:'조건',
+   detail:'"-(으)면"은 앞 절이 뒤 절의 조건이 되는 종속적 연결 어미(조건)예요.',src:'📘교과서'},
+  {id:6,sentence:'도서관에 책을 빌리러 갔다.',emiHighlight:'-(으)러',step1:'종속',step2:'목적',
+   detail:'"-(으)러"는 앞 절이 뒤 절의 목적이 되는 종속적 연결 어미(목적)예요.',src:'창작'},
+  {id:7,sentence:'비가 많이 왔으나 행사는 취소되지 않았다.',emiHighlight:'-(으)나',step1:'대등',step2:'대조',
+   detail:'"-(으)나"는 앞뒤 절의 내용이 대립하는 대등적 연결 어미(대조)예요.',src:'창작'},
+  {id:8,sentence:'시간이 없어서 택시를 탔다.',emiHighlight:'-어서',step1:'종속',step2:'원인',
+   detail:'"-어서"는 앞 절이 뒤 절의 원인이 되는 종속적 연결 어미(원인)예요.',src:'창작'},
+  {id:9,sentence:'축구를 하든지 농구를 하든지 마음대로 해라.',emiHighlight:'-든지',step1:'대등',step2:'선택',
+   detail:'"-든지"는 둘 중 어느 것이든 상관없다는 대등적 연결 어미(선택)예요.',src:'창작'},
+  {id:10,sentence:'친구를 만나려고 카페에 갔다.',emiHighlight:'-(으)려고',step1:'종속',step2:'목적',
+   detail:'"-(으)려고"는 앞 절이 뒤 절의 목적이 되는 종속적 연결 어미(목적·의도)예요.',src:'창작'}
+],
+// ── 3단계: 연결 어미 고르기 ──
+[
+  {id:1,sent1:'나는 노래를 부르다',sent2:'친구는 춤을 추다',reqType:'대등-나열',
+   options:['-고','-지만','-(으)면','-아서'],answer:'-고',
+   result:'나는 노래를 부르고 친구는 춤을 춘다.',detail:'두 동작을 나란히 나열하려면 "-고"가 알맞아요.',src:'창작'},
+  {id:2,sent1:'오늘은 덥다',sent2:'어제는 추웠다',reqType:'대등-대조',
+   options:['-고','-지만','-거나','-아서'],answer:'-지만',
+   result:'오늘은 덥지만 어제는 추웠다.',detail:'앞뒤 절이 반대 내용이므로 대조의 "-지만"이 알맞아요.',src:'창작'},
+  {id:3,sent1:'점심에 짜장면을 먹다',sent2:'짬뽕을 먹다',reqType:'대등-선택',
+   options:['-고','-거나','-지만','-(으)면'],answer:'-거나',
+   result:'점심에 짜장면을 먹거나 짬뽕을 먹자.',detail:'둘 중 하나를 선택하는 의미이므로 "-거나"가 알맞아요.',src:'창작'},
+  {id:4,sent1:'길이 막히다',sent2:'회의에 늦었다',reqType:'종속-원인',
+   options:['-고','-아서','-(으)면','-거나'],answer:'-아서',
+   result:'길이 막혀서 회의에 늦었다.',detail:'앞 절이 뒤 절의 원인이므로 "-아서"가 알맞아요. "막히다" → "막혀서"로 활용해요.',src:'창작'},
+  {id:5,sent1:'열심히 연습하다',sent2:'실력이 늘 것이다',reqType:'종속-조건',
+   options:['-아서','-(으)면','-지만','-(으)러'],answer:'-(으)면',
+   result:'열심히 연습하면 실력이 늘 것이다.',detail:'앞 절이 뒤 절의 조건이므로 "-(으)면"이 알맞아요.',src:'창작'},
+  {id:6,sent1:'우체국에 소포를 보내다',sent2:'나갔다',reqType:'종속-목적',
+   options:['-(으)러','-고','-아서','-(으)면'],answer:'-(으)러',
+   result:'우체국에 소포를 보내러 나갔다.',detail:'앞 절이 뒤 절의 목적이므로 "-(으)러"가 알맞아요.',src:'창작'},
+  {id:7,sent1:'형은 키가 크다',sent2:'동생은 키가 작다',reqType:'대등-대조',
+   options:['-고','-(으)나','-(으)면','-아서'],answer:'-(으)나',
+   result:'형은 키가 크나 동생은 키가 작다.',detail:'앞뒤 절이 대립하므로 대조의 "-(으)나"가 알맞아요.',src:'창작'},
+  {id:8,sent1:'선물을 사다',sent2:'백화점에 갔다',reqType:'종속-목적',
+   options:['-(으)려고','-고','-아서','-지만'],answer:'-(으)려고',
+   result:'선물을 사려고 백화점에 갔다.',detail:'앞 절이 뒤 절의 목적이므로 "-(으)려고"가 알맞아요.',src:'창작'},
+  {id:9,sent1:'비가 오다',sent2:'우산을 가져가거라',reqType:'종속-조건',
+   options:['-거든','-아서','-고','-거나'],answer:'-거든',
+   result:'비가 오거든 우산을 가져가거라.',detail:'앞 절이 뒤 절의 조건이므로 "-거든"이 알맞아요.',src:'창작'},
+  {id:10,sent1:'밤을 새우다',sent2:'오늘 졸리다',reqType:'종속-원인',
+   options:['-(으)니','-고','-(으)면','-거나'],answer:'-(으)니',
+   result:'밤을 새우니 오늘 졸리다.',detail:'앞 절이 뒤 절의 원인이므로 "-(으)니"가 알맞아요.',src:'창작'}
+]
+];
+
+const STAGE_NAMES = ['1단계 · 문장 만들기','2단계 · 유형 판별','3단계 · 어미 고르기'];
+const STAGE_SHORT = ['기본','심화','고급'];
+
+let questions=[], current=0, score=0, combo=0, maxCombo=0, correctCount=0, wrongCount=0;
+let answered=[], userAnswers=[], currentStage=0;
+let gameStartTime=null;
+
+/* ===== Audio ===== */
+const AudioCtx=window.AudioContext||window.webkitAudioContext;let actx;
+function getACtx(){if(!actx)actx=new AudioCtx();return actx}
+function playCorrect(){try{const c=getACtx(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.setValueAtTime(523,c.currentTime);o.frequency.setValueAtTime(659,c.currentTime+.1);o.frequency.setValueAtTime(784,c.currentTime+.2);g.gain.setValueAtTime(.25,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.45);o.start(c.currentTime);o.stop(c.currentTime+.45)}catch(e){}}
+function playWrong(){try{const c=getACtx(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.setValueAtTime(220,c.currentTime);o.frequency.setValueAtTime(180,c.currentTime+.15);g.gain.setValueAtTime(.2,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.35);o.start(c.currentTime);o.stop(c.currentTime+.35)}catch(e){}}
+function playCombo(){try{const c=getACtx();[523,659,784,1047].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(.15,c.currentTime+i*.08);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+i*.08+.2);o.start(c.currentTime+i*.08);o.stop(c.currentTime+i*.08+.2)})}catch(e){}}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
+
+/* ===== 게임 시작 ===== */
+function startGame(si){
+  currentStage=si;
+  questions=STAGES[si];
+  current=0;score=0;combo=0;maxCombo=0;correctCount=0;wrongCount=0;
+  answered=new Array(10).fill(null);
+  userAnswers=new Array(10).fill('');
+  gameStartTime=new Date();
+  document.getElementById('score-val').textContent='0';
+  document.getElementById('combo-badge').classList.add('hidden');
+  document.getElementById('start-screen').style.display='none';
+  document.getElementById('complete-screen').classList.remove('show');
+  document.getElementById('game-area').classList.add('show');
+  document.getElementById('ingame-credit').classList.add('show');
+  renderQuestion();
+}
+
+/* ===== 문제 렌더링 ===== */
+function renderQuestion(){
+  const q=questions[current];
+  document.getElementById('progress-label').textContent=`${STAGE_NAMES[currentStage]} · 문제 ${current+1} / 10`;
+  document.getElementById('progress-fill').style.width=`${((current+1)/10)*100}%`;
+
+  const qCard=document.getElementById('question-card');
+  const iArea=document.getElementById('input-area');
+
+  hideFeedback();
+
+  if(currentStage===0) renderStage1(q,qCard,iArea);
+  else if(currentStage===1) renderStage2(q,qCard,iArea);
+  else renderStage3(q,qCard,iArea);
+
+  // 이미 답한 문제면 피드백 복원
+  if(answered[current]!=null){
+    restoreFeedback(q);
+  }
+
+  document.getElementById('prev-btn').disabled=(current===0);
+  document.getElementById('next-btn').disabled=(current>=9);
+}
+
+/* ── 1단계 렌더링 ── */
+function renderStage1(q,qCard,iArea){
+  const isB=q.type==='B';
+  let qHTML=`<span class="q-num">${q.id}번</span>`;
+  qHTML+=`<span class="q-type-badge ${isB?'type-b':'type-a'}">${isB?'빈칸 채우기':'문장 완성'}</span>`;
+  qHTML+=`<div class="q-instruction">다음 두 문장을 연결 어미 <strong>${q.emi}</strong>를 사용하여 하나의 문장으로 만드세요.</div>`;
+  qHTML+=`<div class="q-sentences"><div class="q-sent">${q.sent1}</div><div class="q-divider">+</div><div class="q-sent">${q.sent2}</div><div style="margin-top:6px"><span class="q-sent"><span class="emi">${q.emi}</span></span></div></div>`;
+
+  if(isB){
+    const parts=q.display.split('____');
+    qHTML+=`<div class="q-blank-area">${parts[0]}<span class="q-blank" id="blank-display">&nbsp;&nbsp;&nbsp;&nbsp;</span>${parts[1]}</div>`;
+  }
+  qCard.innerHTML=qHTML;
+
+  if(isB){
+    iArea.innerHTML=`<div class="text-input-wrap"><label>연결 어미를 입력하세요</label><input class="text-input" id="ans-input" type="text" placeholder="예: 고, 아서, 으면 …" maxlength="10" ${answered[current]!=null?'disabled':''}/>
+    <button class="submit-btn" id="submit-btn" onclick="submitStage1()" ${answered[current]!=null?'disabled':''}>제출</button></div>`;
+    if(answered[current]==null){
+      setTimeout(()=>{const inp=document.getElementById('ans-input');if(inp)inp.focus()},100);
+      const inp2=document.getElementById('ans-input');
+      if(inp2)inp2.addEventListener('keydown',e=>{if(e.key==='Enter')submitStage1()});
+    }
+  } else {
+    iArea.innerHTML=`<div class="text-input-wrap"><label>완성된 이어진 문장을 입력하세요</label><input class="text-input" id="ans-input" type="text" placeholder="두 문장을 이어 쓰세요" ${answered[current]!=null?'disabled':''}/>
+    <button class="submit-btn" id="submit-btn" onclick="submitStage1()" ${answered[current]!=null?'disabled':''}>제출</button></div>`;
+    if(answered[current]==null){
+      setTimeout(()=>{const inp=document.getElementById('ans-input');if(inp)inp.focus()},100);
+      const inp2=document.getElementById('ans-input');
+      if(inp2)inp2.addEventListener('keydown',e=>{if(e.key==='Enter')submitStage1()});
+    }
+  }
+}
+
+/* ── 2단계 렌더링 ── */
+function renderStage2(q,qCard,iArea){
+  let qHTML=`<span class="q-num">${q.id}번</span>`;
+  qHTML+=`<span class="q-type-badge type-select">유형 판별</span>`;
+  qHTML+=`<div class="q-instruction">아래 이어진 문장의 <strong>종류</strong>를 고르세요.</div>`;
+  qHTML+=`<div class="q-full-sentence">${q.sentence}</div>`;
+  qHTML+=`<div style="text-align:center;font-size:.85rem;color:var(--muted)">연결 어미: <strong style="color:var(--primary)">${q.emiHighlight}</strong></div>`;
+  qCard.innerHTML=qHTML;
+
+  // 2단 선택 UI
+  const done=answered[current]!=null;
+  const step1Done=userAnswers[current]&&userAnswers[current].step1;
+  const step1Correct=step1Done&&userAnswers[current].step1===q.step1;
+
+  let iHTML=`<div class="step-select-wrap">`;
+  iHTML+=`<div class="step-label">1단계: 이어진 문장의 종류는?</div>`;
+  iHTML+=`<div class="step-btns two-col">`;
+  iHTML+=`<button class="step-btn" id="s2-dae" onclick="selectStep1('대등')" ${done||step1Done?'disabled':''}>${done&&q.step1==='대등'?'✅ ':step1Done&&userAnswers[current].step1==='대등'&&!step1Correct?'❌ ':''}대등하게 이어진 문장</button>`;
+  iHTML+=`<button class="step-btn" id="s2-jong" onclick="selectStep1('종속')" ${done||step1Done?'disabled':''}>${done&&q.step1==='종속'?'✅ ':step1Done&&userAnswers[current].step1==='종속'&&!step1Correct?'❌ ':''}종속적으로 이어진 문장</button>`;
+  iHTML+=`</div>`;
+
+  // step2 영역
+  if(step1Correct||done){
+    const isD=q.step1==='대등';
+    const opts=isD?['나열','대조','선택']:['원인','조건','목적'];
+    iHTML+=`<div class="step-label" style="margin-top:12px">2단계: 세부 유형은?</div>`;
+    iHTML+=`<div class="step-btns three-col">`;
+    opts.forEach(o=>{
+      const isAns=o===q.step2;
+      const picked=done&&userAnswers[current].step2===o;
+      let cls='step-btn';
+      if(done&&isAns)cls+=' correct-choice';
+      else if(done&&picked&&!isAns)cls+=' wrong-choice';
+      iHTML+=`<button class="${cls}" onclick="selectStep2('${o}')" ${done?'disabled':''}>${o}</button>`;
+    });
+    iHTML+=`</div>`;
+  }
+  iHTML+=`</div>`;
+  iArea.innerHTML=iHTML;
+
+  // 색상 표시
+  if(step1Done&&!done){
+    if(step1Correct){
+      document.getElementById(q.step1==='대등'?'s2-dae':'s2-jong').classList.add('correct-choice');
+    }
+  }
+  if(done){
+    document.getElementById(q.step1==='대등'?'s2-dae':'s2-jong').classList.add('correct-choice');
+    if(userAnswers[current].step1!==q.step1){
+      document.getElementById(userAnswers[current].step1==='대등'?'s2-dae':'s2-jong').classList.add('wrong-choice');
+    }
+  }
+}
+
+/* ── 3단계 렌더링 ── */
+function renderStage3(q,qCard,iArea){
+  let qHTML=`<span class="q-num">${q.id}번</span>`;
+  qHTML+=`<span class="q-type-badge type-select">어미 고르기</span>`;
+  qHTML+=`<div class="q-instruction">아래 두 문장을 <strong>${q.reqType}</strong> 관계로 이으려면 어떤 연결 어미가 알맞을까요?</div>`;
+  qHTML+=`<div class="q-sentences"><div class="q-sent">${q.sent1}</div><div class="q-divider">+</div><div class="q-sent">${q.sent2}</div></div>`;
+  qHTML+=`<div style="text-align:center;margin-top:4px;font-size:.88rem;color:var(--primary);font-weight:700">→ ${q.reqType}</div>`;
+  qCard.innerHTML=qHTML;
+
+  const done=answered[current]!=null;
+  let iHTML=`<div class="emi-select-wrap"><div class="step-label">알맞은 연결 어미를 고르세요</div><div class="emi-btns">`;
+  q.options.forEach(o=>{
+    let cls='emi-btn';
+    if(done&&o===q.answer)cls+=' correct-choice';
+    else if(done&&o===userAnswers[current]&&o!==q.answer)cls+=' wrong-choice';
+    iHTML+=`<button class="${cls}" onclick="selectEmi('${o}')" ${done?'disabled':''}>${o}</button>`;
+  });
+  iHTML+=`</div></div>`;
+  iArea.innerHTML=iHTML;
+}
+
+/* ===== 1단계 제출 ===== */
+function submitStage1(){
+  if(answered[current]!=null)return;
+  const inp=document.getElementById('ans-input');
+  if(!inp)return;
+  const val=inp.value.trim();
+  if(!val){showToast('답을 입력해 주세요!');return}
+
+  const q=questions[current];
+  let isCorrect=false;
+
+  if(q.type==='B'){
+    isCorrect=(val===q.blank);
+    userAnswers[current]=val;
+    const bd=document.getElementById('blank-display');
+    if(bd)bd.textContent=val;
+  } else {
+    const normalize=s=>s.replace(/[\s.,!?。，、]/g,'');
+    const nVal=normalize(val);
+    const candidates=[q.answer,...(q.altAnswers||[])];
+    isCorrect=candidates.some(c=>normalize(c)===nVal);
+    userAnswers[current]=val;
+  }
+
+  inp.disabled=true;
+  document.getElementById('submit-btn').disabled=true;
+  processAnswer(isCorrect,q);
+}
+
+/* ===== 2단계 step1 선택 ===== */
+function selectStep1(choice){
+  if(answered[current]!=null)return;
+  const q=questions[current];
+  if(!userAnswers[current])userAnswers[current]={};
+  userAnswers[current].step1=choice;
+
+  if(choice===q.step1){
+    // 1차 정답 → 2차 표시
+    playCorrect();
+    renderQuestion(); // re-render to show step2
+  } else {
+    // 1차 오답 → 바로 오답 처리
+    userAnswers[current].step2='';
+    processAnswer(false,q);
+  }
+}
+
+/* ===== 2단계 step2 선택 ===== */
+function selectStep2(choice){
+  if(answered[current]!=null)return;
+  const q=questions[current];
+  userAnswers[current].step2=choice;
+  processAnswer(choice===q.step2,q);
+}
+
+/* ===== 3단계 어미 선택 ===== */
+function selectEmi(choice){
+  if(answered[current]!=null)return;
+  const q=questions[current];
+  userAnswers[current]=choice;
+  processAnswer(choice===q.answer,q);
+}
+
+/* ===== 공통 채점 ===== */
+function processAnswer(isCorrect,q){
+  answered[current]=isCorrect;
+  if(isCorrect){
+    combo++;if(combo>maxCombo)maxCombo=combo;correctCount++;
+    const bonus=combo>=5?100:combo>=3?50:0;
+    score+=100+bonus;
+    if(combo>=3){playCombo();showToast(`🔥 ${combo}콤보! +${100+bonus}점`)}
+    else playCorrect();
+    if(combo>=2){document.getElementById('combo-badge').classList.remove('hidden');document.getElementById('combo-val').textContent=combo}
+    showFeedback(true,`정답! +${100+(combo>=5?100:combo>=3?50:0)}점${combo>=3?' (콤보 보너스!)':''}`);
+  } else {
+    combo=0;wrongCount++;score=Math.max(0,score-30);
+    document.getElementById('combo-badge').classList.add('hidden');
+    playWrong();
+    showFeedback(false,'틀렸어요! −30점');
+  }
+  document.getElementById('score-val').textContent=score;
+  showDetail(q);
+  renderQuestion(); // re-render with disabled state
+
+  // 전부 답했으면 자동 종료
+  if(answered.every(a=>a!=null))setTimeout(()=>showComplete(),1500);
+}
+
+function showFeedback(correct,msg){
+  const fb=document.getElementById('feedback');
+  document.getElementById('fb-icon').textContent=correct?'✅':'❌';
+  document.getElementById('fb-msg').textContent=msg;
+  fb.className='feedback show '+(correct?'correct':'wrong');
+}
+function hideFeedback(){
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('feedback-detail').className='feedback-detail';
+  document.getElementById('feedback-detail').innerHTML='';
+}
+function showDetail(q){
+  const el=document.getElementById('feedback-detail');
+  el.innerHTML=`<div class="detail-label">${currentStage===0?q.subtype:currentStage===1?(q.step1+' — '+q.step2):q.reqType}</div>${q.detail}`;
+  if(currentStage===2&&q.result){
+    el.innerHTML+=`<div style="margin-top:6px;font-weight:700;color:var(--primary)">→ ${q.result}</div>`;
+  }
+  el.classList.add('show');
+}
+function restoreFeedback(q){
+  showFeedback(answered[current],answered[current]?'정답! (이미 맞힌 문제)':'틀렸어요!');
+  showDetail(q);
+}
+
+/* ===== 내비게이션 ===== */
+function navigate(dir){
+  const n=current+dir;
+  if(n<0||n>9)return;
+  current=n;renderQuestion();
+}
+
+function finishGame(){
+  // 미답 문제 오답 처리
+  for(let i=0;i<10;i++){if(answered[i]==null){answered[i]=false;wrongCount++}}
+  showComplete();
+}
+
+/* ===== 종료 화면 ===== */
+function showComplete(){
+  document.getElementById('game-area').classList.remove('show');
+  document.getElementById('ingame-credit').classList.remove('show');
+  const cs=document.getElementById('complete-screen');
+  cs.classList.add('show');
+
+  const maxScore=10*100+100+50; // 10문제 전부 맞히면 combo 보너스 포함 최대
+  document.getElementById('final-score').textContent=score+'점';
+  document.getElementById('final-score-label').textContent=`${STAGE_NAMES[currentStage]} 최종 점수`;
+  document.getElementById('stat-correct').textContent=correctCount;
+  document.getElementById('stat-wrong').textContent=wrongCount;
+  document.getElementById('stat-combo').textContent=maxCombo;
+
+  const ratio=correctCount/10;
+  document.getElementById('complete-emoji').textContent=ratio>=.9?'🏆':ratio>=.7?'🎉':ratio>=.5?'😊':'💪';
+  document.getElementById('complete-title').textContent=ratio>=.9?'완벽해요!':ratio>=.7?'잘 했어요!':ratio>=.5?'절반 이상!':'다시 도전!';
+
+  // 오답 목록
+  const wrongList=questions.filter((_,i)=>answered[i]===false);
+  const reportEl=document.getElementById('wrong-report');
+  reportEl.innerHTML='';
+  if(!wrongList.length){
+    reportEl.innerHTML='<div style="text-align:center;padding:14px;background:var(--green-l);border-radius:10px;color:#3a8f60;font-weight:900">🎊 모든 문제를 맞혔어요! 완벽해요!</div>';
+  } else {
+    const t=document.createElement('div');t.className='wrong-report-title';
+    t.innerHTML=`❌ 틀린 문제 다시 보기 <span style="font-size:.8rem;font-weight:400;color:var(--muted)">(${wrongList.length}문제)</span>`;
+    reportEl.appendChild(t);
+    wrongList.forEach((q,qi)=>{
+      const idx=questions.indexOf(q);
+      const item=document.createElement('div');item.className='wrong-item';
+      let myAns=userAnswers[idx]||'미입력';
+      if(typeof myAns==='object')myAns=`${myAns.step1||'?'} → ${myAns.step2||'?'}`;
+      let correctAns='';
+      if(currentStage===0)correctAns=q.type==='B'?q.blank:q.answer;
+      else if(currentStage===1)correctAns=`${q.step1} → ${q.step2}`;
+      else correctAns=q.answer;
+      item.innerHTML=`<div class="wrong-item-num">${q.id}번</div>
+        <div class="wrong-item-text">${currentStage===0?q.sent1+' + '+q.sent2+' ('+q.emi+')':currentStage===1?q.sentence:q.sent1+' + '+q.sent2+' ['+q.reqType+']'}</div>
+        <div class="wrong-item-answer"><span class="wa-wrong">내 답: ${myAns}</span> → <span class="wa-correct">정답: ${correctAns}</span></div>`;
+      reportEl.appendChild(item);
+    });
+  }
+
+  // 이름/소감 체크 → 다운로드 버튼 활성화
+  updateDlButtons();
+  document.getElementById('inp-name').addEventListener('input',updateDlButtons);
+  document.getElementById('inp-comment').addEventListener('input',updateDlButtons);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function updateDlButtons(){
+  const hasName=document.getElementById('inp-name').value.trim().length>0;
+  const hasComment=document.getElementById('inp-comment').value.trim().length>0;
+  const ok=hasName&&hasComment;
+  document.getElementById('btn-note').disabled=!ok;
+  document.getElementById('btn-report').disabled=!ok;
+}
+
+/* ===== 오답노트 다운로드 (Canvas → JPG) ===== */
+function downloadWrongNote(){
+  const name=document.getElementById('inp-name').value.trim();
+  const now=new Date();
+  const dateStr=`${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+  const wrongList=questions.filter((_,i)=>answered[i]===false);
+  const W=800;
+  const lineH=22;
+  const headerH=120;
+  const perItem=100;
+  const H=headerH+(wrongList.length>0?wrongList.length*perItem:60)+80;
+
+  const canvas=document.createElement('canvas');
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#f0eaf8';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#fff';roundRect(ctx,20,20,W-40,H-40,16);ctx.fill();
+
+  ctx.fillStyle='#3a3a5c';ctx.font='bold 22px sans-serif';
+  ctx.fillText(`📋 오답노트 — ${STAGE_SHORT[currentStage]}`,40,60);
+  ctx.font='14px sans-serif';ctx.fillStyle='#8888aa';
+  ctx.fillText(`${name} · ${dateStr}`,40,85);
+  ctx.fillText(`점수: ${score}점 · 정답 ${correctCount} · 오답 ${wrongCount}`,40,105);
+
+  let y=headerH+10;
+  if(wrongList.length===0){
+    ctx.fillStyle='#3a8f60';ctx.font='bold 16px sans-serif';
+    ctx.fillText('🎊 모든 문제를 맞혔어요!',40,y+20);
+  } else {
+    wrongList.forEach(q=>{
+      const idx=questions.indexOf(q);
+      ctx.fillStyle='#fde8e8';roundRect(ctx,30,y,W-60,perItem-12,10);ctx.fill();
+      ctx.fillStyle='#c05050';ctx.font='bold 13px sans-serif';
+      ctx.fillText(`${q.id}번`,42,y+20);
+      ctx.fillStyle='#3a3a5c';ctx.font='13px sans-serif';
+      const qText=currentStage===0?`${q.sent1} + ${q.sent2} (${q.emi})`:currentStage===1?q.sentence:`${q.sent1} + ${q.sent2} [${q.reqType}]`;
+      wrapText(ctx,qText,42,y+40,W-100,lineH);
+      let myAns=userAnswers[idx]||'미입력';
+      if(typeof myAns==='object')myAns=`${myAns.step1||'?'} → ${myAns.step2||'?'}`;
+      let correctAns=currentStage===0?(q.type==='B'?q.blank:q.answer):currentStage===1?`${q.step1} → ${q.step2}`:q.answer;
+      ctx.fillStyle='#c05050';ctx.font='12px sans-serif';
+      ctx.fillText(`내 답: ${myAns}`,42,y+perItem-26);
+      ctx.fillStyle='#3a8f60';ctx.font='bold 12px sans-serif';
+      ctx.fillText(`정답: ${correctAns}`,42,y+perItem-12);
+      y+=perItem;
+    });
+  }
+
+  ctx.fillStyle='#8888aa';ctx.font='11px sans-serif';
+  ctx.fillText('제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com',40,H-30);
+
+  const link=document.createElement('a');
+  link.download=`오답노트_${STAGE_SHORT[currentStage]}_${name}_${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}.jpg`;
+  link.href=canvas.toDataURL('image/jpeg',0.92);
+  link.click();
+}
+
+/* ===== 리포트 다운로드 (Canvas → JPG) ===== */
+function downloadReport(){
+  const name=document.getElementById('inp-name').value.trim();
+  const comment=document.getElementById('inp-comment').value.trim();
+  const now=new Date();
+  const dateStr=`${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  const elapsed=gameStartTime?Math.round((now-gameStartTime)/60000):0;
+
+  // 유형별 분석
+  const typeMap={};
+  questions.forEach((q,i)=>{
+    const key=currentStage===0?q.subtype:currentStage===1?(q.step1+'-'+q.step2):q.reqType;
+    if(!typeMap[key])typeMap[key]={correct:0,total:0};
+    typeMap[key].total++;
+    if(answered[i])typeMap[key].correct++;
+  });
+
+  const W=800,H=620;
+  const canvas=document.createElement('canvas');
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#f0eaf8';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#fff';roundRect(ctx,20,20,W-40,H-40,16);ctx.fill();
+
+  ctx.fillStyle='#7c5cbf';ctx.font='bold 22px sans-serif';
+  ctx.fillText('📊 학습 결과 분석 리포트',40,58);
+  ctx.fillStyle='#3a3a5c';ctx.font='14px sans-serif';
+  ctx.fillText(`${name} · ${dateStr} · 학습 시간 약 ${elapsed}분`,40,82);
+  ctx.fillText(`${STAGE_NAMES[currentStage]}`,40,100);
+
+  // 점수 큰 표시
+  ctx.fillStyle='#7c5cbf';ctx.font='bold 48px sans-serif';
+  ctx.fillText(`${score}점`,W-200,80);
+  ctx.fillStyle='#8888aa';ctx.font='13px sans-serif';
+  ctx.fillText(`정답 ${correctCount} / 오답 ${wrongCount} / 최고콤보 ${maxCombo}`,W-280,100);
+
+  // 유형별 바 차트
+  let y=130;
+  ctx.fillStyle='#3a3a5c';ctx.font='bold 15px sans-serif';
+  ctx.fillText('📈 유형별 정답률',40,y);y+=10;
+  const types=Object.keys(typeMap);
+  const barW=400,barH=24;
+  const strongTypes=[],weakTypes=[];
+  types.forEach(t=>{
+    y+=30;
+    const d=typeMap[t];
+    const pct=d.total>0?d.correct/d.total:0;
+    ctx.fillStyle='#3a3a5c';ctx.font='13px sans-serif';
+    ctx.fillText(t,40,y+16);
+    // bar bg
+    ctx.fillStyle='#dde0f0';roundRect(ctx,180,y,barW,barH,6);ctx.fill();
+    // bar fill
+    ctx.fillStyle=pct>=0.8?'#5baf7e':pct>=0.5?'#c8a020':'#d45b5b';
+    if(pct>0){roundRect(ctx,180,y,barW*pct,barH,6);ctx.fill();}
+    ctx.fillStyle='#3a3a5c';ctx.font='bold 12px sans-serif';
+    ctx.fillText(`${d.correct}/${d.total} (${Math.round(pct*100)}%)`,barW+195,y+16);
+    if(pct>=0.8)strongTypes.push(t);
+    else if(pct<0.5)weakTypes.push(t);
+  });
+
+  y+=50;
+  ctx.fillStyle='#3a8f60';ctx.font='bold 14px sans-serif';
+  ctx.fillText('✅ 잘하는 분야',40,y);
+  ctx.font='13px sans-serif';
+  ctx.fillText(strongTypes.length?strongTypes.join(', '):'아직 없어요 — 다시 도전해 보세요!',40,y+22);
+
+  y+=52;
+  ctx.fillStyle='#d45b5b';ctx.font='bold 14px sans-serif';
+  ctx.fillText('📌 보완이 필요한 분야',40,y);
+  ctx.font='13px sans-serif';
+  ctx.fillText(weakTypes.length?weakTypes.join(', '):'없어요 — 대단해요!',40,y+22);
+
+  y+=52;
+  ctx.fillStyle='#7c5cbf';ctx.font='bold 14px sans-serif';
+  ctx.fillText('💬 학습 소감',40,y);
+  ctx.fillStyle='#3a3a5c';ctx.font='13px sans-serif';
+  wrapText(ctx,comment,40,y+22,W-80,20);
+
+  ctx.fillStyle='#8888aa';ctx.font='11px sans-serif';
+  ctx.fillText('제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com',40,H-30);
+
+  const link=document.createElement('a');
+  link.download=`리포트_${STAGE_SHORT[currentStage]}_${name}_${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}.jpg`;
+  link.href=canvas.toDataURL('image/jpeg',0.92);
+  link.click();
+}
+
+/* ===== Canvas 유틸 ===== */
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+}
+function wrapText(ctx,text,x,y,maxW,lineH){
+  const words=text.split('');let line='';
+  for(let i=0;i<words.length;i++){
+    const test=line+words[i];
+    if(ctx.measureText(test).width>maxW&&line){ctx.fillText(line,x,y);y+=lineH;line=words[i]}
+    else line=test;
+  }
+  if(line)ctx.fillText(line,x,y);
+}
+
+/* ===== 화면 전환 ===== */
+function goStart(){
+  document.getElementById('complete-screen').classList.remove('show');
+  document.getElementById('game-area').classList.remove('show');
+  document.getElementById('ingame-credit').classList.remove('show');
+  document.getElementById('start-screen').style.display='';
+}
+function restartGame(){
+  document.getElementById('complete-screen').classList.remove('show');
+  startGame(currentStage);
+}
+</script>
+</body>
+</html>

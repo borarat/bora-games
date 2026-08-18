@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>교실 안 소설 시뮬레이션 - 사랑 손님과 어머니</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
+<style>
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+        font-family: 'Noto Sans KR', sans-serif;
+        background-color: #f3ede3;
+        color: #3e3835;
+        word-break: keep-all;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 14px;
+    }
+
+    .game-container {
+        width: 100%;
+        max-width: 660px;
+        max-height: 96dvh;
+        max-height: 96vh;
+        background-color: #ffffff;
+        padding: 22px 26px;
+        border-radius: 14px;
+        box-shadow: 0 6px 22px rgba(92, 75, 67, 0.12);
+        border: 1px solid #e6dfd3;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    h1 {
+        text-align: center;
+        font-family: 'Gowun Batang', serif;
+        font-size: 24px;
+        color: #5c4b43;
+        margin: 0 0 4px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+    .subtitle {
+        text-align: center;
+        font-size: 14px;
+        color: #9a887d;
+        margin-bottom: 16px;
+    }
+
+    /* ===== 시작 화면 ===== */
+    #start-screen { display: flex; flex-direction: column; min-height: 0; }
+    .intro-text {
+        background-color: #faf7f1;
+        padding: 16px 18px;
+        border-radius: 10px;
+        border: 1px solid #ecdfc4;
+        font-size: 14.5px;
+        line-height: 1.65;
+        margin-bottom: 12px;
+        overflow-y: auto;
+        min-height: 0;
+    }
+    .intro-text p { margin: 0 0 9px; }
+    .intro-text p:last-child { margin-bottom: 0; }
+    .intro-text strong { color: #6e5f57; }
+
+    .rule-grid { display: flex; gap: 10px; margin-bottom: 12px; }
+    .rule-card {
+        flex: 1;
+        background: #fbfaf7;
+        border: 1px solid #e8e0d2;
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+    .rule-card .rc-title {
+        font-weight: 700; font-size: 13.5px; margin-bottom: 5px;
+        display: flex; align-items: center; gap: 6px;
+    }
+    .rule-card.love .rc-title { color: #c96f74; }
+    .rule-card.duty .rc-title { color: #5f7cb0; }
+
+    .creator-info {
+        background: #f6f2ea;
+        border: 1px dashed #cdbda8;
+        border-radius: 10px;
+        text-align: center;
+        font-size: 12.5px;
+        color: #8c7b73;
+        padding: 10px 12px;
+        margin-bottom: 14px;
+        line-height: 1.55;
+    }
+    .creator-info strong { color: #6e5f57; }
+
+    .start-btn {
+        width: 100%;
+        background-color: #6e5f57;
+        color: #fff;
+        padding: 15px 20px;
+        border-radius: 10px;
+        font-family: 'Noto Sans KR', sans-serif;
+        font-size: 16px; font-weight: 700;
+        cursor: pointer; border: none;
+        transition: background-color 0.2s, transform 0.1s;
+    }
+    .start-btn:hover { background-color: #564942; }
+    .start-btn:active { transform: scale(0.99); }
+
+    /* ===== 게임 화면 ===== */
+    #game-screen { display: none; flex-direction: column; min-height: 0; flex: 1; }
+
+    .top-bar { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+    .gauge-section {
+        flex: 1; background-color: #faf7f1; padding: 12px 14px;
+        border-radius: 10px; border: 1px solid #ecdfc4;
+    }
+    .gauge-container { margin-bottom: 9px; }
+    .gauge-container:last-child { margin-bottom: 0; }
+    .gauge-label {
+        font-size: 13px; font-weight: 700; margin-bottom: 5px;
+        color: #4a3e3d; display: block;
+    }
+    .gauge-bar-outer {
+        width: 100%; height: 14px; background-color: #e8e2d5;
+        border-radius: 7px; overflow: hidden; border: 1px solid #d8ccba;
+    }
+    .gauge-bar-inner { height: 100%; transition: width 0.45s ease; }
+    #love-bar { background-color: #e59398; }
+    #duty-bar { background-color: #7b9acc; }
+
+    .mute-btn {
+        flex: 0 0 auto; width: 40px; height: 40px; border-radius: 10px;
+        border: 1px solid #ddd1c0; background: #faf7f1; cursor: pointer;
+        font-size: 18px; line-height: 1; transition: background 0.15s;
+    }
+    .mute-btn:hover { background: #f1e9da; }
+
+    .review-banner {
+        display: none;
+        background: #f3ece0; border: 1px solid #e2d3bb; color: #8a7868;
+        font-size: 12px; border-radius: 8px; padding: 6px 10px;
+        margin-bottom: 10px; text-align: center;
+    }
+    .review-banner.show { display: block; }
+
+    .story-box {
+        font-family: 'Pretendard', sans-serif;
+        font-size: 16px; line-height: 1.8; color: #2b2624;
+        margin-bottom: 14px; padding: 4px 2px;
+        overflow-y: auto; flex: 1; min-height: 0;
+    }
+    .story-box p { margin: 0 0 12px; }
+    .story-box p:last-child { margin-bottom: 0; }
+
+    /* 낱말 풀이 트리거 */
+    .gloss {
+        border-bottom: 1px dotted #b5836a;
+        color: #9a5f44; cursor: help; font-weight: 700;
+    }
+
+    .choices-container { flex: 0 0 auto; }
+    .choice-btn {
+        display: block; width: 100%;
+        background-color: #ffffff; border: 1px solid #cdbda8; color: #5c4b43;
+        padding: 13px 16px; margin-bottom: 10px; border-radius: 10px;
+        font-family: 'Noto Sans KR', sans-serif; font-size: 14.5px;
+        text-align: left; cursor: pointer; transition: all 0.18s ease; line-height: 1.5;
+    }
+    .choice-btn:last-child { margin-bottom: 0; }
+    .choice-btn:hover { background-color: #fbf6ee; border-color: #a8947d; transform: translateY(-1px); }
+    .choice-btn:active { transform: translateY(0); }
+    .choice-btn.locked { cursor: default; opacity: 0.7; }
+    .choice-btn.locked:hover { background: #ffffff; border-color: #cdbda8; transform: none; }
+    .choice-btn.chosen {
+        opacity: 1; background: #f4efe6; border-color: #a8947d;
+        color: #4a3e3d; font-weight: 500;
+    }
+    .choice-btn.chosen::before { content: "✓ 나의 선택 — "; color: #9a5f44; font-weight: 700; }
+
+    .continue-btn {
+        display: block; width: 100%;
+        background-color: #f4efe6; border: 1px solid #cdbda8; color: #6e5f57;
+        padding: 12px 16px; border-radius: 10px;
+        font-family: 'Noto Sans KR', sans-serif; font-size: 14.5px; font-weight: 500;
+        text-align: center; cursor: pointer; transition: all 0.18s ease;
+    }
+    .continue-btn:hover { background-color: #ece4d6; }
+
+    /* 하단 내비게이션 */
+    .nav-row { flex: 0 0 auto; display: flex; gap: 8px; margin-top: 12px; }
+    .nav-btn {
+        flex: 1; background: #ffffff; border: 1px solid #ddd1c0; color: #6e5f57;
+        padding: 9px 10px; border-radius: 8px;
+        font-family: 'Noto Sans KR', sans-serif; font-size: 13px; font-weight: 500;
+        cursor: pointer; transition: all 0.15s;
+    }
+    .nav-btn:hover:not(:disabled) { background: #f6f1e9; border-color: #c2b09a; }
+    .nav-btn:disabled { opacity: 0.4; cursor: default; }
+    .nav-btn.home { flex: 0 0 auto; }
+
+    /* ===== 엔딩 ===== */
+    .ending-box {
+        border: 2px dashed #a8947d; padding: 18px 20px;
+        background-color: #fffdf9; border-radius: 10px; margin-bottom: 16px;
+    }
+    .ending-box h3 { font-family: 'Gowun Batang', serif; margin: 0 0 10px; color: #5c4b43; font-size: 18px; }
+    .ending-box p { font-family: 'Pretendard', sans-serif; font-size: 15px; line-height: 1.8; margin: 0 0 10px; }
+    .ending-box p:last-child { margin-bottom: 0; }
+
+    .note-box {
+        border: 1px solid #d8ccba; background: #f9f5ee; border-radius: 10px;
+        padding: 16px 18px;
+    }
+    .note-box h4 { font-family: 'Gowun Batang', serif; margin: 0 0 10px; color: #6e5f57; font-size: 16px; }
+    .note-item { font-size: 13.5px; line-height: 1.65; margin-bottom: 9px; }
+    .note-item:last-child { margin-bottom: 0; }
+    .note-item .nl { font-weight: 700; color: #9a5f44; }
+
+    .reset-row { display: flex; gap: 8px; margin-top: 16px; }
+    .reset-btn {
+        flex: 1; background-color: #6e5f57; color: #fff; border: none;
+        padding: 11px 15px; font-family: 'Noto Sans KR', sans-serif;
+        font-size: 14px; font-weight: 500; border-radius: 8px; cursor: pointer;
+    }
+    .reset-btn.alt { background: #ffffff; color: #6e5f57; border: 1px solid #cdbda8; }
+    .reset-btn:hover { background-color: #564942; }
+    .reset-btn.alt:hover { background: #f6f1e9; }
+
+    .ingame-credit {
+        flex: 0 0 auto; text-align: right; font-size: 11px;
+        color: #c2b4a6; margin-top: 10px; letter-spacing: 0.2px;
+    }
+
+    /* 낱말 풀이 말풍선 */
+    .gloss-pop {
+        position: fixed; z-index: 1000; max-width: 250px;
+        background: #fffdf8; border: 1px solid #cdbda8;
+        border-radius: 10px; padding: 11px 13px;
+        box-shadow: 0 6px 18px rgba(92,75,67,0.22);
+        font-family: 'Noto Sans KR', sans-serif;
+        font-size: 13px; line-height: 1.55; color: #4a3e3d;
+        animation: popin 0.12s ease;
+    }
+    .gloss-pop .gp-term {
+        display: block; font-weight: 700; color: #9a5f44;
+        margin-bottom: 4px; font-size: 13.5px;
+    }
+    @keyframes popin { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: none; } }
+
+    /* ===== 모바일 ===== */
+    @media (max-width: 520px) {
+        body { padding: 8px; }
+        .game-container { padding: 16px 16px; border-radius: 12px; }
+        h1 { font-size: 20px; }
+        .subtitle { font-size: 12.5px; margin-bottom: 12px; }
+        .intro-text { font-size: 13.5px; line-height: 1.6; padding: 13px 14px; margin-bottom: 10px; }
+        .intro-text p { margin-bottom: 7px; }
+        .rule-grid { flex-direction: column; gap: 8px; margin-bottom: 10px; }
+        .rule-card { padding: 10px 12px; font-size: 12.5px; }
+        .creator-info { font-size: 11.5px; padding: 9px 10px; margin-bottom: 12px; }
+        .start-btn { padding: 13px 16px; font-size: 15px; }
+        .top-bar { gap: 8px; margin-bottom: 11px; }
+        .gauge-section { padding: 10px 12px; }
+        .gauge-label { font-size: 12px; }
+        .gauge-bar-outer { height: 12px; }
+        .mute-btn { width: 38px; height: 38px; font-size: 17px; }
+        .story-box { font-size: 15px; line-height: 1.75; margin-bottom: 11px; }
+        .story-box p { margin-bottom: 10px; }
+        .choice-btn { font-size: 13.8px; padding: 12px 14px; margin-bottom: 8px; }
+        .nav-btn { font-size: 12px; padding: 8px 8px; }
+        .ending-box { padding: 15px 16px; }
+        .ending-box h3 { font-size: 16px; }
+        .ending-box p { font-size: 14px; line-height: 1.75; }
+        .note-box { padding: 13px 14px; }
+        .note-item { font-size: 12.5px; }
+    }
+</style>
+</head>
+<body>
+
+<div class="game-container">
+    <h1>교실 안 소설 시뮬레이션</h1>
+    <div class="subtitle">&lt;사랑 손님과 어머니&gt; — 어머니의 마음자리</div>
+
+    <!-- 시작 화면 -->
+    <div id="start-screen">
+        <div class="intro-text">
+            <p>주요섭의 소설 &lt;사랑 손님과 어머니&gt;를 바탕으로 한 분기형 스토리 게임입니다.</p>
+            <p>원작에서 우리는 <strong>옥희의 눈</strong>으로만 어머니를 봅니다. 이 게임은 옥희가 끝내 보지 못한 <strong>어머니의 속마음</strong>으로 들어갑니다.</p>
+            <p>당신은 '어머니'가 되어 매 장면 선택을 내립니다. 정답은 없습니다 — 당신의 선택이 곧 이야기입니다.</p>
+        </div>
+
+        <div class="rule-grid">
+            <div class="rule-card love">
+                <div class="rc-title">🌸 연모의 정</div>
+                아저씨를 향한 마음입니다. 마음에 솔직한 선택을 하면 올라갑니다.
+            </div>
+            <div class="rule-card duty">
+                <div class="rc-title">⚖️ 사회적 시선</div>
+                세상의 눈과 체면입니다. 절제하는 선택을 하면 올라갑니다.
+            </div>
+        </div>
+        <div class="rule-grid" style="margin-bottom:14px;">
+            <div class="rule-card" style="flex:1;">
+                두 마음 중 마지막에 더 높은 쪽에 따라 <strong>결말이 갈립니다.</strong> 어려운 낱말에는 점선이 그어져 있어요. 눌러 보면 뜻풀이가 나옵니다.
+            </div>
+        </div>
+
+        <div class="creator-info">
+            제작 <strong>보라라샘</strong> · 전주서신중학교 교사<br>
+            siaawase@g.jbedu.kr · 2026. 6. 9.
+        </div>
+
+        <button class="start-btn" onclick="startGame()">시뮬레이션 시작하기</button>
+    </div>
+
+    <!-- 게임 화면 -->
+    <div id="game-screen">
+        <div class="top-bar">
+            <div class="gauge-section">
+                <div class="gauge-container">
+                    <span class="gauge-label">🌸 연모의 정 <span id="love-value">30</span>%</span>
+                    <div class="gauge-bar-outer">
+                        <div id="love-bar" class="gauge-bar-inner" style="width: 30%;"></div>
+                    </div>
+                </div>
+                <div class="gauge-container">
+                    <span class="gauge-label">⚖️ 사회적 시선 <span id="duty-value">50</span>%</span>
+                    <div class="gauge-bar-outer">
+                        <div id="duty-bar" class="gauge-bar-inner" style="width: 50%;"></div>
+                    </div>
+                </div>
+            </div>
+            <button class="mute-btn" id="mute-btn" onclick="toggleMute()" title="소리 켜기/끄기">🔊</button>
+        </div>
+
+        <div id="review-banner" class="review-banner">📖 지난 장면을 복기하는 중입니다 — ‘다음’으로 현재 장면으로 돌아가세요.</div>
+
+        <div id="story-text" class="story-box"></div>
+        <div id="choices-container" class="choices-container"></div>
+
+        <div class="nav-row">
+            <button class="nav-btn" id="prev-btn" onclick="goPrev()">← 이전</button>
+            <button class="nav-btn" id="next-btn" onclick="goNext()">다음 →</button>
+            <button class="nav-btn home" id="home-btn" onclick="goHome()">↺ 처음으로</button>
+        </div>
+
+        <div class="ingame-credit">제작 · 보라라샘 / 2026.6.9</div>
+    </div>
+</div>
+
+<script>
+    /* ===== 낱말 풀이 ===== */
+    const GLOSS = {
+        "내외": "남녀가 서로 얼굴을 마주하거나 가까이하지 않던 옛 관습.",
+        "화냥년": "정조를 지키지 않았다고 여겨진 여성을 비하하던 차별적인 말. 과부의 재혼이나 연애를 억누르던 시대의 폭력적인 언어.",
+        "수절": "남편이 죽은 뒤에도 재혼하지 않고 절개를 지키는 일.",
+        "사랑방": "집의 바깥채에 있는, 남자 손님을 맞던 방.",
+        "풍금": "발로 바람을 넣어 소리 내는 옛 건반 악기(오르간)."
+    };
+    function g(term){ return '<span class="gloss" data-term="' + term + '">' + term + '</span>'; }
+
+    /* ===== 이야기 데이터 ===== */
+    const nodes = {
+        intro: {
+            type: "narration",
+            text: "<p>죽은 남편의 옛 친구라는 '아저씨'가, 큰외삼촌의 소개로 우리 집 " + g("사랑방") + "에 하숙을 들었습니다. 옛날 남편이 쓰던 바로 그 방입니다.</p>"
+                + "<p>어린 옥희는 그 아저씨를 무척이나 따릅니다. 아저씨가 삶은 달걀을 좋아한다기에 달걀을 자주 사들였더니, 옥희도 덩달아 신이 났습니다.</p>"
+                + "<p>나에게는 남편이 떠난 뒤로 한 번도 열지 않은 " + g("풍금") + "이 있습니다. 요즘 들어 자꾸만 그 닫힌 건반이 눈에 밟힙니다.</p>"
+                + "<p>잔잔하던 내 마음에, 조용히 파문이 입니다.</p>",
+            next: "s1"
+        },
+        s1: {
+            type: "choice",
+            text: "<p>아저씨의 밥상이 다 되었습니다. 사랑 출입은 늘 외삼촌 차지인데, 오늘은 외삼촌이 상을 들다 말고 투덜댑니다.</p>"
+                + "<p>\"누님이 좀 직접 갖다 주구려. 요새 세상에 " + g("내외") + "합니까!\"</p>"
+                + "<p>그 말에 얼굴이 화끈 달아오릅니다.</p>",
+            choices: [
+                { text: "못 들은 척 눈을 흘기고는, 외삼촌을 다시 사랑으로 들여보낸다.", love: -5, duty: 10, next: "s3" },
+                { text: "붉어진 얼굴로 망설이다, 끝내 내 손으로 상을 들고 마루를 나선다.", love: 10, duty: -5, next: "s3" }
+            ]
+        },
+        s2: {
+            type: "choice",
+            text: "<p>유치원에서 돌아온 옥희가 꽃 한 줌을 내밉니다.</p>"
+                + "<p>\"엄마, 이거 사랑방 아저씨가 엄마 갖다 주래!\"</p>"
+                + "<p>그 한마디에 가슴이 철렁 내려앉습니다. 얼굴이 그 꽃보다 더 붉어지고, 꽃을 든 손가락이 파르르 떨립니다. 정말 그분이…?</p>",
+            choices: [
+                { text: "떨리는 손을 누르며 꽃을 꽃병에 꽂아 풍금 위에 두고, 옥희에게 \"아무에게도 말하지 말라\" 이른다.", love: 12, duty: -8, next: "punggeum" },
+                { text: "\"그런 걸 받아 오문 못써.\" 떨리는 목소리로 옥희를 타이르며 꽃을 물린다.", love: -8, duty: 12, next: "punggeum" }
+            ]
+        },
+        punggeum: {
+            type: "narration",
+            text: "<p>그날 밤, 옥희를 재워 놓고 나는 남편이 떠난 뒤 한 번도 열지 않았던 풍금 뚜껑을 가만히 열었습니다.</p>"
+                + "<p>오랜만에 짚어 보는 건반 위로, 까닭 모를 눈물이 주르륵 흘러내립니다.</p>",
+            next: "s4"
+        },
+        s3: {
+            type: "choice",
+            text: "<p>일요일, 옥희를 데리고 예배당에 들었습니다.</p>"
+                + "<p>남자석과 여자석이 따로 갈라져 앉는 자리. 그런데 평소 예배당에 나오지도 않던 아저씨가, 맞은편 남자석에 와 앉아 있습니다.</p>"
+                + "<p>옥희가 반가워 그쪽으로 손을 흔듭니다. 얼굴이 화끈 달아오릅니다.</p>",
+            choices: [
+                { text: "옥희의 손을 끌어 내리고 입을 막은 채, 강대만 바라보며 앉는다.", love: -10, duty: 15, next: "s2" },
+                { text: "들키지 않게, 그러나 한 번 그쪽으로 눈길이 간다. 홍당무처럼 붉어진 얼굴을 가만히 숙인다.", love: 10, duty: -3, next: "s2" },
+                { text: "예배가 끝나고, 옥희를 시켜 아저씨께 인사를 전하게 한다.", love: 15, duty: -12, next: "s2" }
+            ]
+        },
+        s4: {
+            type: "choice",
+            text: "<p>옥희가 사랑에서 하얀 봉투를 받아 왔습니다. '지난달 밥값'이라지만, 지전 사이에 네모로 접은 하얀 종이 한 장이 끼어 있습니다.</p>"
+                + "<p>떨리는 손으로 펴 보니, 아저씨의 마음을 적은 글입니다. 얼굴이 파랬다 붉었다, 종이를 쥔 손이 와들와들 떨립니다.</p>",
+            choices: [
+                { text: "그 글을 읽고 또 읽으며, 차마 미워할 수 없는 마음을 가만히 가슴에 새긴다.", love: 18, duty: -12, next: "rumor" },
+                { text: "다 읽기도 전에, 떨리는 손으로 도로 접어 반짇고리에 던져 넣는다.", love: -12, duty: 15, next: "rumor" }
+            ]
+        },
+        rumor: {
+            type: "narration",
+            text: "<p>그날 밤부터 마음이 갈피를 잡지 못합니다.</p>"
+                + "<p>어떤 밤엔 나도 모르게 풍금을 타고 찬송가를 부르다가도, 그 노래는 끝내 소리 없는 울음이 되어 버립니다.</p>",
+            next: "s5"
+        },
+        s5: {
+            type: "choice",
+            text: "<p>머리가 아프다며 누운 어느 날, 옥희를 곁에 두고 나는 혼잣말처럼 되뇝니다.</p>"
+                + "<p>\"옥희가 아버지를 새로 가지면 세상이 욕을 한단다. 옥희 어머니는 " + g("화냥년") + "이다, 화냥년의 딸이다 — 그렇게 손가락질하겠지.\"</p>"
+                + "<p>이제 마음을 정해야 합니다. 옥희를 곱게 차려 입히고, 나는 풍금 옆의 하얀 손수건을 집어 듭니다.</p>",
+            choices: [
+                { text: "손수건 속에 거절의 뜻을 적어 넣어, 옥희 편에 아저씨께 들려 보낸다.", love: -15, duty: 20, next: "branch_check" },
+                { text: "거절 대신, 그 마음을 받아들이는 답을 적어 넣어 보낸다.", love: 20, duty: -18, next: "branch_check" }
+            ]
+        },
+        monologue: {
+            type: "narration",
+            text: "<p>세상이 무어라 하든, 사람들이 손가락질을 하든 —</p>"
+                + "<p>오늘 밤, 나는 더 이상 내 마음을 속이지 않기로 합니다.</p>"
+                + "<p>설령 그 길이 가시밭일지라도.</p>",
+            next: "s6"
+        },
+        s6: {
+            type: "choice",
+            text: "<p>여러 밤이 지나고, 아저씨가 짐을 꾸립니다. 오늘 기차로 멀리 떠난다고 합니다.</p>"
+                + "<p>아저씨는 옥희에게 예쁜 인형을 하나 쥐어 주었습니다. 나는 벽장에 남은 달걀 여섯 알을 모두 삶아, 소금과 함께 손수건에 싸 두었습니다 — 가시는 찻간에서나마 드시라고.</p>"
+                + "<p>옥희의 손을 잡고 나설 채비를 합니다. 당신의 마지막 선택은 무엇입니까?</p>",
+            choices: [
+                { text: "옥희와 뒷동산에 올라, 기차가 까만 점이 되어 사라질 때까지 가만히 바라본다.", love: 0, duty: 12, next: "ending" },
+                { text: "더는 견디지 못하고, 옥희의 손을 잡고 정거장으로 달음질친다 — 그이를 붙잡으러.", love: 20, duty: -22, next: "ending" }
+            ]
+        }
+    };
+
+    const ENDINGS = {
+        A: {
+            title: "🌸 [엔딩 A] 절제와 그리움의 여운 — 원작의 길",
+            text: "<p>기차가 산모퉁이 뒤로 사라지고, 그 연기마저 하늘로 흩어질 때까지, 당신은 뒷동산에 가만히 서 있었습니다.</p>"
+                + "<p>집으로 돌아온 당신은 늘 열어 두었던 풍금 뚜껑을 닫고 쇠를 채웁니다. 찬송가 갈피에 끼워 두었던 마른 꽃송이를 꺼내 옥희에게 건넵니다. \"이것 내다 버려라.\"</p>"
+                + "<p>달걀 장수가 오자, 이제 달걀 먹을 사람이 없다며 조용히 돌려보냅니다. 사랑은 가슴 깊이 묻은 채, 당신은 오직 옥희만을 바라보며 살아갑니다.</p>"
+        },
+        B: {
+            title: "🌱 [엔딩 B] 장벽을 넘어선 새 발걸음 — 원작에 없는 길",
+            text: "<p>당신은 마침내, 당신을 가두던 해묵은 관습과 따가운 눈총의 벽을 넘어 마음의 소리를 택했습니다.</p>"
+                + "<p>정거장으로 달려가 숨을 몰아쉬며 그이를 불러 세운 당신의 눈에는, 눈물과 함께 단단한 용기가 어려 있습니다. 당황하던 아저씨의 얼굴에 이내 따스한 미소가 번집니다.</p>"
+                + "<p>앞으로의 손가락질도, 낯선 곳에서의 삶도 쉽지만은 않겠지요. 그러나 당신은 이제 누구의 과부도 아닌, 스스로의 행복을 택한 한 사람으로서 한 걸음을 내딛습니다.</p>"
+        }
+    };
+
+    function noteBox(){
+        return '<div class="note-box"><h4>📖 작품 들여다보기</h4>'
+            + '<div class="note-item"><span class="nl">시점</span> — 원작은 여섯 살 옥희의 눈에 비친 것만 들려줍니다. 옥희가 \'아저씨가 준 꽃\'이라 거짓말한 것을 어머니가 끝내 진짜로 믿는 것처럼, 아이가 다 알지 못하는 데서 오는 아이러니가 이 소설의 묘미입니다. 당신이 들여다본 어머니의 속마음은, 옥희가 끝내 보지 못한 것입니다.</div>'
+            + '<div class="note-item"><span class="nl">상징</span> — 풍금(아버지가 사다 준 것 · 죽음 이후 닫혔다가 다시 열리는 억눌린 감정), 흰 봉투(아저씨의 고백)와 하얀 손수건(그에 답하는 어머니의 거절), 삶은 달걀(아저씨를 향한 마음 — 끊는 것은 단념의 신호).</div>'
+            + '<div class="note-item"><span class="nl">시대</span> — 1930년대, 과부의 재혼을 금기시하던 사회. 어머니가 끝내 사랑을 접은 것은, 옥희가 \'' + g("화냥년") + '의 딸\'이라 손가락질받을까 두려웠기 때문입니다.</div>'
+            + '<div class="note-item"><span class="nl">생각해 보기</span> — 엔딩 B는 주요섭이 쓰지 않은 길입니다. 원작의 어머니는 왜 마음을 접었을까요? 당신의 선택은 무엇을 말해 주나요?</div>'
+            + '</div>';
+    }
+
+    /* ===== 상태 ===== */
+    let love = 30, duty = 50;
+    let path = [];
+    let viewIndex = 0;
+
+    function storyEl(){ return document.getElementById("story-text"); }
+    function choicesEl(){ return document.getElementById("choices-container"); }
+    function clamp(v){ return Math.max(0, Math.min(100, v)); }
+
+    function setGauges(l, d){
+        document.getElementById("love-value").innerText = l;
+        document.getElementById("duty-value").innerText = d;
+        document.getElementById("love-bar").style.width = l + "%";
+        document.getElementById("duty-bar").style.width = d + "%";
+    }
+
+    function startGame(){
+        initAudio(); sfxStart();
+        document.getElementById("start-screen").style.display = "none";
+        document.getElementById("game-screen").style.display = "flex";
+        love = 30; duty = 50;
+        path = [{ id: "intro", resolved: false }];
+        viewIndex = 0;
+        render();
+    }
+
+    function goHome(){
+        if (confirm("처음 화면으로 돌아갈까요? 지금까지의 선택은 사라집니다.")){
+            closeGloss();
+            document.getElementById("game-screen").style.display = "none";
+            document.getElementById("start-screen").style.display = "flex";
+        }
+    }
+
+    function advanceTo(nextId){
+        if (nextId === "branch_check") nextId = (love >= duty) ? "monologue" : "s6";
+        if (nextId === "ending"){
+            const type = (duty >= love) ? "A" : "B";
+            path.push({ id: "ending", resolved: true, endingType: type, loveAfter: love, dutyAfter: duty });
+            viewIndex = path.length - 1;
+            render();
+            return;
+        }
+        path.push({ id: nextId, resolved: false });
+        viewIndex = path.length - 1;
+        render();
+    }
+
+    function chooseAt(i){
+        const rec = path[viewIndex];
+        const node = nodes[rec.id];
+        const c = node.choices[i];
+        sfxClick();
+        love = clamp(love + c.love);
+        duty = clamp(duty + c.duty);
+        if (c.love > 0 && c.love >= Math.abs(c.duty)) sfxLove();
+        else if (c.duty > 0) sfxDuty();
+        rec.resolved = true; rec.choiceIndex = i; rec.loveAfter = love; rec.dutyAfter = duty;
+        advanceTo(c.next);
+    }
+
+    function continueNarration(){
+        const rec = path[viewIndex];
+        sfxTurn();
+        rec.resolved = true; rec.loveAfter = love; rec.dutyAfter = duty;
+        advanceTo(nodes[rec.id].next);
+    }
+
+    function render(){
+        closeGloss();
+        const rec = path[viewIndex];
+        const frontier = path.length - 1;
+        const isFrontier = (viewIndex === frontier);
+
+        const dl = rec.resolved ? rec.loveAfter : love;
+        const dd = rec.resolved ? rec.dutyAfter : duty;
+        setGauges(dl, dd);
+
+        if (rec.id === "ending"){ renderEnding(rec); updateNav(); return; }
+
+        const node = nodes[rec.id];
+        storyEl().innerHTML = node.text;
+        storyEl().scrollTop = 0;
+
+        const cont = choicesEl();
+        cont.innerHTML = "";
+
+        if (node.type === "narration"){
+            if (isFrontier && !rec.resolved){
+                const b = document.createElement("button");
+                b.className = "continue-btn";
+                b.innerText = "계속 ▾";
+                b.onclick = continueNarration;
+                cont.appendChild(b);
+            }
+        } else {
+            node.choices.forEach(function(c, i){
+                const b = document.createElement("button");
+                b.className = "choice-btn";
+                b.innerText = c.text;
+                if (rec.resolved){
+                    b.disabled = true;
+                    b.classList.add("locked");
+                    if (rec.choiceIndex === i) b.classList.add("chosen");
+                } else if (isFrontier){
+                    b.onclick = function(){ chooseAt(i); };
+                } else {
+                    b.disabled = true;
+                }
+                cont.appendChild(b);
+            });
+        }
+
+        updateNav();
+        document.getElementById("review-banner").classList.toggle("show", !isFrontier);
+    }
+
+    function renderEnding(rec){
+        const e = ENDINGS[rec.endingType];
+        storyEl().innerHTML =
+            '<div class="ending-box"><h3>' + e.title + '</h3>' + e.text + '</div>' + noteBox();
+        storyEl().scrollTop = 0;
+
+        const cont = choicesEl();
+        cont.innerHTML = "";
+        const row = document.createElement("div");
+        row.className = "reset-row";
+        const again = document.createElement("button");
+        again.className = "reset-btn";
+        again.innerText = "다시 도전하기";
+        again.onclick = startGame;
+        const home = document.createElement("button");
+        home.className = "reset-btn alt";
+        home.innerText = "처음으로";
+        home.onclick = goHome;
+        row.appendChild(again); row.appendChild(home);
+        cont.appendChild(row);
+
+        document.getElementById("review-banner").classList.remove("show");
+        (rec.endingType === "A" ? sfxEndingA : sfxEndingB)();
+    }
+
+    function updateNav(){
+        const frontier = path.length - 1;
+        document.getElementById("prev-btn").disabled = (viewIndex <= 0);
+        document.getElementById("next-btn").disabled = (viewIndex >= frontier);
+    }
+
+    function goPrev(){ if (viewIndex > 0){ viewIndex--; sfxTick(); render(); } }
+    function goNext(){ if (viewIndex < path.length - 1){ viewIndex++; sfxTick(); render(); } }
+
+    /* ===== 효과음 (WebAudio · 외부 파일 없음) ===== */
+    let audioCtx = null, muted = false;
+    function initAudio(){
+        if (!audioCtx){
+            const AC = window.AudioContext || window.webkitAudioContext;
+            if (AC) audioCtx = new AC();
+        }
+        if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+    }
+    function tone(freq, start, dur, type, peak){
+        if (!audioCtx || muted) return;
+        const t0 = audioCtx.currentTime + start;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type || "sine";
+        osc.frequency.setValueAtTime(freq, t0);
+        gain.gain.setValueAtTime(0.0001, t0);
+        gain.gain.exponentialRampToValueAtTime(peak || 0.12, t0 + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start(t0); osc.stop(t0 + dur + 0.02);
+    }
+    function sfxStart(){ tone(523.25, 0, 0.18, "sine", 0.1); tone(659.25, 0.09, 0.22, "sine", 0.1); }
+    function sfxClick(){ tone(330, 0, 0.06, "triangle", 0.1); tone(440, 0.05, 0.09, "triangle", 0.09); }
+    function sfxLove(){ tone(587.33, 0, 0.14, "sine", 0.09); tone(880, 0.1, 0.18, "sine", 0.08); }
+    function sfxDuty(){ tone(392, 0, 0.16, "sine", 0.09); tone(440, 0.1, 0.2, "sine", 0.08); }
+    function sfxTurn(){ tone(440, 0, 0.1, "sine", 0.07); tone(523.25, 0.06, 0.12, "sine", 0.06); }
+    function sfxTick(){ tone(660, 0, 0.04, "triangle", 0.06); }
+    function sfxEndingA(){ tone(440, 0, 0.4, "sine", 0.1); tone(349.23, 0.28, 0.5, "sine", 0.1); tone(293.66, 0.6, 0.9, "sine", 0.09); }
+    function sfxEndingB(){ tone(392, 0, 0.3, "sine", 0.1); tone(493.88, 0.22, 0.3, "sine", 0.1); tone(659.25, 0.44, 0.7, "sine", 0.1); }
+    function toggleMute(){
+        muted = !muted;
+        document.getElementById("mute-btn").textContent = muted ? "🔇" : "🔊";
+    }
+
+    /* ===== 낱말 풀이 말풍선 ===== */
+    let activePop = null;
+    function closeGloss(){ if (activePop){ activePop.remove(); activePop = null; } }
+    function showGloss(el){
+        closeGloss();
+        const term = el.dataset.term;
+        const def = GLOSS[term];
+        if (!def) return;
+        const pop = document.createElement("div");
+        pop.className = "gloss-pop";
+        pop.innerHTML = '<span class="gp-term">' + term + '</span>' + def;
+        document.body.appendChild(pop);
+        const r = el.getBoundingClientRect();
+        const pw = pop.offsetWidth, ph = pop.offsetHeight;
+        let left = r.left;
+        if (left + pw > window.innerWidth - 10) left = window.innerWidth - pw - 10;
+        if (left < 10) left = 10;
+        let top = r.bottom + 8;
+        if (top + ph > window.innerHeight - 10) top = r.top - ph - 8;
+        if (top < 10) top = 10;
+        pop.style.left = left + "px";
+        pop.style.top = top + "px";
+        activePop = pop;
+        sfxTick();
+    }
+    document.addEventListener("click", function(e){
+        const gl = e.target.closest(".gloss");
+        if (gl){ e.stopPropagation(); showGloss(gl); return; }
+        if (!e.target.closest(".gloss-pop")) closeGloss();
+    });
+    window.addEventListener("resize", closeGloss);
+    document.addEventListener("scroll", closeGloss, true);
+</script>
+</body>
+</html>
