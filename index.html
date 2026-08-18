@@ -7,53 +7,124 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             color: #fff;
         }
-        .container {
+        .header {
             text-align: center;
-            padding: 2rem;
+            padding: 3rem 1rem 2rem;
         }
-        h1 {
+        .header h1 {
             font-size: 2.5rem;
             margin-bottom: 0.5rem;
         }
-        p {
-            font-size: 1.2rem;
+        .header p {
+            font-size: 1.1rem;
             opacity: 0.85;
-            margin-bottom: 2rem;
         }
-        .game-list {
+        .game-grid {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1rem 1.5rem 3rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.2rem;
+        }
+        .game-card {
             background: rgba(255,255,255,0.15);
             backdrop-filter: blur(10px);
             border-radius: 16px;
-            padding: 2rem;
-            max-width: 500px;
-            margin: 0 auto;
+            padding: 1.5rem;
+            text-decoration: none;
+            color: #fff;
+            transition: transform 0.2s, background 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
         }
-        .game-list h2 {
-            margin-bottom: 1rem;
-            font-size: 1.3rem;
+        .game-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255,255,255,0.25);
         }
-        .game-list p.empty {
+        .game-card .emoji {
+            font-size: 2.2rem;
+        }
+        .game-card .title {
+            font-size: 1.15rem;
+            font-weight: 600;
+        }
+        .game-card .desc {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            line-height: 1.4;
+        }
+        .game-card .play {
+            margin-top: auto;
+            padding-top: 0.8rem;
+            font-size: 0.85rem;
             opacity: 0.7;
-            font-style: italic;
+        }
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.85rem;
+            opacity: 0.6;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="header">
         <h1>보라의 게임 모음</h1>
-        <p>리모델링된 HTML 게임들을 여기서 플레이하세요!</p>
-        <div class="game-list">
-            <h2>게임 목록</h2>
-            <p class="empty">아직 게임이 업로드되지 않았어요. 곧 추가될 예정입니다!</p>
-        </div>
+        <p>국어 학습을 위한 리모델링 게임 7종</p>
+    </div>
+    <div class="game-grid">
+        <a class="game-card" href="games/동사형용사_두더지탭게임_리모델링_2.html">
+            <span class="emoji">🔨</span>
+            <span class="title">동사·형용사 두더지 탭 게임</span>
+            <span class="desc">동사와 형용사를 빠르게 구분하며 탭하는 게임</span>
+            <span class="play">▶ 플레이하기</span>
+        </a>
+        <a class="game-card" href="games/문학_비평_4관점_게임_리모델링.html">
+            <span class="emoji">📖</span>
+            <span class="title">문학 비평 4관점 게임</span>
+            <span class="desc">문학 비평의 4가지 관점을 학습하는 게임</span>
+            <span class="play">▶ 플레이하기</span>
+        </a>
+        <a class="game-card" href="games/설득전략마스터v2_리모델링_2.html">
+            <span class="emoji">🎯</span>
+            <span class="title">설득 전략 마스터</span>
+            <span class="desc">다양한 설득 전략을 익히고 마스터하는 게임</span>
+            <span class="play">▶ 플레이하기</span>
+        </a>
+        <a class="game-card" href="games/음운체계_메모리게임_리모델링.html">
+            <span class="emoji">🧠</span>
+            <span class="title">음운 체계 메모리 게임</span>
+            <span class="desc">음운 체계를 카드 매칭으로 학습하는 게임</span>
+            <span class="play">▶ 플레이하기</span>
+        </a>
+        <a class="game-card" href="games/자음_체계_구분하기_3.html">
+            <span class="emoji">🔤</span>
+            <span class="title">자음 체계 구분하기</span>
+            <span class="desc">한국어 자음 체계를 분류하고 구분하는 게임</span>
+            <span class="play">▶ 플레이하기</span>
+        </a>
+        <a class="game-card" href="games/품사_메모리게임_26_06_26_리모델링.html">
+            <span class="emoji">🃏</span>
+            <span class="title">품사 메모리 게임</span>
+            <span class="desc">품사를 카드 매칭으로 익히는 메모리 게임</span>
+            <span class="play">▶ 플레이하기</span>
+        </a>
+        <a class="game-card" href="games/합성어_파생어_갤러그_리모델링_9.html">
+            <span class="emoji">🚀</span>
+            <span class="title">합성어·파생어 갤러그</span>
+            <span class="desc">합성어와 파생어를 슈팅 게임으로 학습</span>
+            <span class="play">▶ 플레이하기</span>
+        </a>
+    </div>
+    <div class="footer">
+        Made with Claude &middot; borarat.github.io/bora-games
     </div>
 </body>
 </html>

@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>품사 메모리 게임</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* 보라쌤 시리즈 라벤더 베이스 */
+    --lavender: #b8a9d4;
+    --lavender-l: #ede8f5;
+    --lavender-ll: #f5f2fa;
+    --lavender-bg: #f0ecf8;
+    --lavender-deep: #7b6ba0;
+    /* 게임 포인트 컬러 */
+    --eon: #6ec6e8;
+    --eon-light: #d6f0fa;
+    --eon-deep: #4a9fc4;
+    --sa: #f4a6c8;
+    --sa-light: #fde0ec;
+    --sa-deep: #d97aa6;
+    /* 공통 */
+    --correct: #2f9e44;
+    --wrong: #e03131;
+    --ink: #3a3a5c;
+    --muted: #8888aa;
+    --card-bg: #fff;
+    --border: #dde3f5;
+    --shadow: 0 4px 16px rgba(120,130,200,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: linear-gradient(135deg, var(--lavender-ll), var(--lavender-bg), #f0e8f5);
+    color: var(--ink);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ===== 상단 헤더 ===== */
+  header {
+    flex: 0 0 auto;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    background: rgba(255,255,255,0.75);
+    border-bottom: 1.5px solid var(--border);
+    box-shadow: 0 2px 10px rgba(120,120,200,.06);
+  }
+
+  h1 {
+    font-size: clamp(15px, 1.8vw, 24px);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    white-space: nowrap;
+    color: var(--ink);
+  }
+  h1 .accent { color: var(--lavender-deep); }
+
+  .stats {
+    display: flex;
+    gap: 8px;
+    flex: 1;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .stat {
+    background: #fff;
+    border: 1.5px solid var(--border);
+    padding: 5px 14px;
+    border-radius: 999px;
+    font-size: clamp(11px, 1.2vw, 15px);
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--ink);
+  }
+  .stat b { color: var(--lavender-deep); font-size: 1.1em; }
+
+  .buttons { display: flex; gap: 8px; }
+  button {
+    font-family: 'Noto Sans KR', sans-serif;
+    border: none;
+    cursor: pointer;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: clamp(11px, 1.1vw, 14px);
+    padding: 8px 16px;
+    transition: transform .12s, filter .12s;
+  }
+  button:hover { transform: translateY(-2px); filter: brightness(1.05); }
+  button:active { transform: translateY(0); }
+  .btn-restart { background: var(--lavender); color: #fff; }
+  .btn-peek { background: var(--eon); color: #fff; }
+  .btn-peek:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+
+  /* ===== 게임판 ===== */
+  main {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+    min-height: 0;
+  }
+
+  .board {
+    display: grid;
+    gap: clamp(7px, 1vw, 14px);
+    width: 62%;
+    height: 64%;
+    max-width: 1050px;
+  }
+  .board.many {
+    gap: clamp(6px, 0.8vw, 12px);
+    width: 76%;
+    height: 78%;
+    max-width: 1300px;
+  }
+
+  .card {
+    position: relative;
+    perspective: 800px;
+    cursor: pointer;
+    min-height: 0;
+  }
+  .card-inner {
+    position: absolute;
+    inset: 0;
+    transition: transform .4s;
+    transform-style: preserve-3d;
+  }
+  .card.flipped .card-inner,
+  .card.matched .card-inner { transform: rotateY(180deg); }
+
+  .face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6px;
+    font-weight: 800;
+    box-shadow: 0 4px 12px rgba(0,0,0,.14);
+  }
+
+  .face-back {
+    color: rgba(255,255,255,.95);
+    font-size: clamp(22px, 3.2vw, 48px);
+    flex-direction: column;
+    gap: 3px;
+  }
+  .face-back.eon {
+    background: linear-gradient(150deg, var(--eon), var(--eon-deep));
+    border: 3px solid var(--eon-light);
+  }
+  .face-back.sa {
+    background: linear-gradient(150deg, var(--sa), var(--sa-deep));
+    border: 3px solid var(--sa-light);
+  }
+  .face-back .tag {
+    font-size: clamp(9px, 1vw, 14px);
+    font-weight: 700;
+    letter-spacing: 1px;
+    opacity: .9;
+  }
+
+  .face-front {
+    transform: rotateY(180deg);
+    font-size: clamp(16px, 2.8vw, 44px);
+    line-height: 1.2;
+    word-break: keep-all;
+    white-space: pre-line;
+    flex-direction: column;
+  }
+  .board.many .face-front { font-size: clamp(12px, 1.6vw, 28px); }
+  .board.many .face-back { font-size: clamp(16px, 2.2vw, 36px); }
+  .board.adv .face-front { font-size: clamp(10px, 1.3vw, 22px); }
+  .face-front.eon {
+    background: linear-gradient(150deg, var(--eon), var(--eon-deep));
+    color: #fff;
+    border: 3px solid var(--eon-light);
+  }
+  .face-front.sa {
+    background: linear-gradient(150deg, var(--sa), var(--sa-deep));
+    color: #fff;
+    border: 3px solid var(--sa-light);
+  }
+
+  .card.matched .face-front {
+    animation: pop .45s ease;
+    box-shadow: 0 0 0 4px var(--correct), 0 6px 18px rgba(47,158,68,.4);
+  }
+  .card.shake .card-inner { animation: shake .4s; }
+
+  @keyframes pop {
+    0% { transform: rotateY(180deg) scale(1); }
+    50% { transform: rotateY(180deg) scale(1.1); }
+    100% { transform: rotateY(180deg) scale(1); }
+  }
+  @keyframes shake {
+    0%,100% { transform: rotateY(180deg) translateX(0); }
+    25% { transform: rotateY(180deg) translateX(-8px); }
+    75% { transform: rotateY(180deg) translateX(8px); }
+  }
+
+  /* ===== 배너 ===== */
+  .banner {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%) scale(.6);
+    padding: 20px 50px;
+    border-radius: 20px;
+    font-size: clamp(22px, 4vw, 48px);
+    font-weight: 800;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 50;
+    box-shadow: 0 16px 40px rgba(0,0,0,.4);
+  }
+  .banner.show { animation: bannerPop 1.1s ease; }
+  .banner.correct { background: linear-gradient(135deg,#2f9e44,#69db7c); color:#fff; }
+  .banner.wrong { background: linear-gradient(135deg,#e03131,#ff8787); color:#fff; }
+  @keyframes bannerPop {
+    0% { opacity:0; transform: translate(-50%,-50%) scale(.6); }
+    20% { opacity:1; transform: translate(-50%,-50%) scale(1.05); }
+    80% { opacity:1; transform: translate(-50%,-50%) scale(1); }
+    100% { opacity:0; transform: translate(-50%,-50%) scale(.9); }
+  }
+
+  /* ===== 승리 화면 ===== */
+  .win-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,.96);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    z-index: 100;
+    text-align: center;
+    padding: 20px;
+  }
+  .win-overlay.show { display: flex; animation: fadeIn .5s; }
+  @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+  .win-overlay h2 {
+    font-size: clamp(28px, 4.8vw, 60px);
+    color: var(--lavender-deep);
+  }
+  .win-overlay p { font-size: clamp(14px, 2vw, 24px); color: var(--ink); }
+  .win-overlay .win-stat b { color: var(--lavender-deep); }
+  .win-overlay .win-score {
+    font-size: clamp(22px, 3.6vw, 44px);
+    font-weight: 800;
+  }
+  .win-overlay .win-score b { color: var(--lavender-deep); font-size: 1.3em; }
+  .win-overlay .win-grade {
+    font-size: clamp(17px, 2.6vw, 32px);
+    font-weight: 800;
+    color: var(--eon-deep);
+  }
+
+  .confetti {
+    position: fixed;
+    width: 12px; height: 12px;
+    top: -20px;
+    z-index: 99;
+    pointer-events: none;
+  }
+  @keyframes fall {
+    to { transform: translateY(105vh) rotate(720deg); }
+  }
+
+  /* ===== 시작 화면 / 종료 화면 ===== */
+  .start-overlay, .quit-overlay {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, var(--lavender-ll), var(--lavender-bg), #f0e8f5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(10px, 1.6vw, 20px);
+    z-index: 200;
+    text-align: center;
+    padding: 3vh 16px;
+    overflow-y: auto;
+  }
+  .quit-overlay { display: none; }
+  .quit-overlay.show { display: flex; }
+  .start-overlay.hide { display: none; }
+
+  .start-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(10px, 1.5vw, 18px);
+    transform: scale(0.88);
+    transform-origin: center;
+    max-width: 1100px;
+    width: 100%;
+  }
+
+  /* 제목 + 마스코트 */
+  .start-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+  .mascot { height: 90px; border-radius: 12px; }
+  .start-title-wrap { text-align: center; }
+  .start-title {
+    font-size: clamp(28px, 4.4vw, 52px);
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -1px;
+  }
+  .start-title .accent { color: var(--lavender-deep); }
+  .start-sub {
+    font-size: clamp(13px, 1.7vw, 20px);
+    font-weight: 700;
+    color: var(--lavender-deep);
+    margin-top: 2px;
+  }
+
+  /* 성취기준 박스 */
+  .std-box {
+    background: var(--lavender-l);
+    border: 1.5px solid var(--lavender);
+    border-radius: 10px;
+    padding: 8px 20px;
+    font-size: clamp(12px, 1.3vw, 15px);
+    font-weight: 700;
+    color: var(--lavender-deep);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .std-box .std-code {
+    background: var(--lavender);
+    color: #fff;
+    padding: 2px 10px;
+    border-radius: 6px;
+    font-weight: 800;
+    font-size: 0.95em;
+  }
+
+  /* 게임 방법 & 레이아웃 */
+  .start-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    width: 94%;
+    max-width: 900px;
+  }
+
+  .start-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: clamp(14px, 2vw, 24px) clamp(16px, 2.5vw, 28px);
+    text-align: left;
+  }
+  .start-card h3 {
+    font-size: clamp(13px, 1.5vw, 18px);
+    color: var(--lavender-deep);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .start-card ol {
+    margin: 0;
+    padding-left: 1.3em;
+  }
+  .start-card li {
+    font-size: clamp(11px, 1.2vw, 14px);
+    color: var(--ink);
+    line-height: 1.7;
+    padding-left: 2px;
+  }
+  .start-card li b { color: var(--eon-deep); }
+  .start-card li b.pk { color: var(--sa-deep); }
+
+  /* 카드 범례 */
+  .card-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 10px 16px;
+    box-shadow: var(--shadow);
+  }
+  .legend-swatch {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 800; color: #fff; flex-shrink: 0;
+  }
+  .legend-swatch.eon { background: linear-gradient(150deg, var(--eon), var(--eon-deep)); }
+  .legend-swatch.sa { background: linear-gradient(150deg, var(--sa), var(--sa-deep)); }
+  .legend-text {
+    font-size: clamp(11px, 1.2vw, 14px);
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+  .legend-text small { font-weight: 500; color: var(--muted); font-size: 0.9em; }
+
+  /* 난이도 선택 */
+  .level-pick {
+    display: flex;
+    gap: clamp(10px, 2vw, 24px);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .btn-start {
+    font-family: 'Noto Sans KR', sans-serif;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+    font-size: clamp(15px, 2vw, 22px);
+    font-weight: 800;
+    padding: 12px 36px;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    line-height: 1.2;
+    transition: transform .15s, filter .15s;
+  }
+  .btn-start:hover { transform: translateY(-3px); filter: brightness(1.08); }
+  .btn-start .lvl-desc {
+    font-size: clamp(10px, 1.1vw, 13px);
+    font-weight: 600;
+    opacity: .9;
+  }
+  .btn-basic { background: linear-gradient(135deg, var(--eon), var(--eon-deep)); box-shadow: 0 6px 18px rgba(74,159,196,.35); }
+  .btn-mid { background: linear-gradient(135deg, var(--lavender), var(--lavender-deep)); box-shadow: 0 6px 18px rgba(155,143,196,.35); }
+  .btn-advanced { background: linear-gradient(135deg, var(--sa), var(--sa-deep)); box-shadow: 0 6px 18px rgba(217,122,166,.35); }
+
+  /* 크레딧 & 개인정보 */
+  .start-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 94%;
+    max-width: 900px;
+  }
+  .start-credit {
+    font-size: clamp(10px, 1.1vw, 13px);
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.6;
+    padding: 8px 16px;
+    background: rgba(255,255,255,.5);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    width: 100%;
+  }
+  .start-credit b { color: var(--ink); font-weight: 700; }
+
+  .privacy-notice {
+    font-size: clamp(9px, 1vw, 11px);
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.5;
+    padding: 6px 14px;
+    background: rgba(255,255,255,.35);
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,.05);
+    width: 100%;
+  }
+  .privacy-notice strong { color: var(--ink); font-weight: 700; }
+
+  /* 하단 범례 + 버튼 */
+  .legend-bar {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    padding: 6px 0 clamp(40px, 8vh, 100px);
+    font-size: clamp(10px, 1.2vw, 14px);
+    font-weight: 600;
+    flex-wrap: wrap;
+  }
+  .legend-bar span { display: flex; align-items: center; gap: 6px; }
+  .swatch { width: 22px; height: 22px; border-radius: 6px; }
+  .swatch.eon { background: linear-gradient(150deg, var(--eon), var(--eon-deep)); }
+  .swatch.sa { background: linear-gradient(150deg, var(--sa), var(--sa-deep)); }
+
+  .footer-buttons {
+    gap: 8px !important;
+    padding-left: 10px;
+    border-left: 2px solid rgba(0,0,0,.08);
+  }
+  .btn-mini {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #fff;
+    border: 1.5px solid var(--border);
+    color: var(--ink);
+    font-size: clamp(10px, 1.1vw, 13px);
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .btn-mini:hover { background: var(--lavender-l); }
+  .btn-mini-quit { color: var(--sa-deep); border-color: var(--sa-light); }
+  .btn-mini-quit:hover { background: var(--sa-light); }
+
+  /* 인게임 크레딧 */
+  .ingame-credit {
+    position: fixed;
+    right: 10px;
+    bottom: 6px;
+    z-index: 6;
+    font-size: .65rem;
+    color: var(--muted);
+    opacity: .45;
+    pointer-events: none;
+    display: none;
+    letter-spacing: .2px;
+  }
+  .ingame-credit.show { display: block; }
+</style>
+</head>
+<body>
+
+<!-- ===== 시작 화면 ===== -->
+<div class="start-overlay" id="startOverlay">
+ <div class="start-inner">
+  <div class="start-header">
+    <img class="mascot" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAI8AAAC0CAMAAACaAI/PAAABgFBMVEXTm2evn448MS1lT0Cmf2HAZh3An4D7+vpMNSXZ1s7Gxsa4urzo6OfhupPcto7NxbbalVmMqcKptsKTp7jQiEzTmmfXpXTkwZxGLBvipW3i2snLeDWcscPUrIR8osLFvbKoq6vnx6NqSDBNMR7b0b2telCvpJaHm6jk4dmth2eMZ0qLeGnhmlu+wL3gnWG2g1ipmoySlpVtWEjGfULTgTxaRDSVhXa2lHWdsL50Ujm8wcJELiDFbCd4mraGWDd4ZVaXc1Z8oL46JhhiPSWTjIaDXELwsnh6bWK8dTuSYzwIBQUbFRNuOBZ3Qh3groDi0rsqHRecoJve3+B1nsKzajLawZ7f4N/Av8Dd4eIxIyF7c2l+lJ2BTSe2WBG8YhyjbUUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPmQJeAAAAYHRSTlP///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////9ebwvOAAAdVklEQVR42r1cB3viSNL2fQmkRmoUAQlZIoONDTjbY3vybE53ezn9/3/xVVV3Kws8u/ucdkdgUr9UvRW7xJGu661Wq3rWdL1Te2YMzh31iNbROnVv/2VnTT/ijP4snFnpLDDUngFP5e2/7CyWO9I0rdPpfO65o+4vl7/k7c3no71o5bnTLKKOrkmB/zYiOoxH+8/i+TUSVje/ocqOfo2yxDl9o6bn3169/yI+/0o8S8KjccbjZPthG/9y9f0q+8rOrdaSb08v2ukxvjid65kB/ub2tV9Z+s1Fe9JvF49+e3zDQX02fQj/T9mX3tFPr/uv2vXH9WnymSqzBR4lKz13zj+i6blHxH3xRPK63W/vOy4YkrzuY1tFNeEjIh4dNdMvM41a4ein7YNH/2L7UuGo+LWf8Bppv84N7g7IRh2nnWYMvHwf8EjpZRJ72fmLl6FptyfXvCM/XC7UkueWlj3eAsXhI/vtS29Q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" alt="보라라샘">
+    <div class="start-title-wrap">
+      <div class="start-title">품사 <span class="accent">메모리 게임</span></div>
+      <div class="start-sub">5언–9품사 짝맞추기</div>
+    </div>
+  </div>
+
+  <div class="std-box">
+    <span class="std-code">[9국04-04]</span>
+    품사의 종류를 알고 그 특성을 이해한다.
+  </div>
+
+  <div class="start-body">
+    <div class="start-card">
+      <h3>🎮 게임 방법</h3>
+      <ol>
+        <li>카드는 <b>하늘색(5언)</b>과 <b class="pk">핑크색(9품사)</b> 두 종류예요.</li>
+        <li>색이 <b>다른 두 장</b>을 뒤집어 품사가 어느 언에 속하는지 짝을 찾으세요. (예: 핑크 '명사' ↔ 하늘 '체언')</li>
+        <li>짝이 맞으면 카드가 고정, 틀리면 다시 뒤집혀요.</li>
+        <li><b>'7초 전체 공개'</b> 버튼으로 모든 카드를 잠깐 볼 수 있어요.</li>
+        <li>모든 짝을 맞추면 끝! <b>빠르게 맞출수록 점수가 높아요.</b></li>
+      </ol>
+    </div>
+    <div class="card-legend">
+      <div class="legend-item">
+        <div class="legend-swatch eon">?</div>
+        <div class="legend-text">하늘색 카드 = <b>5언</b><br><small>기능에 따른 분류 (체언·용언·수식언·관계언·독립언)</small></div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch sa">?</div>
+        <div class="legend-text">핑크색 카드 = <b>9품사</b><br><small>의미에 따른 분류 (명사·대명사·수사·동사·형용사 등)</small></div>
+      </div>
+      <div class="legend-item" style="background:var(--lavender-l);border:1.5px solid var(--lavender)">
+        <div class="legend-text" style="font-size:clamp(10px,1.1vw,13px)">
+          <b>초급</b> 9쌍 18장 · <b>중급</b> 18쌍 36장 · <b>고급</b> 18쌍 + 예시 단어
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="level-pick">
+    <button class="btn-start btn-basic" id="startBasic">
+      초급 ▶<span class="lvl-desc">9쌍 · 18장</span>
+    </button>
+    <button class="btn-start btn-mid" id="startMid">
+      중급 ▶▶<span class="lvl-desc">18쌍 · 36장</span>
+    </button>
+    <button class="btn-start btn-advanced" id="startAdvanced">
+      고급 ▶▶▶<span class="lvl-desc">18쌍 · 예시 단어</span>
+    </button>
+  </div>
+
+  <div class="start-footer">
+    <div class="start-credit">
+      제작 <b>보라라샘</b> · 전주서신중학교 교사 · <b>siaawase@gmail.com</b> · 제작일 <b>2026.06.26</b> · Made with Claude
+    </div>
+    <div class="privacy-notice">
+      🔒 <strong>개인정보 보호 안내</strong> — 본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다. 모든 정보는 사용자 기기 내부에서만 안전하게 처리됩니다.
+    </div>
+  </div>
+ </div>
+</div>
+
+<!-- ===== 종료 화면 ===== -->
+<div class="quit-overlay" id="quitOverlay">
+  <div class="start-title">수고했어요! 👋</div>
+  <p style="font-size:clamp(15px,2vw,24px);color:var(--ink);">품사 메모리 게임을 종료했습니다.</p>
+  <div class="level-pick">
+    <button class="btn-start btn-mid" id="quitHomeBtn">시작 화면으로 ↩</button>
+  </div>
+</div>
+
+<!-- ===== 게임 헤더 ===== -->
+<header>
+  <h1>품사 메모리 게임 <span class="accent">5언–9품사</span></h1>
+  <div class="stats">
+    <div class="stat">점수: <b id="score">0</b></div>
+    <div class="stat">이동수: <b id="moves">0</b></div>
+    <div class="stat">정확도: <b id="accuracy">100</b>%</div>
+    <div class="stat">남은쌍: <b id="remaining">9</b></div>
+    <div class="stat">시간: <b id="timer">0</b>초</div>
+  </div>
+  <div class="buttons">
+    <button class="btn-peek" id="peekBtn">7초 전체 공개</button>
+    <button class="btn-restart" id="restartBtn">다시 시작</button>
+  </div>
+</header>
+
+<!-- ===== 게임판 ===== -->
+<main>
+  <div class="board" id="board"></div>
+</main>
+
+<!-- ===== 하단 범례 ===== -->
+<div class="legend-bar">
+  <span><span class="swatch eon"></span> 하늘색 = 5언</span>
+  <span><span class="swatch sa"></span> 핑크색 = 9품사</span>
+  <span class="footer-buttons">
+    <button class="btn-mini" id="homeBtn">↩ 시작화면으로</button>
+    <button class="btn-mini btn-mini-quit" id="quitBtn">✕ 게임 종료</button>
+  </span>
+</div>
+
+<div class="banner" id="banner"></div>
+
+<!-- ===== 승리 화면 ===== -->
+<div class="win-overlay" id="winOverlay">
+  <h2>🎉 모든 짝을 완성했어요! 🎉</h2>
+  <p class="win-score">최종 점수 <b id="winScore">0</b>점</p>
+  <p class="win-stat">총 이동수 <b id="winMoves">0</b>회 · 정확도 <b id="winAcc">100</b>% · 걸린 시간 <b id="winTime">0</b>초</p>
+  <p class="win-grade" id="winGrade"></p>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+    <button class="btn-restart" id="winRestartBtn">같은 난이도로 다시</button>
+    <button class="btn-restart" id="winHomeBtn" style="background:var(--sa);">난이도 다시 고르기</button>
+  </div>
+</div>
+
+<!-- 인게임 크레딧 -->
+<div class="ingame-credit" id="ingame-credit">제작 · 보라라샘 / 2026.06.26</div>
+
+<script>
+/* =========================================================
+   학습 데이터
+   ========================================================= */
+const PAIRS = [
+  { sa: '명사',   eon: '체언',   ex: ['학교', '사랑'] },
+  { sa: '대명사', eon: '체언',   ex: ['그것', '우리'] },
+  { sa: '수사',   eon: '체언',   ex: ['하나', '셋째'] },
+  { sa: '동사',   eon: '용언',   ex: ['먹다', '달리다'] },
+  { sa: '형용사', eon: '용언',   ex: ['예쁘다', '높다'] },
+  { sa: '관형사', eon: '수식언', ex: ['새', '모든'] },
+  { sa: '부사',   eon: '수식언', ex: ['매우', '빨리'] },
+  { sa: '조사',   eon: '관계언', ex: ['이/가', '을/를'] },
+  { sa: '감탄사', eon: '독립언', ex: ['아!', '어머'] },
+];
+
+let level = 'basic';
+
+/* =========================================================
+   게임 상태
+   ========================================================= */
+let cards = [];
+let firstPick = null;
+let lock = false;
+let moves = 0;
+let matchedCount = 0;
+let seconds = 0;
+let timerInterval = null;
+let timerStarted = false;
+
+const boardEl = document.getElementById('board');
+const scoreEl = document.getElementById('score');
+const movesEl = document.getElementById('moves');
+const accEl = document.getElementById('accuracy');
+const remainEl = document.getElementById('remaining');
+const timerEl = document.getElementById('timer');
+const bannerEl = document.getElementById('banner');
+const winOverlay = document.getElementById('winOverlay');
+const peekBtn = document.getElementById('peekBtn');
+
+/* =========================================================
+   효과음 — Web Audio API
+   ========================================================= */
+let audioCtx = null;
+function getCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+function playTone(freq, start, duration, type = 'sine', vol = 0.25) {
+  const ctx = getCtx();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = type;
+  osc.frequency.value = freq;
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  const t = ctx.currentTime + start;
+  gain.gain.setValueAtTime(0, t);
+  gain.gain.linearRampToValueAtTime(vol, t + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
+  osc.start(t);
+  osc.stop(t + duration + 0.05);
+}
+function soundCorrect() {
+  playTone(659.25, 0, 0.18, 'sine');
+  playTone(783.99, 0.15, 0.18, 'sine');
+  playTone(1046.5, 0.30, 0.35, 'sine');
+}
+function soundWrong() {
+  playTone(220, 0, 0.18, 'square', 0.15);
+  playTone(174, 0.14, 0.28, 'square', 0.15);
+}
+function soundFlip() {
+  playTone(520, 0, 0.07, 'triangle', 0.12);
+}
+function soundWin() {
+  [523, 659, 784, 1046, 1318].forEach((f, i) => {
+    playTone(f, i * 0.13, 0.4, 'sine', 0.25);
+  });
+}
+
+/* =========================================================
+   게임 초기화
+   ========================================================= */
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+let totalPairs = 9;
+
+function buildCards() {
+  cards = [];
+  if (level === 'basic') {
+    PAIRS.forEach(p => {
+      cards.push({ type: 'sa',  label: p.sa,  eonGroup: p.eon });
+      cards.push({ type: 'eon', label: p.eon, eonGroup: p.eon });
+    });
+  } else if (level === 'mid') {
+    PAIRS.forEach(p => {
+      for (let i = 0; i < 2; i++) {
+        cards.push({ type: 'sa',  label: p.sa,  eonGroup: p.eon });
+        cards.push({ type: 'eon', label: p.eon, eonGroup: p.eon });
+      }
+    });
+  } else {
+    PAIRS.forEach(p => {
+      p.ex.forEach(word => {
+        cards.push({ type: 'sa',  label: p.sa + '\n(' + word + ')', eonGroup: p.eon });
+        cards.push({ type: 'eon', label: p.eon, eonGroup: p.eon });
+      });
+    });
+  }
+  totalPairs = cards.length / 2;
+  shuffle(cards);
+}
+
+function gridColumns(n) {
+  if (n <= 12) return 4;
+  if (n <= 20) return 6;
+  if (n <= 36) return 9;
+  return 9;
+}
+
+function render() {
+  boardEl.innerHTML = '';
+  boardEl.classList.toggle('many', level !== 'basic');
+  boardEl.classList.toggle('adv', level === 'advanced');
+  const cols = gridColumns(cards.length);
+  boardEl.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  const rows = Math.ceil(cards.length / cols);
+  boardEl.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+
+  cards.forEach((card, idx) => {
+    const el = document.createElement('div');
+    el.className = 'card';
+    el.dataset.index = idx;
+    el.innerHTML = `
+      <div class="card-inner">
+        <div class="face face-back ${card.type}">
+          <span>?</span>
+          <span class="tag">${card.type === 'eon' ? '5언' : '9품사'}</span>
+        </div>
+        <div class="face face-front ${card.type}">${card.label}</div>
+      </div>`;
+    el.addEventListener('click', () => onCardClick(idx, el));
+    boardEl.appendChild(el);
+    card.el = el;
+    card.matched = false;
+    card.flipped = false;
+  });
+}
+
+/* =========================================================
+   카드 클릭 처리
+   ========================================================= */
+function onCardClick(idx, el) {
+  if (lock) return;
+  const card = cards[idx];
+  if (card.matched || card.flipped) return;
+
+  startTimerIfNeeded();
+  flipUp(card);
+  soundFlip();
+
+  if (firstPick === null) {
+    firstPick = card;
+    return;
+  }
+
+  if (firstPick === card) return;
+  lock = true;
+  moves++;
+  updateStats();
+
+  const isMatch =
+    firstPick.eonGroup === card.eonGroup &&
+    firstPick.type !== card.type;
+
+  if (isMatch) {
+    setTimeout(() => handleMatch(firstPick, card), 500);
+  } else {
+    setTimeout(() => handleMismatch(firstPick, card), 850);
+  }
+}
+
+function flipUp(card) {
+  card.flipped = true;
+  card.el.classList.add('flipped');
+}
+function flipDown(card) {
+  card.flipped = false;
+  card.el.classList.remove('flipped');
+}
+
+function handleMatch(a, b) {
+  a.matched = b.matched = true;
+  a.el.classList.add('matched');
+  b.el.classList.add('matched');
+  a.el.classList.remove('flipped');
+  b.el.classList.remove('flipped');
+  matchedCount++;
+  soundCorrect();
+  showBanner('정답이에요! 👏', 'correct');
+  firstPick = null;
+  lock = false;
+  updateStats();
+  if (matchedCount === totalPairs) {
+    setTimeout(winGame, 700);
+  }
+}
+
+function handleMismatch(a, b) {
+  a.el.classList.add('shake');
+  b.el.classList.add('shake');
+  soundWrong();
+  showBanner('다시 도전! 💪', 'wrong');
+  setTimeout(() => {
+    flipDown(a);
+    flipDown(b);
+    a.el.classList.remove('shake');
+    b.el.classList.remove('shake');
+    firstPick = null;
+    lock = false;
+  }, 600);
+}
+
+/* =========================================================
+   배너 / 통계 / 타이머
+   ========================================================= */
+let bannerTimeout = null;
+function showBanner(text, kind) {
+  bannerEl.textContent = text;
+  bannerEl.className = 'banner ' + kind;
+  void bannerEl.offsetWidth;
+  bannerEl.classList.add('show');
+  clearTimeout(bannerTimeout);
+  bannerTimeout = setTimeout(() => bannerEl.classList.remove('show'), 1100);
+}
+
+function computeScore() {
+  const base = matchedCount * 1000;
+  const timePenalty = seconds * 25;
+  const wrongMoves = moves - matchedCount;
+  const wrongPenalty = wrongMoves * 80;
+  return Math.max(0, base - timePenalty - wrongPenalty);
+}
+
+function updateStats() {
+  movesEl.textContent = moves;
+  remainEl.textContent = totalPairs - matchedCount;
+  const acc = moves === 0 ? 100 : Math.round((matchedCount / moves) * 100);
+  accEl.textContent = acc;
+  scoreEl.textContent = computeScore();
+}
+
+function gradeFor(score) {
+  const maxScore = totalPairs * 1000;
+  const ratio = score / maxScore;
+  if (ratio >= 0.88) return '⭐ 품사 박사! 완벽해요 ⭐';
+  if (ratio >= 0.66) return '👍 훌륭해요!';
+  if (ratio >= 0.44) return '😊 잘했어요!';
+  if (ratio >= 0.22) return '💪 조금만 더 빠르게!';
+  return '🌱 다시 도전해 봐요!';
+}
+
+function startTimerIfNeeded() {
+  if (timerStarted) return;
+  timerStarted = true;
+  timerInterval = setInterval(() => {
+    seconds++;
+    timerEl.textContent = seconds;
+    updateStats();
+  }, 1000);
+}
+
+/* =========================================================
+   7초 전체 공개
+   ========================================================= */
+let peeking = false;
+function peek() {
+  if (peeking || lock) return;
+  peeking = true;
+  peekBtn.disabled = true;
+  cards.forEach(c => { if (!c.matched) c.el.classList.add('flipped'); });
+
+  let left = 7;
+  peekBtn.textContent = left + '초';
+  const cd = setInterval(() => {
+    left--;
+    if (left > 0) {
+      peekBtn.textContent = left + '초';
+    } else {
+      clearInterval(cd);
+      cards.forEach(c => { if (!c.matched && c !== firstPick) c.el.classList.remove('flipped'); });
+      cards.forEach(c => { if (!c.matched) c.flipped = (c === firstPick); });
+      peekBtn.textContent = '7초 전체 공개';
+      peekBtn.disabled = false;
+      peeking = false;
+    }
+  }, 1000);
+}
+
+/* =========================================================
+   승리 처리
+   ========================================================= */
+function winGame() {
+  clearInterval(timerInterval);
+  soundWin();
+  const finalScore = computeScore();
+  document.getElementById('winScore').textContent = finalScore;
+  document.getElementById('winMoves').textContent = moves;
+  document.getElementById('winAcc').textContent = accEl.textContent;
+  document.getElementById('winTime').textContent = seconds;
+  document.getElementById('winGrade').textContent = gradeFor(finalScore);
+  winOverlay.classList.add('show');
+  launchConfetti();
+}
+
+function launchConfetti() {
+  const colors = ['#b8a9d4', '#6ec6e8', '#f4a6c8', '#ede8f5', '#d6f0fa', '#fde0ec', '#b5e8c9'];
+  for (let i = 0; i < 80; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random() * 100 + 'vw';
+    c.style.background = colors[Math.floor(Math.random() * colors.length)];
+    const dur = 2.5 + Math.random() * 2;
+    c.style.animation = `fall ${dur}s linear ${Math.random()}s forwards`;
+    if (Math.random() > 0.5) c.style.borderRadius = '50%';
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), (dur + 1) * 1000);
+  }
+}
+
+/* =========================================================
+   게임 시작 / 재시작
+   ========================================================= */
+function newGame() {
+  clearInterval(timerInterval);
+  firstPick = null;
+  lock = false;
+  moves = 0;
+  matchedCount = 0;
+  seconds = 0;
+  timerStarted = false;
+  peeking = false;
+  peekBtn.disabled = false;
+  peekBtn.textContent = '7초 전체 공개';
+  timerEl.textContent = '0';
+  winOverlay.classList.remove('show');
+  buildCards();
+  render();
+  updateStats();
+}
+
+document.getElementById('restartBtn').addEventListener('click', newGame);
+document.getElementById('winRestartBtn').addEventListener('click', newGame);
+
+function goToStart() {
+  clearInterval(timerInterval);
+  winOverlay.classList.remove('show');
+  document.getElementById('quitOverlay').classList.remove('show');
+  document.getElementById('startOverlay').classList.remove('hide');
+  document.getElementById('ingame-credit').classList.remove('show');
+}
+function showQuit() {
+  clearInterval(timerInterval);
+  document.getElementById('quitOverlay').classList.add('show');
+}
+
+document.getElementById('winHomeBtn').addEventListener('click', goToStart);
+document.getElementById('homeBtn').addEventListener('click', goToStart);
+document.getElementById('quitHomeBtn').addEventListener('click', goToStart);
+document.getElementById('quitBtn').addEventListener('click', showQuit);
+peekBtn.addEventListener('click', peek);
+
+function startWithLevel(chosen) {
+  level = chosen;
+  document.getElementById('startOverlay').classList.add('hide');
+  document.getElementById('ingame-credit').classList.add('show');
+  getCtx();
+  newGame();
+}
+document.getElementById('startBasic').addEventListener('click', () => startWithLevel('basic'));
+document.getElementById('startMid').addEventListener('click', () => startWithLevel('mid'));
+document.getElementById('startAdvanced').addEventListener('click', () => startWithLevel('advanced'));
+
+newGame();
+</script>
+</body>
+</html>

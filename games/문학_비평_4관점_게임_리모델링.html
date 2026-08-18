@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>문학 비평, 네 개의 눈 — 4대 관점 게임</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#44414f; --ink2:#857f95;
+    --card:#ffffff; --line:#efe6f3;
+    --in:#5a9fe2; --ex_a:#a98ae0; --ex_w:#54bd8a; --ex_r:#ee85ab;
+    --good:#45b885; --bad:#ef7d99; --gold:#f3b14e;
+    --tblue:#eef4fd; --tpink:#fdedf4; --tgreen:#eafaf1; --tlav:#f5eefc;
+    --font:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic','맑은 고딕',sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%}
+  body{font-family:var(--font);color:var(--ink);
+    background:linear-gradient(135deg,#ffe9f1 0%,#eaf1ff 48%,#e6f8ee 100%);
+    background-attachment:fixed;
+    display:flex;align-items:center;justify-content:center;padding:14px;min-height:100%}
+  .screen{width:100%;max-width:960px;display:none}
+  .screen.on{display:block;animation:fade .35s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:20px;
+    box-shadow:0 20px 44px -24px #d4a9d188,0 2px 0 #fff inset}
+
+  /* ---------- START ---------- */
+  #start .card{padding:22px 26px}
+  .brand{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:4px}
+  .brand-text{text-align:center}
+  .title{font-size:32px;font-weight:800;letter-spacing:-.5px;line-height:1.1;margin:0}
+  .title .q{color:var(--ex_r)}
+  .sub{margin:6px 0 0;color:var(--ink2);font-size:14px;line-height:1.5}
+  .std-box{background:#eef0ff;border:1px solid #c7ccee;border-radius:12px;padding:9px 14px;
+    text-align:center;font-size:13px;font-weight:700;color:#4a4e8a;margin:10px 0 6px}
+  .legend{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0 4px}
+  .chip{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);
+    border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:600}
+  .dot{width:10px;height:10px;border-radius:50%}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}
+  .box{border:1px solid var(--line);border-radius:16px;padding:13px 16px}
+  .box.b1{background:var(--tblue)} .box.b2{background:var(--tpink)}
+  .box h3{margin:0 0 8px;font-size:14px;font-weight:800;display:flex;align-items:center;gap:7px}
+  .box .ico{width:21px;height:21px;border-radius:7px;display:grid;place-items:center;color:#fff;font-size:12px}
+  .box p{margin:3px 0;font-size:13px;color:#56525f;line-height:1.45}
+  .modes{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
+  .mode{cursor:pointer;border:1px solid var(--line);background:#fff;border-radius:16px;
+    padding:15px 12px;text-align:center;transition:.15s;font-family:inherit}
+  .mode:hover{transform:translateY(-3px);box-shadow:0 14px 26px -14px #e29bc0aa;border-color:#f3d2e4}
+  .mode b{display:block;font-size:16px;font-weight:800}
+  .mode.m0{grid-column:1/-1} .mode.m0 b{color:var(--ex_w)} .mode.m1 b{color:var(--in)} .mode.m2 b{color:var(--ex_r)}
+  .mode span{display:block;font-size:12.5px;color:var(--ink2);margin-top:3px}
+  .privacy{margin-top:10px;background:#f8f7fa;border:1px solid #e8e5ee;border-radius:12px;padding:10px 14px;
+    font-size:11.5px;color:#8a8494;line-height:1.6;text-align:center}
+  .privacy strong{color:#6a6478}
+  .maker{margin-top:10px;text-align:center;background:var(--tlav);border-radius:14px;padding:10px}
+  .maker p{margin:1px 0;font-size:12px;color:#6a6478;line-height:1.5}
+  .maker .nm{font-weight:800;color:var(--ink);font-size:12.5px}
+
+  /* ---------- PLAY ---------- */
+  #play .top{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:7px 13px;
+    font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px}
+  .stat b{font-size:17px;font-variant-numeric:tabular-nums}
+  .stat.combo b{color:var(--gold)}
+  .bar{flex:1;min-width:120px;height:9px;background:#ffffffaa;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+  .bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ex_r),var(--in));transition:.3s}
+  .layout{display:grid;grid-template-columns:1fr 116px;gap:14px}
+  @media(max-width:640px){.layout{grid-template-columns:1fr}.side{flex-direction:row!important}}
+  .qcard{padding:18px 20px}
+  .wtag{display:inline-block;background:var(--tlav);border:1px solid var(--line);color:#6a6478;
+    font-size:12.5px;font-weight:700;padding:4px 12px;border-radius:999px}
+  .ttag{font-size:11.5px;font-weight:800;color:var(--ink2);float:right;margin-top:5px}
+  .passage{margin:13px 0;background:var(--tblue);border-left:4px solid #bcd6f4;border-radius:0 12px 12px 0;
+    padding:13px 16px;font-size:14.5px;line-height:1.62;color:#3c4654}
+  .qtext{font-size:15.5px;font-weight:800;margin:6px 0 13px}
+  .opts{display:grid;gap:9px}
+  .opt{cursor:pointer;border:1.5px solid var(--line);background:#fff;border-radius:12px;
+    padding:12px 14px;font-size:14.5px;text-align:left;font-family:inherit;line-height:1.4;
+    transition:.12s;color:var(--ink)}
+  .opt:hover:not(:disabled){border-color:var(--ex_a);transform:translateX(2px);background:#fcf8ff}
+  .opt.correct{border-color:var(--good);background:#e7f7ef;color:#1f7d54;font-weight:700}
+  .opt.wrong{border-color:var(--bad);background:#fdeaf0;color:#b34064}
+  .opt:disabled{cursor:default;opacity:.96}
+  .opt.dim{opacity:.5}
+  @keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}
+    30%,50%,70%{transform:translateX(-7px)}40%,60%{transform:translateX(7px)}}
+  .shake{animation:shake .5s}
+  .sa{display:flex;gap:8px;margin-top:2px}
+  .sa input{flex:1;font-family:inherit;font-size:15px;padding:12px 14px;border:1.5px solid var(--line);
+    border-radius:12px;outline:none;background:#fff}
+  .sa input:focus{border-color:var(--ex_a)}
+  .sa button,.btn{cursor:pointer;font-family:inherit;font-weight:800;border:none;border-radius:12px;
+    padding:12px 18px;font-size:14.5px;background:var(--in);color:#fff;transition:.12s}
+  .sa button:hover,.btn:hover{filter:brightness(1.06)}
+  .sahint{font-size:12px;color:var(--ink2);margin-top:7px}
+  .fb{margin-top:13px;border-radius:12px;padding:12px 15px;font-size:13.5px;line-height:1.55;display:none}
+  .fb.on{display:block;animation:fade .25s}
+  .fb.hint{background:#fff4e2;border:1px solid #f6d79c;color:#9a6a1c}
+  .fb.exp{background:var(--tgreen);border:1px solid #bfe7d3;color:#1f7250}
+  .fb .lab{font-weight:800;display:block;margin-bottom:3px}
+  .reveal{margin-top:9px;background:none;border:none;color:var(--ink2);font-size:12.5px;
+    text-decoration:underline;cursor:pointer;font-family:inherit;padding:0}
+  .side{display:flex;flex-direction:column;gap:9px}
+  .nav{cursor:pointer;font-family:inherit;font-weight:800;font-size:14px;border:1px solid var(--line);
+    background:#fff;border-radius:12px;padding:13px 8px;transition:.12s}
+  .nav:hover:not(:disabled){background:var(--tlav);border-color:#e6d4f1}
+  .nav.next{background:var(--in);color:#fff;border-color:transparent}
+  .nav.end{color:#b34064;border-color:#f6cdda;background:var(--tpink)}
+  .credit{margin-top:12px;text-align:right;font-size:11px;color:#a89fb2}
+
+  /* ---------- END ---------- */
+  #end .card{padding:24px 26px}
+  .endhead{text-align:center;margin-bottom:6px}
+  .endhead h2{margin:0;font-size:26px;font-weight:800}
+  .score{display:flex;justify-content:center;gap:12px;margin:16px 0;flex-wrap:wrap}
+  .sc{border:1px solid var(--line);border-radius:16px;padding:14px 22px;text-align:center;min-width:120px}
+  .sc.s1{background:var(--tblue)} .sc.s2{background:var(--tpink)} .sc.s3{background:var(--tgreen)}
+  .sc b{display:block;font-size:30px;font-weight:800;line-height:1}
+  .sc span{font-size:12.5px;color:var(--ink2)}
+  .end-input{margin:12px 0;background:#f8f6fc;border:1px solid #e8e3f0;border-radius:16px;padding:16px}
+  .end-input h3{font-size:14px;font-weight:800;color:#5a4e7a;margin:0 0 10px}
+  .end-fields{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;align-items:flex-end}
+  .end-fields label{font-size:13px;font-weight:700;display:flex;flex-direction:column;gap:4px}
+  .end-fields input{font-family:inherit;font-size:14px;padding:8px 11px;border:1px solid var(--line);border-radius:10px;width:160px}
+  .end-fields textarea{font-family:inherit;font-size:13px;padding:8px 11px;border:1px solid var(--line);border-radius:10px;
+    width:100%;resize:vertical;min-height:50px}
+  .end-privacy{font-size:11px;color:#a89fb2;margin-top:6px;line-height:1.5}
+  .notewrap{margin-top:12px}
+  .notewrap h3{font-size:15px;margin:0 0 10px}
+  .nlist{display:grid;gap:10px;max-height:300px;overflow:auto;padding:2px}
+  .nitem{border:1px solid var(--line);border-left:5px solid var(--line);border-radius:12px;padding:11px 14px;background:#fff}
+  .nitem .nw{font-weight:800;font-size:13.5px;margin-bottom:4px}
+  .nitem .na{font-size:13px;margin:2px 0}
+  .nitem .na .k{color:var(--ink2);font-weight:700}
+  .nitem .ne{font-size:12.5px;color:#56525f;line-height:1.5;margin-top:4px}
+  .perfect{text-align:center;background:var(--tgreen);border:1px solid #bfe7d3;border-radius:16px;
+    padding:20px;color:#1f7250;font-weight:700;font-size:15px}
+  .endbtns{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+  .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  .btn.gold{background:var(--gold)}
+  .btn.report{background:linear-gradient(135deg,#7c6bc4,#a98ae0);color:#fff}
+</style>
+</head>
+<body>
+
+<!-- ===== START ===== -->
+<section id="start" class="screen on">
+  <div class="card">
+    <div class="brand">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAI8AAAC0CAMAAACaAI/PAAABgFBMVEXTm2evn448MS1lT0Cmf2HAZh3An4D7+vpMNSXZ1s7Gxsa4urzo6OfhupPcto7NxbbalVmMqcKptsKTp7jQiEzTmmfXpXTkwZxGLBvipW3i2snLeDWcscPUrIR8osLFvbKoq6vnx6NqSDBNMR7b0b2telCvpJaHm6jk4dmth2eMZ0qLeGnhmlu+wL3gnWG2g1ipmoySlpVtWEjGfULTgTxaRDSVhXa2lHWdsL50Ujm8wcJELiDFbCd4mraGWDd4ZVaXc1Z8oL46JhhiPSWTjIaDXELwsnh6bWK8dTuSYzwIBQUbFRNuOBZ3Qh3groDi0rsqHRecoJve3+B1nsKzajLawZ7f4N/Av8Dd4eIxIyF7c2l+lJ2BTSe2WBG8YhyjbUUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPmQJeAAAAYHRSTlP///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////9ebwvOAAAdVklEQVR42r1cB3viSNL2fQmkRmoUAQlZIoONDTjbY3vybE53ezn9/3/xVVV3Kws8u/ucdkdgUr9UvRW7xJGu661Wq3rWdL1Te2YMzh31iNbROnVv/2VnTT/ijP4snFnpLDDUngFP5e2/7CyWO9I0rdPpfO65o+4vl7/k7c3no71o5bnTLKKOrkmB/zYiOoxH+8/i+TUSVje/ocqOfo2yxDl9o6bn3169/yI+/0o8S8KjccbjZPthG/9y9f0q+8rOrdaSb08v2ukxvjid65kB/ub2tV9Z+s1Fe9JvF49+e3zDQX02fQj/T9mX3tFPr/uv2vXH9WnymSqzBR4lKz13zj+i6blHxH3xRPK63W/vOy4YkrzuY1tFNeEjIh4dNdMvM41a4ein7YNH/2L7UuGo+LWf8Bppv84N7g7IRh2nnWYMvHwf8EjpZRJ72fmLl6FptyfXvCM/XC7UkueWlj3eAsXhI/vtS29Q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" alt="보라라샘" style="height:90px;border-radius:12px">
+      <div class="brand-text">
+        <h1 class="title">문학 비평, 네 개의 <span class="q">눈</span></h1>
+        <p class="sub">하나의 작품을 보는 네 가지 시선<br>내재적 · 표현론적 · 반영론적 · 효용론적 관점</p>
+      </div>
+    </div>
+    <div class="std-box">[9국05-08] 근거를 바탕으로 작품을 해석하고, 다른 해석들과 비교하여 자신의 해석을 평가한다.</div>
+    <div class="legend">
+      <span class="chip"><span class="dot" style="background:var(--in)"></span>내재적 · 작품 자체</span>
+      <span class="chip"><span class="dot" style="background:var(--ex_a)"></span>표현론 · 작가</span>
+      <span class="chip"><span class="dot" style="background:var(--ex_w)"></span>반영론 · 시대 상황</span>
+      <span class="chip"><span class="dot" style="background:var(--ex_r)"></span>효용론 · 독자</span>
+    </div>
+    <div class="grid2">
+      <div class="box b1">
+        <h3><span class="ico" style="background:var(--in)">?</span>게임 방법</h3>
+        <p>개념 단계로 관점의 뜻을 먼저 익혀요.</p>
+        <p>기본·도전은 비평 예문을 읽고 관점을 골라요.</p>
+        <p>유형은 셋 — 관점 이름 / 요소 이름 / 요소 설명.</p>
+        <p>서답형은 관점 이름을 직접 입력해요.</p>
+        <p>보기는 매번 순서가 섞여요. 꼭 읽고 골라요!</p>
+        <p>다 풀면 오답노트를 받을 수 있어요.</p>
+      </div>
+      <div class="box b2">
+        <h3><span class="ico" style="background:var(--ex_r)">★</span>점수 규칙</h3>
+        <p>한 번에 맞히면 +12점, 연속 정답엔 콤보 보너스!</p>
+        <p>틀린 뒤 맞히면 +5점이에요.</p>
+        <p>틀리면 −3점 (0점 밑으론 안 내려가요).</p>
+        <p>한 문제는 한 번만 채점돼요.</p>
+        <p>이전으로 돌아가면 복습만 돼요.</p>
+      </div>
+    </div>
+    <div class="modes">
+      <button class="mode m0" data-mode="concept"><b>개념</b><span>관점 개념 다지기 · 12문항 (선택형·단답형)</span></button>
+      <button class="mode m1" data-mode="basic"><b>기본</b><span>객관식 30문항 · 작품별 순서</span></button>
+      <button class="mode m2" data-mode="challenge"><b>도전</b><span>객관식 16 + 서답형 8 · 무작위 24문항</span></button>
+    </div>
+    <div class="privacy">
+      🔒 <strong>개인정보 보호 안내</strong><br>
+      본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다. 게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.
+    </div>
+    <div class="maker">
+      <p class="nm">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com</p>
+      <p>2026.06.15 · Made with Claude</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PLAY ===== -->
+<section id="play" class="screen">
+  <div class="top">
+    <span class="stat">점수 <b id="score">0</b></span>
+    <span class="stat combo">콤보 <b id="combo">0</b></span>
+    <span class="stat">진행 <b id="prog">1</b>/<b id="total">30</b></span>
+    <div class="bar"><i id="fill"></i></div>
+  </div>
+  <div class="layout">
+    <div class="card qcard">
+      <span class="wtag" id="wtag"></span><span class="ttag" id="ttag"></span>
+      <div class="passage" id="passage"></div>
+      <div class="qtext" id="qtext"></div>
+      <div id="answerArea"></div>
+      <div class="fb hint" id="hintbox"><span class="lab">힌트</span><span id="hinttext"></span></div>
+      <div class="fb exp" id="expbox"><span class="lab">정답 해설</span><span id="exptext"></span></div>
+      <button class="reveal" id="revealBtn" style="display:none">정답 확인하고 넘어가기 →</button>
+    </div>
+    <div class="side">
+      <button class="nav" id="prev">◀ 이전</button>
+      <button class="nav next" id="next">다음 ▶</button>
+      <button class="nav end" id="finish">게임 끝내기</button>
+    </div>
+  </div>
+  <div class="credit">제작 · 보라라샘 / 2026.06.15</div>
+</section>
+
+<!-- ===== END ===== -->
+<section id="end" class="screen">
+  <div class="card">
+    <div class="endhead"><h2 id="endmsg">수고했어요! 🌸</h2></div>
+    <div class="score">
+      <div class="sc s1"><b id="fscore">0</b><span>총점</span></div>
+      <div class="sc s2"><b id="facc">0%</b><span>한 번에 정답</span></div>
+      <div class="sc s3"><b id="fcombo">0</b><span>최고 콤보</span></div>
+    </div>
+    <div class="end-input">
+      <h3>✏️ 이름과 학습 소감을 입력하세요</h3>
+      <div class="end-fields">
+        <label>이름 *<input id="nName" placeholder="이름을 입력하세요" maxlength="20"></label>
+      </div>
+      <div class="end-fields">
+        <label style="width:100%">학습 소감<textarea id="nFeeling" placeholder="오늘 학습한 소감을 적어주세요" rows="2"></textarea></label>
+      </div>
+      <div class="end-privacy">입력하신 이름과 소감은 서버에 저장되지 않으며, 리포트 이미지(JPG) 생성용으로만 쓰입니다.</div>
+    </div>
+    <div class="notewrap" id="notewrap">
+      <h3>📝 오답노트</h3>
+      <div class="nlist" id="nlist"></div>
+    </div>
+    <div class="endbtns">
+      <button class="btn gold" id="saveJpg">📝 오답노트 JPG 저장</button>
+      <button class="btn report" id="saveReport">📊 학습 리포트 JPG 저장</button>
+      <button class="btn ghost" id="again">처음으로</button>
+    </div>
+    <div class="maker" style="margin-top:14px">
+      <p class="nm">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com</p>
+      <p>2026.06.15 · Made with Claude</p>
+    </div>
+  </div>
+</section>
+
+<script>
+const DATA = [{"id": "KM1", "work": "개념 · 네 가지 관점", "text": "", "type": "개념 · 선택형", "q": "작가·시대·독자 같은 외부 요소를 따지지 않고, 오직 작품 안의 표현·구조·운율·심상만을 근거로 작품을 해석하는 관점은?", "opts": ["내재적 관점", "표현론적 관점", "반영론적 관점", "효용론적 관점"], "ans": "내재적 관점", "exp": "작품 바깥의 요소를 끌어들이지 않고 작품 자체의 짜임만으로 감상하므로 내재적 관점입니다.", "mode": "concept"}, {"id": "KM2", "work": "개념 · 네 가지 관점", "text": "", "type": "개념 · 선택형", "q": "작품을, 그것을 창작한 작가의 생애·사상·정신세계와 관련지어 해석하는 관점은?", "opts": ["내재적 관점", "표현론적 관점", "반영론적 관점", "효용론적 관점"], "ans": "표현론적 관점", "exp": "작품을 작가의 삶과 가치관에 비추어 해석하므로 표현론적 관점입니다.", "mode": "concept"}, {"id": "KM3", "work": "개념 · 네 가지 관점", "text": "", "type": "개념 · 선택형", "q": "작품에, 그것이 창작된 당시의 사회·문화적 현실과 시대 상황이 어떻게 담겼는지에 주목하는 관점은?", "opts": ["내재적 관점", "표현론적 관점", "반영론적 관점", "효용론적 관점"], "ans": "반영론적 관점", "exp": "작품을 시대 현실과 사회상에 비추어 해석하므로 반영론적 관점입니다.", "mode": "concept"}, {"id": "KM4", "work": "개념 · 네 가지 관점", "text": "", "type": "개념 · 선택형", "q": "작품이 독자에게 주는 감동·교훈·깨달음 등 독자에게 미친 영향을 중심으로 감상하는 관점은?", "opts": ["내재적 관점", "표현론적 관점", "반영론적 관점", "효용론적 관점"], "ans": "효용론적 관점", "exp": "작품이 독자에게 준 영향과 깨달음을 중심으로 감상하므로 효용론적 관점입니다.", "mode": "concept"}, {"id": "KM5", "work": "개념 · 네 가지 관점", "text": "", "type": "개념 · 선택형", "q": "‘반영론적 관점’에서 작품 해석의 근거로 삼는 것은?", "opts": ["작품 자체", "작가", "시대 상황", "독자"], "ans": "시대 상황", "exp": "반영론적 관점은 작품에 반영된 그 시대의 사회·문화적 현실을 근거로 삼습니다.", "mode": "concept"}, {"id": "KM6", "work": "개념 · 네 가지 관점", "text": "", "type": "개념 · 선택형", "q": "‘효용론적 관점’에서 작품 해석의 근거로 삼는 것은?", "opts": ["작품 자체", "작가", "시대 상황", "독자"], "ans": "독자", "exp": "효용론적 관점은 작품을 읽은 독자가 받은 감동과 깨달음을 근거로 삼습니다.", "mode": "concept"}, {"id": "KM7", "work": "개념 · 네 가지 관점", "text": "", "type": "개념 · 변별형", "q": "다음 네 관점 중, 나머지 셋과 성격이 다른 하나는?", "opts": ["표현론적 관점", "반영론적 관점", "효용론적 관점", "내재적 관점"], "ans": "내재적 관점", "exp": "내재적 관점만 작품 ‘안’을 근거로 삼고, 표현·반영·효용론적 관점은 작가·시대·독자 등 작품 ‘밖’의 요소를 근거로 삼는 외재적 관점입니다.", "mode": "concept"}, {"id": "KM8", "work": "개념 · 네 가지 관점", "text": "", "type": "개념 · 변별형", "q": "작품에 담긴 ‘시대 현실’이 아니라 ‘작가의 삶과 가치관’에 주목하여 해석하는 관점은?", "opts": ["내재적 관점", "표현론적 관점", "반영론적 관점", "효용론적 관점"], "ans": "표현론적 관점", "exp": "시대 현실에 주목하면 반영론적 관점, 작가에 주목하면 표현론적 관점입니다. 둘을 혼동하지 않도록 주의합니다.", "mode": "concept"}, {"id": "KS1", "work": "개념 · 네 가지 관점", "text": "", "type": "서답형", "q": "작품 해석의 근거를 작가·시대·독자가 아닌 ‘작품 그 자체(언어·구조·운율)’에 두는 관점의 이름을 쓰시오.", "opts": [], "ans": "내재적 관점", "exp": "작품 내부의 표현과 구조만을 근거로 삼는 관점입니다.", "mode": "concept"}, {"id": "KS2", "work": "개념 · 네 가지 관점", "text": "", "type": "서답형", "q": "작품 해석의 근거를 ‘작가’의 삶과 가치관에 두는 관점의 이름을 쓰시오.", "opts": [], "ans": "표현론적 관점", "exp": "작품을 작가의 정신세계와 연결 지어 해석하는 관점입니다.", "mode": "concept"}, {"id": "KS3", "work": "개념 · 네 가지 관점", "text": "", "type": "서답형", "q": "작품 해석의 근거를 ‘시대 현실(사회·문화적 배경)’에 두는 관점의 이름을 쓰시오.", "opts": [], "ans": "반영론적 관점", "exp": "작품에 반영된 당대의 사회·문화적 현실을 근거로 삼는 관점입니다.", "mode": "concept"}, {"id": "KS4", "work": "개념 · 네 가지 관점", "text": "", "type": "서답형", "q": "작품 해석의 근거를 ‘독자’가 받은 감동과 깨달음에 두는 관점의 이름을 쓰시오.", "opts": [], "ans": "효용론적 관점", "exp": "작품이 독자에게 준 영향을 근거로 삼는 관점입니다.", "mode": "concept"}, {"id": "B1", "work": "시: 엄마 걱정 (기형도)", "text": "이 시에서 '배춧잎 같은 발소리 타박타박'이라는 표현은 당시 도시 빈민층의 고단한 삶의 무게를 그대로 드러냅니다. 1960~70년대 근대화 과정에서 외면받았던 소외된 이들의 쓸쓸하고 차가운 현실이 시장에 간 어머니를 기다리는 외로운 아이의 시선에 투영되어 있습니다. 따라서 이 시는 당대 사회의 어두운 이면을 사실적으로 보여주는 작품입니다.", "type": "1. 관점의 이름", "q": "다음 비평은 문학 작품을 감상하는 어떤 관점에 해당하나요?", "opts": ["내재적 관점", "표현론적 관점", "반영론적 관점", "효용론적 관점"], "ans": "반영론적 관점", "exp": "1960~70년대 근대화 과정이라는 시대 상황과 사회적 현실을 바탕으로 작품을 해석하고 있으므로 반영론적 관점입니다.", "mode": "basic"}, {"id": "B2", "work": "시: 엄마 걱정 (기형도)", "text": "시인 기형도는 유년 시절에 아버지가 갑작스럽게 쓰러지신 후, 어머니가 생계를 전적으로 책임져야 했던 불우한 환경 속에서 성장했습니다. 이 시에 나타나는 '열무 삼십 단을 이고 시장에 간 우리 엄마'나 '배춧잎 같은 발소리'는 시인의 실제 자전적 경험과 기억이 고스란히 묻어나는 구절입니다. 유년의 깊은 외로움이 시인의 내면세계에 남아 이 시를 창작하게 한 원동력이 되었습니다.", "type": "2. 해석 요소 명칭", "q": "다음 비평이 작품 해석에 있어 가장 핵심적으로 고려하고 있는 요소는 무엇인가요?", "opts": ["작품 자체", "작가", "시대 상황", "독자"], "ans": "작가", "exp": "시인 기형도의 유년 시절 경험, 자전적 기억, 창작 동기 등 '작가'라는 요소를 중심으로 해석하고 있습니다.", "mode": "basic"}, {"id": "B3", "work": "시: 엄마 걱정 (기형도)", "text": "혼자 어두운 방에 남아 어머니를 애타게 기다리는 유년 시절 화자의 서러운 모습을 보며, 어릴 적 맞벌이 부모님을 기다리던 제 자신의 외롭고 무서웠던 감정이 떠올라 가슴이 먹먹해졌습니다. 지금은 성인이 되었지만, 이 시를 읽고 난 뒤 부모님의 눈물겨운 헌신과 사랑에 대해 깊이 감사하는 마음을 새롭게 가지게 되었습니다. 문학이 독자의 마음을 위로하고 올바른 삶의 태도를 심어준다는 것을 보여줍니다.", "type": "3. 해석 요소 설명", "q": "다음 비평의 관점이 바탕으로 삼고 있는 해석 요소를 가장 잘 설명한 것은 무엇인가요?", "opts": ["작품 내부의 언어적 표현과 구조", "작품을 창작한 작가의 정신 세계나 가치관", "작품의 배경이 되는 당시의 사회·문화적 현실", "작품을 읽고 독자가 느끼는 감동과 깨달음"], "ans": "작품을 읽고 독자가 느끼는 감동과 깨달음", "exp": "독자가 시를 읽고 주관적으로 느낀 외로움의 공감, 부모님에 대한 감사 등 '독자에게 미친 효용과 깨달음'을 기준으로 평가하고 있습니다.", "mode": "basic"}, {"id": "B4", "work": "시: 엄마 걱정 (기형도)", "text": "이 시는 유년 시절을 회상하는 1연과 어른이 된 현재의 정서로 맺는 2연의 구조를 통해 외로움의 정서를 응축합니다. '찬밥처럼 방에 담겨', '배춧잎 같은 발소리'와 같은 직유로 어린 화자의 쓸쓸함과 지친 어머니의 모습을 형상화하고, 음성 상징어 '타박타박'이 청각적 심상을 선명하게 살립니다. 또한 '안 오시네', '안 들리네'로 이어지는 '~네' 종결의 반복이 기다림의 애상을 고조시키며, '금 간 창틈으로 고요히 빗소리'라는 청각적 심상이 화자의 외로운 정서를 부각합니다. 이처럼 작품 내부의 비유와 심상, 반복 구조의 짜임새만으로도 완결성이 매우 뛰어납니다.", "type": "1. 관점의 이름", "q": "다음 비평은 문학 작품을 감상하는 어떤 관점에 해당하나요?", "opts": ["내재적 관점", "표현론적 관점", "반영론적 관점", "효용론적 관점"], "ans": "내재적 관점", "exp": "외부 요소를 배제하고 작품 내부의 직유, 청각적 심상, 반복 구조 등 작품 자체의 짜임만으로 해석하므로 내재적 관점입니다.", "mode": "basic"}, {"id": "B5", "work": "소설: 동백꽃 (김유정)", "text": "소설 '동백꽃'은 순진하고 어수룩한 서술자인 '나'를 설정함으로써 독자에게 해학적인 분위기와 미소를 효과적으로 자아냅니다. 점순이의 역설적인 애정 공세와 이를 전혀 알아채지 못하는 '나'의 인지적 불일치가 서사 구조 내에서 갈등과 웃음을 동시에 유발하는 핵심 장치로 작동합니다. 인물 간의 대조적 성격 구축과 토속적 어휘의 긴밀한 배치가 소설의 독자적인 묘미를 완성합니다.", "type": "2. 해석 요소 명칭", "q": "다음 비평이 작품 해석에 있어 가장 핵심적으로 고려하고 있는 요소는 무엇인가요?", "opts": ["작품 자체", "작가", "시대 상황", "독자"], "ans": "작품 자체", "exp": "서술자 설정, 서사 구조, 인물 대조, 토속적 어휘 등 작품의 내적 구성 요소에만 주목하므로 '작품 자체'가 핵심 요소입니다.", "mode": "basic"}, {"id": "B6", "work": "소설: 동백꽃 (김유정)", "text": "작가 김유정은 깊은 애착을 갖고 「동백꽃」의 무대로 삼은 강원도 춘천 신동면 실레마을의 향토적 색채를 배경으로 농촌 사회의 풍경을 생생하게 그려냈습니다. 평소 인물들의 인간미와 해학성을 중시하던 작가 특유의 따뜻한 문학관이 고스란히 반영되어, 자칫 무거울 수 있는 남녀 간의 갈등을 유쾌하고 정감 어린 어조로 포착해 냈습니다. 작가의 고유한 문체와 인간 중심적 시선이 소설 전반의 정서를 지배하고 있습니다.", "type": "3. 해석 요소 설명", "q": "다음 비평의 관점이 바탕으로 삼고 있는 해석 요소를 가장 잘 설명한 것은 무엇인가요?", "opts": ["작품 내부의 언어적 표현과 구조", "작품을 창작한 작가의 정신 세계나 가치관", "작품의 배경이 되는 당시의 사회·문화적 현실", "작품을 읽고 독자가 느끼는 감동과 깨달음"], "ans": "작품을 창작한 작가의 정신 세계나 가치관", "exp": "김유정 작가의 고향 배경 사용, 작가의 문학관, 인간을 바라보는 시선 등을 통해 분석하므로 '작가의 정신 세계나 가치관'에 해당합니다.", "mode": "basic"}, {"id": "B7", "work": "소설: 동백꽃 (김유정)", "text": "이 소설에 등장하는 점순이와 '나'의 갈등 기저에는 '마름의 딸'과 '소작인의 아들'이라는 1930년대 식민지 조선 농촌의 불평등한 계층 구조가 완고하게 자리 잡고 있습니다. 비록 표면적으로는 사춘기 남녀의 풋풋한 연정으로 그려지지만, 점순이의 요구를 거절하지 못하고 전전긍긍하는 '나'의 모습은 당대 농촌의 신분적·경제적 지배 관계를 날카롭게 투영합니다.", "type": "1. 관점의 이름", "q": "다음 비평은 문학 작품을 감상하는 어떤 관점에 해당하나요?", "opts": ["내재적 관점", "표현론적 관점", "반영론적 관점", "효용론적 관점"], "ans": "반영론적 관점", "exp": "1930년대 식민지 조선 농촌의 지주·소작(마름과 소작인) 관계라는 사회 구조와 시대상을 바탕으로 작품을 해석하므로 반영론적 관점입니다.", "mode": "basic"}, {"id": "B8", "work": "소설: 동백꽃 (김유정)", "text": "점순이가 '나'의 씨닭을 괴롭히며 마음을 전하려 애쓰는 장면을 보며, 이성의 관심을 끌기 위해 괜히 심술을 부렸던 나의 부끄러운 학창 시절이 떠올라 깊은 웃음과 공감을 자아냈습니다. 소설을 덮고 나서 타인의 서툰 호의를 곡해하지 않고 진심을 읽어내는 안목이 우리의 삶에서 얼마나 소중한지 깊이 생각해보는 계기가 되었습니다.", "type": "1. 관점의 이름", "q": "다음 비평은 문학 작품을 감상하는 어떤 관점에 해당하나요?", "opts": ["내재적 관점", "표현론적 관점", "반영론적 관점", "효용론적 관점"], "ans": "효용론적 관점", "exp": "독자가 작품을 읽고 떠올린 자신의 과거 경험, 공감, 삶에 대한 성찰 등 독자에게 미친 감동과 깨달음을 중심으로 감상하므로 효용론적 관점입니다.", "mode": "basic"}, {"id": "B9", "work": "소설: 하늘은 맑건만 (현덕)", "text": "이 소설은 주인공 문기의 심리 변화에 맞추어 서사가 치밀하고 긴밀하게 전개되는 훌륭한 구성을 취하고 있습니다. 숙모의 돈을 훔친 후 느끼는 주인공의 죄책감과 내면적 불안감이 '맑고 푸른 하늘'이라는 배경과 선명한 시각적 대조를 이루며 내적 갈등을 형상화합니다. 인과관계가 뚜렷한 플롯 배치와 고유한 상징물이 지닌 내적 완결성이 매우 돋보입니다.", "type": "3. 해석 요소 설명", "q": "다음 비평의 관점이 바탕으로 삼고 있는 해석 요소를 가장 잘 설명한 것은 무엇인가요?", "opts": ["작품 내부의 언어적 표현과 구조", "작품을 창작한 작가의 정신 세계나 가치관", "작품의 배경이 되는 당시의 사회·문화적 현실", "작품을 읽고 독자가 느끼는 감동과 깨달음"], "ans": "작품 내부의 언어적 표현과 구조", "exp": "서사 구성, 배경과 심리의 시각적 대조, 플롯 배치 등 내부적 미학성과 표현 방식을 다루므로 '작품 내부의 언어적 표현과 구조'입니다.", "mode": "basic"}, {"id": "B10", "work": "소설: 하늘은 맑건만 (현덕)", "text": "소설 '하늘은 맑건만'은 1930년대 도시 골목길을 배경으로 당시 아동들이 직면했던 물질적 유혹과 도덕적 가치관의 혼란상을 사실적으로 포착해 냈습니다. 우연히 생긴 거스름돈으로 공과 쌍안경, 군것질거리 등을 사며 소비의 유혹에 흔들리는 아이들의 모습은, 도시화·상업화가 스며들던 당시 서울 하층민의 생활 풍경을 그대로 반영한 거울입니다.", "type": "1. 관점의 이름", "q": "다음 비평은 문학 작품을 감상하는 어떤 관점에 해당하나요?", "opts": ["내재적 관점", "표현론적 관점", "반영론적 관점", "효용론적 관점"], "ans": "반영론적 관점", "exp": "1930년대 자본주의 가치관 유입, 서울 하층민의 생활상 등 당대의 사회적·역사적 현실을 바탕으로 분석하므로 반영론적 관점입니다.", "mode": "basic"}, {"id": "B11", "work": "소설: 하늘은 맑건만 (현덕)", "text": "잘못을 저지른 후 부끄러움 때문에 맑은 하늘을 차마 똑바로 쳐다보지 못하는 문기의 정직한 고뇌를 보면서, 저 역시 사소한 이익 앞에 눈감았던 과거를 뼈저리게 되돌아보았습니다. 양심을 지키는 일은 당장 부끄럽고 두려울지라도 인간의 영혼을 맑게 가꾸는 가장 고귀한 가치임을 이 소설을 통해 깊이 깨달았습니다.", "type": "2. 해석 요소 명칭", "q": "다음 비평이 작품 해석에 있어 가장 핵심적으로 고려하고 있는 요소는 무엇인가요?", "opts": ["작품 자체", "작가", "시대 상황", "독자"], "ans": "독자", "exp": "독자 개인의 반성과 성찰, 양심에 대한 도덕적 깨달음과 내면적 교화에 초점을 맞추고 있으므로 '독자'가 핵심 요소입니다.", "mode": "basic"}, {"id": "B12", "work": "소설: 하늘은 맑건만 (현덕)", "text": "작가 현덕은 대표적인 아동문학가로서, 아이들의 눈높이에서 도덕적 성장과 인간 양심의 문제를 끊임없이 탐구했던 소신 있는 예술가입니다. 그는 아이들이 겪는 일상적인 도덕적 균열을 극복하는 과정을 통해, 어린이들에게 올바른 양심과 가치관을 심어 주려는 뚜렷한 교육적 의도를 품고 이 글을 썼습니다. 작가의 이러한 아동 존중 철학이 문기의 세밀한 심리 묘사에 녹아 있습니다.", "type": "1. 관점의 이름", "q": "다음 비평은 문학 작품을 감상하는 어떤 관점에 해당하나요?", "opts": ["내재적 관점", "표현론적 관점", "반영론적 관점", "효용론적 관점"], "ans": "표현론적 관점", "exp": "작가 현덕의 예술적 철학, 아동문학가로서의 소신, 가치관을 정립하려는 집필 의도에 근거해 작품을 보므로 표현론적 관점입니다.", "mode": "basic"}, {"id": "B13", "work": "소설: 기억 속의 들꽃 (윤흥길)", "text": "이 작품은 전쟁의 잔혹함과 비극성을 '명선이'라는 인물이 지닌 목숨과도 같은 '금반지'라는 상징물을 통해 문학적으로 탁월하게 형상화했습니다. 순진한 시골 소년인 '나'를 서술자로 내세워 어린아이의 시선으로 비극을 담담하게 전달함으로써 그 참혹함을 오히려 선명하게 부각하며, 아름다운 들꽃의 미학적 이미지와 명선이의 비극적 죽음이 극적인 구조적 대비를 시각적으로 전개합니다. 플롯의 내적 긴장감이 돋보입니다.", "type": "2. 해석 요소 명칭", "q": "다음 비평이 작품 해석에 있어 가장 핵심적으로 고려하고 있는 요소는 무엇인가요?", "opts": ["작품 자체", "작가", "시대 상황", "독자"], "ans": "작품 자체", "exp": "금반지의 상징성, 서술자의 배치, 들꽃과 죽음의 구조적 대비 등 오롯이 텍스트 내부의 미적 요소들만 살피므로 '작품 자체'가 정답입니다.", "mode": "basic"}, {"id": "B14", "work": "소설: 기억 속의 들꽃 (윤흥길)", "text": "이 소설은 6·25 전쟁이라는 한국 현대사의 거대한 비극이 평범한 인간성과 순수한 어린이들의 영혼을 어떻게 참혹하게 파괴하는지 적나라하게 고발하는 증언록입니다. 전쟁통에 부모를 잃고 피란길을 떠돌며 탐욕스러운 어른들에게 이용당하는 명선이의 비참한 몰골은 당대 전쟁이 초래한 극단적인 인간성 상실과 비인간적인 사회적 혼란을 있는 그대로 묘사합니다.", "type": "3. 해석 요소 설명", "q": "다음 비평의 관점이 바탕으로 삼고 있는 해석 요소를 가장 잘 설명한 것은 무엇인가요?", "opts": ["작품 내부의 언어적 표현과 구조", "작품을 창작한 작가의 정신 세계나 가치관", "작품의 배경이 되는 당시의 사회·문화적 현실", "작품을 읽고 독자가 느끼는 감동과 깨달음"], "ans": "작품의 배경이 되는 당시의 사회·문화적 현실", "exp": "6·25 전쟁이라는 거대한 역사적 사건과 그로 인한 인간성 상실 등 '당시의 사회·문화적 현실'을 바탕으로 작품을 해석하고 있습니다.", "mode": "basic"}, {"id": "B15", "work": "소설: 기억 속의 들꽃 (윤흥길)", "text": "작가 윤흥길은 한국 분단 소설과 전쟁의 상흔을 다루는 데 독보적인 역량을 발휘해 온 소설가로, 자신이 유년 시절 직접 보고 겪은 전쟁의 참상을 작품 세계의 뿌리로 삼았습니다. 그의 문학은 거대한 폭력 앞에서 나약한 인간이 느끼는 공포와 이를 치유하고자 하는 인도주의적 염원을 일관되게 담고 있습니다. 이 작품 또한 작가의 이와 같은 비극적 역사 인식과 생명 존중 세계관이 고스란히 담겨 있습니다.", "type": "1. 관점의 이름", "q": "다음 비평은 문학 작품을 감상하는 어떤 관점에 해당하나요?", "opts": ["내재적 관점", "표현론적 관점", "반영론적 관점", "효용론적 관점"], "ans": "표현론적 관점", "exp": "작가 윤흥길의 유년 시절 경험, 역사 인식, 인도주의적 세계관 등 작가 측면의 요인을 들어 작품을 분석하므로 표현론적 관점입니다.", "mode": "basic"}, {"id": "B16", "work": "소설: 기억 속의 들꽃 (윤흥길)", "text": "피란길 다리 위에서 바람을 맞으며 허망하게 떨어져 죽는 명선이의 마지막 모습을 읽었을 때, 한동안 심장이 멎는 듯한 고통과 깊은 슬픔을 느꼈습니다. 평화로운 문명 속에서 당연하게 누려왔던 나의 일상이 얼마나 소중한지 절실히 깨달았고, 우리 사회의 사각지대에 놓인 고아들과 소외된 영혼들을 보살펴야겠다는 강력한 인도적 책임감을 안게 되었습니다.", "type": "2. 해석 요소 명칭", "q": "다음 비평이 작품 해석에 있어 가장 핵심적으로 고려하고 있는 요소는 무엇인가요?", "opts": ["작품 자체", "작가", "시대 상황", "독자"], "ans": "독자", "exp": "작품의 결말이 감상자인 독자에게 준 깊은 슬픔, 일상의 소중함 환기, 사회적 책임감 유발 등 '독자'의 반응을 중심으로 평가하고 있습니다.", "mode": "basic"}, {"id": "B17", "work": "드라마: 더 글로리 (김은숙)", "text": "드라마 '더 글로리'는 우리 사회에 은폐되어 있던 악독한 학교폭력과 사법 시스템의 유전무죄 한계, 그리고 수저계급론에 따른 빈부 격차의 단면을 날카롭게 고발합니다. 가해자들이 가문과 부를 이용해 법망을 빠져나가고 피해자만 평생 고통 속에 신음하는 부조리한 현실은, 현대 한국 사회가 지닌 실제 모순적 구조를 그대로 보여주는 현실의 거울입니다.", "type": "1. 관점의 이름", "q": "다음 비평은 문학 작품을 감상하는 어떤 관점에 해당하나요?", "opts": ["내재적 관점", "표현론적 관점", "반영론적 관점", "효용론적 관점"], "ans": "반영론적 관점", "exp": "학교폭력, 빈부격차, 사법적 한계 등 당대 현대 한국 사회의 현실 모순을 극에 투영하여 해석하므로 반영론적 관점입니다.", "mode": "basic"}, {"id": "B18", "work": "드라마: 더 글로리 (김은숙)", "text": "김은숙 작가는 고등학생인 자신의 딸이 던진 '엄마는 내가 누구를 죽도록 때리는 게 더 가슴 아플 것 같아, 아니면 죽도록 맞고 오는 게 더 가슴 아플 것 같아?'라는 질문에 깊은 충격을 받아 이 극을 기획했다고 고백했습니다. 작가는 학교폭력 피해자들이 평생 짊어지고 살아야 할 영혼의 상처를 세상에 환기하고, 그들에게 완전한 명예 회복을 선물하겠다는 명확하고 따뜻한 집필 의도를 품고 각본을 완성해 나갔습니다.", "type": "3. 해석 요소 설명", "q": "다음 비평의 관점이 바탕으로 삼고 있는 해석 요소를 가장 잘 설명한 것은 무엇인가요?", "opts": ["작품 내부의 언어적 표현과 구조", "작품을 창작한 작가의 정신 세계나 가치관", "작품의 배경이 되는 당시의 사회·문화적 현실", "작품을 읽고 독자가 느끼는 감동과 깨달음"], "ans": "작품을 창작한 작가의 정신 세계나 가치관", "exp": "김은숙 작가가 딸에게 받은 질문, 기획 의도, 피해자들을 위로하려는 집필 목적 등 '작가의 정신 세계와 가치관'에 집중한 비평입니다.", "mode": "basic"}, {"id": "B19", "work": "드라마: 더 글로리 (김은숙)", "text": "주인공 문동은이 치밀하게 설계한 복수극을 통해 악마 같은 가해자들을 하나씩 파멸로 이끄는 과정을 지켜보며, 그간 억눌렸던 답답함이 일시에 해소되는 강렬한 카타르시스를 맛보았습니다. 그러면서도 '사적 복수는 정당한가'라는 묵직한 도덕적 질문에 직면하게 되었고, 우리 공동체가 피해자들의 상처를 치유하기 위해 나아가야 할 진정한 연대의 방향을 깊이 성찰하게 되었습니다.", "type": "2. 해석 요소 명칭", "q": "다음 비평이 작품 해석에 있어 가장 핵심적으로 고려하고 있는 요소는 무엇인가요?", "opts": ["작품 자체", "작가", "시대 상황", "독자"], "ans": "독자", "exp": "드라마 시청자인 '독자(시청자)'가 느끼는 카타르시스, 도덕적 질문에 대한 고민, 사회적 성찰을 핵심으로 다루고 있습니다.", "mode": "basic"}, {"id": "B20", "work": "드라마: 더 글로리 (김은숙)", "text": "이 드라마는 '바둑'이라는 고도의 상징적 소재를 정중앙에 배치하고, 이를 서사의 집을 짓고 부수는 플롯 구조와 완벽하게 병치시켰습니다. '침묵 속에서 상대의 집을 빼앗는' 바둑의 메커니즘이 문동은의 은밀한 복수 방식과 일치하며, 촘촘하게 배치된 대사 속 복선들과 주연·조연 간의 완벽한 대칭적 구도가 극적 긴장감을 최고조로 끌어올리는 뛰어난 내적 짜임새를 자랑합니다.", "type": "1. 관점의 이름", "q": "다음 비평은 문학 작품을 감상하는 어떤 관점에 해당하나요?", "opts": ["내재적 관점", "표현론적 관점", "반영론적 관점", "효용론적 관점"], "ans": "내재적 관점", "exp": "상징적 소재(바둑), 플롯 구조, 대사 속 복선, 대칭적 구도 등 극 내부의 시나리오적 완결성과 연출 기법에 집중하므로 내재적 관점입니다.", "mode": "basic"}, {"id": "B21", "work": "영화: 왕과 사는 남자 (장항준)", "text": "영화 '왕과 사는 남자'는 왕위에서 쫓겨나 유배된 어린 선왕 '이홍위'와 그를 곁에서 지키는 마을 촌장 '엄흥도'의 대비 구도를 중심축으로 삼아 극을 이끌어 갑니다. 영월 산골의 고립된 유배 공간 안에서 두 인물이 주고받는 대사의 긴장과 이완, 밥상을 사이에 두고 쌓아 가는 교감이 절제된 연출로 그려집니다. 군더더기를 덜어 낸 압축적 플롯과 인물 간 호흡의 유기적 짜임새가 작품의 내적 완결성을 한층 끌어올립니다.", "type": "3. 해석 요소 설명", "q": "다음 비평의 관점이 바탕으로 삼고 있는 해석 요소를 가장 잘 설명한 것은 무엇인가요?", "opts": ["작품 내부의 언어적 표현과 구조", "작품을 창작한 작가의 정신 세계나 가치관", "작품의 배경이 되는 당시의 사회·문화적 현실", "작품을 읽고 독자가 느끼는 감동과 깨달음"], "ans": "작품 내부의 언어적 표현과 구조", "exp": "두 인물의 대비 구도, 유배지라는 공간 활용, 대사의 긴장과 이완, 호랑이를 통한 상징적 연출, 압축적 플롯 등 영화 텍스트 내부의 표현과 구조적 특징을 분석하고 있으므로 '작품 내부의 언어적 표현과 구조'입니다.", "mode": "basic"}, {"id": "B22", "work": "영화: 왕과 사는 남자 (장항준)", "text": "이 영화는 계유정난을 일으킨 수양대군이 어린 조카의 왕위를 빼앗고 단종을 끝내 죽음으로 내몬 15세기 조선의 비정한 권력 쟁탈사를 정면으로 끌어옵니다. 단종의 유배와 호장 엄흥도의 충절은 왕권과 신권이 격렬하게 충돌하던 당대의 정치 현실과, 그 소용돌이 속에서 짓밟힌 한 인간의 비극을 사실적으로 비춥니다. 표면적으로는 두 사람의 동행을 그리지만, 그 밑바탕에는 당시의 냉혹한 역사적 상황이 자리 잡고 있습니다.", "type": "1. 관점의 이름", "q": "다음 비평은 문학 작품을 감상하는 어떤 관점에 해당하나요?", "opts": ["내재적 관점", "표현론적 관점", "반영론적 관점", "효용론적 관점"], "ans": "반영론적 관점", "exp": "계유정난과 단종의 폐위·죽음이라는 15세기 조선의 권력 쟁탈사와 정치적 현실을 바탕으로 작품을 해석하므로 반영론적 관점입니다.", "mode": "basic"}, {"id": "B23", "work": "영화: 왕과 사는 남자 (장항준)", "text": "권력 앞에 모든 것을 잃고도 끝내 왕으로서의 품위를 지키려는 어린 이홍위의 모습과, 죽음을 무릅쓰고 그 곁을 떠나지 않은 엄흥도의 충심을 지켜보는 내내 가슴이 먹먹하고 눈물이 차올랐습니다. 영화가 끝난 뒤, 이익을 따지기보다 사람으로서 마땅히 지켜야 할 도리와 의리가 무엇인지 오래도록 곱씹게 되었고, 나 역시 신의를 저버리지 않는 사람이 되어야겠다고 다짐했습니다.", "type": "2. 해석 요소 명칭", "q": "다음 비평이 작품 해석에 있어 가장 핵심적으로 고려하고 있는 요소는 무엇인가요?", "opts": ["작품 자체", "작가", "시대 상황", "독자"], "ans": "독자", "exp": "영화를 본 관객(독자)이 느낀 먹먹함과 눈물, 도리·의리에 대한 깨달음과 삶의 다짐 등 수용자의 정서적 반응과 변화를 중심으로 삼고 있으므로 해석 요소는 '독자'입니다.", "mode": "basic"}, {"id": "B24", "work": "노래: 아파트 (로제 & 브루노 마스)", "text": "로제와 브루노 마스가 협업한 '아파트(APT.)'는 한국의 일상적인 술자리 게임 구호를 매우 중독성 강한 드럼 비트와 기타 루프 위에 얹어 곡의 리듬감을 극한으로 끌어올렸습니다. '아파트 아파트'라는 경쾌한 스타카토식 챈트의 반복적 배치와 팝적인 멜로디 라인의 유기적인 조화가 청자에게 즉각적인 청각적 쾌감을 부여합니다. 가사의 영문과 한글 구절의 리드미컬한 교차가 청량한 구조미를 보여줍니다.", "type": "1. 관점의 이름", "q": "다음 비평은 문학 작품을 감상하는 어떤 관점에 해당하나요?", "opts": ["내재적 관점", "표현론적 관점", "반영론적 관점", "효용론적 관점"], "ans": "내재적 관점", "exp": "드럼 비트, 리듬감, 챈트의 반복적 배치, 멜로디 라인의 유기적 조화, 가사의 구조미 등 음악 텍스트 자체의 매력에 집중하므로 내재적 관점입니다.", "mode": "basic"}, {"id": "B25", "work": "시: 풀꽃 (나태주)", "text": "이 시는 평생 시골 학교에서 아이들을 가르친 나태주 시인이, 말썽 많고 미운 아이라도 오래 들여다보면 사랑스럽다는 것을 깨달은 교직 생활의 체험에서 길어 올린 작품입니다. '자세히 보아야 예쁘다'라는 구절에는 작고 사소한 존재 하나하나를 귀하게 바라보려는 시인 특유의 따뜻한 인간관과 생명을 존중하는 가치관이 고스란히 배어 있습니다. 시인이 세상을 바라보는 다정한 시선이 짧은 시구 속에 응축되어 있습니다.", "type": "3. 해석 요소 설명", "q": "다음 비평의 관점이 바탕으로 삼고 있는 해석 요소를 가장 잘 설명한 것은 무엇인가요?", "opts": ["작품 내부의 언어적 표현과 구조", "작품을 창작한 작가의 정신 세계나 가치관", "작품의 배경이 되는 당시의 사회·문화적 현실", "작품을 읽고 독자가 느끼는 감동과 깨달음"], "ans": "작품을 창작한 작가의 정신 세계나 가치관", "exp": "나태주 시인의 교직 체험, 작은 존재를 귀하게 여기는 인간관, 생명 존중의 가치관 등 '작가의 정신 세계나 가치관'을 근거로 작품을 해석하고 있으므로 이에 해당합니다.", "mode": "basic"}, {"id": "B26", "work": "노래: 사건의 지평선 (윤하)", "text": "싱어송라이터인 윤하는 평소 천문학에 대단히 깊은 관심을 두고 우주적 신비로움을 음악적 서사에 녹여내는 독창적인 작업을 지속해 왔습니다. 이 곡 역시 블랙홀 내부의 정보를 알 수 없는 경계선을 뜻하는 일반상대성이론의 과학적 개념을 차용해, 돌이킬 수 없는 이별의 순간을 아름답게 극화하려는 윤하의 음악적 지향점과 독창적 탐구 정신이 고스란히 반영된 지적 산물입니다.", "type": "2. 해석 요소 명칭", "q": "다음 비평이 작품 해석에 있어 가장 핵심적으로 고려하고 있는 요소는 무엇인가요?", "opts": ["작품 자체", "작가", "시대 상황", "독자"], "ans": "작가", "exp": "가수이자 창작자인 윤하의 개인적 천문학 관심사, 음악적 지향점, 창작 노력을 중심으로 해석하고 있으므로 '작가'가 핵심 요소입니다.", "mode": "basic"}, {"id": "B27", "work": "노래: 사건의 지평선 (윤하)", "text": "'사건의 지평선' 가사는 이별이라는 슬픈 사건에 매몰되지 않고, 거스를 수 없는 우주의 법칙과 도도한 시간의 흐름이라는 거대한 자연적 상징을 통해 서정적으로 승화시킵니다. '아낌없이 반짝인 시간', '새로운 길 모퉁이' 같은 세련된 시어와 은유 기법이 텍스트의 밀도를 높여주며, 웅장한 멜로디의 고조와 가사의 감정선 변화가 완벽한 내적 하모니를 구축합니다.", "type": "1. 관점의 이름", "q": "다음 비평은 문학 작품을 감상하는 어떤 관점에 해당하나요?", "opts": ["내재적 관점", "표현론적 관점", "반영론적 관점", "효용론적 관점"], "ans": "내재적 관점", "exp": "가사 내부의 은유 기법, 시어의 대칭적 배치, 가사 감정선과 멜로디의 완벽한 내적 하모니 등 텍스트 내부 요인만 평가하므로 내재적 관점입니다.", "mode": "basic"}, {"id": "B28", "work": "노래: 사건의 지평선 (윤하)", "text": "'여긴 서로의 끝이 아닌 새로운 길 모퉁이'라는 가사의 마지막 자락을 들으면서, 최근 오랜 연인과 헤어지고 절망에 빠져 있던 제 삶에 커다란 위로와 치유의 빛을 얻었습니다. 이별이 단순한 파멸이 아니라 내 삶의 또 다른 도약을 위한 필연적 과정임을 깨닫게 해주어, 한층 성숙하고 긍정적인 가치관을 가지고 세상을 바라보게 되었습니다.", "type": "3. 해석 요소 설명", "q": "다음 비평의 관점이 바탕으로 삼고 있는 해석 요소를 가장 잘 설명한 것은 무엇인가요?", "opts": ["작품 내부의 언어적 표현과 구조", "작품을 창작한 작가의 정신 세계나 가치관", "작품의 배경이 되는 당시의 사회·문화적 현실", "작품을 읽고 독자가 느끼는 감동과 깨달음"], "ans": "작품을 읽고 독자가 느끼는 감동과 깨달음", "exp": "노래를 들은 청자(독자)가 이별의 상처를 치유받고 위로를 얻었으며 삶을 긍정하게 되었다는 '감동과 깨달음'을 바탕으로 논하고 있습니다.", "mode": "basic"}, {"id": "B29", "work": "동화: 신데렐라", "text": "동화 '신데렐라'는 중세 및 근대 초 유럽 사회의 가부장적 가정 구조와 폐쇄적이고 엄격했던 신분 제도의 단면을 적나라하게 형상화합니다. 무도회라는 공식 사교계를 통한 상류층과의 결합만이 여성이 합법적으로 신분을 상승시킬 수 있었던 당대의 척박한 사회적 현실과 여성의 종속적 지위가 고스란히 반영되어 있습니다. 재산 상속권을 둘러싼 계모의 학대 또한 냉혹한 경제상입니다.", "type": "1. 관점의 이름", "q": "다음 비평은 문학 작품을 감상하는 어떤 관점에 해당하나요?", "opts": ["내재적 관점", "표현론적 관점", "반영론적 관점", "효용론적 관점"], "ans": "반영론적 관점", "exp": "중세/근대 초 유럽의 신분 제도, 가부장적 구조, 상속권 문제 등 역사적·사회적 현실을 기반으로 텍스트를 읽고 있으므로 반영론적 관점입니다.", "mode": "basic"}, {"id": "B30", "work": "동화/고전소설: 흥부전", "text": "'흥부전'은 조선 후기 상품화폐 경제가 본격적으로 발달하면서 대두된 농촌 사회의 양극화와 빈부 격차의 참상을 날카롭게 포착합니다. 생계를 위해 돈을 받고 뺨을 맞거나 남의 매를 대신 맞아주는 극단적인 품팔이꾼 흥부의 모습과, 형제간의 혈연적 우애보다 개인의 사적 재산 축적을 절대시하는 놀부의 태도는 당대 붕괴해가던 유교적 공동체 질서와 자본주의적 가치관의 충돌을 그대로 투영합니다.", "type": "2. 해석 요소 명칭", "q": "다음 비평이 작품 해석에 있어 가장 핵심적으로 고려하고 있는 요소는 무엇인가요?", "opts": ["작품 자체", "작가", "시대 상황", "독자"], "ans": "시대 상황", "exp": "조선 후기 상품화폐 경제의 발달, 빈부 격차, 유교 공동체 붕괴 등 당대의 역사적 배경과 '시대 상황'을 핵심 요소로 결부시켰습니다.", "mode": "basic"}, {"id": "H1", "work": "드라마: 슬기로운 의사생활", "text": "이 드라마는 매회 '병원'이라는 고립적이면서도 역동적인 공간에서 벌어지는 에피소드가 독립적인 완결성을 지니며, 동시에 의대 5인방의 오랜 우정이라는 거대 서사와 유기적으로 맞물려 전개됩니다. 특히 극 중간에 삽입되는 주연들의 밴드 연주 장면은 해당 회차의 핵심 주제의식 및 가사와 완벽히 음악적인 조화를 이루어 텍스트의 내적 완성도를 극대화합니다. 인물 배치와 플롯의 유기성이 매우 뛰어납니다.", "type": "1. 관점의 이름", "q": "다음 비평은 문학 작품(혹은 문화 콘텐츠)을 감상하는 어떤 관점에 해당하나요?", "opts": ["내재적 관점", "표현론적 관점", "반영론적 관점", "효용론적 관점"], "ans": "내재적 관점", "exp": "에피소드의 독립적 완결성, 밴드 가사와 극의 유기적 음악 조화, 플롯의 내적 완성도 등 극 자체의 구조적 미학만으로 해석하므로 내재적 관점입니다.", "mode": "challenge"}, {"id": "H2", "work": "드라마: 슬기로운 의사생활", "text": "신원호 감독과 이우정 작가는 예능 프로그램 시절부터 오랜 기간 협업하며 따뜻한 인간미와 소소한 일상적 유머를 가장 중요시하는 고유한 대중문화관을 공유해 왔습니다. 이 드라마 역시 거창한 권력 암투나 자극적인 사건 대신 환자와 의사의 평범하고 따뜻한 일상을 다루고자 했던 제작진의 뚜렷한 창작 의도와 인본주의적 철학이 작품 속에 고스란히 투영된 결과물입니다.", "type": "2. 해석 요소 명칭", "q": "다음 비평이 작품 해석에 있어 가장 핵심적으로 고려하고 있는 요소는 무엇인가요?", "opts": ["작품 자체", "작가", "시대 상황", "독자"], "ans": "작가", "exp": "신원호 감독과 이우정 작가라는 창작진의 협업 성향, 일상적 유머를 중시하는 대중문화관, 집필 및 제작 의도를 바탕으로 해석하고 있으므로 '작가'가 핵심 요소입니다.", "mode": "challenge"}, {"id": "H3", "work": "드라마: 슬기로운 의사생활", "text": "이 작품에 등장하는, 과중한 당직과 긴 근무 시간에 시달리는 대학병원 전공의들의 열악한 근무 환경이나, 소아외과·흉부외과 등 기피 과목 의료진들이 겪는 현실적인 고충은 오늘날 한국 의료계의 실제 풍경을 포착하고 있습니다. 의료 인력 부족으로 인한 번아웃과 대형 병원의 시스템적 한계 등 현대 한국 사회의 단면을 사실적으로 투영해 냈습니다.", "type": "3. 해석 요소 설명", "q": "다음 비평의 관점이 바탕으로 삼고 있는 해석 요소를 가장 잘 설명한 것은 무엇인가요?", "opts": ["작품 내부의 언어적 표현과 구조", "작품을 창작한 작가의 정신 세계나 가치관", "작품의 배경이 되는 당시의 사회·문화적 현실", "작품을 읽고 독자가 느끼는 감동과 깨달음"], "ans": "작품의 배경이 되는 당시의 사회·문화적 현실", "exp": "주 52시간 근무제, 기피 과목 인력 부족, 한국 의료계의 현실 등 '당대 사회·문화적 현실'을 바탕으로 텍스트를 분석하는 관점입니다.", "mode": "challenge"}, {"id": "H4", "work": "드라마: 슬기로운 의사생활", "text": "서로를 위해 아낌없이 헌신하고 환자를 진심으로 위로하는 의사들의 인간적인 면모를 지켜보며, 냉혹한 무한 경쟁 사회 속에서 메말라가던 제 내면이 따뜻하게 치유되는 위로를 받았습니다. 드라마 시청을 마친 후 주변 사람들의 아픔에 좀 더 귀를 기울이고, 진정한 인간관계의 가치를 내 삶에서 직접 실천해야겠다는 성숙한 다짐을 하게 되었습니다.", "type": "1. 관점의 이름", "q": "다음 비평은 문학 작품(혹은 문화 콘텐츠)을 감상하는 어떤 관점에 해당하나요?", "opts": ["내재적 관점", "표현론적 관점", "반영론적 관점", "효용론적 관점"], "ans": "효용론적 관점", "exp": "수용자인 독자(시청자)가 얻은 정서적 치유, 위로, 진정한 인간관계에 대한 성찰과 삶의 태도 변화를 다루고 있으므로 효용론적 관점입니다.", "mode": "challenge"}, {"id": "H5", "work": "시: 꽃 (김춘수)", "text": "이 시는 의미 없는 '몸짓'에 불과했던 대상이 이름을 불러줌으로써 '꽃'이라는 의미 있는 존재가 되고, 나아가 서로에게 잊혀지지 않는 '눈짓'이 되기를 소망하는 점층적 구조를 통해 시상을 심화해 나갑니다. 또한 종결어미 '~다'의 반복적인 배치를 통해 안정적인 율격을 형성하며, '몸짓–꽃–눈짓'으로 이어지는 핵심 시어의 유기적 연결이 시적 여운을 빚어내는 내적 미학성이 매우 뛰어납니다.", "type": "2. 해석 요소 명칭", "q": "다음 비평이 작품 해석에 있어 가장 핵심적으로 고려하고 있는 요소는 무엇인가요?", "opts": ["작품 자체", "작가", "시대 상황", "독자"], "ans": "작품 자체", "exp": "점층적 서사 구조, 종결어미의 반복을 통한 운율 형성, 명사형 종결 등 시 내부의 표현 방식과 유기적 구조만 살피므로 '작품 자체'가 정답입니다.", "mode": "challenge"}, {"id": "H6", "work": "시: 꽃 (김춘수)", "text": "김춘수 시인은 사물의 감각적인 외형을 묘사하기보다는, 대상의 본질과 존재의 내밀한 의미를 철학적으로 탐구하는 이른바 '관념시'의 세계를 일관되게 구축해 온 거장입니다. 이 시 역시 사물에 이름을 명명함으로써 비로소 참된 존재의 가치가 획득된다는 시인 특유의 존재론적 철학과 고유한 인식론적 문학관이 고스란히 투영된 예술적 산물입니다.", "type": "3. 해석 요소 설명", "q": "다음 비평의 관점이 바탕으로 삼고 있는 해석 요소를 가장 잘 설명한 것은 무엇인가요?", "opts": ["작품 내부의 언어적 표현과 구조", "작품을 창작한 작가의 정신 세계나 가치관", "작품의 배경이 되는 당시의 사회·문화적 현실", "작품을 읽고 독자가 느끼는 감동과 깨달음"], "ans": "작품을 창작한 작가의 정신 세계나 가치관", "exp": "김춘수 시인의 철학적 성향, 관념시 세계관, 존재론적 가치관 등 '작가의 정신 세계나 가치관'을 기준으로 작품을 해설하고 있습니다.", "mode": "challenge"}, {"id": "H7", "work": "시: 꽃 (김춘수)", "text": "이 시가 창작된 1950년대는 6·25 전쟁 직후로, 무수한 인명 피해와 파괴 속에서 인간의 존엄성이 말살되고 고독감이 팽배했던 비극적인 시대였습니다. 이러한 극한의 황무지 같은 상황 속에서 타인과 진정한 소통을 이루고 가치 있는 관계를 맺고자 열망하는 시의 내용은, 당대 사회 구성원들이 겪었던 실존적 허무감과 인간성 회복에 대한 절박한 시대적 갈망을 고스란히 반영합니다.", "type": "1. 관점의 이름", "q": "다음 비평은 문학 작품을 감상하는 어떤 관점에 해당하나요?", "opts": ["내재적 관점", "표현론적 관점", "반영론적 관점", "효용론적 관점"], "ans": "반영론적 관점", "exp": "1950년대 6·25 전쟁 직후라는 역사적 배경, 사회적 허무감, 인간성 회복이라는 시대상을 바탕으로 작품을 해석하고 있으므로 반영론적 관점입니다.", "mode": "challenge"}, {"id": "H8", "work": "소설: 어린 왕자 (생텍쥐페리)", "text": "이 소설은 사막에 불시착한 조종사인 서술자 '나'의 한정된 시선을 거쳐 어린 왕자의 독특한 여정과 대화를 관찰하고 전달하는 정교한 플롯 구조를 취하고 있습니다. 상자 속 양 그림, 오직 하나뿐인 장미꽃, 길들여짐의 철학을 말하는 여우 등 작품 내부의 다양한 우화적 소재들이 지닌 촘촘한 상징적 대칭성과 내러티브의 긴밀성이 작품의 완결성을 높여 줍니다.", "type": "3. 해석 요소 설명", "q": "다음 비평의 관점이 바탕으로 삼고 있는 해석 요소를 가장 잘 설명한 것은 무엇인가요?", "opts": ["작품 내부의 언어적 표현과 구조", "작품을 창작한 작가의 정신 세계나 가치관", "작품의 배경이 되는 당시의 사회·문화적 현실", "작품을 읽고 독자가 느끼는 감동과 깨달음"], "ans": "작품 내부의 언어적 표현과 구조", "exp": "서술자의 시점 구조, 우화적 소재의 상징성, 플롯의 내적 긴밀성 등 '작품 내부의 언어적 표현과 구조'를 중심으로 텍스트의 가치를 논하고 있습니다.", "mode": "challenge"}, {"id": "H9", "work": "소설: 어린 왕자 (생텍쥐페리)", "text": "작가 생텍쥐페리는 실제로 민간 항공회사의 조종사로 근무하며 사막에 불시착해 생사의 갈림길에 섰던 생생한 전기적 경험을 바탕으로 이 소설을 집필했습니다. 그는 물질적 풍요에 눈이 멀어 영혼의 순수함을 잃어가는 현대인들을 진심으로 안타까워했으며, 이러한 작가의 독특한 생애와 휴머니즘적 세계관이 사막에서 어린 왕자와 교감하며 동심을 회복해가는 주인공의 모습에 그대로 투영되어 있습니다.", "type": "1. 관점의 이름", "q": "다음 비평은 문학 작품을 감상하는 어떤 관점에 해당하나요?", "opts": ["내재적 관점", "표현론적 관점", "반영론적 관점", "효용론적 관점"], "ans": "표현론적 관점", "exp": "작가 생텍쥐페리의 실제 조종사 경력, 사막 불시착 경험, 내면의 휴머니즘 세계관 등 창작자 중심의 배경을 통해 파악하므로 표현론적 관점입니다.", "mode": "challenge"}, {"id": "H10", "work": "소설: 어린 왕자 (생텍쥐페리)", "text": "어린 왕자가 여러 행성을 유람하며 만나는 왕, 허영쟁이, 장사꾼, 지리학자 등의 인물들은 20세기 전반 자본주의적 산업화가 급격히 팽창하던 서구 근대 사회의 기형적인 인간 군상을 날카롭게 풍자한 결과물입니다. 눈에 보이는 영토나 돈, 주식과 같은 숫자로만 세상의 가치를 계량하려는 어른들의 모습은 당시 물질만능주의에 오염된 사회적 현실을 투명하게 비추는 거울입니다.", "type": "2. 해석 요소 명칭", "q": "다음 비평이 작품 해석에 있어 가장 핵심적으로 고려하고 있는 요소는 무엇인가요?", "opts": ["작품 자체", "작가", "시대 상황", "독자"], "ans": "시대 상황", "exp": "20세기 초반 자본주의 팽창, 물질만능주의에 물든 서구 근대 사회라는 '시대 상황'을 핵심 축으로 삼아 인물들을 분석하고 있습니다.", "mode": "challenge"}, {"id": "H11", "work": "소설: 소나기 (황순원)", "text": "이 소설은 사춘기 소년과 소녀의 짧고 순수한 연정을 서정적인 문체와 감각적인 배경 묘사를 통해 한 편의 맑은 수채화처럼 형상화해 냈습니다. '징검다리'는 두 인물의 소통과 거리를 좁혀주는 공간적 매개체이며, 갑작스레 쏟아지는 '소나기'는 이들의 사랑이 맞이할 비극적이고 덧없는 결말을 유기적으로 암시하는 등 내부 상징물들의 긴밀한 인과관계와 복선 배치가 문학적 완성도를 결점 없이 이루어냅니다.", "type": "1. 관점의 이름", "q": "다음 비평은 문학 작품을 감상하는 어떤 관점에 해당하나요?", "opts": ["내재적 관점", "표현론적 관점", "반영론적 관점", "효용론적 관점"], "ans": "내재적 관점", "exp": "서정적 문체, 공간적 매개체와 소나기의 상징성, 복선 배치 등 텍스트 내부에 존재하는 언어적, 미학적 짜임새만으로 비평하므로 내재적 관점입니다.", "mode": "challenge"}, {"id": "H12", "work": "소설: 소나기 (황순원)", "text": "작가 황순원은 근대화의 거친 물결 속에서도 훼손되지 않는 인간 본연의 원초적인 순수성과 생명의 고귀한 가치를 끈질기게 탐구해 온 소설가입니다. 평소 세속적인 탐욕이나 사회적 이데올로기에 물들지 않은 때 묻지 않은 동심과 인간미를 절대적으로 옹호하던 작가의 문학적 지향점이, 이 작품 속 소년과 소녀의 풋풋한 교감과 절제된 슬픔의 정서 속에 그대로 투영되어 있습니다.", "type": "2. 해석 요소 명칭", "q": "다음 비평이 작품 해석에 있어 가장 핵심적으로 고려하고 있는 요소는 무엇인가요?", "opts": ["작품 자체", "작가", "시대 상황", "독자"], "ans": "작가", "exp": "황순원 작가의 고유한 문학적 탐구 성향, 인간 본연의 순수성을 옹호하는 지향점 등 '작가'적 요인을 바탕으로 분석하고 있습니다.", "mode": "challenge"}, {"id": "H13", "work": "소설: 소나기 (황순원)", "text": "소설 속 소녀의 가문인 '윤 초시 댁'이 가세가 크게 기울어 결국 살던 마을을 떠나 이사를 가야만 하는 서사적 상황은, 1950년대 전후 한국 농촌 사회에서 구한말 이래의 전통적인 양반 지주 계층이 경제적으로 완전히 붕괴해가던 가혹한 신분·지위적 변동 세태를 배경으로 깔고 있습니다. 몰락하는 명문가라는 사회적 실상이 은연중에 반영되어 있습니다.", "type": "3. 해석 요소 설명", "q": "다음 비평의 관점이 바탕으로 삼고 있는 해석 요소를 가장 잘 설명한 것은 무엇인가요?", "opts": ["작품 내부의 언어적 표현과 구조", "작품을 창작한 작가의 정신 세계나 가치관", "작품의 배경이 되는 당시의 사회·문화적 현실", "작품을 읽고 독자가 느끼는 감동과 깨달음"], "ans": "작품의 배경이 되는 당시의 사회·문화적 현실", "exp": "1950년대 전후 한국 농촌의 경제적 변동, 지주 계층의 몰락 등 '당시의 사회·문화적 현실'을 근거로 작품을 해석하는 관점입니다.", "mode": "challenge"}, {"id": "H14", "work": "시: 동해바다 (신경림)", "text": "이 시는 화자가 드넓은 '동해바다'를 바라보며 자신의 옹졸함을 성찰하는 고백적 구조를 지니고 있으며, 바다가 가진 포용적이고 광활한 이미지와 화자가 고백하는 스스로의 편협함이 시각적으로 선명한 대비를 이루며 시상을 전개합니다. '널따란 바다처럼 너그러워질 수는 없을까'와 같은 시구의 부드러운 어조와 화자의 독백적 고백이 시 전반에 안정감 있는 내적 균형을 만들어 냅니다.", "type": "2. 해석 요소 명칭", "q": "다음 비평이 작품 해석에 있어 가장 핵심적으로 고려하고 있는 요소는 무엇인가요?", "opts": ["작품 자체", "작가", "시대 상황", "독자"], "ans": "작품 자체", "exp": "이미지의 선명한 대비, 고백적 시상 전개 구조, 시어의 선택 및 독백적 어조 등 시 내부의 미적 장치들만 고찰하므로 '작품 자체'가 핵심 요소입니다.", "mode": "challenge"}, {"id": "H15", "work": "시: 동해바다 (신경림)", "text": "신경림 시인은 민중의 고단한 삶을 따뜻한 어조로 보듬고, 공동체적 연대와 상생을 실천하려는 시 세계를 평생 동안 옹호해 온 문학가입니다. 스스로를 낮추고 타인의 허물을 포용하려 노력하는 이 시의 주체적 정서는, 독재 정권과 혹독한 산업화의 풍파 속에서도 늘 소외된 이들과 발맞추며 겸손하고 따뜻하게 살아가고자 했던 시인의 고결한 삶의 철학과 민중 지향적 가치관을 고스란히 반영합니다.", "type": "3. 해석 요소 설명", "q": "다음 비평의 관점이 바탕으로 삼고 있는 해석 요소를 가장 잘 설명한 것은 무엇인가요?", "opts": ["작품 내부의 언어적 표현과 구조", "작품을 창작한 작가의 정신 세계나 가치관", "작품의 배경이 되는 당시의 사회·문화적 현실", "작품을 읽고 독자가 느끼는 감동과 깨달음"], "ans": "작품을 창작한 작가의 정신 세계나 가치관", "exp": "신경림 시인의 민중 공동체 지향성, 평생의 따뜻한 삶의 철학 등 '작가의 정신 세계나 가치관'을 결부시켜 해석하고 있습니다.", "mode": "challenge"}, {"id": "H16", "work": "시: 동해바다 (신경림)", "text": "남을 끊임없이 시기하고 미워하며 스스로 옹졸해졌다고 고백하는 화자의 부끄러운 모습이, 사소한 일로 친구를 미워하던 제 옹졸한 마음을 그대로 비추는 듯해 뜨거운 부끄러움을 느꼈습니다. 온갖 것을 묵묵히 품어 안는 동해바다처럼, 저 역시 타인의 허물을 너그럽게 감싸고 더 넓은 마음으로 살아가야겠다는 깨달음과 다짐을 이 시에서 얻었습니다.", "type": "1. 관점의 이름", "q": "다음 비평은 문학 작품을 감상하는 어떤 관점에 해당하나요?", "opts": ["내재적 관점", "표현론적 관점", "반영론적 관점", "효용론적 관점"], "ans": "효용론적 관점", "exp": "독자가 화자의 고백을 자신에게 비추어 느낀 부끄러움과, 너그럽게 살아가겠다는 깨달음·다짐 등 작품이 독자에게 준 정서적 영향과 변화를 중심으로 삼으므로 효용론적 관점입니다.", "mode": "challenge"}, {"id": "S1", "work": "시: 진달래꽃 (김소월)", "text": "이 시는 3음보의 민요적 율격과 7·5조의 가락을 살려 이별의 정한을 노래합니다. 1연과 마지막 연이 짝을 이루는 수미상관 구조로 형식적 안정감과 여운을 자아내며, '죽어도 아니 눈물 흘리오리다'라는 반어적 표현을 통해 슬픔을 절제된 어조로 승화시킵니다. 운율과 구조, 반어법 등 시 자체의 짜임만으로도 정서적 울림이 완성됩니다.", "type": "서답형", "q": "다음 비평은 문학 작품을 감상하는 네 가지 관점 중 어떤 관점에 해당하는지, 관점의 이름을 쓰시오.", "opts": [], "ans": "내재적 관점", "exp": "음보와 율격, 수미상관 구조, 반어법 등 작품 내부의 형식과 표현 방식에 주목하여 감상하므로 내재적 관점입니다.", "mode": "challenge"}, {"id": "S2", "work": "시: 서시 (윤동주)", "text": "시인 윤동주는 사소한 잘못에도 깊이 부끄러워할 만큼 맑고 순결한 내면을 지녔으며, 한 점 부끄럼 없는 삶을 살고자 끊임없이 자신을 돌아본 사람이었습니다. '죽는 날까지 하늘을 우러러' 부끄럽지 않기를 바라는 이 시의 다짐에는 양심을 지키며 올곧게 살아가려 한 시인의 성품과 가치관이 고스란히 담겨 있습니다. 자기 성찰을 멈추지 않았던 윤동주라는 한 인간의 내면이 시 전체에 투영되어 있습니다.", "type": "서답형", "q": "다음 비평은 문학 작품을 감상하는 네 가지 관점 중 어떤 관점에 해당하는지, 관점의 이름을 쓰시오.", "opts": [], "ans": "표현론적 관점", "exp": "윤동주 시인의 순결한 내면, 부끄러움을 아는 성품, 올곧게 살고자 한 가치관 등 작가를 중심으로 작품을 해석하므로 표현론적 관점입니다.", "mode": "challenge"}, {"id": "S3", "work": "시: 청포도 (이육사)", "text": "이 시가 발표된 1939년은 일제의 수탈과 억압이 극심하던 암흑기였습니다. 이런 시대 상황을 고려하면, 화자가 고달픈 몸으로 찾아오리라 믿으며 기다리는 '청포 입은 손님'은 간절히 바라던 조국의 광복을 의미한다고 볼 수 있습니다. 풍요로운 청포도가 익어 가는 평화로운 고장의 모습에는, 억압받던 당대 현실을 딛고 마침내 맞이할 해방된 조국에 대한 염원이 담겨 있습니다.", "type": "서답형", "q": "다음 비평은 문학 작품을 감상하는 네 가지 관점 중 어떤 관점에 해당하는지, 관점의 이름을 쓰시오.", "opts": [], "ans": "반영론적 관점", "exp": "시가 발표된 일제 강점기라는 시대 상황과 조국 광복에 대한 당대의 염원을 바탕으로 작품을 해석하므로 반영론적 관점입니다. (교과서 단원 제재인 시 <청포도>로, 비평문이 '작가의 삶'에 주목한 것과 달리 이 비평은 '시대 상황'에 주목한 예입니다.)", "mode": "challenge"}, {"id": "S4", "work": "소설: 어린 왕자 (생텍쥐페리)", "text": "여우가 어린 왕자에게 '길들인다'는 것의 의미를 일러 주는 장면을 읽으며, 무심코 흘려보냈던 내 곁의 소중한 사람들을 새삼 떠올리게 되었습니다. 누군가와 관계를 맺고 서로에게 특별한 존재가 된다는 것이 얼마나 귀한 일인지 깨달았고, 책을 덮은 뒤 가까운 이들에게 더 마음을 쏟으며 살아야겠다고 다짐하게 되었습니다.", "type": "서답형", "q": "다음 비평은 문학 작품을 감상하는 네 가지 관점 중 어떤 관점에 해당하는지, 관점의 이름을 쓰시오.", "opts": [], "ans": "효용론적 관점", "exp": "독자가 작품을 읽고 얻은 깨달음과 정서적 감화, 삶의 태도 변화 등 독자에게 미친 영향을 중심으로 감상하므로 효용론적 관점입니다.", "mode": "challenge"}, {"id": "S5", "work": "시: 먼 후일 (김소월)", "text": "이 시는 '먼 훗날 당신이 찾으시면 그때에 잊었노라'라고 말하는 화자의 진술을 통해, 결코 잊을 수 없다는 속마음을 정반대로 표현하는 반어법을 시 전체의 뼈대로 삼고 있습니다. '오늘도 어제도'로 이어지는 시간 부사어의 점층적 배열과 3음보의 민요적 율격, 각 연이 비슷한 구조로 반복되는 형식이 어우러져 이별의 정한을 절제된 가락으로 빚어냅니다.", "type": "서답형", "q": "다음 비평은 문학 작품을 감상하는 네 가지 관점 중 어떤 관점에 해당하는지, 관점의 이름을 쓰시오.", "opts": [], "ans": "내재적 관점", "exp": "반어법, 시간 부사어의 점층, 3음보 율격과 반복 구조 등 작품 내부의 표현 기법과 형식적 짜임에 주목하여 감상하므로 내재적 관점입니다.", "mode": "challenge"}, {"id": "S6", "work": "시: 귀천 (천상병)", "text": "시인 천상병은 평생을 지독한 가난과 고초 속에서 살았으면서도, 세상을 향한 원망 대신 어린아이 같은 순수함과 무욕의 태도를 잃지 않았던 사람입니다. 삶을 잠시 다녀가는 '소풍'에 빗대고 죽음을 담담히 하늘로 돌아가는 일로 받아들이는 이 시의 달관한 어조에는, 가진 것 없이도 삶을 아름다웠다 말할 수 있었던 시인 특유의 무욕한 인생관과 맑은 영혼이 고스란히 배어 있습니다.", "type": "서답형", "q": "다음 비평은 문학 작품을 감상하는 네 가지 관점 중 어떤 관점에 해당하는지, 관점의 이름을 쓰시오.", "opts": [], "ans": "표현론적 관점", "exp": "천상병 시인의 무욕하고 순수한 삶의 태도, 삶을 소풍으로 여긴 달관의 인생관 등 작가의 정신 세계와 가치관을 근거로 작품을 해석하므로 표현론적 관점입니다.", "mode": "challenge"}, {"id": "S7", "work": "시: 빼앗긴 들에도 봄은 오는가 (이상화)", "text": "이 시가 발표된 1920년대는 일제에 국권과 국토를 빼앗긴 식민지 현실이 짓누르던 시기였습니다. 제목의 '빼앗긴 들'은 곧 주권을 잃은 우리 국토를 가리키며, 봄이 와 푸르른 들판을 걸으면서도 '지금은 남의 땅'임을 자각하는 화자의 비탄에는, 빼앗긴 조국에서 살아가야 했던 당대 우리 민족의 울분과 상실감이 짙게 반영되어 있습니다.", "type": "서답형", "q": "다음 비평은 문학 작품을 감상하는 네 가지 관점 중 어떤 관점에 해당하는지, 관점의 이름을 쓰시오.", "opts": [], "ans": "반영론적 관점", "exp": "일제강점기라는 시대 상황과 국권·국토를 빼앗긴 당대 민족의 현실을 바탕으로 작품을 해석하므로 반영론적 관점입니다.", "mode": "challenge"}, {"id": "S8", "work": "시: 꽃 (김춘수)", "text": "누군가가 나의 이름을 진심으로 불러 주었을 때 비로소 의미 있는 존재가 된다는 시구를 읽으며, 그동안 주변 사람들을 무심하게 대했던 제 자신을 돌아보게 되었습니다. 이제는 가족과 친구 한 사람 한 사람을 무의미한 존재로 흘려보내지 않고, 서로에게 잊히지 않는 '눈짓'이 되어 줄 수 있도록 진심으로 관심과 사랑을 건네며 살아야겠다고 다짐했습니다.", "type": "서답형", "q": "다음 비평은 문학 작품을 감상하는 네 가지 관점 중 어떤 관점에 해당하는지, 관점의 이름을 쓰시오.", "opts": [], "ans": "효용론적 관점", "exp": "독자가 시를 읽고 얻은 자기 성찰과 깨달음, 주변 사람을 소중히 대하겠다는 삶의 다짐 등 독자에게 미친 영향을 중심으로 감상하므로 효용론적 관점입니다.", "mode": "challenge"}];
+const TODAY = "2026-06-15";
+const CAT = {
+ '내재적 관점':'in','작품 자체':'in','작품 내부의 언어적 표현과 구조':'in',
+ '표현론적 관점':'ex_a','작가':'ex_a','작품을 창작한 작가의 정신 세계나 가치관':'ex_a',
+ '반영론적 관점':'ex_w','시대 상황':'ex_w','작품의 배경이 되는 당시의 사회·문화적 현실':'ex_w',
+ '효용론적 관점':'ex_r','독자':'ex_r','작품을 읽고 독자가 느끼는 감동과 깨달음':'ex_r'
+};
+const CATINFO = {
+ in:{color:'#5a9fe2',hint:'예문이 운율·구조·표현·인물 배치 등 「작품 안」의 요소만 다루고 있지 않나요?'},
+ ex_a:{color:'#a98ae0',hint:'예문이 「작가」의 삶·성향·가치관·창작 의도를 근거로 들고 있지 않나요?'},
+ ex_w:{color:'#54bd8a',hint:'예문이 작품이 그리거나 발표된 「시대·사회 현실」을 근거로 들고 있지 않나요?'},
+ ex_r:{color:'#ee85ab',hint:'예문이 「독자·관객」이 느낀 감동·공감·깨달음을 근거로 들고 있지 않나요?'}
+};
+const ACCEPT = {
+ in:['내재적','내재','절대주의','절대주의적','절대론','절대론적'],
+ ex_a:['표현론','표현론적','표현','생산론'],
+ ex_w:['반영론','반영론적','반영','모방론'],
+ ex_r:['효용론','효용론적','효용','수용론','수용론적','실용론']
+};
+
+function workIcon(w){
+  if(w.indexOf('시:')===0||w.indexOf('시 :')===0) return '📝';
+  if(w.indexOf('소설')===0) return '📖';
+  if(w.indexOf('드라마')===0) return '🎬';
+  if(w.indexOf('영화')===0) return '🎬';
+  if(w.indexOf('노래')===0) return '🎵';
+  if(w.indexOf('동화')===0||w.indexOf('고전')===0) return '📖';
+  if(w.indexOf('개념')===0) return '💡';
+  return '📖';
+}
+function aliasNote(ans){
+  const c=CAT[ans];
+  if(c==='in') return '  (내재적 관점은 \'절대론적 관점\'이라고도 합니다.)';
+  if(c==='ex_r') return '  (효용론적 관점은 \'수용론적 관점\'이라고도 합니다.)';
+  return '';
+}
+
+/* ---- audio ---- */
+let AC=null;
+function ac(){ if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}} return AC; }
+function tone(f,t,dur,vol,type){ const c=ac(); if(!c)return; const o=c.createOscillator(),g=c.createGain();
+  o.type=type||'sine'; o.frequency.value=f; o.connect(g); g.connect(c.destination);
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+.01);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur); o.start(t); o.stop(t+dur); }
+function sCorrect(){ const c=ac(); if(!c)return; const t=c.currentTime; tone(660,t,.12,.18); tone(880,t+.09,.18,.18); }
+function sWrong(){ const c=ac(); if(!c)return; const t=c.currentTime; tone(190,t,.2,.18,'sine'); tone(140,t+.07,.2,.16,'sine'); }
+function sCombo(n){ const c=ac(); if(!c)return; const t=c.currentTime; [523,659,784,1047].slice(0,Math.min(4,1+Math.floor(n/2))).forEach((f,i)=>tone(f,t+i*.07,.16,.15)); }
+function sEnd(){ const c=ac(); if(!c)return; const t=c.currentTime; [523,659,784,1047,1319].forEach((f,i)=>tone(f,t+i*.11,.28,.16)); }
+
+/* ---- state ---- */
+let order=[], idx=0, score=0, combo=0, maxCombo=0, st={}, currentMode='';
+const MODE_LABEL = {'concept':'개념','basic':'기본','challenge':'도전'};
+const $=id=>document.getElementById(id);
+function show(s){ document.querySelectorAll('.screen').forEach(x=>x.classList.remove('on')); $(s).classList.add('on'); window.scrollTo(0,0); }
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function byId(id){ return DATA.find(d=>d.id===id); }
+function nowStr(){ const d=new Date(); return d.getFullYear()+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+String(d.getDate()).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+function fileDate(){ const d=new Date(); return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0')+'_'+String(d.getHours()).padStart(2,'0')+String(d.getMinutes()).padStart(2,'0'); }
+
+function start(mode){
+  ac(); currentMode=mode;
+  if(mode==='concept') order = DATA.filter(d=>d.mode==='concept').map(d=>d.id);
+  else if(mode==='basic') order = DATA.filter(d=>d.mode==='basic').map(d=>d.id);
+  else order = shuffle(DATA.filter(d=>d.mode==='challenge').map(d=>d.id));
+  idx=0; score=0; combo=0; maxCombo=0; st={};
+  order.forEach(id=>{ const q=byId(id);
+    st[id]={picked:[],firstWrong:false,scored:false,resolved:false,correct:false,
+            opts: q.type==='서답형'?null:shuffle(q.opts.slice())}; });
+  $('total').textContent=order.length;
+  show('play'); render();
+}
+
+function render(){
+  const id=order[idx], q=byId(id), s=st[id];
+  $('prog').textContent=idx+1;
+  $('score').textContent=score; $('combo').textContent=combo;
+  $('fill').style.width=((idx)/order.length*100)+'%';
+  $('wtag').textContent=workIcon(q.work)+'  '+q.work;
+  $('ttag').textContent=q.type==='서답형'?'서답형 · 관점 이름 쓰기':q.type;
+  const passEl=$('passage');
+  if(q.text && q.text.trim()){ passEl.style.display=''; passEl.textContent=q.text; }
+  else { passEl.style.display='none'; passEl.textContent=''; }
+  $('qtext').textContent=q.q;
+  $('hintbox').classList.remove('on'); $('expbox').classList.remove('on');
+  $('revealBtn').style.display='none';
+  const area=$('answerArea'); area.innerHTML='';
+
+  if(q.type==='서답형'){
+    const wrap=document.createElement('div');
+    const row=document.createElement('div'); row.className='sa';
+    const inp=document.createElement('input'); inp.id='saInput';
+    inp.placeholder='관점 이름을 입력 (예: 반영론적 관점)';
+    const btn=document.createElement('button'); btn.textContent='확인';
+    row.appendChild(inp); row.appendChild(btn);
+    const note=document.createElement('div'); note.className='sahint';
+    note.textContent="'관점'은 생략해도 돼요. 예) 내재적 / 표현론 / 반영론 / 효용론";
+    wrap.appendChild(row); wrap.appendChild(note); area.appendChild(wrap);
+    if(s.resolved){ lockSA(q,s); }
+    else { btn.onclick=()=>submitSA(q,s); inp.addEventListener('keydown',e=>{if(e.key==='Enter')submitSA(q,s);}); inp.focus(); }
+  } else {
+    const wrap=document.createElement('div'); wrap.className='opts';
+    s.opts.forEach(o=>{
+      const b=document.createElement('button'); b.className='opt'; b.textContent=o;
+      if(s.resolved){
+        b.disabled=true;
+        if(o===q.ans) b.classList.add('correct');
+        else if(s.picked.includes(o)) b.classList.add('wrong');
+        else b.classList.add('dim');
+      } else {
+        if(s.picked.includes(o)){ b.classList.add('wrong'); b.disabled=true; }
+        b.onclick=()=>pick(q,s,o,b);
+      }
+      wrap.appendChild(b);
+    });
+    area.appendChild(wrap);
+    if(s.resolved){ $('expbox').classList.add('on'); $('exptext').textContent=q.exp; }
+  }
+  $('prev').disabled = idx===0;
+  /* 다음 버튼: 항상 활성화 */
+  $('next').textContent = idx===order.length-1 ? '결과 보기 ▶' : '다음 ▶';
+}
+
+function award(s, first){
+  if(s.scored) return;
+  if(first){ score+=12; combo++; if(combo>=2){ score+=combo*2; sCombo(combo);} if(combo>maxCombo)maxCombo=combo; }
+  else { score+=5; }
+  if(score<0)score=0; s.scored=true; s.correct=true;
+}
+function penalize(s){
+  if(!s.firstWrong){ s.firstWrong=true; score-=3; if(score<0)score=0; combo=0; }
+}
+function pick(q,s,o,btn){
+  if(s.resolved||s.scored) return;
+  if(o===q.ans){
+    const first = s.picked.length===0;
+    award(s,first); s.resolved=true; sCorrect();
+    $('score').textContent=score; $('combo').textContent=combo;
+    btn.classList.add('correct'); btn.disabled=true;
+    revealAll(q,s,true);
+  } else {
+    s.picked.push(o); penalize(s);
+    $('score').textContent=score; $('combo').textContent=combo;
+    btn.classList.add('wrong','shake'); btn.disabled=true;
+    setTimeout(()=>btn.classList.remove('shake'),500);
+    sWrong(); showHint(q); $('revealBtn').style.display='inline';
+  }
+}
+function submitSA(q,s){
+  if(s.resolved) return;
+  const inp=$('saInput'); const norm=(inp.value||'').replace(/\s/g,'').replace(/관점/g,'');
+  if(!norm){ inp.focus(); return; }
+  const cat=CAT[q.ans];
+  const ok=ACCEPT[cat].some(a=>norm===a.replace(/\s/g,''));
+  if(ok){
+    const first=!s.firstWrong; award(s,first); s.resolved=true; sCorrect();
+    $('score').textContent=score; $('combo').textContent=combo;
+    lockSA(q,s);
+  } else {
+    s.picked.push(inp.value); penalize(s);
+    $('score').textContent=score; $('combo').textContent=combo;
+    inp.classList.add('shake'); setTimeout(()=>inp.classList.remove('shake'),500);
+    sWrong(); showHint(q); $('revealBtn').style.display='inline';
+  }
+}
+function lockSA(q,s){
+  const area=$('answerArea');
+  const val = s.correct ? '✓ '+q.ans : (s.picked[s.picked.length-1]||'');
+  area.innerHTML='<div class="sa"><input disabled value="'+esc(val)+'" style="border-color:'+(s.correct?'var(--good)':'var(--bad)')+';font-weight:700;color:'+(s.correct?'#1f7d54':'#b34064')+'"></div>';
+  revealAll(q,s,s.correct);
+}
+function showHint(q){ $('hinttext').textContent=CATINFO[CAT[q.ans]].hint; $('hintbox').classList.add('on'); }
+function revealAll(q,s,wasCorrect){
+  $('expbox').classList.add('on'); $('exptext').textContent=(wasCorrect?'':'정답: '+q.ans+' — ')+q.exp+aliasNote(q.ans);
+  if(wasCorrect) $('hintbox').classList.remove('on');
+  $('revealBtn').style.display='none';
+  $('fill').style.width=((idx+1)/order.length*100)+'%';
+}
+$('revealBtn').onclick=()=>{
+  const id=order[idx], q=byId(id), s=st[id];
+  s.resolved=true; render();
+  $('expbox').classList.add('on'); $('exptext').textContent='정답: '+q.ans+' — '+q.exp;
+};
+$('prev').onclick=()=>{ if(idx>0){idx--; render();} };
+$('next').onclick=()=>{ if(idx<order.length-1){idx++; render();} else finish(); };
+$('finish').onclick=finish;
+
+function finish(){
+  sEnd();
+  $('fscore').textContent=score;
+  const firstCorrect=order.filter(id=>st[id].correct&&!st[id].firstWrong).length;
+  $('facc').textContent=Math.round(firstCorrect/order.length*100)+'%';
+  $('fcombo').textContent=maxCombo;
+  const wrongs=order.filter(id=>st[id].firstWrong);
+  const nl=$('nlist');
+  nl.innerHTML='';
+  if(wrongs.length===0){
+    nl.innerHTML='<div class="perfect">완벽해요! 모든 문항을 한 번에 맞혔어요 🎉<br>오답노트가 없습니다.</div>';
+    $('saveJpg').style.display='none';
+    $('endmsg').textContent='완벽 클리어! 🏆';
+  } else {
+    $('saveJpg').style.display='';
+    $('endmsg').textContent='수고했어요! 🌸';
+    wrongs.forEach(id=>{ const q=byId(id), c=CATINFO[CAT[q.ans]].color;
+      const d=document.createElement('div'); d.className='nitem'; d.style.borderLeftColor=c;
+      d.innerHTML='<div class="nw" style="color:'+c+'">'+esc(workIcon(q.work)+' '+q.work)+'</div>'+
+        '<div class="na"><span class="k">정답</span> · '+esc(q.ans)+'</div>'+
+        '<div class="ne">'+esc(q.exp+aliasNote(q.ans))+'</div>';
+      nl.appendChild(d);
+    });
+  }
+  $('nName').value='';
+  $('nFeeling').value='';
+  show('end');
+}
+function esc(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+/* ---- helpers ---- */
+function roundBox(ctx,x,y,w,h,r){
+  ctx.beginPath(); ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+function requireName(){
+  const nm=($('nName').value||'').trim();
+  if(!nm){ alert('이름을 입력해주세요.'); $('nName').focus(); return null; }
+  return nm;
+}
+const FF="'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif";
+const stageLabel = ()=>MODE_LABEL[currentMode]||'';
+
+/* ---- JPG 오답노트 ---- */
+$('saveJpg').onclick=()=>{
+  const nm=requireName(); if(!nm) return;
+  const wrongs=order.filter(id=>st[id].firstWrong);
+  if(wrongs.length===0) return;
+  const W=940, pad=40; const cv=document.createElement('canvas');
+  const ctx=cv.getContext('2d');
+  function wrap(text,maxW,font){ ctx.font=font; const out=[]; let line='';
+    for(const ch of text){ if(ctx.measureText(line+ch).width>maxW){out.push(line);line=ch;} else line+=ch; }
+    if(line)out.push(line); return out; }
+  let blocks=[]; let H=pad+72;
+  wrongs.forEach(id=>{ const q=byId(id); const c=CATINFO[CAT[q.ans]].color;
+    const wl=wrap(workIcon(q.work)+' '+q.work,W-2*pad-16,"bold 21px "+FF);
+    const al=wrap('정답 · '+q.ans,W-2*pad-16,"16px "+FF);
+    const el=wrap(q.exp+aliasNote(q.ans),W-2*pad-16,"15px "+FF);
+    const h=14+wl.length*28+8+al.length*24+6+el.length*23+16;
+    blocks.push({q,c,wl,al,el,h}); H+=h+12;
+  });
+  H+=pad; cv.width=W; cv.height=H;
+  ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#44414f'; ctx.font="bold 28px "+FF;
+  ctx.fillText('📝 오답노트 · 문학 비평 4관점 ('+stageLabel()+')',pad,pad+30);
+  const dt=nowStr();
+  ctx.font="15px "+FF; ctx.fillStyle='#857f95';
+  ctx.fillText('이름: '+nm+'      완료: '+dt,pad,pad+58);
+  ctx.strokeStyle='#efe6f3'; ctx.beginPath(); ctx.moveTo(pad,pad+70); ctx.lineTo(W-pad,pad+70); ctx.stroke();
+  let y=pad+88;
+  blocks.forEach(b=>{
+    ctx.fillStyle='#faf6fc'; roundBox(ctx,pad,y,W-2*pad,b.h-6,12); ctx.fill();
+    ctx.fillStyle=b.c; ctx.fillRect(pad,y,5,b.h-6);
+    let ty=y+30; ctx.fillStyle=b.c; ctx.font="bold 21px "+FF;
+    b.wl.forEach(l=>{ctx.fillText(l,pad+18,ty);ty+=28;}); ty+=4;
+    ctx.fillStyle='#44414f'; ctx.font="16px "+FF;
+    b.al.forEach(l=>{ctx.fillText(l,pad+18,ty);ty+=24;}); ty+=2;
+    ctx.fillStyle='#56525f'; ctx.font="15px "+FF;
+    b.el.forEach(l=>{ctx.fillText(l,pad+18,ty);ty+=23;});
+    y+=b.h+6;
+  });
+  ctx.fillStyle='#a89fb2'; ctx.font="13px "+FF;
+  ctx.fillText('제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com',pad,H-18);
+  const url=cv.toDataURL('image/jpeg',0.92);
+  const a=document.createElement('a'); a.href=url;
+  a.download='오답노트_문학비평4관점_'+stageLabel()+'_'+nm+'_'+fileDate()+'.jpg'; a.click();
+};
+
+/* ---- JPG 학습 리포트 ---- */
+$('saveReport').onclick=()=>{
+  const nm=requireName(); if(!nm) return;
+  const feeling=($('nFeeling').value||'').trim();
+  const W=940, pad=40; const cv=document.createElement('canvas');
+  const ctx=cv.getContext('2d');
+
+  /* 관점별 통계 */
+  const cats={in:{name:'내재적 관점',total:0,correct:0,color:'#5a9fe2'},
+    ex_a:{name:'표현론적 관점',total:0,correct:0,color:'#a98ae0'},
+    ex_w:{name:'반영론적 관점',total:0,correct:0,color:'#54bd8a'},
+    ex_r:{name:'효용론적 관점',total:0,correct:0,color:'#ee85ab'}};
+  order.forEach(id=>{
+    const q=byId(id), c=CAT[q.ans], s=st[id];
+    if(cats[c]){ cats[c].total++; if(s.correct&&!s.firstWrong) cats[c].correct++; }
+  });
+  const firstCorrect=order.filter(id=>st[id].correct&&!st[id].firstWrong).length;
+  const accPct=Math.round(firstCorrect/order.length*100);
+
+  /* 잘하는/보완 분야 */
+  const catArr=Object.values(cats).filter(c=>c.total>0);
+  catArr.forEach(c=>{ c.pct=Math.round(c.correct/c.total*100); });
+  const sorted=[...catArr].sort((a,b)=>b.pct-a.pct);
+  const strong=sorted.filter(c=>c.pct>=70).map(c=>c.name);
+  const weak=sorted.filter(c=>c.pct<50).map(c=>c.name);
+
+  function wrap(text,maxW,font){ ctx.font=font; const out=[]; let line='';
+    for(const ch of text){ if(ctx.measureText(line+ch).width>maxW){out.push(line);line=ch;} else line+=ch; }
+    if(line)out.push(line); return out; }
+
+  let H=420;
+  let feelLines=[];
+  if(feeling){ feelLines=wrap(feeling,W-2*pad-20,"14px "+FF); H+=50+feelLines.length*22; }
+  cv.width=W; cv.height=H;
+
+  /* 배경 */
+  ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,W,H);
+  /* 헤더 */
+  ctx.fillStyle='#44414f'; ctx.font="bold 26px "+FF;
+  ctx.fillText('📊 학습 리포트 · 문학 비평 4관점 ('+stageLabel()+')',pad,pad+28);
+  const dt=nowStr();
+  ctx.font="15px "+FF; ctx.fillStyle='#857f95';
+  ctx.fillText('이름: '+nm+'      완료: '+dt,pad,pad+56);
+  ctx.strokeStyle='#efe6f3'; ctx.beginPath(); ctx.moveTo(pad,pad+68); ctx.lineTo(W-pad,pad+68); ctx.stroke();
+
+  /* 점수 요약 */
+  let ay=pad+96;
+  ctx.font="bold 16px "+FF; ctx.fillStyle='#44414f';
+  ctx.fillText('총점: '+score+'점    |    첫시도 정답률: '+accPct+'%    |    최고 콤보: '+maxCombo,pad,ay);
+
+  /* 관점별 막대 그래프 */
+  ay+=40;
+  ctx.font="bold 15px "+FF; ctx.fillStyle='#44414f';
+  ctx.fillText('관점별 첫시도 정답률',pad,ay); ay+=10;
+  catArr.forEach(c=>{
+    ay+=30;
+    ctx.font="bold 14px "+FF; ctx.fillStyle='#44414f';
+    ctx.fillText(c.name+' ('+c.correct+'/'+c.total+')',pad,ay);
+    /* bar bg */
+    const barX=pad+200, barW=W-2*pad-260, barH=18;
+    ctx.fillStyle='#f0ecf5'; roundBox(ctx,barX,ay-14,barW,barH,6); ctx.fill();
+    /* bar fill */
+    if(c.pct>0){
+      ctx.fillStyle=c.color; roundBox(ctx,barX,ay-14,Math.max(barW*c.pct/100,12),barH,6); ctx.fill();
+    }
+    ctx.font="bold 13px "+FF; ctx.fillStyle=c.color;
+    ctx.fillText(c.pct+'%',barX+barW+10,ay);
+  });
+
+  /* 잘하는/보완 */
+  ay+=44;
+  ctx.font="bold 15px "+FF; ctx.fillStyle='#22814a';
+  ctx.fillText('✅ 잘하는 분야: '+(strong.length?strong.join(', '):'—'),pad,ay);
+  ay+=26;
+  ctx.fillStyle='#b34064';
+  ctx.fillText('📌 보완이 필요한 분야: '+(weak.length?weak.join(', '):'없음 — 모든 관점을 골고루 잘했어요!'),pad,ay);
+
+  /* 소감 */
+  if(feeling){
+    ay+=40; ctx.font="bold 14px "+FF; ctx.fillStyle='#44414f';
+    ctx.fillText('💬 학습 소감',pad,ay); ay+=22;
+    ctx.font="14px "+FF; ctx.fillStyle='#56525f';
+    feelLines.forEach(l=>{ ctx.fillText(l,pad,ay); ay+=22; });
+  }
+
+  /* 푸터 */
+  ctx.fillStyle='#a89fb2'; ctx.font="13px "+FF;
+  ctx.fillText('제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com',pad,H-18);
+  ctx.fillText('입력하신 이름과 소감은 서버에 저장되지 않으며, 리포트 이미지(JPG) 생성용으로만 쓰입니다.',pad,H-38);
+
+  const url=cv.toDataURL('image/jpeg',0.92);
+  const a=document.createElement('a'); a.href=url;
+  a.download='학습리포트_문학비평4관점_'+stageLabel()+'_'+nm+'_'+fileDate()+'.jpg'; a.click();
+};
+
+$('again').onclick=()=>show('start');
+document.querySelectorAll('.mode').forEach(b=>b.onclick=()=>start(b.dataset.mode));
+</script>
+</body>
+</html>

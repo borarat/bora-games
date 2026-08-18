@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;800;900&display=swap');
+:root{
+  --bg:#eee8f8;--card:#fff;
+  --lav:#b8a0e8;--lav-l:#ede5ff;--lav-m:#d4c4f0;--lav-d:#8060c0;
+  --blue:#5080d8;--blue-l:#dce8ff;--blue-m:#b0c8f8;
+  --green:#40a870;--green-l:#d8f5e5;--green-m:#a0dcc0;
+  --pink:#d45878;--pink-l:#fce5ec;--pink-m:#f0b0c4;
+  --red:#e07070;--red-l:#fde8e8;
+  --orange:#f0956a;--orange-l:#ffe8da;--orange-m:#ffd0b8;
+  --yellow:#f5c842;
+  --text:#3a3a5c;--muted:#8888aa;--border:#ddd8f0;
+  --shadow:0 4px 16px rgba(140,120,200,0.13);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse at 20% 30%,rgba(190,170,240,.35),transparent 55%),radial-gradient(ellipse at 80% 15%,rgba(180,200,255,.28),transparent 50%),radial-gradient(ellipse at 50% 85%,rgba(220,180,240,.2),transparent 50%)}
+header{position:relative;z-index:10;width:100%;max-width:1400px;padding:22px 8px 0;text-align:center}
+.game-title{font-size:3rem;font-weight:800;letter-spacing:-.5px;color:var(--text);margin-bottom:2px}
+.game-subtitle{font-size:1.23rem;color:var(--muted)}
+main{position:relative;z-index:10;width:100%;max-width:1400px;padding:10px 8px;display:flex;flex-direction:column;gap:8px}
+/* ===== 시작화면 ===== */
+#start-screen{background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:20px 22px 16px;box-shadow:var(--shadow)}
+.start-layout{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:10px}
+.start-left,.start-right{display:flex;flex-direction:column;gap:8px}
+.start-hero{display:flex;align-items:center;gap:12px;text-align:left}
+.start-emoji{font-size:3.6rem;flex-shrink:0}
+.start-desc{color:var(--muted);font-size:1.32rem;line-height:1.7;word-break:keep-all}
+.start-desc strong{color:var(--text)}
+.concept-box{display:flex;flex-direction:column;border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.concept{display:flex;align-items:center;gap:8px;padding:7px 12px;border-bottom:1px solid var(--border);text-align:left}
+.concept:last-child{border-bottom:none}
+.concept-icon{font-size:1.8rem;flex-shrink:0}
+.concept-title{font-size:1.28rem;font-weight:800;min-width:50px;flex-shrink:0}
+.concept-desc{font-size:1.13rem;color:var(--muted);line-height:1.3}
+.c-in .concept-title{color:var(--blue)}.c-is .concept-title{color:var(--green)}.c-ga .concept-title{color:var(--pink)}
+.info-box{background:var(--lav-l);border:1.5px solid var(--lav-m);border-radius:10px;padding:8px 12px}
+.info-box-title{font-size:1.26rem;font-weight:800;color:var(--lav-d);margin-bottom:4px}
+.info-box p{font-size:1.17rem;color:var(--text);line-height:1.5;margin:2px 0}
+.rules-row{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.rule-chip{text-align:center;padding:5px 3px;background:rgba(184,160,232,.12);border:1px solid var(--lav-m);border-radius:8px}
+.rule-chip .rv{font-size:1.43rem;font-weight:800}.rule-chip .rk{font-size:1.02rem;color:var(--muted);display:block;margin-top:1px}
+.rv.good{color:var(--green)}.rv.bad{color:var(--red)}.rv.neutral{color:var(--lav-d)}
+.stage-section{background:var(--bg);border-radius:10px;padding:10px 10px 8px;border:1.5px solid var(--border)}
+.stage-title{font-size:1.32rem;font-weight:800;color:var(--text);margin-bottom:6px}
+.stage-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.stage-btn{border:none;border-radius:10px;padding:10px 6px 8px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-weight:800;font-size:1.28rem;color:white;transition:all .2s;box-shadow:var(--shadow);text-align:center}
+.stage-btn:hover{transform:translateY(-2px)}
+.stage-btn.s1{background:linear-gradient(135deg,#b8a0e8,#9080d0)}
+.stage-btn.s2{background:linear-gradient(135deg,#9080d0,#7060c0)}
+.stage-btn.s3{background:linear-gradient(135deg,#7060c0,#5040a8)}
+.stage-badge{font-size:.96rem;font-weight:400;opacity:.9;margin-top:3px;line-height:1.3}
+.start-creator{font-size:1.08rem;color:var(--muted);padding-top:6px;border-top:1px solid var(--border);line-height:1.5;text-align:center}
+/* ===== 게임 공통 ===== */
+.game-screen{display:none}.game-screen.show{display:block}
+.ingame-credit{position:fixed;right:10px;bottom:6px;z-index:6;font-size:.98rem;color:var(--muted);opacity:.45;pointer-events:none;display:none}.ingame-credit.show{display:block}
+.progress-wrap{background:var(--card);border-radius:10px;padding:8px 12px;border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:8px}
+.progress-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:3px;margin-bottom:4px}
+.progress-label{color:var(--text);font-weight:700;font-size:1.35rem}
+.progress-right{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.score-badge{background:var(--lav-l);border:1.5px solid var(--lav-m);padding:2px 8px;border-radius:18px;font-weight:800;color:var(--lav-d);font-size:1.28rem}
+.combo-badge{background:var(--orange-l);border:1.5px solid var(--orange-m);padding:2px 8px;border-radius:18px;font-weight:800;color:var(--orange);font-size:1.28rem}
+.combo-badge.hidden{opacity:0;pointer-events:none}
+.progress-bar-bg{background:var(--border);border-radius:5px;height:6px;overflow:hidden}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--lav),var(--lav-d));border-radius:5px;transition:width .4s}
+/* ===== 연설문 모드 ===== */
+.speech-layout{display:grid;grid-template-columns:1fr 540px;gap:10px;align-items:start}
+.speech-panel{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow);max-height:72vh;overflow-y:auto}
+.speech-header{margin-bottom:10px;padding-bottom:8px;border-bottom:1.5px solid var(--border)}
+.speech-title{font-size:1.58rem;font-weight:800;color:var(--text)}
+.speech-author{font-size:1.17rem;color:var(--muted);margin-top:2px}
+.speech-src{font-size:1.05rem;color:var(--lav-d);margin-top:2px;text-align:right}
+.speech-body{font-size:1.01rem;line-height:2;color:var(--text);word-break:keep-all}
+.speech-body p{margin-bottom:10px;text-indent:1em}
+.speech-body p:last-child{margin-bottom:0}
+mark.hl-active{background:linear-gradient(180deg,transparent 55%,rgba(184,160,232,0.35) 55%);color:var(--text);padding:0 1px;border-bottom:2.5px solid var(--lav);font-weight:700}
+.question-panel{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow);position:sticky;top:10px;display:flex;flex-direction:column;gap:8px}
+.q-badge{font-size:1.17rem;font-weight:800;color:var(--lav-d);background:var(--lav-l);padding:2px 10px;border-radius:8px;display:inline-block;margin-bottom:2px}
+.q-prompt{font-size:1.43rem;font-weight:700;color:var(--text);line-height:1.6;word-break:keep-all}
+/* ===== 기본 모드 (1단계) ===== */
+.basic-layout{display:grid;grid-template-columns:1fr 130px;gap:8px;align-items:start}
+.basic-main{display:flex;flex-direction:column;gap:8px}
+.sentence-card{background:var(--card);border:2px solid var(--lav-m);border-radius:14px;padding:18px 16px 14px;text-align:center;min-height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;box-shadow:var(--shadow)}
+.sentence-num{position:absolute;top:8px;left:10px;font-size:1.17rem;color:var(--lav-d);background:var(--lav-l);padding:2px 8px;border-radius:8px;font-weight:800}
+.sentence-text{font-size:1.65rem;line-height:2;font-weight:700;color:var(--text);word-break:keep-all;padding-top:4px}
+.nav-sidebar{display:flex;flex-direction:column;gap:6px;position:sticky;top:10px}
+.nav-sidebar .nav-btn,.q-nav .nav-btn{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px 5px;font-family:'Noto Sans KR',sans-serif;font-size:1.14rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;box-shadow:var(--shadow);text-align:center;line-height:1.3;width:100%}
+.nav-btn:hover{background:var(--lav-l);border-color:var(--lav);color:var(--lav-d)}.nav-btn{white-space:nowrap}
+.nav-btn:disabled{opacity:.3;cursor:not-allowed}
+.finish-btn{background:linear-gradient(135deg,var(--lav),var(--lav-d))!important;border-color:transparent!important;color:white!important;font-size:1.11rem!important;white-space:nowrap}
+.q-nav{display:flex;gap:6px;margin-top:4px}
+.q-nav .nav-btn{flex:1;padding:10px 8px}
+/* ===== 답변 영역 ===== */
+.cups-area{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.cup-btn{border:2px solid transparent;border-radius:10px;padding:10px 6px;cursor:pointer;transition:all .2s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;font-family:'Noto Sans KR',sans-serif;box-shadow:var(--shadow)}
+.cup-btn:hover:not(:disabled){transform:translateY(-2px)}.cup-btn:disabled{opacity:.5;cursor:not-allowed}
+.cup-icon{font-size:1.8rem}.cup-label{font-size:1.23rem;font-weight:800;white-space:nowrap}.cup-desc{font-size:.98rem;color:var(--muted);line-height:1.2}
+.cup-btn.c-in{background:var(--blue-l);border-color:var(--blue-m)}.cup-btn.c-in:hover:not(:disabled){border-color:var(--blue)}
+.cup-btn.c-is{background:var(--green-l);border-color:var(--green-m)}.cup-btn.c-is:hover:not(:disabled){border-color:var(--green)}
+.cup-btn.c-ga{background:var(--pink-l);border-color:var(--pink-m)}.cup-btn.c-ga:hover:not(:disabled){border-color:var(--pink)}
+.cup-btn.c-in .cup-label{color:var(--blue)}.cup-btn.c-is .cup-label{color:var(--green)}.cup-btn.c-ga .cup-label{color:var(--pink)}
+.ox-area{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ox-btn{border:2px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:1.73rem;font-weight:800;text-align:center;transition:all .2s;box-shadow:var(--shadow);background:var(--card)}
+.ox-btn:hover:not(:disabled){transform:translateY(-2px);border-color:var(--lav)}.ox-btn:disabled{opacity:.5;cursor:not-allowed}
+.ox-o{color:var(--blue)}.ox-x{color:var(--red)}
+.short-area{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.short-input{flex:1;min-width:120px;font-family:'Noto Sans KR',sans-serif;font-size:1.43rem;font-weight:700;padding:9px 12px;border:2px solid var(--lav-m);border-radius:10px;color:var(--text);outline:none;transition:border-color .2s}
+.short-input:focus{border-color:var(--lav-d)}.short-input:disabled{background:#f4f2fa;opacity:.6}
+.submit-btn{font-family:'Noto Sans KR',sans-serif;font-weight:800;font-size:1.32rem;padding:9px 14px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--lav),var(--lav-d));color:white;cursor:pointer;box-shadow:var(--shadow)}
+.submit-btn:disabled{opacity:.4;cursor:not-allowed}
+.hint-btn{font-family:'Noto Sans KR',sans-serif;font-weight:700;font-size:1.23rem;padding:8px 12px;border:2px solid var(--orange-m);border-radius:10px;background:var(--orange-l);color:#d06030;cursor:pointer;white-space:nowrap}
+.hint-btn:disabled{opacity:.4;cursor:not-allowed}
+.pick-area{display:flex;flex-direction:column;gap:6px}
+.pick-btn{border:2px solid var(--border);border-radius:10px;padding:11px 14px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:1.32rem;font-weight:600;text-align:left;transition:all .2s;box-shadow:var(--shadow);background:var(--card);color:var(--text);line-height:1.5;word-break:keep-all}
+.pick-btn:hover:not(:disabled){transform:translateY(-1px);border-color:var(--lav);background:var(--lav-l)}
+.pick-btn:disabled{opacity:.5;cursor:not-allowed}
+.pick-num{color:var(--lav-d);font-weight:800;margin-right:6px}
+.hint-box{border-radius:9px;padding:8px 12px;font-size:1.23rem;line-height:1.5;font-weight:700;display:none;animation:slideIn .3s}
+.hint-box.show{display:block}
+.hint-box.h1{background:#fff8e8;border:1.5px solid #f0d8a0;color:#906010}
+.hint-box.h2{background:var(--orange-l);border:1.5px solid var(--orange-m);color:#c06020}
+.feedback{border-radius:10px;padding:9px 12px;display:none;align-items:center;gap:8px;font-weight:700;font-size:1.35rem;animation:slideIn .3s}
+.feedback.show{display:flex}
+.feedback.correct{background:var(--green-l);border:1.5px solid var(--green-m);color:#2a7a50}
+.feedback.wrong{background:var(--red-l);border:1.5px solid #f0b8b8;color:#c05050}
+@keyframes slideIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+.feedback-icon{font-size:1.65rem;flex-shrink:0}.feedback-text{flex:1;word-break:keep-all}
+.feedback-detail{display:none;background:#f8f6ff;border:1.5px solid var(--lav-m);border-radius:10px;padding:9px 12px;font-size:1.26rem;line-height:1.7;color:var(--text);word-break:keep-all}
+.feedback-detail.show{display:block}
+/* ===== 종료화면 ===== */
+#complete-screen{display:none;background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:20px 18px 16px;box-shadow:var(--shadow);animation:fadeIn .5s}
+#complete-screen.show{display:block}
+@keyframes fadeIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+.complete-layout{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:center;margin-bottom:10px}
+.complete-left{text-align:center}.complete-emoji{font-size:3.3rem;margin-bottom:3px}
+.complete-title{font-size:1.95rem;font-weight:800;margin-bottom:3px}
+.complete-desc{color:var(--muted);font-size:1.23rem;line-height:1.5;word-break:keep-all}
+.complete-right{text-align:center}
+.final-score{font-size:3.3rem;font-weight:800;color:var(--lav-d);line-height:1;margin-bottom:2px}
+.final-score-label{color:var(--muted);font-size:1.17rem;margin-bottom:8px}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px}
+.stat-box{border-radius:8px;padding:7px 4px;text-align:center}
+.stat-val{font-size:1.8rem;font-weight:800}.stat-lbl{font-size:1.02rem;color:var(--muted)}
+.stat-box.cs{background:var(--green-l)}.cs .stat-val{color:#2a7a50}
+.stat-box.ws{background:var(--red-l)}.ws .stat-val{color:#c05050}
+.stat-box.xs{background:var(--orange-l)}.xs .stat-val{color:var(--orange)}
+.input-section{margin-top:12px;display:flex;flex-direction:column;gap:7px}
+.input-row{display:flex;gap:6px;align-items:center}
+.input-row label{font-size:1.26rem;font-weight:700;min-width:65px;flex-shrink:0}
+.input-row input,.input-row textarea{flex:1;font-family:'Noto Sans KR',sans-serif;font-size:1.32rem;padding:7px 10px;border:2px solid var(--border);border-radius:9px;color:var(--text)}
+.input-row textarea{resize:vertical;min-height:40px}
+.complete-btns{display:flex;gap:7px;margin-top:8px}
+.restart-btn{flex:1;background:linear-gradient(135deg,var(--lav),var(--lav-d));border:none;border-radius:10px;padding:11px 6px;font-family:'Noto Sans KR',sans-serif;font-size:1.35rem;font-weight:800;color:white;cursor:pointer}
+.back-btn{flex:1;background:var(--green-l);border:1.5px solid var(--green-m);border-radius:10px;padding:11px 6px;font-family:'Noto Sans KR',sans-serif;font-size:1.35rem;font-weight:800;color:#2a7a50;cursor:pointer}
+.download-btn{flex:1;background:var(--blue-l);border:1.5px solid var(--blue-m);border-radius:10px;padding:11px 6px;font-family:'Noto Sans KR',sans-serif;font-size:1.35rem;font-weight:800;color:var(--blue);cursor:pointer}
+.wrong-report{margin-top:14px;text-align:left}
+.wrong-report-title{font-size:1.5rem;font-weight:800;margin-bottom:8px;padding-bottom:5px;border-bottom:2px solid var(--red-l);display:flex;align-items:center;gap:5px}
+.wrong-item{background:var(--red-l);border:1.5px solid #f0b8b8;border-radius:9px;padding:10px 12px;margin-bottom:7px}
+.wrong-item-num{font-size:1.23rem;font-weight:800;color:#c05050;background:rgba(255,255,255,.6);padding:2px 8px;border-radius:7px;display:inline-block;margin-bottom:4px}
+.wrong-item-text{font-size:1.28rem;line-height:1.5;font-weight:700;color:var(--text);margin-bottom:4px;word-break:keep-all}
+.wrong-item-answer{font-size:1.23rem;color:#2a7a50;font-weight:800}
+.wrong-item-answer span{color:#c05050;margin-right:5px;font-weight:400}
+#toast{position:fixed;top:22px;left:50%;transform:translateX(-50%);background:var(--yellow);color:#3a3a00;font-weight:800;font-size:1.28rem;padding:7px 16px;border-radius:26px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;box-shadow:0 4px 12px rgba(240,200,50,.4);white-space:nowrap}
+#toast.show{opacity:1}
+@media(max-width:800px){
+  .start-layout{grid-template-columns:1fr}
+  .speech-layout{grid-template-columns:1fr}
+  .speech-panel{max-height:45vh}
+  .question-panel{position:static}
+  .basic-layout{grid-template-columns:1fr}
+  .nav-sidebar{position:fixed;bottom:0;left:0;right:0;flex-direction:row;justify-content:center;gap:5px;background:rgba(238,232,248,.95);padding:7px 10px;border-top:1px solid var(--border);z-index:20}
+  .nav-sidebar .nav-btn{padding:8px 8px;font-size:1.08rem}
+  .complete-layout{grid-template-columns:1fr}
+}
+@media(max-width:500px){.cups-area{grid-template-columns:1fr 1fr 1fr}.stage-btns{grid-template-columns:1fr 1fr 1fr}.game-title{font-size:2.2rem}}
+</style>
+</head>
+<body>
+<div class="stars"></div>
+<div id="toast"></div>
+<header>
+  <div style="display:flex;align-items:center;justify-content:center;gap:12px">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAI8AAAC0CAMAAACaAI/PAAABgFBMVEXTm2evn448MS1lT0Cmf2HAZh3An4D7+vpMNSXZ1s7Gxsa4urzo6OfhupPcto7NxbbalVmMqcKptsKTp7jQiEzTmmfXpXTkwZxGLBvipW3i2snLeDWcscPUrIR8osLFvbKoq6vnx6NqSDBNMR7b0b2telCvpJaHm6jk4dmth2eMZ0qLeGnhmlu+wL3gnWG2g1ipmoySlpVtWEjGfULTgTxaRDSVhXa2lHWdsL50Ujm8wcJELiDFbCd4mraGWDd4ZVaXc1Z8oL46JhhiPSWTjIaDXELwsnh6bWK8dTuSYzwIBQUbFRNuOBZ3Qh3groDi0rsqHRecoJve3+B1nsKzajLawZ7f4N/Av8Dd4eIxIyF7c2l+lJ2BTSe2WBG8YhyjbUUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPmQJeAAAAYHRSTlP///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////9ebwvOAAAdVklEQVR42r1cB3viSNL2fQmkRmoUAQlZIoONDTjbY3vybE53ezn9/3/xVVV3Kws8u/ucdkdgUr9UvRW7xJGu661Wq3rWdL1Te2YMzh31iNbROnVv/2VnTT/ijP4snFnpLDDUngFP5e2/7CyWO9I0rdPpfO65o+4vl7/k7c3no71o5bnTLKKOrkmB/zYiOoxH+8/i+TUSVje/ocqOfo2yxDl9o6bn3169/yI+/0o8S8KjccbjZPthG/9y9f0q+8rOrdaSb08v2ukxvjid65kB/ub2tV9Z+s1Fe9JvF49+e3zDQX02fQj/T9mX3tFPr/uv2vXH9WnymSqzBR4lKz13zj+i6blHxH3xRPK63W/vOy4YkrzuY1tFNeEjIh4dNdMvM41a4ein7YNH/2L7UuGo+LWf8Bppv84N7g7IRh2nnWYMvHwf8EjpZRJ72fmLl6FptyfXvCM/XC7UkueWlj3eAsXhI/vtS29Q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" alt="보라라샘" style="height:90px;border-radius:12px">
+    <div>
+      <div class="game-title">🎓 연설문 설득 전략 마스터</div>
+      <div class="game-subtitle">중학교 3학년 국어 · 설득 전략 구별 챌린지</div>
+    </div>
+  </div>
+</header>
+<main>
+<!-- ===== 시작화면 ===== -->
+<div id="start-screen">
+  <div style="background:#eef0ff;border:1.5px solid #c8cef0;border-radius:10px;padding:8px 14px;margin-bottom:10px;text-align:center;font-size:1.26rem;font-weight:800;color:#4a50a0">[9국01-02] 설득 전략을 비판적으로 분석하며 듣는다.</div>
+  <div class="start-layout">
+    <div class="start-left">
+      <div class="start-hero">
+        <div class="start-emoji">🔍</div>
+        <p class="start-desc">연설문을 읽고<br><strong>어떤 설득 전략이 사용되었는지</strong><br>구별해 보세요!</p>
+      </div>
+      <div class="concept-box">
+        <div class="concept c-in"><div class="concept-icon">🔵</div><div class="concept-title">인성적</div><div class="concept-desc">화자의 전문성·경험·성품으로 <b>신뢰감</b>을 주어 설득</div></div>
+        <div class="concept c-is"><div class="concept-icon">🟢</div><div class="concept-title">이성적</div><div class="concept-desc">통계·사실·논리적 근거 등 <b>객관적 자료</b>로 설득</div></div>
+        <div class="concept c-ga"><div class="concept-icon">🩷</div><div class="concept-title">감성적</div><div class="concept-desc">감동·공포·동정심 등 <b>감정에 호소</b>하여 설득</div></div>
+      </div>
+    </div>
+    <div class="start-right">
+      <div class="info-box">
+        <div class="info-box-title">🎮 게임 방법</div>
+        <p>1단계: 개념 문제를 풀어요.</p>
+        <p>2~3단계: 연설문의 보라색 밑줄 부분이 어떤 설득 전략인지 찾아요.</p>
+        <p>단답형은 직접 타이핑! 힌트를 쓰면 점수가 줄어요.</p>
+      </div>
+      <div class="rules-row">
+        <div class="rule-chip"><span class="rv good">+100</span><span class="rk">정답</span></div>
+        <div class="rule-chip"><span class="rv bad">−30</span><span class="rk">오답</span></div>
+        <div class="rule-chip"><span class="rv neutral">콤보</span><span class="rk">연속 보너스</span></div>
+      </div>
+      <div class="stage-section">
+        <div class="stage-title">🎯 단계를 선택하세요</div>
+        <div class="stage-btns" style="grid-template-columns:1fr 1fr">
+          <button class="stage-btn s1" onclick="startGame(0)">1단계 · 기본 개념<div class="stage-badge">정의·특징 문제</div></button>
+          <button class="stage-btn s2" onclick="startGame(1)">2단계 · 연설문 기본<div class="stage-badge">짧은 연설문 분석</div></button>
+          <button class="stage-btn s3" onclick="startGame(2)">3단계 · 연설문 심화<div class="stage-badge">긴 연설문 분석</div></button>
+          <button class="stage-btn s4" onclick="startGame(3)" style="background:linear-gradient(135deg,#5040a8,#3a2888)">4단계 · 심화 적용<div class="stage-badge">연설문 작성에 활용</div></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="background:#f8f8ff;border:1px solid #e0ddf0;border-radius:8px;padding:7px 12px;margin-top:8px;font-size:1.08rem;color:#8888aa;line-height:1.5;text-align:left">🔒 <b>개인정보 보호 안내</b><br>본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다. 게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.</div>
+  <div class="start-creator">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.07.16 · Made with Claude</div>
+</div>
+
+<!-- ===== 게임 영역 ===== -->
+<div id="game-area" class="game-screen">
+  <div class="progress-wrap">
+    <div class="progress-top">
+      <span class="progress-label" id="progress-label">문제 1 / 10</span>
+      <div class="progress-right">
+        <span id="growth-display" style="font-size:1.5rem">🌱</span>
+        <span class="score-badge">🏅 <span id="score-val">0</span>점</span>
+        <span class="combo-badge hidden" id="combo-badge">🔥 <span id="combo-val">0</span>콤보</span>
+      </div>
+    </div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-fill"></div></div>
+  </div>
+  <!-- 기본 모드 (1단계) -->
+  <div id="layout-basic" class="basic-layout" style="display:none">
+    <div class="basic-main">
+      <div class="sentence-card"><span class="sentence-num" id="sentence-num"></span><div class="sentence-text" id="sentence-text"></div></div>
+      <div id="answer-wrap-b"></div>
+      <div><div class="hint-box" id="hint-box-b"></div></div>
+      <div class="feedback" id="feedback-b"><div class="feedback-icon" id="fb-icon-b"></div><div class="feedback-text" id="fb-msg-b"></div></div>
+      <div class="feedback-detail" id="feedback-detail-b"></div>
+    </div>
+    <div class="nav-sidebar" id="nav-sidebar-b">
+      <button class="nav-btn" id="prev-btn-b" onclick="navigate(-1)">◀ 이전</button>
+      <button class="nav-btn" id="next-btn-b" onclick="navigate(1)">다음 ▶</button>
+      <button class="nav-btn finish-btn" onclick="finishGame()">게임 종료</button>
+    </div>
+  </div>
+  <!-- 연설문 모드 (2~3단계) -->
+  <div id="layout-speech" class="speech-layout" style="display:none">
+    <div class="speech-panel" id="speech-panel">
+      <div class="speech-header">
+        <div class="speech-title" id="sp-title"></div>
+        <div class="speech-author" id="sp-author"></div>
+        <div class="speech-src" id="sp-src"></div>
+      </div>
+      <div class="speech-body" id="sp-body"></div>
+    </div>
+    <div class="question-panel">
+      <div><span class="q-badge" id="q-badge"></span></div>
+      <div class="q-prompt" id="q-prompt">← 보라색 밑줄 부분에 사용된 설득 전략은?</div>
+      <div id="answer-wrap-s"></div>
+      <div><div class="hint-box" id="hint-box-s"></div></div>
+      <div class="feedback" id="feedback-s"><div class="feedback-icon" id="fb-icon-s"></div><div class="feedback-text" id="fb-msg-s"></div></div>
+      <div class="feedback-detail" id="feedback-detail-s"></div>
+      <div class="q-nav">
+        <button class="nav-btn" id="prev-btn-s" onclick="navigate(-1)">◀ 이전</button>
+        <button class="nav-btn" id="next-btn-s" onclick="navigate(1)">다음 ▶</button>
+        <button class="nav-btn finish-btn" onclick="finishGame()">게임 종료</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 종료화면 ===== -->
+<div id="complete-screen">
+  <div class="complete-layout">
+    <div class="complete-left">
+      <div class="complete-emoji" id="complete-emoji">🎉</div>
+      <div class="complete-title" id="complete-title">학습 완료!</div>
+      <div class="complete-desc">설득 전략을 잘 구분할 수 있나요?<br>어렵다면 다시 한번 풀어보세요!</div>
+    </div>
+    <div class="complete-right">
+      <div class="final-score" id="final-score">0점</div>
+      <div class="final-score-label" id="final-score-label">최종 점수</div>
+      <div class="stats-grid">
+        <div class="stat-box cs"><div class="stat-val" id="stat-correct">0</div><div class="stat-lbl">정답</div></div>
+        <div class="stat-box ws"><div class="stat-val" id="stat-wrong">0</div><div class="stat-lbl">오답</div></div>
+        <div class="stat-box xs"><div class="stat-val" id="stat-combo">0</div><div class="stat-lbl">최고 콤보</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="input-section">
+    <div class="input-row"><label>이름</label><input type="text" id="nickname" placeholder="이름을 입력해 주세요" maxlength="20"></div>
+    <div class="input-row"><label>학습 소감</label><textarea id="comment" placeholder="오늘 학습 소감을 적어 주세요" rows="2"></textarea></div>
+  </div>
+  <div class="complete-btns">
+    <button class="back-btn" onclick="goStart()">🏠 단계 선택</button>
+    <button class="restart-btn" onclick="restartGame()">🔄 다시하기</button>
+    <button class="download-btn" onclick="downloadJPG()">📥 오답노트 저장</button>
+    <button class="download-btn" onclick="downloadReport()" style="background:var(--lav-l);border-color:var(--lav-m);color:var(--lav-d)">📊 학습 리포트 저장</button>
+  </div>
+  <div style="font-size:1.08rem;color:#8888aa;margin-top:8px;line-height:1.5;text-align:center">🔒 입력하신 이름과 소감은 서버에 저장되지 않으며, 리포트 이미지(JPG) 생성용으로만 쓰입니다.</div>
+  <div class="wrong-report" id="wrong-report"></div>
+</div>
+</main>
+<div class="ingame-credit" id="ingame-credit">제작 · 보라라샘 / 2026.07.16</div>
+
+<script>
+/* ========== 연설문 데이터 ========== */
+const SP={
+maejum:{
+  title:'매점 설치를 건의하는 연설',author:'최정은 (OO중학교 학생회장)',src:'출처: 15개정 비상교육(김진수)',
+  body:`OO 중학교 관계자 여러분, 안녕하세요? {{11}}저는 이 학교의 학생회장, '최정은'이라고 합니다{{/11}}. 오전 수업 중, {{13}}우리 반 뿐 여기저기에서 '꼬르륵' 소리가 울려 퍼지지만, 우리는 하염없이 점심시간만 기다립니다{{/13}}. 왜냐하면 우리의 배를 채워 줄 매점이 없기 때문입니다.
+
+저는 우리 학교에 매점이 꼭 필요하다고 생각합니다. 매점이 있으면 아침을 거르고 오는 학생들은 간단한 식사를 할 수 있고, 성장기에 필요한 영양분을 보충할 수 있습니다. 또한 {{12}}배가 고플 때에는 집중력이 떨어진다는 연구 결과도 있습니다{{/12}}. 매점을 이용하여 허기를 채우면 우리의 집중력도 높아질 것입니다.
+
+부디 우리 학교에 매점을 설치하여 우리가 즐거운 학교생활을 할 수 있도록 해 주시면 감사하겠습니다.`
+},
+aksung:{
+  title:'악성 댓글을 남기지 맙시다',author:'OO중학교 3학년',src:'출처: 15개정 비상교육(김진수)',
+  body:`안녕하세요? 저는 OO 중학교 3학년, OOO이라고 합니다. 최근 {{14}}악성 댓글로 피해를 보는 사람이 점점 많아진다는 뉴스를 보았는데, 피해자들의 고통이 매우 커 보였습니다{{/14}}. 그래서 저는 여러분께 악성 댓글을 남기지 말자는 말씀을 드리고 싶습니다.
+
+우리가 장난하듯이 남긴 댓글이 상대방에게는 지워지지 않는 상처로 남을 수 있습니다. 악성 댓글을 주고받다가 {{15}}마음의 상처를 입은 경험이 있는지를 조사해 보았더니 우리 학급의 30명 중 25명이 그렇다고 답을 했습니다{{/15}}. 이는 악성 댓글을 남긴 경험이 있는 사람도 해당되는 것입니다. 이처럼 악성 댓글은 남기는 사람과 받는 사람 모두에게 좋지 않은 영향을 미칩니다.
+
+{{16}}악성 댓글은 '칼날'과 같습니다. 그 칼끝이 '나'를 향한다고 생각해 보십시오.{{/16}} 얼굴도 모르는 사람들이 '나'를 향해 싫대질하는 장면을 떠올리면 누구도 함부로 악성 댓글을 남길 수 없을 것입니다.`
+},
+aram:{
+  title:'행복이 넘치는 학교를 만들겠습니다',author:'정아람 (학생회장 후보 기호 1번)',src:'출처: 15개정 천재교육(노미숙)',
+  body:`여러분, 안녕하십니까? 학생회장 후보 기호 1번 정아람입니다. 오늘 저는 행복이 넘치는 학교를 만들고 싶어 여러분 앞에 섰습니다.
+
+저는 중학생이 되어 학교생활을 하면서, 진정한 지도력은 배려하는 마음에서 시작한다는 것을 알게 되었습니다. 특히 {{17}}학교 앞 교통안전 도우미 활동을 꾸준히 하면서 배려하고 봉사하는 즐거움을 배웠습니다{{/17}}. 다른 사람을 배려하고, 다른 사람을 도우려고 봉사하는 마음이야말로 학생회장이 갖추어야 할 중요한 마음가짐이라고 생각합니다.
+
+여러분! 행복이 넘치는 학교는 어떤 곳일까요? 지금부터 행복이 넘치는 학교를 만들 저의 세 가지 약속을 말씀드리겠습니다.
+
+첫째, 소통이 활발한 학교를 만들겠습니다. 평소 학교에 바라는 것이 많지만 어떻게 건의해야 할지 몰라서 고민하는 친구들의 모습을 자주 보았습니다. 저는 {{18}}설문 조사에서 67퍼센트 되는 학생들이 자신의 의견을 학교에 전달하고 싶어 한다는 것을 알게 되었습니다{{/18}}. 이러한 의견을 반영하여 한 달에 한 번이던 학급 회의를 두 번으로 늘리고, 신청한 사람이면 누구나 아침 방송 '1분 건의 시간'에 학교에 제안할 점을 말할 수 있도록 하겠습니다. 또한 {{19}}학급 회의에서 낸 의견이 실제로 학교 운영에 반영되는지 궁금해하는 73퍼센트의 의견을 고려해{{/19}}, 대의원회 회의 결과를 학교 게시판에 공개하겠습니다.
+
+둘째, 활력이 가득한 학교를 만들겠습니다. 학생들의 관심이 가장 큰 가을 축제를 우리 스스로 만들어 나갈 수 있도록 하겠습니다. 축제를 기획하는 단계에서부터 학생을 중심으로 운영 모임을 만들고 여러분의 의견을 적극적으로 수용하겠습니다.
+
+셋째, 불편함이 없는 학교를 만들겠습니다. 하굣길에 갑자기 비가 오면 우산이 없어서 곤란을 겪는 친구가 많습니다. 그래서 학생회에서 여러분께 우산을 빌려드리고자 합니다. 집에 남아 있는 우산을 기증받고 학생회 예산으로 우산을 구입하여, 우산이 필요한 학생들이 언제든지 우산을 빌릴 수 있도록 하겠습니다.
+
+{{20}}저는 여러분에게 우산 같은 학생회장, 난로 같은 학생회장이 되고 싶습니다. 여러분을 위해서라면 언제든 빛이 되고 바람이 되겠습니다.{{/20}}
+
+행복이 넘치는 학교를 만들 기호 1번 정아람! 여러분의 선택이 후회로 남지 않도록 최선을 다하겠습니다. 감사합니다.`
+},
+king:{
+  title:'마틴 루서 킹 연설',author:'마틴 루서 킹',src:'출처: 15개정 천재교육(박영목)',
+  body:`{{21}}마틴 루서 킹은 인종에 따라 버스 안 좌석을 구분해서 앉게 하는 정책에 반대하며 1955년 5만여 명의 시민들과 함께 '몽고메리 버스 타기 거부 운동'을 벌였다. 이 운동을 통해 흑인 인권 운동의 지도자로 이름을 알린 마틴 루서 킹은 이후 비폭력 정신을 바탕으로 한 흑인 인권 운동을 이끌었다.{{/21}}
+
+흑인 인권 운동을 지속적으로 실천해 온 마틴 루서 킹의 경험과 전문성이 청자에게 신뢰감을 주고 주장의 설득력을 높인다.
+
+나에게는 꿈이 있습니다. 언젠가 이 나라가 {{22}}'모든 인간은 평등하게 태어났다는 사실을 우리는 자명한 진리로 받아들인다.'라는 이 나라 건국 신조의 참뜻을 되새기며{{/22}} 살아가리라는 꿈입니다.
+
+나에게는 꿈이 있습니다. {{23}}언젠가 조지아주의 붉은 언덕에서 한때 노예의 후손과 노예 주인의 후손이 형제애라는 식탁 앞에 나란히 앉을 수 있는 날이 오리라는 꿈입니다.{{/23}}`
+},
+yuna:{
+  title:'평창 동계 올림픽 유치 연설',author:'김연아',src:'출처: 15개정 천재교육(박영목)',
+  body:`자크 로게 국제 올림픽 위원회 위원장님과 위원 여러분, 안녕하십니까? 로잔에서 만난 지 7주밖에 되지 않았다니 재 믿기지 않습니다. 그동안 저는 오늘을 위해 선수 때보다 더 열심히 준비하였습니다.
+
+{{25}}십 년 전 평창이 동계 올림픽 유치의 꿈을 꾸기 시작했을 때, 저는 서울의 어느 빙상 경기장에서 올림픽 출전의 꿈을 꾸기 시작한 어린 소녀였습니다.{{/25}} 여러분도 아시다시피 한국의 많은 동계 종목 선수가 올림픽 출전의 꿈을 이루고자 훈련하러 가는 데에만 지구를 반 바퀴 돌아가야 합니다. 그리고 이제 저의 꿈은 제가 누렸던 기회들을 다른 나라 선수들과 나누는 것입니다. 2018년 평창 올림픽이 그 꿈을 실현하는 데 도움이 될 수 있을 것입니다.
+
+'꿈을 펼쳐라(Drive the dream)'는 한국 정부가 동계 스포츠 선수들에게 시설과 훈련을 재정적으로 지원하는 프로젝트입니다. 이 덕분에 {{24}}한국은 밴쿠버 올림픽에서 저의 메달을 포함하여 총 14개의 메달을 획득하였고, 82개국 중 7위의 성적을 거두었습니다.{{/24}} 앞으로 더 좋은 성적을 내기 위해서, 2018년 평창 올림픽을 치를 새로운 경기장들이 필요합니다.`
+},
+rowling:{
+  title:'세상을 바꾸는 실패와 상상력',author:'조앤 K. 롤링',src:'출처: 15개정 비상교육(김진수)',
+  body:`우선 제게 이런 특별한 시간을 주신 대학교 측에 감사하다는 말씀을 드리고 싶습니다. 오늘 졸업생 여러분 앞에서 무슨 이야기를 해야 할지 고민을 많이 했습니다. 저는 더 큰 세상으로 나아가는 출발점에 서 있는 여러분에게 '실패가 주는 혜택'과 '상상력의 중요성'을 말씀드리고 싶습니다.
+
+제가 여러분 나이에 가장 두려워했던 것은 실패였습니다. {{26}}학교를 졸업한 후 7년 동안, 저는 계속 실패했습니다. 결혼 생활이 짧게 끝나고, 변변한 직장을 다닌 것도 아니어서 경제적으로 매우 어려웠습니다.{{/26}} 어떤 기준으로 보더라도 실패한 사람이었지요. 하지만 실패는 다른 곳에서 배울 수 없었던 제 자신을 알게 해 주었습니다.
+
+{{27}}대학을 졸업하고 얼마 안 되어 저는 런던에 있는 '국제 사면 위원회' 본부의 연구 부서에서 일하게 되었습니다.{{/27}} 저는 여기에서 일하는 동안 우리가 직접 경험하지 않은 타인의 아픔을 공감하게 하는 상상력의 힘을 느낄 수 있었습니다.
+
+{{28}}여러분은 힘없는 사람들을 자신과 같이 여기고, 어려운 상황에 처해 있는 사람들의 삶을 상상하는 힘을 가지세요. 그리고 여러분의 힘과 영향력을 그들을 위해 사용해 주십시오.{{/28}} 세상을 바꾸는 데 마법은 필요 없습니다. 우리의 마음속에 이미 세상을 바꿀 힘이 있습니다.`
+},
+gates:{
+  title:'빌 게이츠 & 멜린다 연설',author:'빌 게이츠',src:'출처: 15개정 두산동아(이은영)',
+  body:`이러한 질문에 대한 이야기를 하던 중에 {{29}}매년 가난한 나라의 수백만 어린이가 여러 가지 질병으로 죽어 가고 있다는 기사를 읽게 되었습니다. 홍역, 말라리아, 폐렴, B형 간염, 황열병 등으로 말입니다. 이러한 질병 중 제가 전혀 들어 보지도 못했던 로타바이러스는 매년 50만 어린이의 생명을 앗아간다고 합니다.{{/29}}
+
+우리가 관심을 행동으로 옮기기 위해서는 문제를 똑바로 바라보고, 해결책을 찾고, 해결책이 미칠 영향을 파악해야 합니다.
+
+저와 제 아내 멜린다 역시 스스로에게 같은 질문을 던지고는 합니다. 어떻게 우리가 가진 한정된 자원으로 더 많은 사람에게 도움을 줄 수 있을지 말입니다.
+
+다시 말하지만 여러분은 세계의 불평등을 알고 있습니다. {{30}}여러분의 작은 노력으로 누군가의 삶이 바뀔 수 있다는 것을 알면서도 포기해 버린다면 마음속에서 울부짖는 양심의 소리에 괴로워하게 될 것입니다.{{/30}}`
+}
+};
+
+/* ========== 문제 데이터 ========== */
+const STAGES=[
+[/* 1단계 기본 개념 */
+{id:1,type:'mc3',text:'화자의 전문성, 경험, 도덕적 성품 등을 통해 신뢰감을 주어 청중을 설득하는 전략은?',answer:'인성적',detail:'인성적 설득 전략은 화자가 \'어떤 사람인가\'를 보여줘서 신뢰를 얻는 전략이에요.'},
+{id:2,type:'ox',text:'"통계 수치와 객관적 자료를 제시하여 청중을 설득하는 것은 감성적 설득 전략이다."',answer:'X',detail:'통계·자료를 활용하는 것은 이성적 설득 전략이에요. 감성적은 감정에 호소하는 거예요.'},
+{id:3,type:'mc3',text:'청중의 감정(감동, 공포, 동정심 등)에 호소하여 설득하는 전략은?',answer:'감성적',detail:'감성적 설득 전략은 청중의 \'마음\'을 움직여서 설득하는 전략이에요.'},
+{id:4,type:'short',text:'"역사적 사실, 통계 수치, 체계적 자료를 활용하여 청중을 논리적으로 설득하는 전략"을 무엇이라 하나요?',answer:'이성적',detail:'객관적 근거와 논리로 설득하는 전략이 이성적 설득 전략이에요.'},
+{id:5,type:'mc3',text:'다음은 어떤 설득 전략의 예시인가요?\n「화자의 오랜 경험과 전문성을 강조하여 청중에게 신뢰감을 준다.」',answer:'인성적',detail:'화자의 경험·전문성을 강조하는 것은 인성적 설득 전략의 대표적 예시예요.'},
+{id:6,type:'ox',text:'"공포심이나 동정심을 불러일으켜 설득하는 것은 이성적 설득 전략이다."',answer:'X',detail:'공포심·동정심 등 감정에 호소하는 것은 감성적 설득 전략이에요.'},
+{id:7,type:'mc3',text:'다음은 어떤 설득 전략의 예시인가요?\n「매년 교통사고 사망자가 3,000명에 달합니다.」',answer:'이성적',detail:'구체적 수치(3,000명)를 제시하는 것은 이성적 설득 전략이에요.'},
+{id:8,type:'short',text:'"화자의 인격이나 신뢰성을 바탕으로 청중을 설득하는 전략"을 무엇이라 하나요?',answer:'인성적',detail:'\'이 사람이니까 믿을 수 있다\'는 느낌을 주는 전략이 인성적 설득 전략이에요.'},
+{id:9,type:'mc3',text:'다음 설명에 해당하는 설득 전략은?\n「감동을 주는 문구를 반복하고, 생생한 장면을 묘사하여 청중의 마음을 움직인다.」',answer:'감성적',detail:'감동·생생한 묘사로 마음을 움직이는 것은 감성적 설득 전략이에요.'},
+{id:10,type:'ox',text:'"설득 전략은 하나의 글이나 연설에서 한 가지만 사용할 수 있다."',answer:'X',detail:'하나의 글이나 연설에서 여러 설득 전략을 함께 사용할 수 있어요. 함께 사용할 때 더 효과적이에요.'}
+],
+[/* 2단계 연설문 기본 */
+{id:11,sid:'maejum',type:'mc3',answer:'인성적',detail:'화자가 학생회장임을 밝혀 학교 문제에 대한 대표성과 권위를 보여 주고 있으므로 인성적 설득 전략이에요.'},
+{id:12,sid:'maejum',type:'short',answer:'이성적',detail:'\'연구 결과\'라는 객관적 근거를 제시하여 논리적으로 설득하고 있으므로 이성적 설득 전략이에요.'},
+{id:13,sid:'maejum',type:'mc3',answer:'감성적',detail:'배고픈 학생들의 모습을 생생하게 묘사하여 청중의 공감과 안타까움을 불러일으키고 있어요.'},
+{id:14,sid:'aksung',type:'mc3',answer:'감성적',detail:'피해자들의 \'고통\'을 언급하여 청중의 동정심과 공감을 이끌어내므로 감성적 설득 전략이에요.'},
+{id:15,sid:'aksung',type:'short',answer:'이성적',detail:'학급 조사 결과(30명 중 25명)라는 구체적 수치를 제시하여 논리적으로 설득하고 있어요.'},
+{id:16,sid:'aksung',type:'mc3',answer:'감성적',detail:'\'칼날\'이라는 비유와 \'나를 향한다\'는 상상 유도로 청중의 두려움과 공감에 호소하고 있어요.'},
+{id:17,sid:'aram',type:'mc3',answer:'인성적',detail:'화자의 봉사 활동 경험을 밝혀 \'배려하는 사람\'이라는 신뢰감을 주므로 인성적 설득 전략이에요.'},
+{id:18,sid:'aram',type:'short',answer:'이성적',detail:'설문 조사 수치(67%)라는 객관적 자료를 근거로 제시하고 있어요.'},
+{id:19,sid:'aram',type:'mc3',answer:'이성적',detail:'73%라는 구체적 수치를 근거로 공약의 필요성을 논리적으로 뒷받침하고 있어요.'},
+{id:20,sid:'aram',type:'mc3',answer:'감성적',detail:'\'우산\', \'난로\', \'빛\', \'바람\' 등 따뜻한 비유로 청중의 마음을 움직이고 있어요.'}
+],
+[/* 3단계 연설문 심화 */
+{id:21,sid:'king',type:'mc3',answer:'인성적',detail:'인권 운동에 오랫동안 헌신해 온 경험이 화자의 신뢰성을 높이므로 인성적 설득 전략이에요.'},
+{id:22,sid:'king',type:'short',answer:'이성적',detail:'건국 신조라는 공인된 역사적 원칙을 근거로 제시하여 논리적으로 설득하고 있어요.'},
+{id:23,sid:'king',type:'mc3',answer:'감성적',detail:'감동적인 문구 반복과 평등한 세상의 생생한 묘사로 청중의 마음을 움직이고 있어요.'},
+{id:24,sid:'yuna',type:'mc3',answer:'이성적',detail:'메달 수(14개)와 순위(82개국 중 7위)라는 구체적 수치를 제시하고 있어요.'},
+{id:25,sid:'yuna',type:'short',answer:'감성적',detail:'어린 시절의 꿈 이야기를 진솔하게 들려주어 청중의 공감과 감동을 이끌어내고 있어요.'},
+{id:26,sid:'rowling',type:'mc3',answer:'인성적',detail:'화자가 자신의 실패 경험을 솔직하게 밝혀 \'이 사람의 말이니 믿을 수 있다\'는 신뢰를 주고 있어요.'},
+{id:27,sid:'rowling',type:'short',answer:'인성적',detail:'국제 사면 위원회에서 근무한 전문적 경력이 화자의 신뢰성을 높이므로 인성적 설득 전략이에요.'},
+{id:28,sid:'rowling',type:'mc3',answer:'감성적',detail:'타인의 고통에 공감하라는 호소로 청중의 감정을 움직이고 있어요.'},
+{id:29,sid:'gates',type:'short',answer:'이성적',detail:'수백만, 50만이라는 구체적 수치를 제시하여 문제의 심각성을 논리적으로 설명하고 있어요.'},
+{id:30,sid:'gates',type:'mc3',answer:'감성적',detail:'\'양심의 소리\', \'괴로워하게 될 것\'이라는 표현으로 청중의 자책감과 책임감에 호소하고 있어요.'}
+]
+];
+
+/* 4단계 심화 적용 — 연설문 작성에 활용 */
+STAGES.push([
+{id:31,type:'pick',text:'교복 자율화를 주장하는 연설을 준비 중입니다.\n다음 중 이성적 설득 전략에 해당하는 내용을 고르세요.',
+ opts:['저는 학생회에서 2년간 교복 개선 TF팀에서 활동해 왔습니다.','교복 자율화를 시행한 학교의 87%에서 학생 만족도가 상승했습니다.','매일 똑같은 옷을 입고 거울 앞에 서는 기분을 상상해 보세요.'],answer:1,detail:'구체적 수치(87%)를 제시한 ②가 이성적 설득 전략이에요. ①은 인성적, ③은 감성적이에요.'},
+{id:32,type:'pick',text:'학교 급식 개선을 요구하는 연설을 준비 중입니다.\n다음 중 감성적 설득 전략에 해당하는 내용을 고르세요.',
+ opts:['급식 만족도 조사에서 72%의 학생이 개선을 원한다고 답했습니다.','맛없는 급식을 억지로 삼키며 점심시간이 고통인 친구들을 생각해 보세요.','저는 영양 교육 동아리에서 1년간 활동하며 급식에 대해 공부해 왔습니다.'],answer:1,detail:'친구들의 고통을 상상하게 하는 ②가 감성적 설득 전략이에요. ①은 이성적, ③은 인성적이에요.'},
+{id:33,type:'pick',text:'환경 보호 캠페인 연설을 준비 중입니다.\n다음 중 인성적 설득 전략에 해당하는 내용을 고르세요.',
+ opts:['저는 3년간 환경 동아리에서 매주 교내 분리수거 활동을 이끌어 왔습니다.','우리 학교의 1인당 월간 플라스틱 사용량은 전국 평균의 1.4배입니다.','병들어 가는 지구를 다음 세대에게 물려줄 수는 없지 않겠습니까?'],answer:0,detail:'3년간의 환경 활동 경험을 밝힌 ①이 인성적 설득 전략이에요. ②는 이성적, ③은 감성적이에요.'},
+{id:34,type:'pick',text:'스마트폰 사용 시간 줄이기 연설을 준비 중입니다.\n다음 중 이성적 설득 전략에 해당하는 내용을 고르세요.',
+ opts:['하루 종일 스마트폰만 바라보는 우리의 눈이 안쓰럽지 않나요?','청소년 스마트폰 과의존 비율이 35.8%로 매년 증가하고 있습니다.','저는 디지털 리터러시 교육을 3년간 담당해 온 교사입니다.'],answer:1,detail:'구체적 수치(35.8%)를 제시한 ②가 이성적 설득 전략이에요. ①은 감성적, ③은 인성적이에요.'},
+{id:35,type:'pick',text:'학교 폭력 예방 연설을 준비 중입니다.\n다음 중 감성적 설득 전략에 해당하는 내용을 고르세요.',
+ opts:['저는 학교 폭력 예방 또래 상담사로 2년간 활동해 왔습니다.','학교 폭력 피해 학생의 62%가 등교를 거부한 경험이 있습니다.','혼자서 울면서 학교에 가기 싫다고 말하지 못하는 친구가 바로 옆에 있을 수 있습니다.'],answer:2,detail:'친구의 고통을 상상하게 하는 ③이 감성적 설득 전략이에요. ①은 인성적, ②는 이성적이에요.'},
+{id:36,type:'pick',text:'도서관 이용 활성화 연설을 준비 중입니다.\n다음 중 인성적 설득 전략에 해당하는 내용을 고르세요.',
+ opts:['도서관 이용률이 작년 대비 30% 감소했다는 통계가 있습니다.','저는 초등학교 때부터 6년간 매일 도서관을 찾아 1,000권 이상의 책을 읽었습니다.','먼지만 쌓이는 책장을 보면 책들이 안쓰럽다는 생각이 들지 않나요?'],answer:1,detail:'6년간의 독서 경험을 밝힌 ②가 인성적 설득 전략이에요. ①은 이성적, ③은 감성적이에요.'},
+{id:37,type:'pick',text:'체육 시간 확대를 주장하는 연설을 준비 중입니다.\n다음 중 이성적 설득 전략에 해당하는 내용을 고르세요.',
+ opts:['체육 시간이 부족해서 답답한 마음, 여러분도 느끼고 계시지 않나요?','저는 학교 체육 진흥회 위원으로 2년간 활동해 왔습니다.','체육 수업을 주 3회 이상 실시한 학교에서 학생들의 집중력이 평균 22% 향상되었습니다.'],answer:2,detail:'구체적 수치(주 3회, 22%)를 제시한 ③이 이성적 설득 전략이에요. ①은 감성적, ②는 인성적이에요.'},
+{id:38,type:'pick',text:'봉사 활동 참여를 권하는 연설을 준비 중입니다.\n다음 중 감성적 설득 전략에 해당하는 내용을 고르세요.',
+ opts:['봉사 활동에 참여한 학생의 85%가 자존감이 높아졌다고 답했습니다.','저는 요양원에서 3년간 매주 봉사를 하며 나눔의 가치를 배웠습니다.','홀로 지내시는 어르신이 여러분의 손을 잡고 고맙다며 눈물을 글썽이시던 모습을 떠올려 보세요.'],answer:2,detail:'어르신의 눈물이라는 장면으로 감정에 호소하는 ③이 감성적 설득 전략이에요. ①은 이성적, ②는 인성적이에요.'},
+{id:39,type:'pick',text:'동아리 활동 지원 확대 연설을 준비 중입니다.\n다음 중 인성적 설득 전략에 해당하는 내용을 고르세요.',
+ opts:['동아리 활동에 만족하는 학생은 전체의 45%에 불과합니다.','저는 학생 자치회장으로서 20개 동아리 대표들과 매달 간담회를 진행해 왔습니다.','하고 싶은 활동이 있는데 기회조차 없는 친구들의 아쉬운 마음을 헤아려 주세요.'],answer:1,detail:'자치회장으로서의 경험을 밝힌 ②가 인성적 설득 전략이에요. ①은 이성적, ③은 감성적이에요.'},
+{id:40,type:'pick',text:'분리수거 실천을 촉구하는 연설을 준비 중입니다.\n다음 중 이성적 설득 전략에 해당하는 내용을 고르세요.',
+ opts:['제대로 분리되지 않은 쓰레기가 바다로 흘러가 고통받는 동물들을 생각해 주세요.','저는 환경부 선정 분리수거 우수 학교의 환경 위원장을 맡고 있습니다.','올바른 분리수거를 실천하면 재활용률을 현재 59%에서 80%까지 높일 수 있습니다.'],answer:2,detail:'구체적 수치(59%→80%)를 제시한 ③이 이성적 설득 전략이에요. ①은 감성적, ②는 인성적이에요.'}
+]);
+
+const STAGE_INFO=[{label:'1단계 · 기본 개념',short:'기본'},{label:'2단계 · 연설문 기본',short:'연설문 기본'},{label:'3단계 · 연설문 심화',short:'연설문 심화'},{label:'4단계 · 심화 적용',short:'심화 적용'}];
+const HINT1={'인성적':'💡 이 전략은 화자의 전문성이나 경험으로 신뢰감을 주는 것과 관련이 있어요.','이성적':'💡 이 전략은 객관적 자료나 통계 등 논리적 근거를 제시하는 것과 관련이 있어요.','감성적':'💡 이 전략은 청중의 감정(감동, 공포, 동정심 등)에 호소하는 것과 관련이 있어요.'};
+const HINT2={'인성적':'💡💡 첫 글자는 "인"이에요.','이성적':'💡💡 첫 글자는 "이"예요.','감성적':'💡💡 첫 글자는 "감"이에요.'};
+const GROWTH=['🌱','🌿','🌾','🌻','🏆'];
+function gEmoji(s){const r=s/1140;return r<.2?GROWTH[0]:r<.4?GROWTH[1]:r<.6?GROWTH[2]:r<.85?GROWTH[3]:GROWTH[4]}
+
+/* ========== 상태 ========== */
+let questions=[],cur=0,score=0,combo=0,maxCombo=0,correctCnt=0,wrongCnt=0,cStage=0;
+let answered=[],hintUsed=[],userAns=[];
+let isSpeechMode=false;
+
+/* ========== 사운드 ========== */
+const AC=window.AudioContext||window.webkitAudioContext;let actx;
+function getAC(){if(!actx)actx=new AC();return actx}
+function sndOK(){try{const c=getAC(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.setValueAtTime(523,c.currentTime);o.frequency.setValueAtTime(659,c.currentTime+.1);o.frequency.setValueAtTime(784,c.currentTime+.2);g.gain.setValueAtTime(.22,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.4);o.start(c.currentTime);o.stop(c.currentTime+.4)}catch(e){}}
+function sndNG(){try{const c=getAC(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.setValueAtTime(220,c.currentTime);o.frequency.setValueAtTime(180,c.currentTime+.14);g.gain.setValueAtTime(.18,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.3);o.start(c.currentTime);o.stop(c.currentTime+.3)}catch(e){}}
+function sndCombo(){try{const c=getAC();[523,659,784,1047].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(.16,c.currentTime+i*.07);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+i*.07+.18);o.start(c.currentTime+i*.07);o.stop(c.currentTime+i*.07+.18)})}catch(e){}}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
+
+/* ========== 게임 시작 ========== */
+function startGame(si){
+  cStage=si;questions=STAGES[si];cur=0;
+  score=0;combo=0;maxCombo=0;correctCnt=0;wrongCnt=0;
+  const n=questions.length;
+  answered=Array(n).fill(null);hintUsed=Array(n).fill(0);userAns=Array(n).fill('');
+  isSpeechMode=(si===1||si===2);
+  document.getElementById('score-val').textContent='0';
+  document.getElementById('growth-display').textContent='🌱';
+  document.getElementById('combo-badge').classList.add('hidden');
+  document.getElementById('start-screen').style.display='none';
+  document.getElementById('complete-screen').classList.remove('show');
+  document.getElementById('game-area').classList.add('show');
+  document.getElementById('ingame-credit').classList.add('show');
+  document.getElementById('layout-basic').style.display=isSpeechMode?'none':'grid';
+  document.getElementById('layout-speech').style.display=isSpeechMode?'grid':'none';
+  renderQ();
+}
+
+/* ========== 렌더링 ========== */
+function el(id){return document.getElementById(id)}
+function renderQ(){
+  const q=questions[cur],n=questions.length;
+  // 진행바
+  el('progress-label').textContent=STAGE_INFO[cStage].label+' · 문제 '+(cur+1)+' / '+n;
+  el('progress-fill').style.width=((cur+1)/n*100)+'%';
+  if(isSpeechMode) renderSpeechQ(q); else renderBasicQ(q);
+}
+
+function renderBasicQ(q){
+  el('sentence-num').textContent=q.id+'번';
+  const st=el('sentence-text');
+  st.innerHTML=q.text.replace(/\n/g,'<br>');
+  st.style.fontSize=q.text.length>130?'1.5rem':q.text.length>80?'1.62rem':'1.73rem';
+  // 답변
+  el('answer-wrap-b').innerHTML=buildAnswerHTML(q,'b');
+  // 힌트/피드백 초기화
+  resetFeedback('b');
+  bindShortEnter('b');
+  if(answered[cur]) showAnswered(q,'b');
+  el('prev-btn-b').disabled=(cur===0);
+  el('next-btn-b').disabled=(cur===n-1);
+}
+function renderSpeechQ(q){
+  const sp=SP[q.sid];
+  // 연설문 헤더
+  el('sp-title').textContent=sp.title;
+  el('sp-author').textContent=sp.author;
+  el('sp-src').textContent=sp.src;
+  // 본문 (현재 문제 강조)
+  el('sp-body').innerHTML=renderBody(sp.body,q.id);
+  // 강조 부분으로 스크롤
+  setTimeout(()=>{const m=document.querySelector('mark.hl-active');if(m)m.scrollIntoView({behavior:'smooth',block:'center'})},150);
+  // 문제
+  el('q-badge').textContent=q.id+'번';
+  el('q-prompt').textContent='← 보라색 밑줄 부분에 사용된 설득 전략은?';
+  el('answer-wrap-s').innerHTML=buildAnswerHTML(q,'s');
+  resetFeedback('s');
+  bindShortEnter('s');
+  if(answered[cur]) showAnswered(q,'s');
+  el('prev-btn-s').disabled=(cur===0);
+  el('next-btn-s').disabled=(cur===questions.length-1);
+}
+
+function renderBody(body,activeId){
+  let html=body.replace(/\{\{(\d+)\}\}([\s\S]*?)\{\{\/\1\}\}/g,(m,id,txt)=>{
+    return parseInt(id)===activeId?'<mark class="hl-active">'+txt+'</mark>':txt;
+  });
+  return html.split('\n\n').map(p=>'<p>'+p+'</p>').join('');
+}
+
+/* ========== 답변 HTML 생성 ========== */
+function buildAnswerHTML(q,suf){
+  if(q.type==='mc3') return `<div class="cups-area">
+    <button class="cup-btn c-in" onclick="doAnswer('인성적')"><div class="cup-icon">🔵</div><div class="cup-label">인성적 설득 전략</div><div class="cup-desc">신뢰감·전문성</div></button>
+    <button class="cup-btn c-is" onclick="doAnswer('이성적')"><div class="cup-icon">🟢</div><div class="cup-label">이성적 설득 전략</div><div class="cup-desc">통계·논리·자료</div></button>
+    <button class="cup-btn c-ga" onclick="doAnswer('감성적')"><div class="cup-icon">🩷</div><div class="cup-label">감성적 설득 전략</div><div class="cup-desc">감정·공감·호소</div></button></div>`;
+  if(q.type==='ox') return `<div class="ox-area">
+    <button class="ox-btn ox-o" onclick="doAnswer('O')">⭕ O (맞다)</button>
+    <button class="ox-btn ox-x" onclick="doAnswer('X')">❌ X (틀리다)</button></div>`;
+  if(q.type==='short') return `<div class="short-area">
+    <input class="short-input" id="sinp-${suf}" type="text" placeholder="예: ○○적 설득 전략" maxlength="20">
+    <button class="submit-btn" id="sbtn-${suf}" onclick="submitShort('${suf}')">확인</button>
+    <button class="hint-btn" id="hbtn-${suf}" onclick="useHint('${suf}')">💡 힌트</button></div>`;
+  if(q.type==='pick') return `<div class="pick-area">${q.opts.map((o,i)=>
+    `<button class="pick-btn" onclick="doPick(${i})"><span class="pick-num">①②③④</span> ${o}</button>`
+    .replace('①②③④','①②③④⑤'.charAt(i))).join('')}</div>`;
+  return '';
+}
+
+function bindShortEnter(suf){
+  const inp=el('sinp-'+suf);
+  if(inp) inp.addEventListener('keydown',e=>{if(e.key==='Enter')submitShort(suf)});
+}
+
+function resetFeedback(suf){
+  el('feedback-'+suf).className='feedback';
+  el('feedback-detail-'+suf).className='feedback-detail';
+  el('feedback-detail-'+suf).innerHTML='';
+  const hb=el('hint-box-'+suf);hb.className='hint-box';hb.innerHTML='';
+}
+
+/* ========== 답변 처리 ========== */
+function doPick(idx){
+  if(answered[cur])return;
+  const q=questions[cur];
+  const ok=(idx===q.answer);
+  userAns[cur]='①②③'.charAt(idx)+' '+q.opts[idx].substring(0,20)+'…';
+  processAns(ok,q);
+}
+function doAnswer(choice){
+  if(answered[cur])return;
+  const q=questions[cur];
+  const ok=(q.type==='ox')?(choice===q.answer):(choice===q.answer);
+  userAns[cur]=choice;
+  processAns(ok,q);
+}
+function submitShort(suf){
+  if(answered[cur])return;
+  const inp=el('sinp-'+suf);if(!inp)return;
+  const val=inp.value.trim();
+  if(!val){toast('답을 입력해 주세요.');return}
+  const q=questions[cur],cl=val.replace(/\s/g,'');
+  const target=q.answer+'설득전략';
+  let ok=(cl===target||cl===q.answer||cl===q.answer+'적'||cl===q.answer+'적설득전략');
+  userAns[cur]=val;
+  processAns(ok,q);
+}
+function processAns(ok,q){
+  const suf=isSpeechMode?'s':'b';
+  document.querySelectorAll('#answer-wrap-'+suf+' button,#answer-wrap-'+suf+' input').forEach(e=>e.disabled=true);
+  if(ok){
+    answered[cur]='correct';correctCnt++;combo++;if(combo>maxCombo)maxCombo=combo;
+    const h=hintUsed[cur],base=h===0?100:h===1?70:50;
+    const cb=combo>=5?20:combo>=3?10:0;
+    score+=base+cb;
+    if(combo>=3){sndCombo();toast('🔥 '+combo+'콤보! +'+(base+cb)+'점')}else sndOK();
+    if(combo>=2){el('combo-badge').classList.remove('hidden');el('combo-val').textContent=combo}
+    showFB(suf,true,'정답! +'+(base+cb)+'점'+(h>0?' (힌트 사용)':'')+(cb>0?' (콤보+'+cb+')':''));
+  }else{
+    answered[cur]='wrong';wrongCnt++;combo=0;score=Math.max(0,score-30);
+    el('combo-badge').classList.add('hidden');sndNG();
+    const cl=q.type==='ox'?q.answer:(q.answer+' 설득 전략');
+    showFB(suf,false,'오답! −30점 — 정답: '+cl);
+  }
+  el('score-val').textContent=score;el('growth-display').textContent=gEmoji(score);
+  showDetail(suf,q);
+}
+
+/* ========== 힌트 ========== */
+function useHint(suf){
+  if(answered[cur])return;
+  const q=questions[cur],lv=hintUsed[cur];
+  if(lv>=2){toast('힌트를 모두 사용했어요.');return}
+  hintUsed[cur]=lv+1;
+  showHintDisp(suf,lv+1,q);
+  const btn=el('hbtn-'+suf);
+  if(hintUsed[cur]>=2){btn.disabled=true;btn.textContent='힌트 완료'}
+  else btn.textContent='💡 힌트 한 번 더';
+}
+function showHintDisp(suf,lv,q){
+  const hb=el('hint-box-'+suf);
+  if(lv===1){hb.className='hint-box show h1';hb.innerHTML=HINT1[q.answer]}
+  else{hb.className='hint-box show h2';hb.innerHTML=HINT1[q.answer]+'<br>'+HINT2[q.answer]}
+}
+
+/* ========== 피드백 ========== */
+function showFB(suf,ok,msg){
+  const fb=el('feedback-'+suf);
+  el('fb-icon-'+suf).textContent=ok?'✅':'❌';
+  el('fb-msg-'+suf).textContent=msg;
+  fb.className='feedback show '+(ok?'correct':'wrong');
+}
+function showDetail(suf,q){el('feedback-detail-'+suf).innerHTML=q.detail;el('feedback-detail-'+suf).classList.add('show')}
+
+function showAnswered(q,suf){
+  document.querySelectorAll('#answer-wrap-'+suf+' button,#answer-wrap-'+suf+' input').forEach(e=>e.disabled=true);
+  const inp=el('sinp-'+suf);if(inp)inp.value=userAns[cur];
+  if(answered[cur]==='correct')showFB(suf,true,'정답!');
+  else{const cl=q.type==='ox'?q.answer:(q.answer+' 설득 전략');showFB(suf,false,'오답 — 정답: '+cl)}
+  showDetail(suf,q);
+  if(q.type==='short'&&hintUsed[cur]>=1)showHintDisp(suf,hintUsed[cur],q);
+}
+
+/* ========== 네비게이션 ========== */
+function navigate(d){const nx=cur+d;if(nx<0||nx>=questions.length)return;cur=nx;renderQ()}
+function finishGame(){showComplete()}
+
+/* ========== 종료 ========== */
+function showComplete(){
+  el('game-area').classList.remove('show');el('complete-screen').classList.add('show');
+  el('ingame-credit').classList.remove('show');
+  const r=score/1140;
+  el('final-score').textContent=score+'점';
+  el('final-score-label').textContent='최종 점수 — '+STAGE_INFO[cStage].label;
+  el('stat-correct').textContent=correctCnt;el('stat-wrong').textContent=wrongCnt;el('stat-combo').textContent=maxCombo;
+  el('complete-emoji').textContent=r>=.8?'🏆':r>=.6?'🎉':r>=.4?'😊':'💪';
+  el('complete-title').textContent=r>=.8?'완벽해요!':r>=.6?'잘 했어요!':r>=.4?'절반 이상!':'다시 도전!';
+  window.scrollTo({top:0,behavior:'smooth'});
+  // 오답노트
+  const wl=questions.filter((_,i)=>answered[i]==='wrong');
+  const rpt=el('wrong-report');rpt.innerHTML='';
+  if(!wl.length){rpt.innerHTML='<div style="text-align:center;padding:10px;background:var(--green-l);border-radius:9px;color:#2a7a50;font-weight:800">🎊 모든 문제를 맞혔어요!</div>';return}
+  const t=document.createElement('div');t.className='wrong-report-title';
+  t.innerHTML='❌ 틀린 문제 다시 보기 <span style="font-size:1.13rem;font-weight:400;color:var(--muted)">('+wl.length+'문제)</span>';
+  rpt.appendChild(t);
+  wl.forEach(q=>{
+    const idx=questions.indexOf(q);
+    const item=document.createElement('div');item.className='wrong-item';
+    const cl=q.type==='ox'?q.answer:(q.answer+' 설득 전략');
+    const my=userAns[idx]||'(미응답)';
+    // 밑줄 텍스트 추출 (연설문 모드)
+    let hlTxt='';
+    if(q.sid){const sp=SP[q.sid];const re=new RegExp('\\{\\{'+q.id+'\\}\\}([\\s\\S]*?)\\{\\{\\/'+q.id+'\\}\\}');const m=sp.body.match(re);if(m)hlTxt=m[1]}
+    const qText=q.text||('「'+hlTxt.substring(0,80)+(hlTxt.length>80?'…':'')+'」');
+    item.innerHTML=`<div class="wrong-item-num">${q.id}번${q.sid?' · '+SP[q.sid].title:''}</div><div class="wrong-item-text">${qText.replace(/\n/g,' ')}</div><div class="wrong-item-answer"><span>내 답: ${my}</span> ✅ 정답: ${cl}</div><div style="font-size:1.17rem;color:var(--muted);margin-top:3px;line-height:1.4">${q.detail}</div>`;
+    rpt.appendChild(item);
+  });
+}
+function goStart(){el('complete-screen').classList.remove('show');el('game-area').classList.remove('show');el('ingame-credit').classList.remove('show');el('start-screen').style.display=''}
+function restartGame(){startGame(cStage)}
+
+/* ========== JPG 다운로드 ========== */
+function downloadJPG(){
+  const nick=el('nickname').value.trim(),cmt=el('comment').value.trim();
+  if(!nick||!cmt){toast('이름과 학습 소감을 모두 입력해 주세요.');return}
+  const wl=questions.filter((_,i)=>answered[i]==='wrong');
+  const now=new Date();
+  const ds=now.getFullYear()+'.'+(now.getMonth()+1)+'.'+now.getDate()+' '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
+  const W=1400,pad=36,lh=24;
+  let H=260;
+  wl.forEach(q=>{let t=q.text||'';if(q.sid){const sp=SP[q.sid];const re=new RegExp('\\{\\{'+q.id+'\\}\\}([\\s\\S]*?)\\{\\{\\/'+q.id+'\\}\\}');const m=sp.body.match(re);if(m)t=m[1]}
+    H+=Math.ceil(t.length/40)*lh+Math.ceil(q.detail.length/45)*lh+70});
+  if(!wl.length)H=340;
+  const cv=document.createElement('canvas');cv.width=W;cv.height=H;
+  const c=cv.getContext('2d');
+  c.fillStyle='#f8f4ff';c.fillRect(0,0,W,H);
+  c.fillStyle='#ede5ff';c.fillRect(0,0,W,55);
+  c.font='bold 28px sans-serif';c.fillStyle='#3a3a5c';
+  c.fillText('📝 오답노트 — 연설문 설득 전략 마스터 ['+STAGE_INFO[cStage].short+']',pad,38);
+  c.font='bold 19px sans-serif';c.fillStyle='#8888aa';
+  c.fillText('이름: '+nick+'  |  '+ds+'  |  점수: '+score+'점  |  정답 '+correctCnt+' / 오답 '+wrongCnt,pad,76);
+  c.fillText('학습 소감: '+cmt,pad,98);
+  let y=130;
+  if(!wl.length){c.font='bold 26px sans-serif';c.fillStyle='#2a7a50';c.fillText('🎊 모든 문제를 맞혔어요!',pad,y+20)}
+  else{
+    c.font='bold 20px sans-serif';c.fillStyle='#c05050';c.fillText('❌ 틀린 문제 ('+wl.length+'문제)',pad,y);y+=30;
+    wl.forEach(q=>{
+      const idx=questions.indexOf(q);
+      c.fillStyle='#fde8e8';c.fillRect(pad,y-14,W-pad*2,1);y+=6;
+      c.font='bold 18px sans-serif';c.fillStyle='#c05050';
+      c.fillText(q.id+'번'+(q.sid?' · '+SP[q.sid].title:''),pad,y);y+=22;
+      let t=q.text||'';if(q.sid){const sp=SP[q.sid];const re=new RegExp('\\{\\{'+q.id+'\\}\\}([\\s\\S]*?)\\{\\{\\/'+q.id+'\\}\\}');const m=sp.body.match(re);if(m)t=m[1]}
+      c.font='17px sans-serif';c.fillStyle='#3a3a5c';
+      wrapT(c,t,W-pad*2).forEach(l=>{c.fillText(l,pad,y);y+=20});y+=3;
+      const cl=q.type==='ox'?q.answer:(q.answer+' 설득 전략');
+      c.font='bold 17px sans-serif';c.fillStyle='#c05050';c.fillText('내 답: '+(userAns[idx]||'미응답'),pad,y);
+      c.fillStyle='#2a7a50';c.fillText('정답: '+cl,pad+240,y);y+=20;
+      c.font='16px sans-serif';c.fillStyle='#666688';
+      wrapT(c,q.detail,W-pad*2).forEach(l=>{c.fillText(l,pad,y);y+=18});y+=14;
+    });
+  }
+  c.font='14px sans-serif';c.fillStyle='#aaaacc';c.fillText('제작 · 보라라샘 / 전주서신중학교 교사',pad,H-14);
+  const a=document.createElement('a');
+  const ts=now.getFullYear()+''+(now.getMonth()+1).toString().padStart(2,'0')+now.getDate().toString().padStart(2,'0')+'_'+now.getHours().toString().padStart(2,'0')+String(now.getMinutes()).padStart(2,'0');
+  a.download='오답노트_연설문설득전략_'+STAGE_INFO[cStage].short+'_'+nick+'_'+ts+'.jpg';
+  a.href=cv.toDataURL('image/jpeg',.92);a.click();toast('오답노트가 저장되었어요!');
+}
+function wrapT(ctx,t,mw){ctx.font=ctx.font;const ch=t.replace(/\n/g,' ').split(''),lines=[];let l='';
+  for(const c of ch){if(ctx.measureText(l+c).width>mw){lines.push(l);l=c}else l+=c}
+  if(l)lines.push(l);return lines}
+
+/* ========== 학습 리포트 JPG ========== */
+function downloadReport(){
+  const nick=el('nickname').value.trim(),cmt=el('comment').value.trim();
+  if(!nick||!cmt){toast('이름과 학습 소감을 모두 입력해 주세요.');return}
+  const now=new Date();
+  const ds=now.getFullYear()+'.'+(now.getMonth()+1)+'.'+now.getDate()+' '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
+  const W=1400,H=720,pad=36;
+  const cv=document.createElement('canvas');cv.width=W;cv.height=H;
+  const c=cv.getContext('2d');
+  // 배경
+  c.fillStyle='#f8f4ff';c.fillRect(0,0,W,H);
+  c.fillStyle='#ede5ff';c.fillRect(0,0,W,60);
+  c.font='bold 30px sans-serif';c.fillStyle='#3a3a5c';
+  c.fillText('📊 학습 리포트 — 연설문 설득 전략 마스터 ['+STAGE_INFO[cStage].short+']',pad,42);
+  c.font='bold 18px sans-serif';c.fillStyle='#8888aa';
+  c.fillText('이름: '+nick+'  |  '+ds+'  |  점수: '+score+'점',pad,82);
+  c.fillText('학습 소감: '+cmt,pad,104);
+  // 종합 결과
+  let y=140;
+  c.font='bold 22px sans-serif';c.fillStyle='#3a3a5c';
+  c.fillText('📋 종합 결과',pad,y);y+=30;
+  const total=questions.length;
+  const pct=total>0?Math.round(correctCnt/total*100):0;
+  c.font='bold 19px sans-serif';
+  c.fillStyle='#2a7a50';c.fillText('✅ 정답: '+correctCnt+'문제',pad,y);
+  c.fillStyle='#c05050';c.fillText('❌ 오답: '+wrongCnt+'문제',pad+200,y);
+  c.fillStyle='#d06030';c.fillText('🔥 최고 콤보: '+maxCombo,pad+400,y);
+  c.fillStyle='#8060c0';c.fillText('📊 정답률: '+pct+'%',pad+600,y);y+=40;
+  // 전략별 분석
+  c.font='bold 22px sans-serif';c.fillStyle='#3a3a5c';
+  c.fillText('📈 설득 전략별 분석',pad,y);y+=28;
+  const cats={'인성적':{c:0,w:0},'이성적':{c:0,w:0},'감성적':{c:0,w:0}};
+  questions.forEach((q,i)=>{
+    const ans=q.answer;
+    if(ans==='인성적'||ans==='이성적'||ans==='감성적'){
+      if(answered[i]==='correct')cats[ans].c++;
+      else if(answered[i]==='wrong')cats[ans].w++;
+    }
+  });
+  const barW=280,barH=28;
+  ['인성적','이성적','감성적'].forEach((cat,ci)=>{
+    const d=cats[cat],tot=d.c+d.w,rate=tot>0?Math.round(d.c/tot*100):0;
+    const colors=[['#5080d8','🔵'],['#40a870','🟢'],['#d45878','🩷']];
+    c.font='bold 18px sans-serif';c.fillStyle='#3a3a5c';
+    c.fillText(colors[ci][1]+' '+cat+' 설득 전략',pad,y+18);
+    // bar background
+    const bx=pad+160;
+    c.fillStyle='#eee8f8';c.fillRect(bx,y+4,barW,barH);
+    // bar fill
+    c.fillStyle=colors[ci][0];c.fillRect(bx,y+4,barW*(rate/100),barH);
+    c.font='bold 17px sans-serif';c.fillStyle='#3a3a5c';
+    c.fillText(rate+'% ('+d.c+'/'+tot+')',bx+barW+12,y+22);
+    y+=40;
+  });
+  y+=10;
+  // 잘하는/보완 분야
+  c.font='bold 22px sans-serif';c.fillStyle='#3a3a5c';
+  c.fillText('💡 분석 결과',pad,y);y+=28;
+  const sorted=Object.entries(cats).sort((a,b)=>{
+    const ra=(a[1].c+a[1].w)>0?a[1].c/(a[1].c+a[1].w):0;
+    const rb=(b[1].c+b[1].w)>0?b[1].c/(b[1].c+b[1].w):0;
+    return rb-ra;
+  });
+  c.font='bold 18px sans-serif';
+  c.fillStyle='#2a7a50';
+  const bestRate=(sorted[0][1].c+sorted[0][1].w)>0?Math.round(sorted[0][1].c/(sorted[0][1].c+sorted[0][1].w)*100):0;
+  c.fillText('✨ 잘하는 분야: '+sorted[0][0]+' 설득 전략 (정답률 '+bestRate+'%)',pad,y);y+=24;
+  c.fillStyle='#c05050';
+  const last=sorted[sorted.length-1];
+  const worstRate=(last[1].c+last[1].w)>0?Math.round(last[1].c/(last[1].c+last[1].w)*100):0;
+  c.fillText('📝 보완이 필요한 분야: '+last[0]+' 설득 전략 (정답률 '+worstRate+'%)',pad,y);y+=40;
+  // 등급
+  const r=score/1140;
+  c.font='bold 26px sans-serif';c.fillStyle='#8060c0';
+  const grade=r>=.8?'🏆 완벽해요!':r>=.6?'🎉 잘 했어요!':r>=.4?'😊 절반 이상!':'💪 다시 도전!';
+  c.fillText(grade,pad,y);y+=30;
+  // 푸터
+  c.font='14px sans-serif';c.fillStyle='#aaaacc';
+  c.fillText('제작 · 보라라샘 / 전주서신중학교 교사 · siaawase@gmail.com',pad,H-14);
+  const ts=now.getFullYear()+''+(now.getMonth()+1).toString().padStart(2,'0')+now.getDate().toString().padStart(2,'0')+'_'+now.getHours().toString().padStart(2,'0')+String(now.getMinutes()).padStart(2,'0');
+  const a=document.createElement('a');
+  a.download='학습리포트_연설문설득전략_'+STAGE_INFO[cStage].short+'_'+nick+'_'+ts+'.jpg';
+  a.href=cv.toDataURL('image/jpeg',.92);a.click();toast('학습 리포트가 저장되었어요!');
+}
+</script>
+</body>
+</html>
