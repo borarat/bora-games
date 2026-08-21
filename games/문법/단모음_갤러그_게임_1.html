@@ -20,7 +20,7 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden;touch-action:manipulation;-webkit-user-select:none;user-select:none}
 .stars{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse at 20% 30%,rgba(180,160,255,.3) 0%,transparent 55%),radial-gradient(ellipse at 80% 70%,rgba(160,200,255,.25) 0%,transparent 50%)}
-#app{position:relative;z-index:10;width:100%;max-width:960px;padding:0 12px}
+#app{position:relative;z-index:10;width:100%;max-width:1200px;padding:0 6px}
 
 /* ===== 시작 화면 ===== */
 #start-screen{padding-top:85px;display:flex;flex-direction:column;gap:14px}
@@ -329,14 +329,24 @@ function startGame(){
 
 function spawnEnemy(){
   if(!gs)return;
+  // 겹침 방지: 기존 적과 x좌표 겹치면 스폰 건너뜀
   const v=draw(),isT=gs.targets.includes(v);
+  const eW=52,margin=20;
+  let x,attempts=0,ok=false;
+  while(attempts<15){
+    x=margin+Math.random()*(arenaW-eW-margin*2);
+    // 화면 상단 근처(y<80)에 있는 기존 적과 x가 겹치는지 확인
+    const overlap=enemies.some(e=>e.alive&&e.y<80&&Math.abs(e.x-x)<eW+margin);
+    if(!overlap){ok=true;break}
+    attempts++;
+  }
+  if(!ok)return; // 빈자리 없으면 이번 스폰 건너뜀
   const el=document.createElement('div');
   el.className='enemy';
   el.textContent=v;
-  const x=30+Math.random()*(arenaW-82);
   el.style.left=x+'px';el.style.top='-52px';
   document.getElementById('arena').appendChild(el);
-  enemies.push({el,x,y:-52,vowel:v,isTarget:isT,alive:true,speed:1.2+Math.random()*.6});
+  enemies.push({el,x,y:-52,vowel:v,isTarget:isT,alive:true,speed:0.5+Math.random()*0.3});
 }
 
 function loop(){
@@ -407,7 +417,7 @@ function popAt(x,y,text,cls){
 /* 컨트롤 — 최초 1회만 등록 */
 function setupControls(){
   const bL=document.getElementById('btnL'),bR=document.getElementById('btnR'),bF=document.getElementById('btnFire');
-  // 이동 버튼
+  // 이동 버튼 (터치)
   bL.addEventListener('pointerdown',()=>{moveDir=-1});
   bL.addEventListener('pointerup',()=>{moveDir=0});
   bL.addEventListener('pointerleave',()=>{moveDir=0});
@@ -416,7 +426,7 @@ function setupControls(){
   bR.addEventListener('pointerup',()=>{moveDir=0});
   bR.addEventListener('pointerleave',()=>{moveDir=0});
   bR.addEventListener('pointercancel',()=>{moveDir=0});
-  // 발사 버튼 — 탭 즉시 1발 + 길게 누르면 연사
+  // 발사 버튼 (터치) — 탭 즉시 1발 + 길게 누르면 연사
   let fireId=null;
   function startFire(){if(!gs)return;fire();clearInterval(fireId);fireId=setInterval(fire,250)}
   function stopFire(){clearInterval(fireId);fireId=null}
@@ -424,6 +434,21 @@ function setupControls(){
   bF.addEventListener('pointerup',stopFire);
   bF.addEventListener('pointerleave',stopFire);
   bF.addEventListener('pointercancel',stopFire);
+
+  // 키보드 조작 (PC)
+  const keysDown=new Set();
+  let kbFireId=null;
+  document.addEventListener('keydown',e=>{
+    if(!gs)return;
+    if(e.key==='ArrowLeft'||e.key==='a'){e.preventDefault();moveDir=-1;keysDown.add('left')}
+    if(e.key==='ArrowRight'||e.key==='d'){e.preventDefault();moveDir=1;keysDown.add('right')}
+    if((e.key===' '||e.key==='ArrowUp')&&!keysDown.has('fire')){e.preventDefault();keysDown.add('fire');fire();kbFireId=setInterval(fire,250)}
+  });
+  document.addEventListener('keyup',e=>{
+    if(e.key==='ArrowLeft'||e.key==='a'){keysDown.delete('left');if(!keysDown.has('right'))moveDir=0}
+    if(e.key==='ArrowRight'||e.key==='d'){keysDown.delete('right');if(!keysDown.has('left'))moveDir=0}
+    if(e.key===' '||e.key==='ArrowUp'){keysDown.delete('fire');clearInterval(kbFireId);kbFireId=null}
+  });
 }
 
 /* 종료 */
