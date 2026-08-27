@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>설명문 '처음' 조립 게임</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0f4ff;--card:#fff;
+  --interest:#e07898;--interest-l:#fce8f0;--interest-m:#f8c0d4;
+  --concept:#7b9ef0;--concept-l:#dce8ff;--concept-m:#b8d0ff;
+  --info:#c99347;--info-l:#faf1de;--info-m:#e8cc93;
+  --preview:#6bbf8e;--preview-l:#d8f5e8;--preview-m:#a8dfc0;
+  --orange:#f0956a;--orange-l:#ffe8da;--orange-m:#ffd0b8;
+  --purple:#9b7be0;--purple-l:#ede8ff;--purple-m:#cfc0f8;
+  --yellow:#f5c842;--yellow-l:#fff4c8;
+  --red:#e88080;--red-l:#fde8e8;
+  --green:#6bbf8e;--green-l:#d8f5e8;
+  --text:#3a3a5c;--muted:#8888aa;--border:#dde3f5;
+  --shadow:0 4px 16px rgba(120,130,200,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{overflow-x:hidden}
+body{font-family:'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden;overflow-y:auto}
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse at 20% 60%,rgba(180,200,255,.35) 0%,transparent 55%),radial-gradient(ellipse at 85% 75%,rgba(255,200,170,.25) 0%,transparent 50%)}
+header{position:relative;z-index:10;width:100%;max-width:980px;padding:18px 12px 4px;text-align:center}
+.game-title{font-family:'Gowun Batang',serif;font-size:1.85rem;font-weight:700;letter-spacing:-.5px;color:var(--text);margin-bottom:3px;line-height:1.3}
+.game-subtitle{font-size:.84rem;color:var(--muted)}
+main{position:relative;z-index:10;width:100%;max-width:980px;padding:8px 12px 14px;display:flex;flex-direction:column;gap:9px}
+
+/* ===== 시작 화면 ===== */
+#start-screen{background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:14px 20px 12px;box-shadow:var(--shadow)}
+.start-hero{display:flex;align-items:center;gap:12px;margin-bottom:8px;text-align:left}
+.start-emoji{font-size:2rem;flex-shrink:0;line-height:1}
+.start-desc{color:var(--muted);font-size:.88rem;line-height:1.5;word-break:keep-all}
+.start-desc strong{color:var(--text)}
+.roles-box{background:var(--bg);border:1.5px solid var(--border);border-radius:11px;padding:8px 11px;margin-bottom:8px}
+.roles-title{font-size:.84rem;font-weight:700;color:var(--text);margin-bottom:5px}
+.roles-list{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:5px}
+.role-item{padding:5px 7px;border-radius:7px;font-size:.7rem;line-height:1.3}
+.role-item.r-interest{background:var(--interest-l);border:1.5px solid var(--interest-m)}
+.role-item.r-concept{background:var(--concept-l);border:1.5px solid var(--concept-m)}
+.role-item.r-background{background:var(--info-l);border:1.5px solid var(--info-m)}
+.role-item.r-preview{background:var(--preview-l);border:1.5px solid var(--preview-m)}
+.role-item b{display:block;font-size:.76rem;margin-bottom:1px}
+.role-item.r-interest b{color:#b04070}
+.role-item.r-concept b{color:#3a6fd4}
+.role-item.r-background b{color:#a07a2a}
+.role-item.r-preview b{color:#2a8f60}
+.roles-note{font-size:.7rem;color:var(--muted);margin-top:5px;line-height:1.4;text-align:center;word-break:keep-all}
+.roles-note b{color:var(--text)}
+.start-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.info-box{border-radius:10px;padding:8px 11px;text-align:left}
+.info-box.howto{background:var(--concept-l);border:1.5px solid var(--concept-m)}
+.info-box.score{background:var(--orange-l);border:1.5px solid var(--orange-m)}
+.info-title{font-size:.84rem;font-weight:700;margin-bottom:3px}
+.info-box.howto .info-title{color:#3a6fd4}
+.info-box.score .info-title{color:#c05020}
+.info-box p{font-size:.74rem;line-height:1.4;color:var(--text);margin:1px 0}
+.info-box p::before{content:"·";color:currentColor;opacity:.5;margin-right:4px}
+
+.stage-section{margin-bottom:8px}
+.stage-section-title{font-size:.92rem;font-weight:700;color:var(--text);margin-bottom:7px}
+.mode-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:2px}
+.mode-btn{border:2px solid var(--border);border-radius:12px;padding:10px 8px;cursor:pointer;font-family:'Gowun Batang',serif;font-weight:700;font-size:.92rem;color:var(--text);transition:all .2s;box-shadow:var(--shadow);text-align:center;background:var(--card)}
+.mode-btn:hover{transform:translateY(-1px)}
+.mode-btn.sel{border-color:var(--purple);background:var(--purple-l);color:#6040c0}
+.mode-btn.m-order.sel{border-color:var(--concept);background:var(--concept-l);color:#3a6fd4}
+.mode-btn.m-role.sel{border-color:var(--interest);background:var(--interest-l);color:#b04070}
+.mode-btn.m-combined.sel{border-color:var(--purple);background:var(--purple-l);color:#6040c0}
+.mode-badge{font-size:.65rem;font-weight:400;color:var(--muted);margin-top:4px;line-height:1.3;display:block}
+.mode-btn.sel .mode-badge{color:inherit;opacity:.7}
+.stage-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stage-btn{border:none;border-radius:13px;padding:14px 10px;cursor:pointer;font-family:'Gowun Batang',serif;font-weight:700;font-size:1.06rem;color:white;transition:all .2s;box-shadow:var(--shadow);text-align:center}
+.stage-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(120,130,220,.35)}
+.stage-btn.basic{background:linear-gradient(135deg,#7bc8f0,#7b9ef0)}
+.stage-btn.adv{background:linear-gradient(135deg,var(--purple),#c050a0)}
+.stage-badge{font-size:.7rem;font-weight:400;opacity:.9;margin-top:5px;line-height:1.4;display:block}
+
+.start-creator{font-size:.72rem;color:var(--muted);margin-top:10px;padding-top:8px;border-top:1px solid var(--border);line-height:1.6;text-align:center;word-break:keep-all}
+.start-creator strong{color:var(--text)}
+.ingame-credit{position:fixed;right:12px;bottom:8px;z-index:6;font-size:.68rem;color:var(--muted);opacity:.55;pointer-events:none;display:none;letter-spacing:.2px}
+.ingame-credit.show{display:block}
+
+/* ===== 진행률 ===== */
+.progress-wrap{background:var(--card);border-radius:12px;padding:9px 14px;border:1px solid var(--border);box-shadow:var(--shadow)}
+.progress-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:4px}
+.progress-label{color:var(--text);font-weight:700;font-size:.95rem}
+.progress-right{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.score-badge{background:var(--concept-l);border:1.5px solid var(--concept-m);padding:2px 9px;border-radius:20px;font-weight:700;color:var(--concept);font-size:.9rem}
+.combo-badge{background:var(--orange-l);border:1.5px solid var(--orange-m);padding:2px 9px;border-radius:20px;font-weight:700;color:var(--orange);font-size:.9rem}
+.combo-badge.hidden{opacity:0;pointer-events:none}
+.progress-bar-bg{background:var(--border);border-radius:6px;height:7px;overflow:hidden}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--concept),var(--purple));border-radius:6px;transition:width .4s ease}
+
+/* ===== 게임 화면 ===== */
+#game-area{display:none}
+#game-area.show{display:grid;grid-template-columns:1fr 90px;grid-template-areas:"progress progress" "stage sidebar" "tools sidebar" "board sidebar" "action sidebar" "feedback sidebar" "hint sidebar";gap:8px;align-items:start}
+#tools-panel[style*="display: none"]+.board-wrap,#tools-panel[style*="display:none"]+.board-wrap{margin-top:0}
+#game-area .progress-wrap{grid-area:progress}
+#game-area .stage-info{grid-area:stage}
+#game-area .tools{grid-area:tools}
+#game-area .board-wrap{grid-area:board}
+#game-area .actions{grid-area:action}
+#game-area .feedback{grid-area:feedback}
+#game-area .wrong-hint{grid-area:hint}
+#game-area .nav-sidebar{grid-area:sidebar}
+
+.stage-info{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:10px 15px;box-shadow:var(--shadow)}
+.stage-topic{font-family:'Gowun Batang',serif;font-size:1.12rem;font-weight:700;color:var(--text)}
+.stage-topic .stage-idx{color:var(--concept);font-size:.84rem;font-weight:400;margin-right:7px;font-family:'IBM Plex Sans KR',sans-serif}
+.stage-subtopic{font-size:.8rem;color:var(--concept);margin-top:3px;line-height:1.4;font-weight:500;padding:3px 9px;background:var(--concept-l);border-radius:6px;display:inline-block;word-break:keep-all}
+.stage-hint{font-size:.76rem;color:var(--muted);margin-top:5px;line-height:1.4}
+
+.tools{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:9px 12px;box-shadow:var(--shadow)}
+.tools-label{font-size:.76rem;color:var(--muted);margin-bottom:6px;font-weight:600}
+.tools-row{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.tool-btn{border:2px solid transparent;border-radius:9px;padding:7px 6px;cursor:pointer;font-family:'IBM Plex Sans KR',sans-serif;font-weight:700;font-size:.82rem;transition:all .15s}
+.tool-btn.t-interest{background:var(--interest-l);color:#b04070;border-color:var(--interest-m)}
+.tool-btn.t-concept{background:var(--concept-l);color:#3a6fd4;border-color:var(--concept-m)}
+.tool-btn.t-background{background:var(--info-l);color:#a07a2a;border-color:var(--info-m)}
+.tool-btn.t-preview{background:var(--preview-l);color:#2a8f60;border-color:var(--preview-m)}
+.tool-btn:hover{transform:translateY(-1px)}
+.tool-btn.active{transform:scale(1.04);box-shadow:0 3px 10px rgba(0,0,0,.15)}
+.tool-btn.t-interest.active{border-color:var(--interest);background:#f8d0e0}
+.tool-btn.t-concept.active{border-color:var(--concept);background:#c8dcff}
+.tool-btn.t-background.active{border-color:var(--info);background:#f3e0ac}
+.tool-btn.t-preview.active{border-color:var(--preview);background:#c0ecd4}
+
+.board-wrap{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:10px;box-shadow:var(--shadow)}
+#game-board{list-style:none;padding:0;margin:0}
+.sentence-item{background:#fbfbff;border:1.5px solid var(--border);padding:10px 12px;margin-bottom:7px;border-radius:9px;cursor:grab;transition:background .2s,border-color .2s;display:flex;align-items:flex-start;gap:8px;font-size:.9rem;line-height:1.55;word-break:keep-all;color:var(--text)}
+.sentence-item:last-child{margin-bottom:0}
+.sentence-item:hover{border-color:var(--concept)}
+.sentence-item.dragging{opacity:.4}
+.sentence-item.drag-over{border:2px dashed var(--concept);background:var(--concept-l)}
+.sentence-num{background:var(--border);color:var(--text);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.82rem;flex-shrink:0;margin-top:1px}
+.sentence-text{flex:1;color:var(--text);cursor:pointer}
+.sentence-item.color-interest{background:var(--interest-l);border-color:var(--interest-m)}
+.sentence-item.color-interest .sentence-num{background:var(--interest);color:white}
+.sentence-item.color-concept{background:var(--concept-l);border-color:var(--concept-m)}
+.sentence-item.color-concept .sentence-num{background:var(--concept);color:white}
+.sentence-item.color-background{background:var(--info-l);border-color:var(--info-m)}
+.sentence-item.color-background .sentence-num{background:var(--info);color:white}
+.sentence-item.color-preview{background:var(--preview-l);border-color:var(--preview-m)}
+.sentence-item.color-preview .sentence-num{background:var(--preview);color:white}
+.sentence-item.correct-mark{border:2px solid var(--green)}
+.sentence-item.wrong-mark{border:2px solid var(--red);animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.drag-handle{display:none}
+.arrow-btns{display:flex;flex-direction:column;gap:2px;flex-shrink:0}
+.arrow-btn{width:24px;height:20px;border:1.5px solid var(--border);border-radius:5px;background:white;color:var(--muted);font-size:.68rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;padding:0;line-height:1}
+.arrow-btn:hover{background:var(--concept-l);border-color:var(--concept);color:#3a6fd4}
+.arrow-btn:active{transform:scale(.9)}
+.arrow-btn:disabled{opacity:.2;cursor:not-allowed;background:white}
+.sentence-item.locked{cursor:default}
+.sentence-item.locked .arrow-btns{display:none}
+
+/* ===== 액션 & 피드백 ===== */
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.action-btn{flex:1;padding:10px;font-family:'Gowun Batang',serif;font-size:.95rem;font-weight:700;border:none;border-radius:11px;cursor:pointer;transition:all .2s;letter-spacing:.5px;min-width:120px}
+.action-btn.check{background:linear-gradient(135deg,var(--concept),var(--purple));color:white;box-shadow:var(--shadow)}
+.action-btn.check:hover{transform:translateY(-2px)}
+.action-btn.check:disabled{background:#c8ccd8;cursor:not-allowed;transform:none}
+.action-btn.reset{background:var(--orange-l);color:#c06030;border:1.5px solid var(--orange-m)}
+.action-btn.giveup{background:var(--red-l);color:#c05050;border:1.5px solid #f0b8b8}
+.action-btn.review{background:var(--purple-l);color:#6040c0;border:1.5px solid var(--purple-m)}
+.feedback{border-radius:11px;padding:10px 14px;display:none;align-items:center;gap:9px;font-weight:700;font-size:.95rem;animation:slideIn .3s ease}
+.feedback.show{display:flex}
+.feedback.correct{background:var(--green-l);border:1.5px solid #a8dfc0;color:#3a8f60}
+.feedback.wrong{background:var(--red-l);border:1.5px solid #f0b8b8;color:#c05050}
+@keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.feedback-icon{font-size:1.2rem;flex-shrink:0}
+.feedback-text{flex:1;line-height:1.45}
+.wrong-hint{display:none;background:var(--yellow-l);border:1.5px dashed var(--yellow);border-radius:11px;padding:10px 14px;font-size:.84rem;line-height:1.55;color:#7a5e1c;word-break:keep-all}
+.wrong-hint.show{display:block;animation:slideIn .3s ease}
+
+/* ===== 사이드바 ===== */
+.nav-sidebar{display:flex;flex-direction:column;gap:7px;align-self:start;position:sticky;top:12px}
+.nav-btn{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:11px 5px;font-family:'IBM Plex Sans KR',sans-serif;font-size:.76rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;box-shadow:var(--shadow);width:100%;text-align:center;word-break:keep-all;line-height:1.4}
+.nav-btn:hover:not(:disabled){background:var(--concept-l);border-color:var(--concept);color:#3a6fd4}
+.nav-btn:disabled{opacity:.35;cursor:not-allowed}
+.finish-btn{background:linear-gradient(135deg,var(--concept),var(--purple))!important;border-color:transparent!important;color:white!important;font-size:.76rem!important;line-height:1.4}
+
+/* ===== 정답 해설 오버레이 ===== */
+#result-overlay{position:fixed;inset:0;background:rgba(58,58,92,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:200;display:none;align-items:flex-start;justify-content:center;padding:20px 14px;overflow-y:auto}
+#result-overlay.show{display:flex;animation:overlayFade .3s ease}
+@keyframes overlayFade{from{opacity:0}to{opacity:1}}
+.result-panel{background:var(--card);border-radius:16px;max-width:700px;width:100%;padding:20px 22px 16px;box-shadow:0 20px 60px rgba(0,0,0,.25);animation:panelSlide .4s cubic-bezier(.34,1.56,.64,1);margin:auto}
+@keyframes panelSlide{from{opacity:0;transform:translateY(30px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+.result-badge{display:inline-flex;align-items:center;gap:7px;padding:7px 16px;border-radius:22px;font-family:'Gowun Batang',serif;font-weight:700;font-size:.98rem;margin-bottom:10px}
+.result-badge.perfect{background:var(--green-l);color:#3a8f60;border:1.5px solid #a8dfc0}
+.result-badge.partial{background:var(--yellow-l);color:#a08020;border:1.5px solid #e8d060}
+.result-badge.skipped{background:var(--red-l);color:#c05050;border:1.5px solid #f0b8b8}
+.result-title{font-family:'Gowun Batang',serif;font-size:1.2rem;font-weight:700;color:var(--text);margin-bottom:5px;padding-bottom:8px;border-bottom:2px solid var(--concept-m)}
+.result-source{font-size:.76rem;color:var(--muted);margin-bottom:10px}
+.result-flow{background:var(--bg);border-radius:9px;padding:9px 12px;margin-bottom:10px}
+.result-flow-title{font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:5px}
+.result-order{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.result-order .role-chip{padding:3px 10px;border-radius:18px;font-weight:700;font-size:.78rem}
+.result-order .role-chip.r-interest{background:var(--interest-l);color:#b04070}
+.result-order .role-chip.r-concept{background:var(--concept-l);color:#3a6fd4}
+.result-order .role-chip.r-background{background:var(--info-l);color:#a07a2a}
+.result-order .role-chip.r-preview{background:var(--preview-l);color:#2a8f60}
+.result-order .arrow{color:var(--muted);font-weight:700}
+.result-sentences{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.result-sentence{background:#fbfcff;border-radius:9px;padding:10px 12px;border-left:4px solid var(--border)}
+.result-sentence.r-interest{border-left-color:var(--interest);background:linear-gradient(90deg,var(--interest-l) 0%,#fbfcff 45%)}
+.result-sentence.r-concept{border-left-color:var(--concept);background:linear-gradient(90deg,var(--concept-l) 0%,#fbfcff 45%)}
+.result-sentence.r-background{border-left-color:var(--info);background:linear-gradient(90deg,var(--info-l) 0%,#fbfcff 45%)}
+.result-sentence.r-preview{border-left-color:var(--preview);background:linear-gradient(90deg,var(--preview-l) 0%,#fbfcff 45%)}
+.result-sentence-role{font-size:.74rem;font-weight:700;margin-bottom:2px}
+.result-sentence.r-interest .result-sentence-role{color:#b04070}
+.result-sentence.r-concept .result-sentence-role{color:#3a6fd4}
+.result-sentence.r-background .result-sentence-role{color:#a07a2a}
+.result-sentence.r-preview .result-sentence-role{color:#2a8f60}
+.result-sentence-text{font-size:.86rem;line-height:1.55;color:var(--text);margin-bottom:4px;font-weight:600}
+.result-sentence-why{font-size:.82rem;color:var(--muted);line-height:1.55;padding-top:4px;border-top:1px dashed var(--border)}
+.result-sentence-why b{color:var(--text)}
+.result-actions{display:flex;gap:9px;margin-top:5px}
+.result-next-btn{flex:1;border:none;border-radius:11px;padding:12px;font-family:'Gowun Batang',serif;font-size:1rem;font-weight:700;color:white;background:linear-gradient(135deg,var(--concept),var(--purple));cursor:pointer;transition:all .2s;box-shadow:0 4px 14px rgba(120,130,220,.35)}
+.result-next-btn:hover{transform:translateY(-2px)}
+.result-close-btn{padding:12px 16px;border:1.5px solid var(--border);border-radius:11px;background:white;color:var(--muted);font-family:'IBM Plex Sans KR',sans-serif;font-size:.86rem;font-weight:700;cursor:pointer}
+
+/* ===== 응원 배너 ===== */
+#cheer-banner{position:fixed;top:-100px;left:50%;transform:translateX(-50%);z-index:300;background:linear-gradient(135deg,var(--orange),var(--interest));color:white;padding:10px 24px;border-radius:30px;font-family:'Gowun Batang',serif;font-weight:700;font-size:1.05rem;box-shadow:0 8px 24px rgba(240,150,110,.5);transition:top .5s cubic-bezier(.34,1.56,.64,1);pointer-events:none;white-space:nowrap}
+#cheer-banner.show{top:14px}
+#toast{position:fixed;top:22px;right:18px;background:var(--yellow);color:#3a3a00;font-weight:700;font-size:.86rem;padding:8px 18px;border-radius:28px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;box-shadow:0 4px 14px rgba(240,200,50,.4)}
+#toast.show{opacity:1}
+
+/* ===== 종료 화면 ===== */
+#complete-screen{display:none;background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:20px 20px 16px;box-shadow:var(--shadow);animation:fadeIn .5s ease}
+#complete-screen.show{display:block}
+@keyframes fadeIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.complete-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:center;margin-bottom:12px}
+.complete-left{text-align:center}
+.complete-emoji{font-size:2.4rem;margin-bottom:4px}
+.complete-title{font-family:'Gowun Batang',serif;font-size:1.4rem;font-weight:700;color:var(--text);margin-bottom:4px}
+.complete-desc{color:var(--muted);font-size:.86rem;line-height:1.5}
+.complete-right{text-align:center}
+.final-score{font-family:'Gowun Batang',serif;font-size:2.4rem;font-weight:700;color:var(--orange);line-height:1;margin-bottom:3px}
+.final-score-label{color:var(--muted);font-size:.84rem;margin-bottom:10px}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.stat-box{border-radius:9px;padding:7px 4px;text-align:center}
+.stat-val{font-size:1.2rem;font-weight:700}
+.stat-lbl{font-size:.72rem;color:var(--muted);margin-top:2px}
+.stat-box.perfect-stat{background:var(--green-l)}.stat-box.perfect-stat .stat-val{color:#3a8f60}
+.stat-box.partial-stat{background:var(--yellow-l)}.stat-box.partial-stat .stat-val{color:#a08020}
+.stat-box.combo-stat{background:var(--orange-l)}.stat-box.combo-stat .stat-val{color:var(--orange)}
+
+.complete-time{font-size:.8rem;color:var(--muted);text-align:center;margin:6px 0}
+.nickname-row{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--bg);border:1.5px solid var(--border);border-radius:11px;flex-wrap:wrap}
+.nickname-label{font-weight:700;font-size:.88rem;color:var(--text);flex-shrink:0}
+.nickname-input{flex:1;min-width:110px;max-width:180px;border:1.5px solid var(--border);border-radius:7px;padding:6px 10px;font-family:'IBM Plex Sans KR',sans-serif;font-size:.88rem;color:var(--text);background:white}
+.nickname-input:focus{outline:none;border-color:var(--concept)}
+.review-field{margin-top:8px;padding:9px 12px;background:var(--bg);border:1.5px solid var(--border);border-radius:11px}
+.review-label{font-weight:700;font-size:.88rem;color:var(--text);margin-bottom:5px;display:block}
+.review-textarea{width:100%;min-height:60px;border:1.5px solid var(--border);border-radius:7px;padding:8px 10px;font-family:'IBM Plex Sans KR',sans-serif;font-size:.86rem;color:var(--text);background:white;resize:vertical;line-height:1.5}
+.review-textarea:focus{outline:none;border-color:var(--concept)}
+.review-hint{font-size:.72rem;color:var(--muted);margin-top:4px}
+
+.complete-btns{display:flex;gap:9px;margin-top:10px;flex-wrap:wrap}
+.restart-btn,.back-btn,.download-btn{flex:1;min-width:130px;border:none;border-radius:11px;padding:12px 9px;font-family:'IBM Plex Sans KR',sans-serif;font-size:.92rem;font-weight:700;cursor:pointer;transition:all .2s}
+.restart-btn{background:linear-gradient(135deg,var(--concept),var(--purple));color:white}
+.restart-btn:hover{transform:translateY(-2px)}
+.back-btn{background:var(--green-l);border:1.5px solid #a8dfc0;color:#3a8f60}
+.download-btn{background:var(--orange-l);border:1.5px solid var(--orange-m);color:#c06030}
+
+.wrong-report{margin-top:16px;text-align:left}
+.wrong-report-title{font-family:'Gowun Batang',serif;font-size:1.08rem;font-weight:700;color:var(--text);margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--red-l)}
+.wrong-item{background:var(--red-l);border:1.5px solid #f0b8b8;border-radius:9px;padding:11px 14px;margin-bottom:9px}
+.wrong-item-num{font-size:.86rem;font-weight:700;color:#c05050;background:rgba(255,255,255,.7);padding:2px 9px;border-radius:7px;display:inline-block;margin-bottom:7px}
+.wrong-item-topic{font-family:'Gowun Batang',serif;font-size:.96rem;font-weight:700;color:var(--text);margin-bottom:7px}
+
+@media(max-width:680px){
+  .start-grid{grid-template-columns:1fr}
+  .roles-list{grid-template-columns:1fr 1fr}
+  .mode-btns{grid-template-columns:1fr 1fr 1fr}
+  .stage-btns{grid-template-columns:1fr}
+  .complete-layout{grid-template-columns:1fr}
+  .game-title{font-size:1.45rem}
+  #game-area.show{grid-template-columns:1fr;grid-template-areas:"progress" "stage" "tools" "board" "action" "feedback" "hint" "sidebar"}
+  .nav-sidebar{position:static;flex-direction:row}
+}
+@media(max-width:400px){
+  .mode-btns{grid-template-columns:1fr}
+  .mode-btn{padding:8px 12px;display:flex;align-items:center;gap:8px;text-align:left}
+  .mode-badge{margin-top:0}
+}
+</style>
+</head>
+<body>
+<div class="stars"></div>
+<div id="toast"></div>
+<div id="cheer-banner"></div>
+<header>
+  <div class="game-title">🧩 설명문 '처음' 조립 게임</div>
+  <div class="game-subtitle">설명문의 '처음' 부분을 알맞게 배치하고 역할별로 구분해요</div>
+</header>
+<main>
+<div id="start-screen">
+  <div class="start-hero">
+    <div class="start-emoji">✍️</div>
+    <p class="start-desc">설명문의 <strong>'처음'</strong> 부분은 몇 가지 요소로 이루어져요.<br>게임 모드를 골라 <strong>순서 맞추기</strong>, <strong>역할 찾기</strong>, 또는 <strong>둘 다</strong> 도전해 보세요!</p>
+  </div>
+  <div class="roles-box">
+    <div class="roles-title">🎨 '처음' 부분에 쓰일 수 있는 요소</div>
+    <div class="roles-list">
+      <div class="role-item r-interest"><b>흥미 유발</b>관심을 끄는 도입<br>(질문·경험·상상)</div>
+      <div class="role-item r-concept"><b>개념 정의</b>대상이 무엇인지<br>명확하게 밝히기</div>
+      <div class="role-item r-background"><b>배경 정보</b>관련 배경지식이나<br>장단점 제시</div>
+      <div class="role-item r-preview"><b>방향 안내</b>다룰 내용을<br>예고하기</div>
+    </div>
+    <div class="roles-note">※ 네 가지가 모두 들어가지는 않아요! <b>개념 정의나 배경 정보 없이</b> 흥미 유발과 방향 안내만 있는 경우도 많아요.</div>
+  </div>
+  <div class="start-grid">
+    <div class="info-box howto">
+      <div class="info-title">🎮 게임 방법</div>
+      <p>순서 맞추기: 화살표(▲▼)로 문장 순서를 배치해요</p>
+      <p>역할 찾기: 역할 버튼을 골라 문장을 눌러 구분해요</p>
+      <p>통합: 순서와 역할을 한꺼번에 맞춰요</p>
+    </div>
+    <div class="info-box score">
+      <div class="info-title">🏅 점수 규칙</div>
+      <p>완벽 정답 (첫 시도): +100점</p>
+      <p>재시도 후 정답: +50점</p>
+      <p>포기 (해설 열람): 점수 없음</p>
+      <p>2연속부터 콤보 보너스 (+10 ~ +30)</p>
+    </div>
+  </div>
+  <div class="stage-section">
+    <div class="stage-section-title">🎮 게임 모드를 선택하세요</div>
+    <div class="mode-btns">
+      <button class="mode-btn m-order sel" data-mode="order" onclick="selectMode('order')">🔢 순서 맞추기<span class="mode-badge">문장의 순서만 배치해요<br>역할 구분은 해설에서 확인</span></button>
+      <button class="mode-btn m-role" data-mode="role" onclick="selectMode('role')">🎨 역할 찾기<span class="mode-badge">순서는 이미 맞춰져 있어요<br>각 문장의 역할만 구분해요</span></button>
+      <button class="mode-btn m-combined" data-mode="combined" onclick="selectMode('combined')">🔢🎨 통합<span class="mode-badge">순서 배치와 역할 구분<br>두 가지를 한꺼번에!</span></button>
+    </div>
+  </div>
+  <div class="stage-section">
+    <div class="stage-section-title">🎯 단계를 선택하세요</div>
+    <div class="stage-btns">
+      <button class="stage-btn basic" onclick="startGame('basic')">기본 단계<span class="stage-badge">5주제 · 3문장씩<br>흥미유발 → 개념정의 → 방향안내</span></button>
+      <button class="stage-btn adv" onclick="startGame('advanced')">심화 단계<span class="stage-badge">6주제 · 4~5문장<br>다양한 구조 · 교과서 실전 지문</span></button>
+    </div>
+  </div>
+  <div class="start-creator">
+    제작 · <strong>보라라샘</strong> · 전주서신중학교 교사 · siaawase@gmail.com<br>만든 날짜 <span id="today-date"></span>
+  </div>
+</div>
+
+<div id="game-area">
+  <div class="progress-wrap">
+    <div class="progress-top">
+      <span class="progress-label" id="progress-label">주제 1 / 5</span>
+      <div class="progress-right">
+        <span class="score-badge">🏅 <span id="score-val">0</span>점</span>
+        <span class="combo-badge hidden" id="combo-badge">🔥 <span id="combo-val">0</span>콤보</span>
+      </div>
+    </div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+  <div class="stage-info">
+    <div class="stage-topic"><span class="stage-idx" id="stage-idx">주제 1</span><span id="stage-topic-name"></span></div>
+    <div class="stage-subtopic" id="stage-subtopic"></div>
+    <div class="stage-hint" id="stage-hint">화살표(▲▼)로 순서를 맞추고, 역할 버튼을 골라 각 문장을 구분하세요. 모든 역할이 다 쓰이지는 않아요!</div>
+  </div>
+  <div class="tools" id="tools-panel">
+    <div class="tools-label">🖍️ 역할 구분 도구</div>
+    <div class="tools-row">
+      <button class="tool-btn t-interest" onclick="selectColor('interest')">🩷 흥미 유발</button>
+      <button class="tool-btn t-concept" onclick="selectColor('concept')">🔵 개념 정의</button>
+      <button class="tool-btn t-background" onclick="selectColor('background')">🟡 배경 정보</button>
+      <button class="tool-btn t-preview" onclick="selectColor('preview')">🟢 방향 안내</button>
+    </div>
+  </div>
+  <div class="board-wrap"><ul id="game-board"></ul></div>
+  <div class="actions">
+    <button class="action-btn reset" id="reset-btn" onclick="resetStage()">↺ 다시 배치</button>
+    <button class="action-btn check" id="check-btn" onclick="checkAnswer()">✓ 정답 확인하기</button>
+    <button class="action-btn giveup" id="giveup-btn" onclick="giveUp()" style="display:none">🏳️ 포기</button>
+    <button class="action-btn review" id="review-btn" onclick="showReviewOverlay()" style="display:none">📖 해설 다시 보기</button>
+  </div>
+  <div class="feedback" id="feedback"><div class="feedback-icon" id="fb-icon"></div><div class="feedback-text" id="fb-msg"></div></div>
+  <div class="wrong-hint" id="wrong-hint"></div>
+  <div class="nav-sidebar">
+    <button class="nav-btn" id="prev-btn" onclick="navStage(-1)" disabled>◀ 이전<br>주제</button>
+    <button class="nav-btn" id="next-btn" onclick="navStage(1)" disabled>다음<br>주제 ▶</button>
+    <button class="nav-btn finish-btn" onclick="finishGame()">게임<br>끝내기</button>
+  </div>
+</div>
+
+<div id="complete-screen">
+  <div class="complete-layout">
+    <div class="complete-left">
+      <div class="complete-emoji" id="complete-emoji">🎉</div>
+      <div class="complete-title" id="complete-title">학습 완료!</div>
+      <div class="complete-desc">설명문 '처음' 부분의 구조,<br>이제 잘 익혔나요?</div>
+    </div>
+    <div class="complete-right">
+      <div class="final-score" id="final-score">0점</div>
+      <div class="final-score-label" id="final-score-label">최종 점수</div>
+      <div class="stats-grid">
+        <div class="stat-box perfect-stat"><div class="stat-val" id="stat-perfect">0</div><div class="stat-lbl">완벽 정답</div></div>
+        <div class="stat-box partial-stat"><div class="stat-val" id="stat-partial">0</div><div class="stat-lbl">재시도 정답</div></div>
+        <div class="stat-box combo-stat"><div class="stat-val" id="stat-combo">0</div><div class="stat-lbl">최고 콤보</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="complete-time" id="complete-time"></div>
+  <div class="nickname-row">
+    <label class="nickname-label" for="nickname-input">📛 닉네임</label>
+    <input type="text" id="nickname-input" class="nickname-input" placeholder="닉네임 입력" maxlength="12">
+  </div>
+  <div class="review-field">
+    <label class="review-label" for="review-textarea">✏️ 활동 소감</label>
+    <textarea id="review-textarea" class="review-textarea" placeholder="이번 활동을 통해 배운 점이나 느낀 점을 써 주세요."></textarea>
+    <div class="review-hint">※ 닉네임과 활동 소감을 모두 작성해야 오답노트를 저장할 수 있어요.</div>
+  </div>
+  <div class="complete-btns">
+    <button class="back-btn" onclick="goStart()">🏠 단계 선택</button>
+    <button class="download-btn" onclick="downloadReport()">📥 오답노트 저장</button>
+    <button class="restart-btn" onclick="restartGame()">🔄 다시 도전</button>
+  </div>
+  <div class="wrong-report" id="wrong-report"></div>
+</div>
+</main>
+<div class="ingame-credit" id="ingame-credit"></div>
+<div id="result-overlay"><div class="result-panel" id="result-panel"></div></div>
+
+<script>
+const ROLE_NAMES={interest:'흥미 유발',concept:'개념 정의',background:'배경 정보',preview:'방향 안내'};
+const ROLE_COLOR={
+  interest:{l:'#fce8f0',m:'#f8c0d4',fg:'#b04070',bar:'#e07898'},
+  concept:{l:'#dce8ff',m:'#b8d0ff',fg:'#3a6fd4',bar:'#7b9ef0'},
+  background:{l:'#faf1de',m:'#e8cc93',fg:'#a07a2a',bar:'#c99347'},
+  preview:{l:'#d8f5e8',m:'#a8dfc0',fg:'#2a8f60',bar:'#6bbf8e'}
+};
+
+const STAGES_BASIC=[
+  {topic:"떡볶이",subtopic:"대중 음식의 역사와 종류",sentences:[
+    {text:"매콤하고 달콤한 맛으로 남녀노소 모두에게 사랑받으며, 보기만 해도 입안에 군침이 돌게 만드는 대중적인 음식을 아시나요?",type:"interest",order:1,why:"'~ 아시나요?'라는 <b>질문</b>과 감각적 표현으로 독자의 <b>관심을 끄는 도입</b>이에요. 이처럼 질문으로 시작하면서 감정·경험에 호소하는 문장은 흥미 유발이에요."},
+    {text:"떡볶이는 가래떡을 주재료로 하여 고추장이나 간장 등의 양념을 넣고 조려 만든 한국의 대표적인 길거리 음식입니다.",type:"concept",order:2,why:"'~은/는 ~이다' 형식으로 떡볶이가 <b>무엇인지</b>를 명확하게 밝히는 <b>개념 정의</b>예요."},
+    {text:"그렇다면 우리가 즐겨 먹는 떡볶이는 언제부터 시작되었으며, 시대에 따라 어떻게 변화해 왔을지 그 역사와 종류를 자세히 알아보겠습니다.",type:"preview",order:3,why:"'~을/를 알아보겠습니다'로 앞으로 다룰 <b>역사와 종류</b>를 안내하는 <b>방향 안내</b>예요."}
+  ]},
+  {topic:"반려동물",subtopic:"긍정적 효과와 반려인 에티켓",sentences:[
+    {text:"길을 걷다 보면 귀여운 강아지나 고양이와 함께 다정하게 산책을 즐기는 사람들을 아주 쉽게 만날 수 있습니다.",type:"interest",order:1,why:"독자가 <b>일상에서 흔히 겪는 장면</b>을 떠올리게 해 관심을 끌어들이는 <b>흥미 유발</b>이에요."},
+    {text:"반려동물이란 사람이 외로움을 달래고 정서적으로 의지하며 함께 살아가기 위해 기르는 동물을 뜻합니다.",type:"concept",order:2,why:"'~이란 ~을 뜻합니다'로 반려동물의 <b>뜻을 명확히 밝히는</b> 개념 정의예요."},
+    {text:"이처럼 우리 삶 속에 깊숙이 들어온 반려동물을 기를 때 얻을 수 있는 긍정적인 효과와 반려인이 지켜야 할 에티켓에는 무엇이 있는지 살펴보겠습니다.",type:"preview",order:3,why:"앞으로 <b>긍정적 효과와 에티켓</b>을 다루겠다고 예고하는 방향 안내예요."}
+  ]},
+  {topic:"유튜브",subtopic:"세계적 인기의 배경과 미치는 영향",sentences:[
+    {text:"심심할 때 스마트폰을 켜고 가장 먼저 들어가는 앱은 무엇인가요? 아마 많은 청소년들이 영상을 보기 위해 이 앱을 켤 것입니다.",type:"interest",order:1,why:"<b>독자에게 던지는 질문</b>과 청소년의 공감대를 이용해 흥미를 끄는 도입이에요."},
+    {text:"유튜브는 사용자가 직접 만든 동영상을 자유롭게 올리고 시청하며 전 세계 사람들과 소통할 수 있는 세계 최대의 동영상 공유 플랫폼입니다.",type:"concept",order:2,why:"'유튜브는 ~ 플랫폼입니다'로 유튜브의 <b>본질을 정의</b>하는 문장이에요."},
+    {text:"지금부터 유튜브가 전 세계적인 인기를 끌게 된 배경과 이로 인해 발생하는 긍정적·부정적 영향에 대해 설명하겠습니다.",type:"preview",order:3,why:"'지금부터 ~ 설명하겠습니다'로 <b>본론에서 다룰 내용</b>을 예고하는 방향 안내예요."}
+  ]},
+  {topic:"인공지능",subtopic:"생활을 바꾸는 방식과 주의할 점",sentences:[
+    {text:"스마트폰의 음성 비서나 내가 좋아할 만한 영상을 척척 골라주는 추천 알고리즘처럼, 우리는 매일 눈에 보이지 않는 똑똑한 컴퓨터의 도움을 받으며 살고 있습니다.",type:"interest",order:1,why:"<b>구체적인 일상 사례</b>(음성 비서, 추천 알고리즘)로 독자의 관심을 끌어요."},
+    {text:"인공지능(AI)이란 컴퓨터가 인간의 학습·추론·지각 능력을 모방하여 스스로 문제를 해결할 수 있도록 구현한 기술입니다.",type:"concept",order:2,why:"'~이란 ~기술입니다'로 인공지능이 <b>무엇인지</b> 명확히 밝히는 개념 정의예요."},
+    {text:"과연 인공지능은 우리 생활을 어떻게 변화시키고 있으며, 우리가 앞으로 주의해야 할 점은 무엇인지 알아보겠습니다.",type:"preview",order:3,why:"본론에서 다룰 <b>영향과 주의점</b>을 예고하는 방향 안내예요."}
+  ]},
+  {topic:"미세먼지",subtopic:"발생 원인과 실천할 대처 수칙",sentences:[
+    {text:"아침에 일어나자마자 날씨 앱을 켜서 '오늘의 대기질 정보'를 확인하고 마스크를 챙길지 말지 고민한 경험이 다들 있을 것입니다.",type:"interest",order:1,why:"독자가 <b>겪었을 법한 경험</b>을 언급해 공감을 끌어내는 흥미 유발이에요."},
+    {text:"미세먼지는 대기 중에 떠다니는 아주 작은 먼지로, 눈에 보이지 않을 만큼 작아 호흡기 깊숙이 침투하여 건강을 해치는 유해 물질입니다.",type:"concept",order:2,why:"'미세먼지는 ~ 물질입니다'로 미세먼지가 무엇인지 <b>정의</b>해요."},
+    {text:"우리의 건강을 위협하는 미세먼지는 왜 발생하는 것이며, 이를 예방하고 대처하기 위한 행동 수칙은 어떤 것들이 있는지 알아보겠습니다.",type:"preview",order:3,why:"<b>발생 원인과 대처 수칙</b>이라는 본론 내용을 미리 예고하는 방향 안내예요."}
+  ]}
+];
+
+const STAGES_ADV=[
+  {topic:"숏폼 콘텐츠",subtopic:"폭발적 인기의 비결과 부정적 영향",sentences:[
+    {text:"스마트폰을 켜고 짧은 영상을 넘기다 보면 어느새 한두 시간이 훌쩍 지나가 버린 경험, 누구나 한 번쯤 있을 것이다.",type:"interest",order:1,why:"청소년이 <b>공감할 만한 경험</b>으로 관심을 여는 흥미 유발이에요."},
+    {text:"이처럼 15초에서 1분 내외로 제작되어 스마트폰에서 빠르게 소비되는 짧은 영상을 '숏폼 콘텐츠'라고 한다.",type:"concept",order:2,why:"'<b>이처럼</b>'으로 앞 경험을 받아 대상의 이름과 뜻을 밝히는 <b>개념 정의</b>예요. '이처럼'이 있으므로 반드시 1번 뒤에 와야 해요."},
+    {text:"그렇다면 숏폼 콘텐츠는 왜 이토록 폭발적인 인기를 끌게 되었을까?",type:"preview",order:3,why:"'<b>그렇다면</b> ~ 되었을까?'로 본론의 핵심 질문을 던지는 <b>방향 안내</b>예요. 이 질문은 독자의 감정이 아니라 <b>앞으로 다룰 내용의 범위</b>(인기의 비결)를 드러내므로 흥미 유발이 아니라 방향 안내예요."},
+    {text:"지금부터 숏폼 콘텐츠의 특징과 장점, 그리고 우리가 주의해야 할 부정적 영향까지 살펴보자.",type:"preview",order:4,why:"'<b>지금부터</b> ~ 살펴보자'로 다룰 내용을 구체적으로 나열하며 마무리하는 방향 안내예요."}
+  ]},
+  {topic:"디지털 디톡스",subtopic:"필요한 이유와 실천 방법",sentences:[
+    {text:"스마트폰을 잠시라도 손에서 놓으면 왠지 불안하고 초조해진 적이 있는가?",type:"interest",order:1,why:"독자의 <b>감정·경험에 호소하는 질문</b>으로 흥미를 끄는 도입이에요. 다룰 내용을 드러내지 않으므로 방향 안내가 아니라 흥미 유발이에요."},
+    {text:"실제로 한 조사에 따르면 청소년 중 약 40퍼센트가 '스마트폰 과의존 위험군'에 해당한다고 한다.",type:"background",order:2,why:"'<b>실제로</b>'로 앞의 경험을 객관적 <b>통계로 뒷받침</b>하는 배경 정보예요. 장단점뿐 아니라 이렇게 실태·수치를 제시하는 것도 배경 정보의 역할이에요."},
+    {text:"이러한 문제의 해결책으로 주목받고 있는 것이 '디지털 디톡스'인데, 이는 디지털 기기의 사용을 의도적으로 줄이거나 중단하여 몸과 마음에 휴식을 주는 행위를 뜻한다.",type:"concept",order:3,why:"'<b>이러한 문제</b>'로 1-2번을 받아, 대상의 이름과 뜻을 한 문장에 밝히는 <b>개념 정의</b>예요."},
+    {text:"디지털 디톡스가 우리 정신 건강에 왜 필요한지 그 이유를 먼저 알아보자.",type:"preview",order:4,why:"'<b>먼저</b> 알아보자'로 첫 번째 다룰 내용을 예고하는 방향 안내예요. '먼저'가 있으므로 5번보다 앞에 와야 해요."},
+    {text:"이와 함께 일상에서 쉽게 실천할 수 있는 구체적인 방법도 살펴보겠다.",type:"preview",order:5,why:"'<b>이와 함께</b>'로 두 번째 다룰 내용을 이어서 예고하는 방향 안내예요."}
+  ]},
+  {topic:"스트레스",subtopic:"개념과 종류, 청소년 스트레스 실태와 관리법",source:"중학교 국어 교과서 예시 글 재구성",sentences:[
+    {text:"'아, 스트레스받아!' 누구나 한 번쯤 이렇게 외쳐 본 적이 있을 것이다.",type:"interest",order:1,why:"누구나 공감할 만한 <b>혼잣말</b>로 자연스럽게 흥미를 이끌어내는 도입이에요."},
+    {text:"그렇다면 스트레스는 도대체 무엇이길래 우리를 이토록 힘들게 만드는 것일까?",type:"interest",order:2,why:"'<b>그렇다면</b>'으로 앞의 공감을 받아 <b>궁금증을 한 번 더 자극</b>하는 흥미 유발이에요. 질문이지만 다룰 내용의 범위를 구체적으로 드러내지 않으므로 방향 안내가 아니에요."},
+    {text:"사실 스트레스에는 집중력을 높여 주는 '좋은 스트레스'와 몸과 마음에 해를 끼치는 '나쁜 스트레스'가 함께 존재한다.",type:"background",order:3,why:"'<b>사실</b>'로 일반적 통념과 다른 정보(좋은 스트레스의 존재)를 제시하는 <b>배경 정보</b>예요."},
+    {text:"지금부터 스트레스의 개념과 종류를 살펴보고, 청소년 스트레스의 실태와 건강한 관리 방법을 알아보자.",type:"preview",order:4,why:"'<b>지금부터</b> ~ 알아보자'로 본론에서 다룰 네 가지 내용을 구체적으로 나열하는 <b>방향 안내</b>예요. 이 글의 처음에는 <b>개념 정의가 없어요</b> — 정의는 중간 부분에서 나와요."}
+  ]},
+  {topic:"양궁",subtopic:"정의와 활의 구조, 양궁 강국의 비결",source:"중학교 국어 교과서 예시 글 재구성",sentences:[
+    {text:"우리나라 양궁은 올림픽을 비롯한 수많은 국제 대회에서 늘 최고의 자리를 차지하며 '양궁 최강국'이라 불린다.",type:"interest",order:1,why:"누구나 알 만한 <b>최근의 성과</b>를 제시해 관심을 끄는 흥미 유발이에요."},
+    {text:"워낙 양궁에 강하다 보니, 양궁을 우리나라 고유의 스포츠로 알고 있는 사람들도 적지 않다.",type:"interest",order:2,why:"'<b>워낙 ~ 보니</b>'로 1번을 받아 <b>흔한 오해</b>를 짚어 주며 호기심을 더하는 흥미 유발이에요."},
+    {text:"그러나 양궁은 사실 서양에서 시작된 종목으로, 우리나라의 전통 활인 국궁과는 전혀 다른 스포츠이다.",type:"background",order:3,why:"'<b>그러나</b>'로 앞의 오해를 바로잡는 <b>배경 정보</b>예요. '그러나'가 있으므로 반드시 2번 뒤에 와야 해요."},
+    {text:"양궁이란 정확히 어떤 경기이고, 우리나라가 양궁 강국이 된 과학적·제도적 비결은 무엇인지 알아보자.",type:"preview",order:4,why:"다룰 내용(<b>경기의 정의</b>와 <b>강국의 비결</b>)을 구체적으로 나열하는 <b>방향 안내</b>예요. 이 글에도 형식적인 개념 정의 문장이 없어요."}
+  ]},
+  {topic:"아이스크림",subtopic:"부드러운 질감과 맛의 원리, 건강에 미치는 영향",source:"중학교 국어 교과서 예시 글 재구성",sentences:[
+    {text:"무더운 여름, 뜨거운 햇볕 아래에서 갈증을 달래기 위해 아이스크림을 먹는 상상을 해 보자.",type:"interest",order:1,why:"독자가 직접 <b>상상해 보게 만드는 장면 제시</b>로 흥미를 이끌어내는 도입이에요."},
+    {text:"부드러운 아이스크림을 한 입 베어 물면 사르르 녹으며 입안 가득 달콤함이 퍼질 것이다.",type:"interest",order:2,why:"<b>감각적 묘사</b>('사르르 녹으며', '달콤함')로 앞의 상상을 더 생생하게 만드는 흥미 유발이에요."},
+    {text:"이 부드러운 질감과 달콤한 맛은 어떻게 만들어지는 것일까?",type:"preview",order:3,why:"질문 형식이지만 <b>흥미 유발이 아니라 방향 안내</b>예요. 왜냐하면 이 질문 속 키워드(<b>질감</b>, <b>맛</b>, <b>만들어지는 원리</b>)가 바로 본론에서 다룰 내용이기 때문이에요. 앞으로 다룰 범위를 질문으로 예고하는 거예요."},
+    {text:"또한 아이스크림이 우리 몸에 미치는 영향에 대해서도 함께 알아보겠다.",type:"preview",order:4,why:"'<b>또한</b> ~ 알아보겠다'로 두 번째 다룰 내용(<b>건강 영향</b>)을 이어서 예고하는 방향 안내예요."}
+  ]},
+  {topic:"자외선 차단제",subtopic:"자외선의 종류와 특징, 차단제의 원리와 사용법",source:"최원석, 「농담하냐고요? 과학입니다」 재구성",sentences:[
+    {text:"햇빛이 강렬한 날, 외출하기 전에 자외선 차단제를 꼼꼼히 바르는 일은 이제 우리의 일상이 되었다.",type:"interest",order:1,why:"누구나 아는 <b>일상 속 행동</b>을 언급하며 자연스럽게 화제로 이끄는 흥미 유발이에요."},
+    {text:"햇빛 속 자외선은 비타민 디(D) 합성을 도와 뼈 건강에 이로운 면도 있다.",type:"background",order:2,why:"자외선의 <b>이로운 점</b>을 알려 주는 배경 정보예요."},
+    {text:"하지만 피부에 오래 닿으면 세포를 손상시키고, 심하면 피부암까지 일으킬 수 있어 반드시 주의가 필요하다.",type:"background",order:3,why:"'<b>하지만</b>'으로 앞 문장과 대비되는 <b>해로운 점</b>을 제시하는 배경 정보예요. 장단점을 함께 짚어 주는 것도 배경 정보의 역할이에요."},
+    {text:"그렇다면 자외선이 우리 몸에 해를 끼치는 원리는 무엇이고, 이를 효과적으로 차단하는 방법에는 어떤 것들이 있을까?",type:"preview",order:4,why:"'<b>그렇다면</b>'으로 배경 정보(2-3번)를 받아, 본론에서 다룰 <b>원리와 방법</b>을 질문형으로 예고하는 방향 안내예요."},
+    {text:"지금부터 자외선의 특징과 자외선 차단제의 종류 및 올바른 사용법을 알아보자.",type:"preview",order:5,why:"'<b>지금부터</b> ~ 알아보자'로 다룰 내용을 구체적으로 나열하며 마무리하는 방향 안내예요."}
+  ]}
+];
+
+/* ===== 날짜 ===== */
+const TODAY=(function(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')})();
+document.getElementById('today-date').textContent=TODAY;
+document.getElementById('ingame-credit').textContent='제작 · 보라라샘 / '+TODAY;
+
+/* ===== 상태 ===== */
+let questions=[],currentStage=0,selectedColor=null,score=0,combo=0,maxCombo=0,perfectCount=0,partialCount=0,stageResult=[],completedTimeStr='',currentMode='basic',currentGameMode='order';
+
+/* ===== 모드 선택 ===== */
+function selectMode(mode){
+  currentGameMode=mode;
+  document.querySelectorAll('.mode-btn').forEach(b=>{b.classList.remove('sel')});
+  document.querySelector('.mode-btn[data-mode="'+mode+'"]').classList.add('sel');
+}
+
+const MODE_NAMES={order:'순서 맞추기',role:'역할 찾기',combined:'통합'};
+const MODE_HINTS={
+  order:'화살표(▲▼)로 문장 순서를 맞춰요. 정답 확인 후 해설에서 각 문장의 역할도 함께 배워요.',
+  role:'문장은 이미 올바른 순서로 배치되어 있어요. 역할 버튼을 골라 각 문장의 역할을 구분하세요!',
+  combined:'화살표(▲▼)로 순서를 맞추고, 역할 버튼을 골라 각 문장을 구분하세요. 모든 역할이 다 쓰이지는 않아요!'
+};
+
+/* ===== WebAudio ===== */
+const AudioCtx=window.AudioContext||window.webkitAudioContext;let ctx;
+function getCtx(){if(!ctx)ctx=new AudioCtx();return ctx}
+function playCorrect(){try{const c=getCtx(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.setValueAtTime(523,c.currentTime);o.frequency.setValueAtTime(659,c.currentTime+.1);o.frequency.setValueAtTime(784,c.currentTime+.2);g.gain.setValueAtTime(.3,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.5);o.start(c.currentTime);o.stop(c.currentTime+.5)}catch(e){}}
+function playWrong(){try{const c=getCtx(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.setValueAtTime(220,c.currentTime);o.frequency.setValueAtTime(180,c.currentTime+.15);g.gain.setValueAtTime(.25,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.4);o.start(c.currentTime);o.stop(c.currentTime+.4)}catch(e){}}
+function playCombo(){try{const c=getCtx();[523,659,784,1047].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(.2,c.currentTime+i*.08);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+i*.08+.25);o.start(c.currentTime+i*.08);o.stop(c.currentTime+i*.08+.25)})}catch(e){}}
+
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
+
+/* ===== 시작 ===== */
+function startGame(mode){
+  currentMode=mode;
+  questions=(mode==='basic')?STAGES_BASIC:STAGES_ADV;
+  currentStage=0;score=0;combo=0;maxCombo=0;perfectCount=0;partialCount=0;
+  stageResult=questions.map(()=>({status:null,pointsGained:0,attempts:0}));
+  document.getElementById('start-screen').style.display='none';
+  document.getElementById('complete-screen').classList.remove('show');
+  document.getElementById('game-area').classList.add('show');
+  document.getElementById('ingame-credit').classList.add('show');
+  // 모드에 따라 도구 패널 표시/숨김
+  document.getElementById('tools-panel').style.display=(currentGameMode==='order')?'none':'';
+  updateHUD();loadStage();
+}
+function updateHUD(){
+  document.getElementById('score-val').textContent=score;
+  const cb=document.getElementById('combo-badge');
+  if(combo>=2){cb.classList.remove('hidden');document.getElementById('combo-val').textContent=combo}else cb.classList.add('hidden');
+}
+
+/* ===== 스테이지 로드 ===== */
+function loadStage(){
+  const st=questions[currentStage];
+  const isOrderMode=currentGameMode==='order';
+  const isRoleMode=currentGameMode==='role';
+  const isCombined=currentGameMode==='combined';
+  document.getElementById('stage-idx').textContent='주제 '+(currentStage+1);
+  document.getElementById('stage-topic-name').textContent=st.topic;
+  document.getElementById('stage-subtopic').textContent='📌 '+(st.subtopic||'');
+  document.getElementById('progress-label').textContent=MODE_NAMES[currentGameMode]+' · '+(currentMode==='basic'?'기본':'심화')+' · 주제 '+(currentStage+1)+' / '+questions.length;
+  document.getElementById('progress-fill').style.width=(((currentStage+1)/questions.length)*100)+'%';
+  document.getElementById('stage-hint').textContent=MODE_HINTS[currentGameMode];
+  selectedColor=null;
+  document.querySelectorAll('.tool-btn').forEach(b=>b.classList.remove('active'));
+  const board=document.getElementById('game-board');board.innerHTML='';
+  const already=stageResult[currentStage].status;
+  // 역할 찾기 모드: 정답 순서로 정렬, 순서/통합: 섞기
+  let list;
+  if(already){list=[...st.sentences].sort((a,b)=>a.order-b.order)}
+  else if(isRoleMode){list=[...st.sentences].sort((a,b)=>a.order-b.order)}
+  else{list=shuffle(st.sentences)}
+  list.forEach(s=>{
+    const li=document.createElement('li');
+    li.className='sentence-item';
+    li.dataset.order=s.order;li.dataset.correctType=s.type;
+    // 이미 완료된 상태
+    if(already){
+      li.draggable=false;
+      li.dataset.currentType=s.type;
+      li.classList.add('locked','color-'+s.type);
+    }else if(isRoleMode){
+      // 역할 모드: 순서 고정, 드래그 불가
+      li.draggable=false;
+      li.dataset.currentType='';
+    }else if(isOrderMode){
+      // 순서 모드: 드래그 가능, 역할 자동 배정 불필요
+      li.draggable=true;
+      li.dataset.currentType='__skip__'; // 역할 채점 건너뛰기용 마커
+    }else{
+      // 통합 모드
+      li.draggable=true;
+      li.dataset.currentType='';
+    }
+    // 화살표 (순서 모드 + 통합 모드에서만, 역할 모드에서는 숨김)
+    const arrows=document.createElement('div');arrows.className='arrow-btns';
+    if(isRoleMode||already)arrows.style.display='none';
+    const up=document.createElement('button');up.className='arrow-btn';up.textContent='▲';
+    const dn=document.createElement('button');dn.className='arrow-btn';dn.textContent='▼';
+    if(!already&&!isRoleMode){
+      up.addEventListener('click',e=>{e.stopPropagation();moveSentence(li,-1)});
+      dn.addEventListener('click',e=>{e.stopPropagation();moveSentence(li,1)});
+    }
+    arrows.appendChild(up);arrows.appendChild(dn);
+    const num=document.createElement('div');num.className='sentence-num';
+    // 역할 모드: 이미 정답 순서이므로 번호 표시
+    num.textContent=already?s.order:(isRoleMode?s.order:'?');
+    const txt=document.createElement('div');txt.className='sentence-text';txt.textContent=s.text;
+    li.appendChild(arrows);li.appendChild(num);li.appendChild(txt);
+    if(!already){
+      // 역할 클릭: 역할 모드/통합 모드에서만
+      if(!isOrderMode){
+        num.addEventListener('click',()=>applyRole(li));
+        txt.addEventListener('click',()=>applyRole(li));
+      }
+      // 드래그: 순서 모드/통합 모드에서만
+      if(!isRoleMode){
+        li.addEventListener('dragstart',handleDragStart);li.addEventListener('dragover',handleDragOver);
+        li.addEventListener('drop',handleDrop);li.addEventListener('dragenter',handleDragEnter);
+        li.addEventListener('dragleave',handleDragLeave);li.addEventListener('dragend',handleDragEnd);
+      }
+    }
+    board.appendChild(li);
+  });
+  updateArrowStates();
+  const ck=document.getElementById('check-btn'),rs=document.getElementById('reset-btn'),gv=document.getElementById('giveup-btn'),rv=document.getElementById('review-btn');
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('wrong-hint').className='wrong-hint';
+  if(already){ck.style.display='none';rs.style.display='none';gv.style.display='none';rv.style.display='';
+    const lbl=already==='perfect'?'✅ 완벽 정답! ('+stageResult[currentStage].pointsGained+'점)':already==='partial'?'👍 재시도 정답! ('+stageResult[currentStage].pointsGained+'점)':'🏳️ 정답 확인 (0점)';
+    showFB(already!=='skipped',lbl);
+  }else{ck.style.display='';ck.disabled=false;ck.textContent='✓ 정답 확인하기';rs.style.display=(isRoleMode?'none':'');gv.style.display='none';rv.style.display='none'}
+  document.getElementById('prev-btn').disabled=(currentStage===0);
+  document.getElementById('next-btn').disabled=!(already&&currentStage<questions.length-1);
+}
+
+function applyRole(li){if(!selectedColor){showToast('먼저 위쪽에서 역할을 골라주세요!');return}li.classList.remove('color-interest','color-concept','color-background','color-preview');li.classList.add('color-'+selectedColor);li.dataset.currentType=selectedColor}
+function selectColor(c){selectedColor=c;document.querySelectorAll('.tool-btn').forEach(b=>b.classList.remove('active'));document.querySelector('.tool-btn.t-'+c).classList.add('active')}
+
+function moveSentence(li,dir){const board=document.getElementById('game-board'),items=Array.from(board.children),idx=items.indexOf(li);if(dir===-1&&idx>0)board.insertBefore(li,items[idx-1]);else if(dir===1&&idx<items.length-1)board.insertBefore(items[idx+1],li);updateSentenceNumbers();updateArrowStates()}
+function updateSentenceNumbers(){document.querySelectorAll('#game-board .sentence-item').forEach((it,i)=>{const n=it.querySelector('.sentence-num');if(n)n.textContent=i+1})}
+function updateArrowStates(){const items=document.querySelectorAll('#game-board .sentence-item'),len=items.length;items.forEach((it,i)=>{const b=it.querySelectorAll('.arrow-btn');if(b.length>=2){b[0].disabled=i===0;b[1].disabled=i===len-1}})}
+
+let draggedItem=null;
+function handleDragStart(e){draggedItem=this;this.classList.add('dragging');e.dataTransfer.effectAllowed='move'}
+function handleDragOver(e){e.preventDefault();return false}
+function handleDragEnter(e){if(this!==draggedItem)this.classList.add('drag-over')}
+function handleDragLeave(e){this.classList.remove('drag-over')}
+function handleDragEnd(e){this.classList.remove('dragging');document.querySelectorAll('.drag-over').forEach(x=>x.classList.remove('drag-over'))}
+function handleDrop(e){e.stopPropagation();this.classList.remove('drag-over');if(draggedItem&&draggedItem!==this){const b=document.getElementById('game-board'),items=Array.from(b.children),di=items.indexOf(draggedItem),ti=items.indexOf(this);if(di<ti)this.parentNode.insertBefore(draggedItem,this.nextSibling);else this.parentNode.insertBefore(draggedItem,this);updateSentenceNumbers();updateArrowStates()}return false}
+
+function resetStage(){if(stageResult[currentStage].status!==null)return;selectedColor=null;document.querySelectorAll('.tool-btn').forEach(b=>b.classList.remove('active'));loadStage()}
+
+function checkAnswer(){
+  if(stageResult[currentStage].status!==null)return;
+  const items=Array.from(document.querySelectorAll('#game-board .sentence-item'));
+  const isOrderMode=currentGameMode==='order';
+  const isRoleMode=currentGameMode==='role';
+  // 역할 모드/통합 모드: 역할 미구분 검사
+  if(!isOrderMode&&items.some(it=>!it.dataset.currentType)){showToast('아직 역할을 구분하지 않은 문장이 있어요!');return}
+  let orderOk=true,colorOk=true;
+  items.forEach((it,idx)=>{
+    it.classList.remove('correct-mark','wrong-mark');
+    const posOk=parseInt(it.dataset.order)===idx+1;
+    const colOk=isOrderMode?true:(it.dataset.correctType===it.dataset.currentType);
+    if(!posOk&&!isRoleMode)orderOk=false;
+    if(!colOk)colorOk=false;
+    // 마킹
+    if(isOrderMode){if(posOk)it.classList.add('correct-mark');else it.classList.add('wrong-mark')}
+    else if(isRoleMode){if(colOk)it.classList.add('correct-mark');else it.classList.add('wrong-mark')}
+    else{if(posOk&&colOk)it.classList.add('correct-mark');else it.classList.add('wrong-mark')}
+  });
+  const allOk=isOrderMode?orderOk:isRoleMode?colorOk:(orderOk&&colorOk);
+  const st=questions[currentStage],attempts=++stageResult[currentStage].attempts;
+  if(allOk){
+    let gained;if(attempts===1){gained=100;perfectCount++;combo++;stageResult[currentStage].status='perfect'}else{gained=50;partialCount++;combo++;stageResult[currentStage].status='partial'}
+    let bonus=0;if(combo>=4)bonus=30;else if(combo===3)bonus=20;else if(combo===2)bonus=10;
+    score+=gained+bonus;stageResult[currentStage].pointsGained=gained+bonus;if(combo>maxCombo)maxCombo=combo;
+    if(combo>=2){playCombo();showCheer(combo)}else playCorrect();
+    updateHUD();items.forEach(it=>{it.classList.add('locked');it.draggable=false;
+      // 순서 모드: 정답 후 역할 색상 표시
+      if(isOrderMode){const ct=it.dataset.correctType;it.classList.add('color-'+ct);it.dataset.currentType=ct}
+    });
+    document.getElementById('check-btn').style.display='none';document.getElementById('reset-btn').style.display='none';document.getElementById('giveup-btn').style.display='none';document.getElementById('review-btn').style.display='';
+    document.getElementById('feedback').className='feedback';document.getElementById('wrong-hint').className='wrong-hint';
+    document.getElementById('next-btn').disabled=(currentStage>=questions.length-1);
+    showResultOverlay(st,stageResult[currentStage].status,gained,bonus);
+  }else{
+    playWrong();combo=0;updateHUD();
+    let msg;
+    if(isOrderMode){msg='문장의 순서가 아직 맞지 않아요. 접속어를 단서로 다시 살펴봐요.'}
+    else if(isRoleMode){msg='문장의 역할 구분이 아직 맞지 않아요. 다시 살펴봐요.'}
+    else{if(!orderOk&&!colorOk)msg='문장의 순서와 역할 구분 모두 다시 살펴봐요.';else if(!orderOk)msg='각 문장의 역할은 잘 구분했지만, 순서가 아직 맞지 않아요.';else msg='문장의 순서는 좋아요! 각 문장의 역할을 다시 살펴봐요.'}
+    showFB(false,'❌ '+msg);
+    const h=document.getElementById('wrong-hint');let hh='<b>💡 이런 점을 다시 살펴봐요</b><br>';
+    if(isOrderMode||(!orderOk&&!isRoleMode))hh+='• <b>순서</b>: 접속어(이처럼, 그렇다면, 하지만, 또한 등)를 단서로 앞뒤 관계를 찾아봐요.<br>';
+    if(isRoleMode||(!colorOk&&!isOrderMode))hh+='• <b>역할</b>: 감정·경험 호소 → 흥미 유발 / "~은/는 ~이다" → 개념 정의 / 장단점·통계 → 배경 정보 / 다룰 내용 예고 → 방향 안내예요.';
+    h.innerHTML=hh;h.classList.add('show');
+    document.getElementById('giveup-btn').style.display='';
+  }
+}
+
+function showFB(ok,msg){const f=document.getElementById('feedback');document.getElementById('fb-icon').textContent=ok?'✅':'❌';document.getElementById('fb-msg').textContent=msg;f.className='feedback show '+(ok?'correct':'wrong')}
+
+function showResultOverlay(st,status,gained,bonus){
+  const panel=document.getElementById('result-panel'),sorted=[...st.sentences].sort((a,b)=>a.order-b.order);
+  let bc,bt;if(status==='perfect'){bc='perfect';bt='🎉 완벽 정답!  +'+gained+'점'+(bonus?' (+콤보 '+bonus+'점)':'')}else if(status==='partial'){bc='partial';bt='👍 재시도 정답!  +'+gained+'점'+(bonus?' (+콤보 '+bonus+'점)':'')}else{bc='skipped';bt='🏳️ 정답 확인 (0점)'}
+  let flow='<div class="result-flow"><div class="result-flow-title">📖 \'처음\' 부분의 흐름</div><div class="result-order">';
+  sorted.forEach((s,i)=>{flow+='<span class="role-chip r-'+s.type+'">'+s.order+'. '+ROLE_NAMES[s.type]+'</span>';if(i<sorted.length-1)flow+='<span class="arrow">→</span>'});flow+='</div></div>';
+  let sents='<div class="result-sentences">';sorted.forEach(s=>{sents+='<div class="result-sentence r-'+s.type+'"><div class="result-sentence-role">'+s.order+'. '+ROLE_NAMES[s.type]+'</div><div class="result-sentence-text">'+s.text+'</div><div class="result-sentence-why">'+s.why+'</div></div>'});sents+='</div>';
+  const isLast=currentStage>=questions.length-1,nl=isLast?'🏁 결과 보기':'다음 주제 →';
+  const tn=st.topic,sub=st.subtopic?'<div class="result-source">📌 '+st.subtopic+(st.source?' · 출처: '+st.source:'')+'</div>':'';
+  panel.innerHTML='<div class="result-badge '+bc+'">'+bt+'</div><div class="result-title">📚 해설 · '+tn+'</div>'+sub+flow+sents+'<div class="result-actions"><button class="result-close-btn" onclick="closeOverlay()">닫기</button><button class="result-next-btn" onclick="proceedOverlay()">'+nl+'</button></div>';
+  const ov=document.getElementById('result-overlay');ov.classList.add('show');ov.scrollTop=0;
+}
+function closeOverlay(){document.getElementById('result-overlay').classList.remove('show')}
+function proceedOverlay(){closeOverlay();if(currentStage>=questions.length-1)finishGame();else navStage(1)}
+function showReviewOverlay(){const st=questions[currentStage],r=stageResult[currentStage];showResultOverlay(st,r.status,r.pointsGained,0)}
+
+function giveUp(){
+  if(stageResult[currentStage].status!==null)return;
+  stageResult[currentStage].status='skipped';stageResult[currentStage].pointsGained=0;combo=0;updateHUD();
+  const st=questions[currentStage],board=document.getElementById('game-board');board.innerHTML='';
+  [...st.sentences].sort((a,b)=>a.order-b.order).forEach(s=>{
+    const li=document.createElement('li');li.className='sentence-item locked color-'+s.type;
+    li.innerHTML='<div class="sentence-num">'+s.order+'</div><div class="sentence-text">'+s.text+'</div>';
+    board.appendChild(li);
+  });
+  document.getElementById('check-btn').style.display='none';document.getElementById('reset-btn').style.display='none';document.getElementById('giveup-btn').style.display='none';document.getElementById('review-btn').style.display='';
+  document.getElementById('feedback').className='feedback';document.getElementById('wrong-hint').className='wrong-hint';
+  document.getElementById('next-btn').disabled=(currentStage>=questions.length-1);
+  showResultOverlay(st,'skipped',0,0);
+}
+
+function showCheer(c){const el=document.getElementById('cheer-banner');el.textContent=c>=7?'🏆 설명문 구조 마스터!':c>=5?'⭐ 완벽한 흐름 파악!':c>=3?'🔥 훌륭해요! '+c+'연속!':'🎉 잘하고 있어요!';el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1800)}
+function navStage(d){const n=currentStage+d;if(n<0||n>=questions.length)return;currentStage=n;loadStage()}
+function finishGame(){showComplete()}
+
+function showComplete(){
+  document.getElementById('game-area').classList.remove('show');
+  document.getElementById('complete-screen').classList.add('show');
+  document.getElementById('final-score').textContent=score+'점';
+  document.getElementById('final-score-label').textContent=MODE_NAMES[currentGameMode]+' · '+(currentMode==='basic'?'기본':'심화')+' 단계 · '+questions.length+'개 주제 완주';
+  document.getElementById('stat-perfect').textContent=perfectCount;
+  document.getElementById('stat-partial').textContent=partialCount;
+  document.getElementById('stat-combo').textContent=maxCombo;
+  const r=score/(questions.length*100),emj=document.getElementById('complete-emoji'),tit=document.getElementById('complete-title');
+  if(r>=1){emj.textContent='🏆';tit.textContent='완벽해요!'}else if(r>=.75){emj.textContent='🎉';tit.textContent='아주 잘했어요!'}else if(r>=.5){emj.textContent='😊';tit.textContent='잘하고 있어요!'}else{emj.textContent='💪';tit.textContent='다시 도전해봐요!'}
+  const now=new Date();completedTimeStr=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('complete-time').textContent='⏱ 완료 시각: '+completedTimeStr;
+  document.getElementById('nickname-input').value='';
+  document.getElementById('review-textarea').value='';
+  window.scrollTo({top:0,behavior:'smooth'});
+  // 오답노트 표시
+  const wrongEl=document.getElementById('wrong-report');wrongEl.innerHTML='';
+  const targets=[];stageResult.forEach((r,i)=>{if(r.status!=='perfect')targets.push({idx:i,status:r.status})});
+  if(!targets.length){wrongEl.innerHTML='<div style="text-align:center;padding:12px;background:var(--green-l);border-radius:9px;color:#3a8f60;font-weight:700">🎊 모든 주제를 완벽하게 맞혔어요!</div>';return}
+  const t=document.createElement('div');t.className='wrong-report-title';t.innerHTML='📝 다시 살펴볼 주제 ('+targets.length+'개)';wrongEl.appendChild(t);
+  targets.forEach(o=>{
+    const st=questions[o.idx],item=document.createElement('div');item.className='wrong-item';
+    const stt=o.status===null?'미채점':o.status==='partial'?'재시도 정답':'포기';
+    const sorted=[...st.sentences].sort((a,b)=>a.order-b.order);
+    let fc='',sl='';sorted.forEach((s,i)=>{const rc=ROLE_COLOR[s.type];fc+='<span style="display:inline-block;padding:2px 8px;border-radius:12px;background:'+rc.l+';color:'+rc.fg+';font-size:.76rem;font-weight:700;margin:2px">'+s.order+'. '+ROLE_NAMES[s.type]+'</span>';if(i<sorted.length-1)fc+='<span style="color:var(--muted);margin:0 2px">→</span>';sl+='<div style="background:white;border-left:3px solid '+rc.bar+';padding:6px 9px;margin-top:4px;border-radius:5px;font-size:.82rem;line-height:1.5"><b style="font-size:.76rem;color:'+rc.fg+'">'+s.order+'. '+ROLE_NAMES[s.type]+'</b><br>'+s.text+'</div>'});
+    item.innerHTML='<div class="wrong-item-num">주제 '+(o.idx+1)+' · '+stt+'</div><div class="wrong-item-topic">'+st.topic+'</div>'+(st.subtopic?'<div style="font-size:.78rem;color:var(--muted);margin-bottom:6px">📌 '+st.subtopic+'</div>':'')+'<div style="background:white;border-radius:7px;padding:9px 11px"><div style="font-size:.8rem;font-weight:700;color:#3a8f60;margin-bottom:4px">✅ 정답 흐름</div><div>'+fc+'</div>'+sl+'</div>';
+    wrongEl.appendChild(item);
+  });
+}
+
+function goStart(){document.getElementById('complete-screen').classList.remove('show');document.getElementById('game-area').classList.remove('show');document.getElementById('ingame-credit').classList.remove('show');document.getElementById('start-screen').style.display=''}
+function restartGame(){document.getElementById('complete-screen').classList.remove('show');startGame(currentMode)}
+
+/* ===== 오답노트 JPG (닉네임+소감 필수) ===== */
+function downloadReport(){
+  const nickname=(document.getElementById('nickname-input').value||'').trim();
+  const review=(document.getElementById('review-textarea').value||'').trim();
+  if(!nickname){showToast('닉네임을 입력해 주세요!');document.getElementById('nickname-input').focus();return}
+  if(!review){showToast('활동 소감을 작성해 주세요!');document.getElementById('review-textarea').focus();return}
+
+  const targets=[];stageResult.forEach((r,i)=>{if(r.status!=='perfect')targets.push({idx:i,status:r.status})});
+  const W=900,PAD=40,dpr=2;
+  const canvas=document.createElement('canvas'),tmp=canvas.getContext('2d');
+  tmp.font='13px "Malgun Gothic",sans-serif';
+  const wrapW=W-PAD*2-24;
+  let H=280;
+  // 소감 높이
+  const reviewLines=wrapText(tmp,review,wrapW-20);H+=reviewLines.length*18+50;
+  if(!targets.length){H+=80}else{targets.forEach(o=>{const st=questions[o.idx];H+=80;if(st.subtopic)H+=22;st.sentences.forEach(s=>{H+=28+wrapText(tmp,s.text,wrapW).length*18+14});H+=12})}
+  H+=70;
+  canvas.width=W*dpr;canvas.height=H*dpr;canvas.style.width=W+'px';canvas.style.height=H+'px';
+  const c=canvas.getContext('2d');c.scale(dpr,dpr);
+  c.fillStyle='#f0f4ff';c.fillRect(0,0,W,H);
+  c.fillStyle='#fff';roundRect(c,PAD/2,PAD/2,W-PAD,H-PAD,14);c.fill();
+  let y=PAD;
+  c.fillStyle='#3a3a5c';c.font='bold 24px "Malgun Gothic",sans-serif';
+  c.fillText("📝 설명문 '처음' 조립 게임 · 오답노트",PAD,y+8);y+=40;
+  c.font='13px "Malgun Gothic",sans-serif';c.fillStyle='#8888aa';
+  c.fillText('📛 '+nickname+'  ·  ⏱ '+completedTimeStr+'  ·  '+MODE_NAMES[currentGameMode]+' · '+(currentMode==='basic'?'기본':'심화')+' 단계',PAD,y);y+=22;
+  c.fillText('최종 '+score+'점 · 완벽 '+perfectCount+' / 재시도 '+partialCount+' / 최고 콤보 '+maxCombo,PAD,y);y+=26;
+  // 소감
+  c.fillStyle='#f8f6ff';roundRect(c,PAD,y,W-PAD*2,reviewLines.length*18+30,8);c.fill();
+  c.fillStyle='#6040c0';c.font='bold 12px "Malgun Gothic",sans-serif';c.fillText('✏️ 활동 소감',PAD+10,y+16);
+  c.fillStyle='#3a3a5c';c.font='13px "Malgun Gothic",sans-serif';
+  reviewLines.forEach((ln,i)=>c.fillText(ln,PAD+10,y+34+i*18));
+  y+=reviewLines.length*18+42;
+  c.strokeStyle='#dde3f5';c.lineWidth=1;c.beginPath();c.moveTo(PAD,y);c.lineTo(W-PAD,y);c.stroke();y+=18;
+  if(!targets.length){c.fillStyle='#3a8f60';c.font='bold 16px "Malgun Gothic",sans-serif';c.fillText('🎊 모든 주제를 완벽하게 맞혔어요!',PAD,y+18);y+=50}
+  else{targets.forEach(o=>{const st=questions[o.idx],stt=o.status===null?'미채점':o.status==='partial'?'재시도 정답':'포기';c.fillStyle='#fde8e8';roundRect(c,PAD,y,W-PAD*2,28,7);c.fill();c.fillStyle='#c05050';c.font='bold 13px "Malgun Gothic",sans-serif';c.fillText('주제 '+(o.idx+1)+' · '+st.topic+'  ['+stt+']',PAD+10,y+19);y+=36;if(st.subtopic){c.fillStyle='#8888aa';c.font='11px "Malgun Gothic",sans-serif';c.fillText('📌 '+st.subtopic,PAD+2,y+8);y+=20}y+=2;
+    [...st.sentences].sort((a,b)=>a.order-b.order).forEach(s=>{const rc=ROLE_COLOR[s.type];c.fillStyle=rc.bar;c.fillRect(PAD,y,4,50);c.fillStyle=rc.fg;c.font='bold 12px "Malgun Gothic",sans-serif';c.fillText(s.order+'. '+ROLE_NAMES[s.type],PAD+12,y+14);c.fillStyle='#3a3a5c';c.font='12px "Malgun Gothic",sans-serif';wrapText(c,s.text,wrapW).forEach((ln,i)=>c.fillText(ln,PAD+12,y+32+i*16));y+=28+wrapText(c,s.text,wrapW).length*16+12});y+=10})}
+  y=H-PAD;c.fillStyle='#8888aa';c.font='11px "Malgun Gothic",sans-serif';
+  c.fillText('제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com',PAD,y);
+  const a=document.createElement('a');a.href=canvas.toDataURL('image/jpeg',.92);
+  a.download='설명문_처음_오답노트_'+MODE_NAMES[currentGameMode]+'_'+(currentMode==='basic'?'기본':'심화')+'_'+nickname+'_'+completedTimeStr.split(' ')[0]+'.jpg';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+}
+
+function roundRect(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath()}
+function wrapText(x,t,mw){const ch=t.split(''),ln=[];let l='';ch.forEach(c=>{if(x.measureText(l+c).width>mw){ln.push(l);l=c}else l+=c});if(l)ln.push(l);return ln}
+</script>
+</body>
+</html>
