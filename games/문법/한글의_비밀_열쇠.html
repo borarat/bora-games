@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>한글의 비밀 열쇠</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#26365c; --ink2:#4a5b85; --gold:#c19a3e; --gold-l:#e8d9ae;
+  --paper:#fbf8f1; --paper2:#f2ece0; --line:#ded3bd;
+  --ok:#1f8b52; --ng:#cf4340;
+  --c1:#f6d98a; --c2:#a6cfee; --c3:#f4b8c8; --c4:#b2ddb6; --c5:#c9bced;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Noto Sans KR',-apple-system,'Malgun Gothic',sans-serif;
+  color:var(--ink);
+  background:linear-gradient(160deg,#faf6ec 0%,#f0e9da 55%,#e7ddc8 100%);
+  overflow:hidden;
+  word-break:keep-all;
+}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,textarea{font-family:inherit}
+.screen{display:none;height:100vh;width:100%}
+.screen.on{display:block}
+
+/* ===== 시작 화면 ===== */
+#start{overflow-y:auto}
+.wrap{max-width:1440px;margin:0 auto;padding:60px 16px 12px}
+.head{display:flex;align-items:center;gap:22px;margin-bottom:13px}
+.head img{height:90px;border-radius:12px;flex:0 0 auto}
+.title{font-size:42px;font-weight:700;letter-spacing:-1.5px;line-height:1.15}
+.title .dot{color:var(--gold)}
+.subtitle{font-size:17px;font-weight:400;color:var(--ink2);margin-top:6px}
+.cols{display:grid;grid-template-columns:1.08fr 1fr;gap:18px;align-items:start}
+.box{background:rgba(255,255,255,.72);border:1.5px solid var(--line);border-radius:16px;padding:13px 20px}
+.box h3{font-size:16px;font-weight:700;margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.box h3::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--gold)}
+.box p,.box li{font-size:14.2px;line-height:1.66;color:#3d4a6b}
+.box ul{list-style:none}
+.box li{padding-left:15px;position:relative}
+.box li::before{content:'·';position:absolute;left:4px;color:var(--gold);font-weight:700}
+.std{background:#eef3fb;border-color:#c9d8ef}
+.std h3::before{background:var(--ink)}
+.stages{display:flex;flex-direction:column;gap:9px}
+.stage-btn{
+  display:flex;align-items:center;gap:14px;width:100%;text-align:left;
+  background:#fff;border:2px solid var(--line);border-radius:14px;padding:12px 16px;
+  transition:.16s;
+}
+.stage-btn:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 7px 16px rgba(120,100,50,.16)}
+.stage-btn .num{
+  flex:0 0 auto;width:44px;height:44px;border-radius:11px;background:var(--ink);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;line-height:1.1;text-align:center;
+}
+.stage-btn:nth-child(2) .num{background:#3d5a8a}
+.stage-btn:nth-child(3) .num{background:#6b5aa0}
+.stage-btn:nth-child(4) .num{background:#9a6a3c}
+.stage-btn .tx{flex:1;min-width:0}
+.stage-btn .t{display:block;font-size:16px;font-weight:700}
+.stage-btn .d{display:block;font-size:12.8px;line-height:1.5;color:#6b7793;margin-top:3px}
+.credit{
+  margin-top:12px;background:#fffdf7;border:1.5px dashed var(--gold-l);border-radius:14px;
+  padding:10px 18px;display:flex;flex-wrap:wrap;gap:5px 22px;align-items:center;justify-content:center;
+  font-size:13px;color:#7a6a45;
+}
+.credit b{font-weight:700;color:#5f5233}
+.privacy{
+  margin-top:8px;background:#f4f6f9;border:1px solid #dde3ec;border-radius:12px;
+  padding:9px 18px;font-size:12.2px;line-height:1.65;color:#5d6a83;text-align:center;
+}
+.privacy b{color:#3c4a66}
+
+/* ===== 플레이 화면 ===== */
+#play{display:none}
+#play.on{display:flex;height:100vh}
+.side{
+  flex:0 0 132px;background:rgba(38,54,92,.94);color:#fff;
+  display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px 12px;
+}
+.side .lv{font-size:12.5px;line-height:1.45;text-align:center;color:#c9d6f0;border-bottom:1px solid rgba(255,255,255,.22);padding-bottom:12px;width:100%}
+.side .lv b{display:block;font-size:15px;color:#fff;margin-bottom:3px}
+.nav-btn{
+  width:100%;padding:11px 0;border-radius:10px;background:rgba(255,255,255,.13);
+  font-size:14px;font-weight:500;transition:.15s;
+}
+.nav-btn:hover{background:rgba(255,255,255,.27)}
+.nav-btn:disabled{opacity:.32;cursor:default}
+.nav-btn.end{margin-top:auto;background:rgba(233,120,110,.28)}
+.nav-btn.end:hover{background:rgba(233,120,110,.5)}
+.side .keyhint{font-size:11px;color:#9fb0d4;line-height:1.7;text-align:center;margin-top:2px}
+.side .keyhint b{color:#c9d6f0;font-weight:700}
+
+.main{flex:1;display:flex;flex-direction:column;padding:14px 30px 10px;position:relative;min-width:0}
+.arena{flex:1;display:flex;flex-direction:column;justify-content:center;gap:15px;min-height:0}
+.topbar{display:flex;align-items:center;gap:16px;margin-bottom:6px}
+.qno{font-size:14px;font-weight:700;color:var(--ink2);white-space:nowrap}
+.bar{flex:1;height:9px;background:#e3dbc9;border-radius:5px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),#e0c064);width:0;transition:.3s}
+.stat{display:flex;gap:9px}
+.pill{background:#fff;border:1.5px solid var(--line);border-radius:9px;padding:5px 12px;font-size:13px;font-weight:700;white-space:nowrap}
+.pill.combo{background:#fff5e2;border-color:#e9cf94;color:#a5761d}
+
+.qhead{display:flex;align-items:center;justify-content:center;gap:10px}
+.qtype{font-size:12.5px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.3px}
+.qtype.mc{background:#e5eefb;color:#2f558f}
+.qtype.sa{background:#fdf0e2;color:#a5761d}
+.qarea{font-size:12.5px;color:#77839e;background:#f2eee3;border-radius:20px;padding:4px 12px;font-weight:500}
+.qtext{
+  text-align:center;font-size:25px;font-weight:700;line-height:1.5;letter-spacing:-.6px;
+  max-width:1000px;margin:0 auto;color:#22314f;
+}
+.qsub{text-align:center;font-size:15.5px;color:#5b6885;line-height:1.75;max-width:900px;margin:0 auto}
+.qsub .big{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:104px;height:92px;padding:0 16px;margin:0 5px;
+  font-size:60px;font-weight:500;line-height:1;color:var(--ink);
+  background:#fff;border:3px solid var(--ink);border-radius:20px;
+  box-shadow:0 8px 18px rgba(40,50,80,.14);vertical-align:middle;
+}
+
+/* 객관식 */
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:11px;max-width:960px;width:100%;margin:0 auto}
+.opt{
+  display:flex;align-items:center;gap:12px;text-align:left;
+  background:#fff;border:2px solid var(--line);border-radius:14px;padding:13px 17px;
+  font-size:16.5px;line-height:1.45;font-weight:500;transition:.15s;min-height:60px;
+}
+.opt:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 6px 14px rgba(120,100,50,.15)}
+.opt .onum{
+  flex:0 0 auto;width:28px;height:28px;border-radius:50%;background:#eee7d6;color:#7a6a45;
+  display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;
+}
+.opt.ok{border-color:var(--ok);background:#effaf3;color:#146b3f}
+.opt.ok .onum{background:var(--ok);color:#fff}
+.opt.ng{border-color:var(--ng);background:#fdf0ef;color:#9c322f;animation:shake .42s}
+.opt.ng .onum{background:var(--ng);color:#fff}
+.opt.reveal{border-color:var(--ok);background:#effaf3;color:#146b3f;box-shadow:0 0 0 3px rgba(31,139,82,.18)}
+.opt.dim{opacity:.4}
+.opt.gone{opacity:.28;text-decoration:line-through}
+.opt:disabled{cursor:default;transform:none;box-shadow:none}
+.opt.jamo .otx{font-size:27px;font-weight:500;letter-spacing:2px;line-height:1.25}
+@keyframes shake{0%,100%{transform:translateX(0)}15%{transform:translateX(-13px)}30%{transform:translateX(11px)}45%{transform:translateX(-9px)}60%{transform:translateX(7px)}80%{transform:translateX(-4px)}}
+
+/* 단답형 */
+.sazone{display:flex;flex-direction:column;align-items:center;gap:10px}
+.sarow{display:flex;gap:10px;align-items:center;justify-content:center;width:100%;max-width:640px}
+.sain{
+  flex:1;font-size:23px;font-weight:700;text-align:center;color:var(--ink);
+  border:2.5px solid var(--line);border-radius:14px;padding:13px 16px;background:#fff;letter-spacing:1px;
+}
+.sain:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 4px rgba(193,154,62,.16)}
+.sain:disabled{background:#f6f2e9;color:#8a8776}
+.sain.ok{border-color:var(--ok);background:#effaf3;color:#146b3f}
+.sain.ng{border-color:var(--ng);background:#fdf0ef;color:#9c322f;animation:shake .42s}
+.sabtn{flex:0 0 auto;background:var(--ink);color:#fff;border-radius:13px;padding:14px 28px;font-size:16px;font-weight:700;transition:.15s}
+.sabtn:hover{filter:brightness(1.15)}
+.sabtn:disabled{opacity:.35;cursor:default}
+.choseong{
+  display:flex;gap:8px;justify-content:center;align-items:center;
+}
+.choseong .cs{
+  width:44px;height:52px;border:2.5px dashed #e2be6a;border-radius:11px;background:#fff8e8;
+  display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#a5761d;
+}
+.chosLabel{font-size:12.5px;color:#a9832a;font-weight:700;letter-spacing:.5px;margin-bottom:2px;text-align:center}
+
+.fb{min-height:86px;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+.msg{width:100%;max-width:1000px;border-radius:12px;padding:10px 18px;font-size:14px;line-height:1.65;text-align:center}
+.msg.ok{background:#e9f8ef;border:1.5px solid #a9dcbf;color:#166b40}
+.msg.ng{background:#fdeeed;border:1.5px solid #f0b6b4;color:#9c322f}
+.msg.hint{background:#fff6e0;border:2px dashed #e2be6a;color:#8a6716;text-align:left}
+.msg.hint b.hl{display:block;font-size:12.5px;color:#a9832a;margin-bottom:3px;letter-spacing:.5px}
+.msg .ans{font-weight:700}
+.msg .nextkey{display:block;font-size:11.8px;color:#5d7f68;margin-top:3px}
+.msg .left{display:block;font-size:12.5px;color:#a9832a;margin-top:4px}
+.sig{position:absolute;right:16px;bottom:6px;font-size:10.5px;color:rgba(60,70,95,.38);letter-spacing:.2px}
+
+/* ===== 종료 화면 ===== */
+#end{overflow-y:auto}
+.ewrap{max-width:1240px;margin:0 auto;padding:34px 26px 26px}
+.ehead{display:flex;align-items:center;gap:18px;margin-bottom:14px}
+.ehead img{height:76px;border-radius:12px}
+.ehead h2{font-size:31px;font-weight:700;letter-spacing:-1px}
+.ehead p{font-size:14px;color:var(--ink2);margin-top:4px}
+.ecols{display:grid;grid-template-columns:1fr 1.05fr;gap:18px;align-items:start}
+.scoreline{display:flex;gap:10px;margin-bottom:12px}
+.sbox{flex:1;background:#fff;border:1.5px solid var(--line);border-radius:13px;padding:11px 8px;text-align:center}
+.sbox .v{font-size:25px;font-weight:700;color:var(--ink)}
+.sbox .l{font-size:11.8px;color:#6f7c98;margin-top:2px}
+.field{margin-bottom:10px}
+.field label{display:block;font-size:13.2px;font-weight:700;margin-bottom:4px}
+.field label i{color:var(--ng);font-style:normal}
+.field input,.field textarea{
+  width:100%;font-size:14px;color:var(--ink);
+  border:1.5px solid var(--line);border-radius:10px;padding:9px 12px;background:#fff;
+}
+.field textarea{resize:none;height:78px;line-height:1.6}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--gold)}
+.metaline{display:flex;gap:10px}
+.metaline .field{flex:1}
+.dlrow{display:flex;gap:10px;margin-top:4px}
+.dlbtn{flex:1;background:var(--ink);color:#fff;border-radius:11px;padding:13px 8px;font-size:14.5px;font-weight:700;transition:.16s}
+.dlbtn.alt{background:var(--gold)}
+.dlbtn:hover{filter:brightness(1.12);transform:translateY(-2px)}
+.againrow{display:flex;gap:10px;margin-top:10px}
+.ghost{flex:1;border:2px solid var(--ink);border-radius:11px;padding:11px;font-size:14px;font-weight:700;color:var(--ink)}
+.ghost:hover{background:var(--ink);color:#fff}
+.wronglist{max-height:340px;overflow-y:auto;padding-right:5px}
+.witem{background:#fff;border:1.5px solid var(--line);border-left:5px solid var(--ng);border-radius:11px;padding:9px 13px;margin-bottom:8px}
+.witem.skip{border-left-color:#b9a15f}
+.witem .wq{font-size:14.5px;font-weight:700;line-height:1.5;color:#2b3a5c;margin-bottom:4px}
+.witem .wtag{font-size:12.5px;color:#6f7c98}
+.witem .wtag s{color:var(--ng);text-decoration:line-through}
+.witem .wtag b{color:var(--ok)}
+.witem .wex{font-size:12.6px;color:#5c6884;line-height:1.6;margin-top:4px}
+.perfect{background:#eefaf2;border:1.5px solid #a9dcbf;border-radius:12px;padding:22px;text-align:center;font-size:15px;color:#166b40;font-weight:700}
+.warn{font-size:12.5px;color:var(--ng);margin-top:5px;display:none}
+.warn.on{display:block}
+
+/* ===== 모바일 · 태블릿 세로 ===== */
+.nextbtn{display:none}
+.mo-only{display:none}
+@media (max-width:900px){
+  html,body{height:auto}
+  body{overflow:auto}
+  .screen{height:auto;min-height:100vh;min-height:100dvh}
+  .wrap{padding:16px 13px 20px}
+  .head{gap:11px;margin-bottom:11px}
+  .head img{height:56px}
+  .title{font-size:25px;letter-spacing:-1px}
+  .subtitle{font-size:13px;margin-top:4px}
+  .cols{grid-template-columns:1fr;gap:11px}
+  .box{padding:11px 14px;border-radius:13px}
+  .box h3{font-size:15px}
+  .box p,.box li{font-size:13.4px;line-height:1.62}
+  .box[style]{margin-top:11px!important}
+  .stage-btn{padding:10px 12px;gap:11px}
+  .stage-btn .num{width:38px;height:38px;font-size:13px;border-radius:10px}
+  .stage-btn .t{font-size:14.5px}
+  .stage-btn .d{font-size:11.8px}
+  .credit{flex-direction:column;gap:3px;font-size:12px;padding:9px 12px;margin-top:11px}
+  .privacy{font-size:11.5px;padding:9px 12px;line-height:1.6}
+
+  #play.on{flex-direction:column;height:100vh;height:100dvh}
+  .side{flex:0 0 auto;width:100%;flex-direction:row;align-items:center;gap:7px;padding:7px 9px}
+  .side .lv{width:auto;flex:0 0 auto;border-bottom:none;border-right:1px solid rgba(255,255,255,.25);
+            padding:1px 9px 1px 2px;font-size:10.5px;text-align:left;line-height:1.3}
+  .side .lv b{display:block;font-size:12.5px;margin:0}
+  .nav-btn{width:auto;flex:1 1 0;padding:9px 0;font-size:13px;border-radius:9px}
+  .nav-btn.end{margin-top:0;flex:0 0 auto;padding:9px 11px;font-size:12.5px}
+  .side .keyhint{display:none}
+  .main{padding:8px 11px 4px;overflow-y:auto}
+  .arena{gap:10px;justify-content:flex-start;padding-top:4px}
+  .topbar{gap:9px;margin-bottom:2px}
+  .qno{font-size:12px}
+  .pill{padding:4px 9px;font-size:11.5px}
+  .qtext{font-size:18px;line-height:1.45}
+  .qsub{font-size:13.5px;line-height:1.6}
+  .qsub .big{min-width:64px;height:56px;padding:0 10px;margin:0 3px;font-size:36px;border-width:2.5px;border-radius:14px;box-shadow:0 5px 11px rgba(40,50,80,.12)}
+  .opts{grid-template-columns:1fr;gap:8px}
+  .opt{font-size:14.5px;padding:11px 13px;min-height:0;border-width:1.8px;border-radius:12px}
+  .opt:hover{transform:none;box-shadow:none}
+  .opt .onum{width:24px;height:24px;font-size:12.5px}
+  .opt.jamo .otx{font-size:23px;letter-spacing:1.5px}
+  .sain{font-size:19px;padding:11px 13px}
+  .sabtn{padding:12px 20px;font-size:14.5px}
+  .choseong .cs{width:38px;height:44px;font-size:22px}
+  .fb{min-height:0;margin-top:4px}
+  .msg{font-size:12.8px;line-height:1.58;padding:9px 12px}
+  .msg .nextkey{display:none}
+  .pc-only{display:none}
+  .mo-only{display:list-item}
+  .nextbtn{display:inline-block;margin-top:8px;background:#1f8b52;color:#fff;
+           padding:9px 20px;border-radius:9px;font-size:13.5px;font-weight:700}
+  .msg.ng .nextbtn{background:#cf4340}
+  .sig{display:none}
+
+  .ewrap{padding:16px 13px 22px}
+  .ehead{gap:12px;margin-bottom:11px}
+  .ehead img{height:54px}
+  .ehead h2{font-size:22px}
+  .ehead p{font-size:12.5px}
+  .ecols{grid-template-columns:1fr;gap:12px}
+  .scoreline{flex-wrap:wrap;gap:7px}
+  .sbox{flex:1 1 44%;padding:9px 6px}
+  .sbox .v{font-size:20px}
+  .sbox .l{font-size:11px}
+  .dlrow{flex-direction:column}
+  .dlbtn{font-size:13.5px;padding:12px 8px}
+  .wronglist{max-height:none}
+  .field textarea{height:70px}
+}
+@media (max-width:400px){
+  .title{font-size:22px}
+  .qtext{font-size:16.5px}
+}
+/* 세로가 짧은 화면(노트북·교실 프로젝터)에서도 스크롤 없이 한 화면에 담기도록 압축 */
+@media (min-width:901px) and (max-height:880px){
+  .wrap{padding:22px 16px 10px}
+  .head{gap:18px;margin-bottom:10px}
+  .head img{height:76px}
+  .title{font-size:34px}
+  .subtitle{font-size:15px;margin-top:4px}
+  .cols{gap:14px}
+  .box{padding:9px 17px;border-radius:14px}
+  .box h3{font-size:15px;margin-bottom:4px}
+  .box p,.box li{font-size:13.4px;line-height:1.52}
+  .box[style]{margin-top:8px!important}
+  .stages{gap:7px}
+  .stage-btn{padding:8px 13px;gap:12px;border-radius:12px}
+  .stage-btn .num{width:38px;height:38px;font-size:13px;border-radius:10px}
+  .stage-btn .t{font-size:15px}
+  .stage-btn .d{font-size:12px;line-height:1.42;margin-top:2px}
+  .credit{margin-top:9px;padding:8px 18px;font-size:12.5px}
+  .privacy{margin-top:7px;padding:7px 18px;font-size:11.8px;line-height:1.55}
+}
+@media (min-width:901px) and (max-height:740px){
+  .wrap{padding-top:12px}
+  .head{margin-bottom:8px}
+  .head img{height:66px}
+  .title{font-size:30px}
+  .box{padding:7px 16px}
+  .box p,.box li{font-size:12.8px;line-height:1.46}
+  .box[style]{margin-top:7px!important}
+  .stage-btn{padding:7px 12px}
+  .stage-btn .num{width:35px;height:35px}
+  .credit{margin-top:7px;padding:7px 16px;font-size:12px}
+  .privacy{margin-top:6px;padding:6px 16px;font-size:11.3px;line-height:1.5}
+}
+::-webkit-scrollbar{width:9px}
+::-webkit-scrollbar-thumb{background:#cfc4ad;border-radius:5px}
+</style>
+</head>
+<body>
+<!-- ================= 시작 화면 ================= -->
+<div id="start" class="screen on">
+ <div class="wrap">
+  <div class="head">
+   <img id="mascot1" alt="보라라샘" style="height:90px;border-radius:12px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAACxCAMAAAAyLeWLAAAB/lBMVEUAAABMNSXZ1s7hupPcto7alVnNxba4uryMqcKptsLQiEyTp7jTmmfXpXTkwZxGLBvipW3i2snLeDWcscPUrIR8osLnx6NqSDBNMR7FvbLb0b2telCoq6vGxsb7+vqth2eHm6ivpJaMZ0rhmlvgnWGLeGm2g1ipmozGfUJtWEjTgTySlpVaRDS2lHXo6OeVhXbk4dl0UjmdsL6+wL1ELiDFbCd4mraGWDe8wcLGxsaXc1Z4ZVZ8oL77+vo6JhhiPSWoq6uTjIa4urzZ1s6DXELwsnh6bWK8dTuSYzwIBQUbFRNuOBZ3Qh3groDi0rsqHRdMNSWcoJuvpJbFvbLi2sl1nsKSlpWzajKptsLawZ7Nxbbo6OdtWEiLeGmpmowxIyF7c2l+lJ2BTSeTjIa2WBG8YhyjbUXd4eLk4dk8MS1ELiBlT0B4ZVaVhXaTp7imf2GvpJbAZh3An4De3+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADGtm7NAAAAgHRSTlMA///////////////////////////////////////////////////////////////////////////c////3P//3P/c3P///////////////9z/3Nzc/9z/3P/c3Nzc3P/////c/////9z/3P/c3Nz/oP///wAAAAAAAAAAAAAAAKaTQcIAABeqSURBVHja7VwHd+JItl4kUUpVKCAjhMjYYINxTh2me3q6e3vyvNnZ3dmcw8vx/5/z7r1VEghjLLfp3XPeebVjaANWffrud0PdKvYHP/j/sa3xC5Ml7cmrSdLRnvxdAPwjm+wdVPIRH+wN/sZAnhwfVJpepTi8SnzMPvqbQdg79C4q68fhr/8mED5+VvEqm8bBJx8cw68r9w7v4DcfFMJP72EhG3u//GAQXv+wHIRKpXn4iw+E4buDshhwfCBFxg/BUPnnD4Hhk8oD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">
+   <div>
+    <div class="title">한글의 비밀 <span class="dot">열쇠</span></div>
+    <div class="subtitle">한글의 창제 정신과 창제 원리, 그리고 한글의 가치를 네 단계로 복습해 보아요</div>
+   </div>
+  </div>
+
+  <div class="cols">
+   <div>
+    <div class="box">
+     <h3>게임 방법</h3>
+     <ul>
+      <li>문제는 <b>객관식</b>과 <b>단답형</b> 두 가지로 나옵니다.</li>
+      <li class="pc-only">객관식은 <b>선택지를 클릭</b>하거나 <b>숫자키 1~4</b>를 눌러 답합니다.</li>
+      <li class="mo-only">객관식은 <b>선택지를 손가락으로 톡</b> 누르면 됩니다.</li>
+      <li>단답형은 답을 입력한 뒤 <b>«확인»</b> 또는 <b>Enter</b> 키를 누릅니다.</li>
+      <li>틀려도 <b>정답을 바로 알려 주지 않고 힌트</b>를 줍니다.</li>
+      <li>단답형은 두 번째 힌트로 <b>초성</b>을 보여 줍니다.</li>
+      <li>한 문제당 <b>세 번</b>까지 도전할 수 있습니다.</li>
+      <li><b>세 번째로 틀리면</b> 그때 정답과 해설을 알려 줍니다.</li>
+      <li class="pc-only">맞힌 뒤 <b>Enter · Spacebar · →</b> 를 누르면 다음 문제로 넘어갑니다.</li>
+      <li class="mo-only">답을 확인한 뒤 <b>«다음 문제 ▶»</b> 단추를 누르면 넘어갑니다.</li>
+      <li class="pc-only">왼쪽 사이드바의 <b>이전 · 다음 · 게임 끝내기</b>로 이동합니다.</li>
+      <li class="mo-only">화면 맨 위의 <b>이전 · 다음 · 게임 끝내기</b> 단추로 이동합니다.</li>
+     </ul>
+    </div>
+    <div class="box" style="margin-top:10px">
+     <h3>점수 규칙</h3>
+     <ul>
+      <li>첫 시도에 정답 <b>+100점</b> · 두 번째 시도 <b>+50점</b> · 세 번째 시도 <b>+25점</b><br>오답은 <b>−20점</b>이며 0점 아래로는 내려가지 않습니다.</li>
+      <li>연속으로 한 번에 맞히면 <b>콤보 보너스</b>가 최대 +50점까지 붙습니다.</li>
+      <li>답하지 않고 넘어간 문제는 점수를 얻지 못합니다.</li>
+      <li>각 문항은 한 번만 채점되며, «이전»으로 돌아가면 복습만 할 수 있습니다.</li>
+     </ul>
+    </div>
+   </div>
+
+   <div>
+    <div class="box" style="padding:14px 16px">
+     <h3>단계를 골라 시작하세요</h3>
+     <div class="stages">
+      <button class="stage-btn" data-stage="1">
+       <span class="num">1<br>단계</span>
+       <span class="tx"><span class="t">한글의 창제 정신</span><span class="d">13문제 — 창제 정신 · 세종 대왕 · 집현전 · 훈민정음을<br>객관식과 단답형으로 번갈아 확인합니다</span></span>
+      </button>
+      <button class="stage-btn" data-stage="2">
+       <span class="num">2<br>단계</span>
+       <span class="tx"><span class="t">자음의 창제 원리</span><span class="d">27문제 — 상형 · 가획 · 이체와<br>그 외의 자음자까지 자세히 다룹니다</span></span>
+      </button>
+      <button class="stage-btn" data-stage="3">
+       <span class="num">3<br>단계</span>
+       <span class="tx"><span class="t">모음의 창제 원리</span><span class="d">25문제 — 상형 · 합성의 원리와<br>초출자 · 재출자 · 그 외의 모음자를 다룹니다</span></span>
+      </button>
+      <button class="stage-btn" data-stage="4">
+       <span class="num">4<br>단계</span>
+       <span class="tx"><span class="t">한글의 가치</span><span class="d">17문제 — 모아쓰기 · 풀어쓰기와 한글의<br>독창성 · 실용성 · 과학성을 두루 다룹니다</span></span>
+      </button>
+     </div>
+    </div>
+    <div class="box std" style="margin-top:10px">
+     <h3>성취기준 · 학습 목표</h3>
+     <p>[9국04-06] 한글의 창제 원리를 이해한다.</p>
+     <p>한글의 창제 원리를 중심으로 국어의 문자 체계를 이해하고<br>국어생활에 활용할 수 있다.</p>
+    </div>
+   </div>
+  </div>
+
+  <div class="credit">
+   <span>제작 <b>보라라샘</b></span>
+   <span><b>전주서신중학교 교사</b></span>
+   <span><b>siaawase@gmail.com</b></span>
+   <span>만든 날짜 <b>2026. 8. 31.</b></span>
+  </div>
+
+  <div class="privacy">
+   <b>🔒 개인정보 보호 안내</b><br>
+   본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다.<br>
+   게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.
+  </div>
+ </div>
+</div>
+
+<!-- ================= 플레이 화면 ================= -->
+<div id="play" class="screen">
+ <div class="side">
+  <div class="lv"><b id="sideStage">1단계</b><span id="sideDesc">한글의 창제 정신</span></div>
+  <button class="nav-btn" id="btnPrev">◀ 이전</button>
+  <button class="nav-btn" id="btnNext">다음 ▶</button>
+  <div class="keyhint"><b>1~4</b> 객관식 선택<br><b>Enter</b> 확인 · 다음<br><b>← →</b> 앞뒤 이동</div>
+  <button class="nav-btn end" id="btnEnd">게임 끝내기</button>
+ </div>
+ <div class="main">
+  <div class="topbar">
+   <div class="qno" id="qno">1 / 10</div>
+   <div class="bar"><i id="barFill"></i></div>
+   <div class="stat">
+    <div class="pill" id="pScore">0점</div>
+    <div class="pill combo" id="pCombo">연속 0</div>
+   </div>
+  </div>
+  <div class="arena">
+   <div class="qhead"><span class="qtype mc" id="qType">객관식</span><span class="qarea" id="qArea">창제 정신</span></div>
+   <div class="qtext" id="qText"></div>
+   <div class="qsub" id="qSub"></div>
+   <div id="answerZone"></div>
+   <div class="fb" id="fb"></div>
+  </div>
+  <div class="sig">제작 · 보라라샘 / 2026. 8. 31.</div>
+ </div>
+</div>
+
+<!-- ================= 종료 화면 ================= -->
+<div id="end" class="screen">
+ <div class="ewrap">
+  <div class="ehead">
+   <img id="mascot2" alt="보라라샘">
+   <div>
+    <h2>학습을 마쳤어요!</h2>
+    <p id="endStage">1단계 · 한글의 창제 정신</p>
+   </div>
+  </div>
+
+  <div class="ecols">
+   <div>
+    <div class="scoreline">
+     <div class="sbox"><div class="v" id="fScore">0</div><div class="l">점수</div></div>
+     <div class="sbox"><div class="v" id="fAcc">0%</div><div class="l">정답률</div></div>
+     <div class="sbox"><div class="v" id="fFirst">0</div><div class="l">한 번에 맞힘</div></div>
+     <div class="sbox"><div class="v" id="fTime">0분</div><div class="l">학습 시간</div></div>
+    </div>
+
+    <div class="box" style="background:#fff">
+     <div class="field">
+      <label>학생 이름 <i>*</i></label>
+      <input id="inName" type="text" maxlength="20" placeholder="이름을 입력하세요 (예: 김보라)">
+     </div>
+     <div class="metaline">
+      <div class="field"><label>날짜</label><input id="inDate" type="text" readonly></div>
+      <div class="field"><label>학습 시간</label><input id="inTime" type="text" readonly></div>
+     </div>
+     <div class="field">
+      <label>학습 소감 <i>*</i></label>
+      <textarea id="inMemo" maxlength="200" placeholder="오늘 배운 점이나 어려웠던 점을 적어 보세요."></textarea>
+     </div>
+     <div class="warn" id="warn">이름과 학습 소감을 모두 입력해야 저장할 수 있습니다.</div>
+     <div class="dlrow">
+      <button class="dlbtn" id="btnNote">오답노트 JPG 저장</button>
+      <button class="dlbtn alt" id="btnReport">학습 결과 분석 리포트 JPG</button>
+     </div>
+     <div class="privacy" style="margin-top:10px;text-align:left">
+      입력하신 이름과 소감은 서버에 저장되지 않으며,<br>리포트 이미지(JPG) 생성용으로만 쓰입니다.
+     </div>
+     <div class="againrow">
+      <button class="ghost" id="btnRetry">이 단계 다시 하기</button>
+      <button class="ghost" id="btnHome">단계 선택으로</button>
+     </div>
+    </div>
+   </div>
+
+   <div>
+    <div class="box" style="background:#fff">
+     <h3>오답노트</h3>
+     <div class="wronglist" id="wrongList"></div>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<script>
+/* =========================================================
+   한글의 비밀 열쇠
+   제작 · 보라라샘 (전주서신중학교 교사) / 2026. 8. 31.
+   ========================================================= */
+const MADE_DATE = '2026. 8. 31.';
+const GAME_NAME = '한글의 비밀 열쇠';
+
+/* ================= 문항 데이터 ================= */
+/* t : 'mc' 객관식 / 'sa' 단답형
+   area : 학습 결과 분석 리포트의 분야 이름
+   sub  : 문제 아래 보조 설명(HTML 가능)
+   hint1: 첫 번째 힌트   hint2: 두 번째 힌트(단답형은 초성이 함께 표시됨) */
+
+const BANK = {
+1:[
+ {t:'mc',area:'자주 정신',q:'다음 설명에 해당하는 한글의 창제 정신은 무엇일까요?',
+  sub:'“우리말은 중국과 달라 한자로 표기하기 어려우므로,<br>우리만의 독창적인 문자를 만들었다.”',
+  opts:['자주 정신','애민 정신','실용 정신','사대 정신'],a:0,
+  hint1:'남의 나라 문자를 빌려 쓰지 않고 “우리 스스로의 글자”를 만들었다는 데 초점이 있습니다.',
+  hint2:'‘스스로 자(自)’, ‘주인 주(主)’ 자가 들어가는 말입니다.',
+  ex:'우리말이 중국말과 달라 한자로는 제대로 적을 수 없다는 문제의식에서 우리만의 독창적인 문자를 만든 것은 자주 정신입니다.'},
+
+ {t:'sa',area:'자주 정신',q:'우리말이 중국과 달라 한자로 적기 어려우므로 우리만의 독창적인 문자를 만든 정신을 무엇이라고 할까요?',
+  sub:'(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;) 정신 — 두 글자로 쓰세요.',
+  ans:'자주',alt:['자주정신','자주 정신'],
+  hint1:'남에게 기대지 않고 스스로 주인이 된다는 뜻의 말입니다.',
+  ex:'자주 정신입니다. 우리말에 꼭 맞는 우리 글자를 스스로 만들었다는 뜻입니다.'},
+
+ {t:'mc',area:'애민 정신',q:'다음 설명에 해당하는 한글의 창제 정신은 무엇일까요?',
+  sub:'“글자를 잘 모르는 백성을 가엾게 여겨 문자를 만들었다.”',
+  opts:['실용 정신','애민 정신','자주 정신','창조 정신'],a:1,
+  hint1:'세종이 누구를 생각하며 글자를 만들었는지 떠올려 보세요.',
+  hint2:'‘사랑 애(愛)’, ‘백성 민(民)’ 자가 들어가는 말입니다.',
+  ex:'글자를 몰라 뜻을 펴지 못하는 백성을 가엾게 여긴 마음에서 나온 것이 애민 정신입니다.'},
+
+ {t:'sa',area:'애민 정신',q:'글자를 몰라 어려움을 겪는 백성을 가엾게 여기는 마음에서 나온 한글의 창제 정신은 무엇일까요?',
+  sub:'(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;) 정신 — 두 글자로 쓰세요.',
+  ans:'애민',alt:['애민정신','애민 정신'],
+  hint1:'백성을 사랑하는 마음이라는 뜻의 한자어입니다.',
+  ex:'애민 정신입니다. 백성을 가엾게 여기는 마음이 한글 창제의 바탕이 되었습니다.'},
+
+ {t:'mc',area:'실용 정신',q:'다음 설명에 해당하는 한글의 창제 정신은 무엇일까요?',
+  sub:'“누구나 쉽게 배우고 편하게 쓸 수 있는 문자를 만들었다.”',
+  opts:['자주 정신','애민 정신','실용 정신','절약 정신'],a:2,
+  hint1:'“배우기 쉽다”, “쓰기 편하다”는 말에 담긴 뜻을 생각해 보세요.',
+  hint2:'‘열매 실(實)’, ‘쓸 용(用)’ 자가 들어가는 말입니다.',
+  ex:'누구나 쉽게 배우고 편하게 쓸 수 있도록 만든 데에서 드러나는 것이 실용 정신입니다.'},
+
+ {t:'sa',area:'실용 정신',q:'누구나 쉽게 배우고 편하게 쓸 수 있도록 글자를 만든 데에서 드러나는 창제 정신은 무엇일까요?',
+  sub:'(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;) 정신 — 두 글자로 쓰세요.',
+  ans:'실용',alt:['실용정신','실용 정신'],
+  hint1:'실제로 쓰기에 편리하다는 뜻의 말입니다.',
+  ex:'실용 정신입니다. 한글은 배우기 쉽고 쓰기 편하도록 만들어졌습니다.'},
+
+ {t:'mc',area:'훈민정음',q:'‘백성을 가르치는 바른 소리’라는 뜻을 지닌, 한글의 처음 이름은 무엇일까요?',
+  sub:'',
+  opts:['훈민정음','용비어천가','동국정운','월인천강지곡'],a:0,
+  hint1:'‘가르칠 훈(訓)’, ‘백성 민(民)’, ‘바를 정(正)’, ‘소리 음(音)’ 자로 이루어진 이름입니다.',
+  hint2:'네 글자이며, 오늘날 한글의 처음 이름입니다.',
+  ex:'훈민정음(訓民正音)은 ‘백성을 가르치는 바른 소리’라는 뜻입니다.'},
+
+ {t:'sa',area:'훈민정음',q:'‘백성을 가르치는 바른 소리’라는 뜻을 지닌 한글의 처음 이름을 쓰세요.',
+  sub:'네 글자로 쓰세요.',
+  ans:'훈민정음',alt:[],
+  hint1:'‘가르칠 훈(訓)’, ‘백성 민(民)’, ‘바를 정(正)’, ‘소리 음(音)’ 자로 이루어진 이름입니다.',
+  ex:'훈민정음(訓民正音)입니다. 뒤에 ‘한글’이라는 이름으로 불리게 되었습니다.'},
+
+ {t:'sa',area:'훈민정음',q:'한글을 만들기 전, 우리 조상들이 우리말을 적기 위해 빌려 쓰던 문자를 쓰세요.',
+  sub:'두 글자로 쓰세요.',
+  ans:'한자',alt:[],
+  hint1:'중국에서 들어온, 뜻을 나타내는 문자입니다.',
+  ex:'한자입니다. 우리말과 맞지 않아 백성들이 뜻을 펴기 어려웠습니다.'},
+
+ {t:'sa',area:'세종 대왕',q:'훈민정음을 창제한 사람은 누구일까요?',
+  sub:'두 글자로 쓰세요. ‘대왕’을 붙여 써도 됩니다.',
+  ans:'세종',alt:['세종대왕','세종 대왕','세종임금','세종 임금'],
+  hint1:'조선의 네 번째 임금으로, 오늘날 만 원짜리 지폐에 그려져 있는 분입니다.',
+  ex:'세종(세종 대왕)입니다. 세종은 1443년에 훈민정음을 창제하고 1446년에 반포하였습니다.'},
+
+
+ {t:'sa',area:'세종 대왕',q:'훈민정음은 어느 나라 때에 만들어졌을까요?',
+  sub:'두 글자로 쓰세요.',
+  ans:'조선',alt:['조선시대','조선 시대','조선왕조','조선 왕조'],
+  hint1:'고려가 무너진 뒤 이성계가 세운 나라로, 세종이 임금으로 있던 나라입니다.',
+  ex:'조선입니다. 세종은 조선의 네 번째 임금으로, 1443년에 훈민정음을 창제하였습니다.'},
+
+
+ {t:'sa',area:'집현전',q:'세종이 궁궐 안에 두었던 학문 연구 기관으로, 훈민정음 해례본을 짓는 데 참여한 학자들이 속해 있던 곳은 어디일까요?',
+  sub:'세 글자로 쓰세요.',
+  ans:'집현전',alt:[],
+  hint1:'‘어진 사람들을 모은 집’이라는 뜻을 지닌 기관입니다.',
+  ex:'집현전입니다. 성삼문·정인지·신숙주 같은 학자들이 이곳에서 세종을 도왔습니다.'},
+
+
+ {t:'sa',area:'실용 정신',q:'한글은 글자 수가 적고 만든 원리가 간단하여, 누구나 배우기 <b>____</b>. 빈칸에 알맞은 말은 무엇일까요?',
+  sub:'‘-다’로 끝나는 두 글자로 쓰세요.',
+  ans:'쉽다',alt:['쉽습니다','쉬움','쉬워요','쉽고','간단하다'],
+  hint1:'어렵다의 반대말입니다.',
+  ex:'쉽다입니다. 배우기 쉽고 쓰기 편하다는 점에 한글의 실용 정신이 담겨 있습니다.'}
+],
+
+2:[
+ {t:'mc',area:'상형의 원리',q:'이 자음자는 어떤 모양을 본떠 만들었을까요?',
+  sub:'<span class="big">ㄱ</span>',
+  opts:['혀뿌리가 목구멍을 막는 모양','혀끝이 윗잇몸에 붙는 모양','입의 모양','목구멍의 모양'],a:0,
+  hint1:'‘그’ 소리를 직접 내면서 혀의 어느 부분이 움직이는지 느껴 보세요.',
+  hint2:'혀의 뒤쪽이 목구멍 쪽을 막습니다. 어금니 근처에서 나는 소리예요.',
+  ex:'ㄱ은 혀뿌리가 목구멍을 막는 모양을 본뜬 어금닛소리(아음)의 기본자입니다.'},
+
+ {t:'mc',area:'상형의 원리',q:'이 자음자는 어떤 모양을 본떠 만들었을까요?',
+  sub:'<span class="big">ㄴ</span>',
+  opts:['이의 모양','혀끝이 윗잇몸에 붙는 모양','입의 모양','혀뿌리가 목구멍을 막는 모양'],a:1,
+  hint1:'‘느’ 소리를 내 보면 혀끝이 어디에 닿는지 알 수 있습니다.',
+  hint2:'혀끝이 윗니 뒤쪽의 잇몸에 붙었다가 떨어집니다.',
+  ex:'ㄴ은 혀끝이 윗잇몸에 붙는 모양을 본뜬 혓소리(설음)의 기본자입니다.'},
+
+ {t:'mc',area:'상형의 원리',q:'이 자음자는 어떤 모양을 본떠 만들었을까요?',
+  sub:'<span class="big">ㅁ</span>',
+  opts:['목구멍의 모양','이의 모양','입의 모양','혀끝이 윗잇몸에 붙는 모양'],a:2,
+  hint1:'‘므’ 소리를 내면 두 입술이 붙었다가 떨어집니다.',
+  hint2:'글자의 네모난 모양이 무엇을 닮았는지 생각해 보세요.',
+  ex:'ㅁ은 입의 모양을 본뜬 입술소리(순음)의 기본자입니다.'},
+
+ {t:'mc',area:'상형의 원리',q:'이 자음자는 어떤 모양을 본떠 만들었을까요?',
+  sub:'<span class="big">ㅅ</span>',
+  opts:['혀뿌리가 목구멍을 막는 모양','입의 모양','목구멍의 모양','이의 모양'],a:3,
+  hint1:'‘스’ 소리를 내면 공기가 좁은 틈으로 빠져나갑니다. 그 틈은 어디에 있나요?',
+  hint2:'뾰족한 글자 모양이 무엇을 닮았는지 살펴보세요.',
+  ex:'ㅅ은 이의 모양을 본뜬 잇소리(치음)의 기본자입니다.'},
+
+ {t:'mc',area:'상형의 원리',q:'이 자음자는 어떤 모양을 본떠 만들었을까요?',
+  sub:'<span class="big">ㅇ</span>',
+  opts:['목구멍의 모양','이의 모양','입의 모양','혀끝이 윗잇몸에 붙는 모양'],a:0,
+  hint1:'입안 어디에도 닿지 않고 소리가 나는 자리를 떠올려 보세요.',
+  hint2:'동그란 글자 모양이 무엇을 닮았는지 살펴보세요.',
+  ex:'ㅇ은 목구멍의 모양을 본뜬 목구멍소리(후음)의 기본자입니다.'},
+
+ {t:'sa',area:'상형의 원리',q:'발음 기관의 모양을 본떠 자음의 기본자를 만든 원리를 무엇이라고 할까요?',
+  sub:'(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)의 원리 — 두 글자로 쓰세요.',
+  ans:'상형',alt:['상형의원리','상형원리'],
+  hint1:'‘모양 상(象)’, ‘모양 형(形)’ 자를 씁니다. 모양을 본뜬다는 뜻이에요.',
+  ex:'상형(象形)의 원리입니다. ㄱ, ㄴ, ㅁ, ㅅ, ㅇ 다섯 자가 이 원리로 만들어졌습니다.'},
+
+ {t:'sa',area:'상형의 원리',q:'발음 기관의 모양을 본떠 만든 자음의 기본자는 모두 몇 자일까요?',
+  sub:'숫자로 쓰세요.',
+  ans:'5',alt:['다섯','5자','다섯자','오'],
+  hint1:'ㄱ, ㄴ, ㅁ, ㅅ, ㅇ 을 하나씩 세어 보세요.',
+  hint2:'손가락 한 손으로 셀 수 있는 수입니다.',
+  ex:'ㄱ, ㄴ, ㅁ, ㅅ, ㅇ 다섯 자입니다.'},
+
+ {t:'mc',area:'상형의 원리',q:'다음 중 자음의 ‘기본자’가 아닌 것은 무엇일까요?',
+  sub:'',
+  opts:['ㄱ','ㄷ','ㅁ','ㅇ'],a:1,
+  hint1:'기본자는 발음 기관의 모양을 그대로 본뜬 다섯 자뿐입니다.',
+  hint2:'네 개 중 하나는 기본자에 획을 하나 더해 만든 글자입니다.',
+  ex:'ㄷ은 기본자 ㄴ에 획을 더해 만든 가획자입니다. 기본자는 ㄱ, ㄴ, ㅁ, ㅅ, ㅇ 다섯 자입니다.'},
+
+ {t:'sa',area:'소리의 갈래',q:'ㄱ, ㅋ이 속하는 소리의 이름은 무엇일까요?',
+  sub:'(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)소리 — ‘소리’까지 붙여 써도 됩니다.',
+  ans:'어금닛소리',alt:['어금닛','아음','어금니소리'],
+  hint1:'혀뿌리가 목구멍을 막을 때 나는 소리로, 입안의 안쪽 이 근처에서 납니다.',
+  ex:'어금닛소리(아음)입니다. ㄱ, ㅋ, ㆁ이 여기에 속합니다.'},
+
+ {t:'sa',area:'소리의 갈래',q:'ㄴ, ㄷ, ㅌ, ㄹ이 속하는 소리의 이름은 무엇일까요?',
+  sub:'(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)소리 — ‘소리’까지 붙여 써도 됩니다.',
+  ans:'혓소리',alt:['혓','설음','혀소리'],
+  hint1:'혀끝을 써서 내는 소리입니다.',
+  ex:'혓소리(설음)입니다. ㄴ, ㄷ, ㅌ, ㄹ이 여기에 속합니다.'},
+
+ {t:'sa',area:'소리의 갈래',q:'ㅁ, ㅂ, ㅍ이 속하는 소리의 이름은 무엇일까요?',
+  sub:'(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)소리 — ‘소리’까지 붙여 써도 됩니다.',
+  ans:'입술소리',alt:['입술','순음'],
+  hint1:'두 입술이 붙었다가 떨어지면서 나는 소리입니다.',
+  ex:'입술소리(순음)입니다. ㅁ, ㅂ, ㅍ이 여기에 속합니다.'},
+
+ {t:'sa',area:'소리의 갈래',q:'ㅅ, ㅈ, ㅊ이 속하는 소리의 이름은 무엇일까요?',
+  sub:'(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)소리 — ‘소리’까지 붙여 써도 됩니다.',
+  ans:'잇소리',alt:['잇','치음','이소리'],
+  hint1:'공기가 이 사이의 좁은 틈으로 빠져나가면서 나는 소리입니다.',
+  ex:'잇소리(치음)입니다. ㅅ, ㅈ, ㅊ, ㅿ이 여기에 속합니다.'},
+
+ {t:'sa',area:'소리의 갈래',q:'ㅇ, ㅎ이 속하는 소리의 이름은 무엇일까요?',
+  sub:'(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)소리 — ‘소리’까지 붙여 써도 됩니다.',
+  ans:'목구멍소리',alt:['목구멍','후음'],
+  hint1:'입안 어디에도 닿지 않고 가장 안쪽에서 바로 나는 소리입니다.',
+  ex:'목구멍소리(후음)입니다. ㅇ, ㆆ, ㅎ이 여기에 속합니다.'},
+
+ {t:'mc',area:'가획의 원리',q:'기본자에 획을 하나씩 더하여 새로운 글자를 만든 원리를 무엇이라고 할까요?',
+  sub:'',
+  opts:['상형의 원리','가획의 원리','합성의 원리','병서의 원리'],a:1,
+  hint1:'‘더할 가(加)’, ‘새길 획(劃)’ 자를 씁니다.',
+  hint2:'ㄱ → ㅋ, ㄴ → ㄷ → ㅌ 처럼 글자에 선을 하나씩 보태는 방법입니다.',
+  ex:'가획(加劃)의 원리입니다. 기본자에 획을 더할수록 소리가 더 세집니다.'},
+
+ {t:'sa',area:'가획의 원리',q:'기본자에 획을 더하여 새로운 글자를 만든 원리를 무엇이라고 할까요?',
+  sub:'(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)의 원리 — 두 글자로 쓰세요.',
+  ans:'가획',alt:['가획의원리','가획원리'],
+  hint1:'‘더할 가(加)’, ‘새길 획(劃)’ 자를 씁니다.',
+  ex:'가획(加劃)의 원리입니다.'},
+
+ {t:'mc',area:'가획의 원리',q:'ㄱ에 획을 더하여 만든 글자는 무엇일까요?',
+  sub:'<span class="big">ㄱ</span> ＋ 획 ＝ ?',
+  opts:['ㅋ','ㄲ','ㅇ','ㄴ'],a:0,
+  hint1:'같은 어금닛소리이면서 ㄱ보다 소리가 더 센 글자를 찾아보세요.',
+  hint2:'ㄱ 안쪽에 짧은 가로획이 하나 더 그어진 글자입니다.',
+  ex:'ㄱ에 획을 더하여 ㅋ을 만들었습니다. ㄲ은 같은 글자를 나란히 쓴 것으로, 가획과는 다릅니다.'},
+
+ {t:'mc',area:'가획의 원리',q:'ㄴ에 획을 차례로 더하여 만든 글자를 바르게 나열한 것은 무엇일까요?',
+  sub:'',
+  opts:['ㄴ → ㄷ → ㅌ','ㄴ → ㅌ → ㄷ','ㄴ → ㄹ → ㄷ','ㄴ → ㅁ → ㅂ'],a:0,
+  hint1:'소리가 약한 것에서 센 것으로 갈수록 획이 늘어납니다.',
+  hint2:'ㄴ에 위 획을 더하면 ㄷ, ㄷ에 가운데 획을 더하면 ㅌ이 됩니다.',
+  ex:'ㄴ → ㄷ → ㅌ 순서로 획이 더해집니다. ㄹ은 획을 더해 만든 글자가 아니라 이체자입니다.'},
+
+ {t:'mc',area:'가획의 원리',q:'ㅁ에 획을 차례로 더하여 만든 글자를 바르게 나열한 것은 무엇일까요?',
+  sub:'',
+  opts:['ㅁ → ㅍ → ㅂ','ㅁ → ㅂ → ㅍ','ㅁ → ㅃ → ㅍ','ㅁ → ㅂ → ㅁ'],a:1,
+  hint1:'소리가 약한 것에서 센 것으로 갈수록 획이 늘어납니다.',
+  hint2:'ㅁ 위에 두 획을 세우면 ㅂ, 다시 획을 더하면 ㅍ이 됩니다.',
+  ex:'ㅁ → ㅂ → ㅍ 순서로 획이 더해집니다.'},
+
+ {t:'mc',area:'가획의 원리',q:'ㅅ에 획을 차례로 더하여 만든 글자를 바르게 나열한 것은 무엇일까요?',
+  sub:'',
+  opts:['ㅅ → ㅊ → ㅈ','ㅅ → ㅆ → ㅈ','ㅅ → ㅈ → ㅊ','ㅅ → ㅈ → ㅉ'],a:2,
+  hint1:'소리가 약한 것에서 센 것으로 갈수록 획이 늘어납니다.',
+  hint2:'ㅅ 위에 가로획을 얹으면 ㅈ, 그 위에 짧은 획을 더하면 ㅊ이 됩니다.',
+  ex:'ㅅ → ㅈ → ㅊ 순서로 획이 더해집니다. ㅆ, ㅉ은 같은 글자를 나란히 쓴 것입니다.'},
+
+ {t:'mc',area:'가획의 원리',q:'ㅇ에 획을 차례로 더하여 만든 글자를 바르게 나열한 것은 무엇일까요?',
+  sub:'',
+  opts:['ㅇ → ㅎ → ㆆ','ㅇ → ㆁ → ㅎ','ㅇ → ㆆ → ㅎ','ㅇ → ㅎ → ㆁ'],a:2,
+  hint1:'ㆆ은 ‘여린히읗’, ㆁ은 ‘옛이응’입니다. 둘 중 가획자는 하나뿐이에요.',
+  hint2:'ㅇ 위에 짧은 세로획을 더한 ㆁ은 이체자입니다. 가로획을 얹은 글자를 찾아보세요.',
+  ex:'ㅇ에 획을 더해 ㆆ(여린히읗)을, ㆆ에 다시 획을 더해 ㅎ을 만들었습니다. ㆁ(옛이응)은 이체자입니다.'},
+
+ {t:'mc',area:'가획의 원리',q:'자음자에 획을 더할수록 소리는 어떻게 될까요?',
+  sub:'',
+  opts:['소리가 더 세진다','소리가 더 약해진다','소리의 길이가 길어진다','소리가 달라지지 않는다'],a:0,
+  hint1:'‘그 — 크’, ‘드 — 트’ 를 차례로 소리 내어 비교해 보세요.',
+  hint2:'획이 많은 글자일수록 숨이 더 세게 나옵니다.',
+  ex:'가획자는 획을 하나씩 더할수록 소리가 더 세지는 특성이 있습니다.'},
+
+ {t:'mc',area:'이체자',q:'획을 더하기는 했지만 소리가 세진다는 뜻을 갖지 않는 글자끼리 묶인 것은 무엇일까요?',
+  sub:'',
+  opts:['ㅋ, ㅌ, ㅍ','ㆁ, ㄹ, ㅿ','ㄲ, ㄸ, ㅃ','ㄱ, ㄴ, ㅁ'],a:1,
+  hint1:'‘옛이응’, ‘반혓소리’, ‘반잇소리’ 세 글자를 떠올려 보세요.',
+  hint2:'모양만 달리해 만든 글자라는 뜻에서 ‘이체자’라고 부릅니다.',
+  ex:'ㆁ(옛이응), ㄹ(반혓소리), ㅿ(반잇소리)은 소리가 세진다는 뜻이 없는 이체자입니다.'},
+
+ {t:'sa',area:'이체자',q:'ㆁ, ㄹ, ㅿ 처럼 소리가 세진다는 뜻을 갖지 않고 모양을 달리하여 만든 글자를 무엇이라고 할까요?',
+  sub:'세 글자로 쓰세요.',
+  ans:'이체자',alt:['이체'],
+  hint1:'‘다를 이(異)’, ‘몸 체(體)’ 자를 씁니다. 모양을 달리했다는 뜻이에요.',
+  ex:'이체자(異體字)입니다. ㆁ, ㄹ, ㅿ 세 자가 여기에 속합니다.'},
+
+ {t:'sa',area:'가획의 원리',q:'ㅋ, ㄷ, ㅌ, ㅂ, ㅍ, ㅈ, ㅊ, ㆆ, ㅎ 처럼 기본자에 획을 더하여 만든 글자를 무엇이라고 할까요?',
+  sub:'세 글자로 쓰세요.',
+  ans:'가획자',alt:['가획'],
+  hint1:'획을 더해 만든 글자라는 뜻입니다.',
+  ex:'가획자(加劃字)입니다. 기본자 다섯 자에 획을 더해 아홉 자를 더 만들었습니다.'},
+
+ {t:'mc',area:'그 외의 자음자',q:'ㄲ, ㄸ, ㅃ, ㅆ, ㅉ 처럼 자음자를 나란히 붙여 쓰는 방법을 무엇이라고 할까요?',
+  sub:'',
+  opts:['가로로 나란히 쓰기','세로로 이어 쓰기','획을 더해 쓰기','모양을 달리해 쓰기'],a:0,
+  hint1:'두 글자가 왼쪽 오른쪽으로 나란히 놓여 있는지, 위아래로 놓여 있는지 살펴보세요.',
+  hint2:'ㄱ 옆에 ㄱ을 붙여 ㄲ을 만든 방법입니다.',
+  ex:'자음자를 가로로 나란히 쓰는 방법으로, ㄲ, ㄸ, ㅃ, ㅆ, ㅉ, ㆅ과 ㅳ, ㅄ, ㅴ 같은 글자를 만들었습니다.'},
+
+ {t:'mc',area:'그 외의 자음자',q:'ㅱ, ㅸ, ㆄ, ㅹ 처럼 두 개의 자음자를 위아래로 붙여 만든 방법을 무엇이라고 할까요?',
+  sub:'',
+  opts:['가로로 나란히 쓰기','세로로 이어 쓰기','모양을 본떠 쓰기','획을 더해 쓰기'],a:1,
+  hint1:'두 글자가 왼쪽 오른쪽으로 놓여 있는지, 위아래로 놓여 있는지 살펴보세요.',
+  hint2:'ㅁ 아래에 ㅇ을 이어 붙여 ㅱ을 만든 방법입니다.',
+  ex:'두 개의 자음자를 세로로 이어 쓰는 방법으로, ㅱ, ㅸ, ㆄ, ㅹ 같은 글자를 만들었습니다.'},
+
+
+ {t:'sa',area:'상형의 원리',q:'자음의 기본자는 무엇의 모양을 본떠 만들었을까요?',
+  sub:'(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;) 기관 — 네 글자로 쓰세요.',
+  ans:'발음 기관',alt:['발음기관','발음'],
+  hint1:'혀·입술·이·목구멍처럼 소리를 내는 데 쓰이는 몸의 부분을 무엇이라고 할까요?',
+  ex:'발음 기관입니다. ㄱ, ㄴ, ㅁ, ㅅ, ㅇ은 각각 발음 기관의 모양을 본떠 만들었습니다.'}
+],
+
+3:[
+ {t:'mc',area:'상형의 원리',q:'이 모음자는 무엇의 모양을 본떠 만들었을까요?',
+  sub:'<span class="big">ㆍ</span> (아래아)',
+  opts:['하늘의 둥근 모양','땅의 평평한 모양','사람이 서 있는 모양','해가 뜨는 모양'],a:0,
+  hint1:'모음의 기본자는 하늘·땅·사람 세 가지를 본떠 만들었습니다.',
+  hint2:'점처럼 동그란 모양이 무엇을 닮았는지 생각해 보세요.',
+  ex:'ㆍ(아래아)는 하늘의 둥근 모양을 본떠 만든 기본자입니다.'},
+
+ {t:'mc',area:'상형의 원리',q:'이 모음자는 무엇의 모양을 본떠 만들었을까요?',
+  sub:'<span class="big">ㅡ</span>',
+  opts:['하늘의 둥근 모양','땅의 평평한 모양','사람이 서 있는 모양','강이 흐르는 모양'],a:1,
+  hint1:'모음의 기본자는 하늘·땅·사람 세 가지를 본떠 만들었습니다.',
+  hint2:'가로로 곧게 뻗은 모양이 무엇을 닮았는지 생각해 보세요.',
+  ex:'ㅡ는 땅의 평평한 모양을 본떠 만든 기본자입니다.'},
+
+ {t:'mc',area:'상형의 원리',q:'이 모음자는 무엇의 모양을 본떠 만들었을까요?',
+  sub:'<span class="big">ㅣ</span>',
+  opts:['땅의 평평한 모양','하늘의 둥근 모양','사람이 서 있는 모양','나무가 자라는 모양'],a:2,
+  hint1:'모음의 기본자는 하늘·땅·사람 세 가지를 본떠 만들었습니다.',
+  hint2:'세로로 곧게 선 모양이 무엇을 닮았는지 생각해 보세요.',
+  ex:'ㅣ는 사람이 서 있는 모양을 본떠 만든 기본자입니다.'},
+
+ {t:'sa',area:'상형의 원리',q:'하늘·땅·사람의 모양을 본떠 모음의 기본자를 만든 원리를 무엇이라고 할까요?',
+  sub:'(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)의 원리 — 두 글자로 쓰세요.',
+  ans:'상형',alt:['상형의원리','상형원리'],
+  hint1:'‘모양 상(象)’, ‘모양 형(形)’ 자를 씁니다. 자음의 기본자를 만든 원리와 같아요.',
+  ex:'상형(象形)의 원리입니다. 모음의 기본자도 자음처럼 모양을 본떠 만들었습니다.'},
+
+ {t:'sa',area:'상형의 원리',q:'모양을 본떠 만든 모음의 기본자는 모두 몇 자일까요?',
+  sub:'숫자로 쓰세요.',
+  ans:'3',alt:['셋','세','3자','세자','삼'],
+  hint1:'하늘, 땅, 사람을 하나씩 세어 보세요.',
+  hint2:'ㆍ, ㅡ, ㅣ 를 세어 보면 됩니다.',
+  ex:'ㆍ, ㅡ, ㅣ 세 자입니다.'},
+
+ {t:'mc',area:'상형의 원리',q:'다음 중 모음의 ‘기본자’가 아닌 것은 무엇일까요?',
+  sub:'',
+  opts:['ㆍ','ㅡ','ㅣ','ㅗ'],a:3,
+  hint1:'기본자는 하늘·땅·사람을 본뜬 세 자뿐입니다.',
+  hint2:'네 개 중 하나는 기본자 두 개를 합해 만든 글자입니다.',
+  ex:'ㅗ는 ㆍ와 ㅡ를 합하여 만든 초출자입니다. 기본자는 ㆍ, ㅡ, ㅣ 세 자입니다.'},
+
+ {t:'mc',area:'합성의 원리',q:'모음의 기본자를 서로 합하여 새로운 글자를 만든 원리를 무엇이라고 할까요?',
+  sub:'',
+  opts:['상형의 원리','가획의 원리','합성의 원리','병서의 원리'],a:2,
+  hint1:'‘합할 합(合)’, ‘이룰 성(成)’ 자를 씁니다.',
+  hint2:'ㆍ와 ㅡ를 더해 ㅗ를 만드는 것처럼, 글자를 서로 더하는 방법입니다.',
+  ex:'합성(合成)의 원리입니다. 자음은 획을 더했지만, 모음은 기본자를 서로 합했습니다.'},
+
+ {t:'sa',area:'합성의 원리',q:'모음의 기본자를 서로 합하여 새로운 글자를 만든 원리를 무엇이라고 할까요?',
+  sub:'(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)의 원리 — 두 글자로 쓰세요.',
+  ans:'합성',alt:['합성의원리','합성원리'],
+  hint1:'‘합할 합(合)’, ‘이룰 성(成)’ 자를 씁니다.',
+  ex:'합성(合成)의 원리입니다.'},
+
+ {t:'mc',area:'초출자',q:'기본자를 한 번만 합하여 만든 ㅗ, ㅏ, ㅜ, ㅓ 를 무엇이라고 할까요?',
+  sub:'',
+  opts:['재출자','초출자','합용자','기본자'],a:1,
+  hint1:'‘처음 초(初)’, ‘날 출(出)’ 자를 씁니다. 처음 나온 글자라는 뜻이에요.',
+  hint2:'ㆍ에 해당하는 짧은 획이 하나만 붙어 있는 글자들입니다.',
+  ex:'초출자(初出字)입니다. 기본자를 한 번 합하여 만든 ㅗ, ㅏ, ㅜ, ㅓ 네 자입니다.'},
+
+ {t:'sa',area:'초출자',q:'기본자를 한 번만 합하여 만든 ㅗ, ㅏ, ㅜ, ㅓ 를 무엇이라고 할까요?',
+  sub:'세 글자로 쓰세요.',
+  ans:'초출자',alt:['초출'],
+  hint1:'‘처음 초(初)’, ‘날 출(出)’ 자를 씁니다.',
+  ex:'초출자(初出字)입니다.'},
+
+ {t:'mc',area:'초출자',q:'ㅗ는 어떤 두 글자를 합하여 만들었을까요?',
+  sub:'<span class="big">ㅗ</span>',
+  opts:['ㆍ ＋ ㅡ','ㅡ ＋ ㆍ','ㅣ ＋ ㆍ','ㆍ ＋ ㅣ'],a:0,
+  hint1:'ㅗ에서 짧은 획(ㆍ)이 긴 획(ㅡ)의 위에 있는지 아래에 있는지 보세요.',
+  hint2:'하늘(ㆍ)이 땅(ㅡ) 위에 있는 모양입니다.',
+  ex:'ㅗ는 ㆍ와 ㅡ를 한 번 합하여 만든 초출자입니다.'},
+
+ {t:'mc',area:'초출자',q:'ㅏ는 어떤 두 글자를 합하여 만들었을까요?',
+  sub:'<span class="big">ㅏ</span>',
+  opts:['ㆍ ＋ ㅡ','ㅣ ＋ ㆍ','ㆍ ＋ ㅣ','ㅡ ＋ ㆍ'],a:1,
+  hint1:'ㅏ에서 짧은 획(ㆍ)이 긴 세로획(ㅣ)의 어느 쪽에 붙어 있나요?',
+  hint2:'사람(ㅣ)의 오른쪽에 하늘(ㆍ)이 붙은 모양입니다.',
+  ex:'ㅏ는 ㅣ와 ㆍ를 한 번 합하여 만든 초출자입니다.'},
+
+ {t:'mc',area:'초출자',q:'ㅜ는 어떤 두 글자를 합하여 만들었을까요?',
+  sub:'<span class="big">ㅜ</span>',
+  opts:['ㅡ ＋ ㆍ','ㆍ ＋ ㅡ','ㅣ ＋ ㆍ','ㆍ ＋ ㅣ'],a:0,
+  hint1:'ㅜ에서 짧은 획(ㆍ)이 긴 획(ㅡ)의 위에 있는지 아래에 있는지 보세요.',
+  hint2:'땅(ㅡ) 아래에 하늘(ㆍ)이 있는 모양입니다.',
+  ex:'ㅜ는 ㅡ와 ㆍ를 한 번 합하여 만든 초출자입니다.'},
+
+ {t:'mc',area:'초출자',q:'ㅓ는 어떤 두 글자를 합하여 만들었을까요?',
+  sub:'<span class="big">ㅓ</span>',
+  opts:['ㅣ ＋ ㆍ','ㅡ ＋ ㆍ','ㆍ ＋ ㅣ','ㆍ ＋ ㅡ'],a:2,
+  hint1:'ㅓ에서 짧은 획(ㆍ)이 긴 세로획(ㅣ)의 어느 쪽에 붙어 있나요?',
+  hint2:'하늘(ㆍ)이 사람(ㅣ)의 왼쪽에 붙은 모양입니다.',
+  ex:'ㅓ는 ㆍ와 ㅣ를 한 번 합하여 만든 초출자입니다.'},
+
+ {t:'mc',area:'재출자',q:'초출자에 ㆍ를 한 번 더 더하여 만든 ㅛ, ㅑ, ㅠ, ㅕ 를 무엇이라고 할까요?',
+  sub:'',
+  opts:['초출자','합용자','기본자','재출자'],a:3,
+  hint1:'‘두 번 재(再)’, ‘날 출(出)’ 자를 씁니다. 다시 나온 글자라는 뜻이에요.',
+  hint2:'ㆍ에 해당하는 짧은 획이 둘로 늘어난 글자들입니다.',
+  ex:'재출자(再出字)입니다. 초출자에 ㆍ를 다시 더해 만든 ㅛ, ㅑ, ㅠ, ㅕ 네 자입니다.'},
+
+ {t:'sa',area:'재출자',q:'초출자에 ㆍ를 다시 한 번 더하여 만든 ㅛ, ㅑ, ㅠ, ㅕ 를 무엇이라고 할까요?',
+  sub:'세 글자로 쓰세요.',
+  ans:'재출자',alt:['재출'],
+  hint1:'‘두 번 재(再)’, ‘날 출(出)’ 자를 씁니다.',
+  ex:'재출자(再出字)입니다.'},
+
+ {t:'mc',area:'재출자',q:'ㅛ는 어떤 글자에 ㆍ를 더하여 만들었을까요?',
+  sub:'? ＋ <span class="big">ㆍ</span> ＝ <span class="big">ㅛ</span>',
+  opts:['ㅗ','ㅜ','ㅏ','ㅓ'],a:0,
+  hint1:'ㅛ에서 짧은 획을 하나 지우면 어떤 글자가 남을까요?',
+  hint2:'짧은 획이 위쪽에 있으므로 위쪽에 획이 있는 초출자를 찾아보세요.',
+  ex:'ㅛ는 초출자 ㅗ에 ㆍ를 한 번 더 더해 만든 재출자입니다.'},
+
+ {t:'mc',area:'재출자',q:'ㅕ는 어떤 글자에 ㆍ를 더하여 만들었을까요?',
+  sub:'? ＋ <span class="big">ㆍ</span> ＝ <span class="big">ㅕ</span>',
+  opts:['ㅏ','ㅓ','ㅗ','ㅜ'],a:1,
+  hint1:'ㅕ에서 짧은 획을 하나 지우면 어떤 글자가 남을까요?',
+  hint2:'짧은 획이 세로획의 왼쪽에 있으므로 왼쪽에 획이 있는 초출자를 찾아보세요.',
+  ex:'ㅕ는 초출자 ㅓ에 ㆍ를 한 번 더 더해 만든 재출자입니다.'},
+
+ {t:'mc',area:'재출자',q:'다음 중 재출자가 아닌 것은 무엇일까요?',
+  sub:'',
+  opts:['ㅛ','ㅑ','ㅜ','ㅕ'],a:2,
+  hint1:'재출자는 짧은 획(ㆍ)이 둘인 글자입니다.',
+  hint2:'네 개 중 하나는 짧은 획이 하나뿐인 초출자입니다.',
+  ex:'ㅜ는 초출자입니다. 재출자는 ㅛ, ㅑ, ㅠ, ㅕ 네 자입니다.'},
+
+ {t:'sa',area:'합성의 원리',q:'훈민정음이 창제될 당시 만들어진 모음자는 모두 몇 자일까요?',
+  sub:'숫자로 쓰세요.',
+  ans:'11',alt:['십일','11자','열한','열한자'],
+  hint1:'기본자 3자 + 초출자 4자 + 재출자 4자를 더해 보세요.',
+  hint2:'열 자보다 한 자 더 많습니다.',
+  ex:'기본자 3자, 초출자 4자, 재출자 4자를 합하여 모두 11자입니다.'},
+
+ {t:'mc',area:'그 외의 모음자',q:'ㅘ는 어떤 두 모음자를 서로 합하여 만들었을까요?',
+  sub:'<span class="big">ㅘ</span>',
+  opts:['ㅗ ＋ ㅏ','ㅜ ＋ ㅓ','ㅗ ＋ ㅣ','ㅏ ＋ ㅣ'],a:0,
+  hint1:'글자를 왼쪽부터 차례로 읽어 보면 어떤 글자가 보이나요?',
+  hint2:'이미 만들어진 초출자 두 개를 나란히 붙여 놓은 모양입니다.',
+  ex:'ㅘ는 ㅗ와 ㅏ를 서로 합하여 만든 글자입니다.'},
+
+ {t:'mc',area:'그 외의 모음자',q:'ㅝ는 어떤 두 모음자를 서로 합하여 만들었을까요?',
+  sub:'<span class="big">ㅝ</span>',
+  opts:['ㅗ ＋ ㅏ','ㅜ ＋ ㅓ','ㅜ ＋ ㅣ','ㅓ ＋ ㅣ'],a:1,
+  hint1:'글자를 왼쪽부터 차례로 읽어 보면 어떤 글자가 보이나요?',
+  hint2:'아래쪽에 획이 있는 초출자와 왼쪽에 획이 있는 초출자를 합했습니다.',
+  ex:'ㅝ는 ㅜ와 ㅓ를 서로 합하여 만든 글자입니다.'},
+
+ {t:'mc',area:'그 외의 모음자',q:'ㅢ는 어떤 두 모음자를 서로 합하여 만들었을까요?',
+  sub:'<span class="big">ㅢ</span>',
+  opts:['ㅡ ＋ ㅣ','ㅣ ＋ ㅡ','ㆍ ＋ ㅣ','ㅗ ＋ ㅣ'],a:0,
+  hint1:'두 개의 기본자가 나란히 붙어 있는 모양입니다.',
+  hint2:'땅을 본뜬 글자와 사람을 본뜬 글자를 순서대로 합했습니다.',
+  ex:'ㅢ는 ㅡ와 ㅣ를 서로 합하여 만든 글자입니다.'},
+
+ {t:'mc',area:'그 외의 모음자',q:'ㅐ는 어떤 두 모음자를 서로 합하여 만들었을까요?',
+  sub:'<span class="big">ㅐ</span>',
+  opts:['ㅏ ＋ ㆍ','ㅏ ＋ ㅣ','ㅣ ＋ ㅏ','ㅑ ＋ ㅣ'],a:1,
+  hint1:'글자를 왼쪽부터 차례로 읽어 보면 어떤 글자가 보이나요?',
+  hint2:'초출자 하나에 사람을 본뜬 기본자를 덧붙인 모양입니다.',
+  ex:'ㅐ는 ㅏ와 ㅣ를 서로 합하여 만든 글자입니다.'},
+
+
+ {t:'sa',area:'상형의 원리',q:'모음의 기본자는 무엇의 모양을 본떠 만들었을까요?',
+  sub:'하늘·땅·사람을 아울러 이르는 말 — 세 글자로 쓰세요.',
+  ans:'천지인',alt:['천지인 삼재','삼재'],
+  hint1:'자음의 기본자는 발음 기관을 본떴지만, 모음의 기본자는 세상을 이루는 세 가지를 본떴습니다.',
+  hint2:'하늘 천(天), 땅 지(地), 사람 인(人) 자를 차례로 이어 붙인 말입니다.',
+  ex:'천지인(天地人)입니다. ㆍ는 하늘, ㅡ는 땅, ㅣ는 사람의 모양을 본떠 만들었습니다.'}
+],
+
+4:[
+ {t:'mc',area:'모아쓰기',q:'한글의 자음자와 모음자를 음절 단위로 모아서 쓰는 표기 방식을 무엇이라고 할까요?',
+  sub:'ㅎ ＋ ㅏ ＋ ㄴ  →  한',
+  opts:['모아쓰기','풀어쓰기','이어쓰기','나란히쓰기'],a:0,
+  hint1:'낱낱의 자모를 흩어 놓지 않고 한 덩어리로 묶어 쓰는 방식입니다.',
+  hint2:'‘ㅎㅏㄴ’이 아니라 ‘한’으로 쓰는 방식의 이름입니다.',
+  ex:'모아쓰기입니다. 한글은 자음자와 모음자를 음절 단위로 모아서 씁니다.'},
+
+ {t:'sa',area:'모아쓰기',q:'한글의 자음자와 모음자를 음절 단위로 모아서 쓰는 표기 방식을 무엇이라고 할까요?',
+  sub:'네 글자로 쓰세요.',
+  ans:'모아쓰기',alt:['모아 쓰기'],
+  hint1:'낱낱의 자모를 흩어 놓지 않고 한 덩어리로 묶어 쓰는 방식입니다.',
+  ex:'모아쓰기입니다.'},
+
+ {t:'mc',area:'모아쓰기',q:'모아쓰기를 할 때 모음자는 글자의 어느 자리에 쓸까요?',
+  sub:'',
+  opts:['글자의 처음','글자의 가운데','글자의 마지막','정해져 있지 않다'],a:1,
+  hint1:'‘강’이라는 글자에서 ㅏ가 어디에 있는지 살펴보세요.',
+  hint2:'자음자는 글자의 처음과 마지막에 씁니다.',
+  ex:'모아쓰기를 할 때 자음자는 글자의 처음과 마지막에, 모음자는 가운데에 씁니다.'},
+
+ {t:'sa',area:'모아쓰기',q:'모아쓰기는 자음자와 모음자를 무엇 단위로 모아서 쓰는 방식일까요?',
+  sub:'(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;) 단위 — 두 글자로 쓰세요.',
+  ans:'음절',alt:['음절단위'],
+  hint1:'한 번에 소리 낼 수 있는 소리의 덩어리를 가리키는 말입니다.',
+  ex:'음절 단위입니다. ‘한글’은 ‘한’, ‘글’ 두 음절로 모아 씁니다.'},
+
+ {t:'mc',area:'디지털 시대의 가치',q:'한글의 창제 원리가 컴퓨터·휴대전화 자판에 적용되어 얻는 이점은 무엇일까요?',
+  sub:'',
+  opts:['문자를 빠르게 입력할 수 있다','글자의 수를 줄일 수 있다','외국어를 그대로 적을 수 있다','글자의 모양을 마음대로 바꿀 수 있다'],a:0,
+  hint1:'천지인 자판이 ㆍ, ㅡ, ㅣ 세 글자만으로 모든 모음을 만드는 까닭을 생각해 보세요.',
+  hint2:'적은 수의 자판만으로 모든 글자를 만들 수 있어 속도가 빨라집니다.',
+  ex:'한글의 창제 원리는 자판에도 그대로 적용되어 문자를 빠르게 입력할 수 있게 해 줍니다.'},
+
+ {t:'sa',area:'디지털 시대의 가치',q:'한글의 창제 원리가 자판에 적용되어 문자를 빠르게 <b>____</b>할 수 있습니다. 빈칸에 알맞은 말은 무엇일까요?',
+  sub:'두 글자로 쓰세요.',
+  ans:'입력',alt:['입력하다'],
+  hint1:'자판을 눌러 글자를 넣는 것을 무엇이라고 할까요?',
+  ex:'입력입니다. 한글은 적은 수의 자판으로도 모든 글자를 빠르게 입력할 수 있습니다.'},
+
+ {t:'mc',area:'디지털 시대의 가치',q:'한글이 음성 인식에 유리한 까닭은 무엇일까요?',
+  sub:'',
+  opts:['글자 수가 적기 때문에','문자와 소리가 대부분 일치하기 때문에','모아쓰기를 하기 때문에','자음자가 모음자보다 많기 때문에'],a:1,
+  hint1:'한글은 적힌 대로 소리 나고, 소리 나는 대로 적을 수 있는 글자입니다.',
+  hint2:'글자 하나가 소리 하나에 거의 그대로 대응한다는 점을 떠올려 보세요.',
+  ex:'한글은 문자와 소리가 대부분 일치하기 때문에 음성 인식에 유리합니다.'},
+
+ {t:'sa',area:'디지털 시대의 가치',q:'문자와 소리가 대부분 일치하는 한글의 특성은 무엇에 유리할까요?',
+  sub:'(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;) 인식 — 두 글자로 쓰세요.',
+  ans:'음성',alt:['음성인식','음성 인식'],
+  hint1:'사람의 말소리를 기계가 알아듣는 기술을 무엇이라고 할까요?',
+  ex:'음성 인식입니다. 문자와 소리가 일치하므로 기계가 말소리를 글자로 옮기기 쉽습니다.'},
+
+ {t:'mc',area:'한글의 발전 방향',q:'한글의 발전 방향으로 알맞지 <b>않은</b> 것은 무엇일까요?',
+  sub:'',
+  opts:['한글을 사랑하는 마음을 기른다','한글을 바르게 사용한다','한글의 가치를 널리 알린다','뜻을 알기 어려운 줄임말과 신조어를 마음껏 쓴다'],a:3,
+  hint1:'한글을 아끼고 바르게 쓰는 태도와 어울리지 않는 것을 찾아보세요.',
+  hint2:'다른 사람이 알아듣기 어렵게 만드는 것은 한글을 바르게 쓰는 태도가 아닙니다.',
+  ex:'한글을 사랑하는 마음을 기르고 바르게 사용하며, 그 가치를 인식하고 지켜 나가야 합니다.'},
+
+ {t:'sa',area:'한글의 발전 방향',q:'한글의 가치를 인식하고, 한글을 지속적으로 <b>____</b>시키고 지켜 나갈 방법을 모색해야 합니다. 빈칸에 알맞은 말은 무엇일까요?',
+  sub:'두 글자로 쓰세요.',
+  ans:'발전',alt:['발전시키다'],
+  hint1:'더 낫고 좋은 상태로 나아가게 한다는 뜻의 두 글자 말입니다.',
+  ex:'발전입니다. 한글의 가치를 알고 지속적으로 발전시키고 지켜 나가야 합니다.'},
+
+
+ {t:'sa',area:'한글의 독창성',q:'한글은 다른 나라 문자를 빌려 쓰지 않고 세종이 상형·가획·합성의 원리로 새로 만든 우리만의 문자입니다. 이러한 한글의 가치를 무엇이라고 할까요?',
+  sub:'세 글자로 쓰세요.',
+  ans:'독창성',alt:['독창적','독창'],
+  hint1:'‘홀로 독(獨)’, ‘비롯할 창(創)’ 자가 들어가는 말입니다.',
+  ex:'독창성입니다. 한글은 세계에서 드물게 만든 사람과 만든 원리가 분명히 알려진 문자입니다.'},
+
+
+ {t:'sa',area:'한글의 실용성',q:'‘스물여덟 개의 글자만으로 수많은 소리를 표현할 수 있다.’ 이는 한글의 어떤 가치를 말한 것일까요?',
+  sub:'세 글자로 쓰세요.',
+  ans:'실용성',alt:['실용적','실용'],
+  hint1:'적은 수의 글자로 많은 것을 나타낼 수 있어 쓰기에 편리하다는 뜻입니다.',
+  hint2:'‘열매 실(實)’, ‘쓸 용(用)’ 자가 들어가는 말입니다.',
+  ex:'한글의 실용성입니다. 훈민정음 창제 당시의 스물여덟 글자(자음자 17자·모음자 11자)만으로 수많은 소리를 적을 수 있습니다.'},
+
+
+ {t:'sa',area:'한글의 과학성',q:'발음 기관과 천지인의 모양을 본떠 기본자를 만들고, 획을 더하거나 서로 합하는 원리로 글자를 체계적으로 만든 한글의 가치를 무엇이라고 할까요?',
+  sub:'세 글자로 쓰세요.',
+  ans:'과학성',alt:['과학적','과학'],
+  hint1:'‘과학 과(科)’, ‘배울 학(學)’ 자가 들어가는 말입니다.',
+  ex:'과학성입니다. 한글은 일정한 원리에 따라 짜임새 있게 만들어진 문자입니다.'},
+
+
+ {t:'sa',area:'풀어쓰기',q:'글자의 처음 소리, 중간 소리, 마지막 소리를 차례대로 늘어놓아 쓰는 방식을 무엇이라고 할까요?',
+  sub:'네 글자로 쓰세요.',
+  ans:'풀어쓰기',alt:['풀어 쓰기'],
+  hint1:'‘한’을 ‘ㅎㅏㄴ’처럼 낱낱이 늘어놓아 쓰는 방식입니다.',
+  ex:'풀어쓰기입니다. 모아쓰기와 반대되는 방식입니다.'},
+
+
+ {t:'sa',area:'표기 방식 비교',q:'영어 알파벳, 일본어 문자, 한글 가운데 <b>모아쓰기</b>를 하는 문자는 무엇일까요?',
+  sub:'두 글자로 쓰세요.',
+  ans:'한글',alt:['훈민정음','우리글'],
+  hint1:'영어 알파벳과 일본어 문자는 글자를 옆으로 차례차례 늘어놓아 씁니다.',
+  hint2:'‘ㅎㅏㄴ’이 아니라 ‘한’처럼 한 덩어리로 모아 쓰는 문자를 찾아보세요.',
+  ex:'한글입니다. 영어 알파벳과 일본어 문자는 풀어쓰기를 하지만, 한글만 자음자와 모음자를 음절 단위로 모아 쓰는 모아쓰기를 합니다.'},
+
+
+ {t:'sa',area:'글자와 소리의 관계',q:'영어 알파벳 a는 apple, water, cake에서 서로 다른 소리로 납니다. 이와 달리 한글은 한 글자가 대체로 <b>____</b>의 소리를 냅니다. 빈칸에 알맞은 말은 무엇일까요?',
+  sub:'두 글자로 쓰세요.',
+  ans:'하나',alt:['한 개','한개','1개','1','한'],
+  hint1:'둘도 셋도 아닌, 오직 한 가지라는 뜻의 말입니다.',
+  ex:'하나입니다. 한글은 한 글자가 대체로 하나의 소리를 내므로 소리 나는 대로 적기 쉽습니다.'},
+
+
+ {t:'sa',area:'세종 대왕 문해상',q:'문맹 퇴치에 공헌한 개인이나 단체에게 해마다 ‘세종 대왕 문해상’을 주는 국제기구는 어디일까요?',
+  sub:'네 글자로 쓰세요.',
+  ans:'유네스코',alt:['UNESCO','유네스코(UNESCO)'],
+  hint1:'국제 연합(UN) 산하에서 교육·과학·문화를 맡고 있는 기구입니다.',
+  hint2:'세계 문화유산을 정하는 곳으로도 잘 알려진 기구입니다.',
+  ex:'유네스코(UNESCO)입니다. 1989년 우리나라의 제안으로 만들어져, 해마다 문맹 퇴치에 공헌한 개인이나 단체에게 ‘세종 대왕 문해상’을 주고 있습니다.'}
+]
+};
+
+const STAGES = {
+ 1:{label:'1단계',desc:'한글의 창제 정신',full:'1단계 · 한글의 창제 정신',file:'1단계_한글의_창제_정신'},
+ 2:{label:'2단계',desc:'자음의 창제 원리',full:'2단계 · 자음의 창제 원리',file:'2단계_자음의_창제_원리'},
+ 3:{label:'3단계',desc:'모음의 창제 원리',full:'3단계 · 모음의 창제 원리',file:'3단계_모음의_창제_원리'},
+ 4:{label:'4단계',desc:'한글의 가치',full:'4단계 · 한글의 가치',file:'4단계_한글의_가치'}
+};
+
+/* ================= 사운드 (WebAudio · 외부 파일 없음) ================= */
+let AC=null;
+function ac(){ if(!AC){ try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return AC; }
+function tone(f,t0,dur,type,vol){
+  const c=ac(); if(!c) return;
+  const o=c.createOscillator(), g=c.createGain();
+  o.type=type||'sine'; o.frequency.setValueAtTime(f,c.currentTime+t0);
+  g.gain.setValueAtTime(0.0001,c.currentTime+t0);
+  g.gain.exponentialRampToValueAtTime(vol||0.18,c.currentTime+t0+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001,c.currentTime+t0+dur);
+  o.connect(g); g.connect(c.destination);
+  o.start(c.currentTime+t0); o.stop(c.currentTime+t0+dur+0.05);
+}
+function sOK(){ tone(660,0,0.13,'sine',0.16); tone(880,0.1,0.2,'sine',0.15); }
+function sNG(){ tone(200,0,0.16,'square',0.1); tone(150,0.13,0.24,'square',0.09); }
+function sCombo(){ tone(784,0,0.1,'triangle',0.13); tone(988,0.08,0.1,'triangle',0.13); tone(1319,0.16,0.22,'triangle',0.12); }
+function sEnd(){ [523,659,784,1047].forEach((f,i)=>tone(f,i*0.13,0.3,'sine',0.14)); }
+
+/* ================= 도우미 ================= */
+const $=id=>document.getElementById(id);
+const CHO=['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+function choseong(s){
+  const out=[];
+  for(const ch of s){
+    const code=ch.charCodeAt(0)-0xAC00;
+    if(code>=0 && code<11172) out.push(CHO[Math.floor(code/588)]);
+  }
+  return out;
+}
+function norm(s){
+  return (s||'').toString().trim().toLowerCase()
+    .replace(/[\s.,·’'"”“()\[\]]/g,'');
+}
+function shuffle(a){const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function stripTags(h){ return (h||'').replace(/<br\s*\/?>/gi,' ').replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim(); }
+
+/* ================= 상태 ================= */
+let S={stage:1,qs:[],i:0,score:0,combo:0,best:0,t0:0,elapsed:0};
+
+$('mascot2').src=$('mascot1').src;
+document.querySelectorAll('.stage-btn').forEach(b=>{
+  b.addEventListener('click',()=>startStage(parseInt(b.dataset.stage,10)));
+});
+function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on')); $(id).classList.add('on'); }
+
+function startStage(n){
+  ac();
+  S.stage=n; S.i=0; S.score=0; S.combo=0; S.best=0; S.t0=Date.now();
+  S.qs=shuffle(BANK[n]).map(q=>Object.assign({},q,{
+    done:false,tries:0,correct:false,gained:0,skipped:false,firstTry:false,wrong:[],myAns:''
+  }));
+  $('sideStage').textContent=STAGES[n].label;
+  $('sideDesc').textContent=STAGES[n].desc;
+  $('inName').value=''; $('inMemo').value=''; $('warn').classList.remove('on');
+  show('play'); renderQ();
+}
+
+/* ================= 문제 그리기 ================= */
+const NEXT_BTN='<button class="nextbtn" onclick="goNext()">다음 문제 ▶</button>';
+
+function renderQ(){
+  const q=S.qs[S.i];
+  $('qno').textContent=(S.i+1)+' / '+S.qs.length;
+  $('barFill').style.width=(S.i/S.qs.length*100)+'%';
+  $('pScore').textContent=S.score+'점';
+  $('pCombo').textContent='연속 '+S.combo;
+  $('qType').textContent = q.t==='mc' ? '객관식' : '단답형';
+  $('qType').className = 'qtype '+(q.t==='mc'?'mc':'sa');
+  $('qArea').textContent = q.area;
+  $('qText').innerHTML = q.q;
+  $('qSub').innerHTML = q.sub || '';
+  $('qSub').style.display = q.sub ? '' : 'none';
+  $('fb').innerHTML='';
+
+  const az=$('answerZone');
+  if(q.t==='mc') az.innerHTML = '<div class="opts" id="opts"></div>';
+  else az.innerHTML =
+    '<div class="sazone">'+
+      '<div class="sarow">'+
+        '<input class="sain" id="saIn" type="text" maxlength="20" autocomplete="off" placeholder="답을 입력하세요">'+
+        '<button class="sabtn" id="saBtn">확인</button>'+
+      '</div>'+
+      '<div id="csZone"></div>'+
+    '</div>';
+
+  if(q.t==='mc'){
+    const wrap=$('opts');
+    q.opts.forEach((o,idx)=>{
+      const b=document.createElement('button');
+      b.className='opt'; b.dataset.idx=idx;
+      if(/^[\u3131-\u318E\s\uFF0B\uFF1D+=?\u2192\u00b7,]+$/.test(o)) b.classList.add('jamo');
+      b.innerHTML='<span class="onum">'+(idx+1)+'</span><span class="otx">'+o+'</span>';
+      b.addEventListener('click',()=>pickMC(idx));
+      wrap.appendChild(b);
+    });
+  }else{
+    $('saBtn').addEventListener('click',submitSA);
+    $('saIn').addEventListener('keydown',e=>{
+      if(e.key==='Enter'){ e.preventDefault(); e.stopPropagation();
+        if(S.qs[S.i].done) goNext(); else submitSA(); }
+    });
+    if(!q.done) setTimeout(()=>{ const el=$('saIn'); if(el) el.focus(); },40);
+  }
+
+  $('btnPrev').disabled=(S.i===0);
+  if(q.done) paintDone(q);
+  else if(q.tries>0) paintHint(q);
+}
+
+function optEl(i){ return document.querySelector('.opt[data-idx="'+i+'"]'); }
+
+function answerText(q){ return q.t==='mc' ? q.opts[q.a] : q.ans; }
+
+function paintDone(q){
+  if(q.t==='mc'){
+    document.querySelectorAll('.opt').forEach(el=>{
+      const i=parseInt(el.dataset.idx,10);
+      el.disabled=true;
+      if(i===q.a) el.classList.add(q.correct?'ok':'reveal');
+      else if(q.wrong.indexOf(i)>=0) el.classList.add('gone');
+      else el.classList.add('dim');
+    });
+  }else{
+    const el=$('saIn');
+    if(el){ el.value = q.correct ? q.myAns : (q.myAns||''); el.disabled=true;
+            el.classList.add(q.correct?'ok':'ng'); }
+    const bt=$('saBtn'); if(bt) bt.disabled=true;
+    $('csZone').innerHTML='';
+  }
+  const fb=$('fb');
+  if(q.correct){
+    fb.innerHTML='<div class="msg ok">정답입니다! <span class="ans">'+answerText(q)+'</span><br>'+q.ex+
+      '<span class="nextkey">Enter · Spacebar · → 를 누르면 다음 문제로 넘어갑니다.</span>'+NEXT_BTN+'</div>';
+  }else if(q.skipped){
+    fb.innerHTML='<div class="msg ng">답하지 않고 넘어간 문제입니다. 정답은 <span class="ans">'+answerText(q)+'</span> 입니다.<br>'+q.ex+NEXT_BTN+'</div>';
+  }else{
+    fb.innerHTML='<div class="msg ng">세 번 모두 틀렸어요. 정답은 <span class="ans">'+answerText(q)+'</span> 입니다.<br>'+q.ex+NEXT_BTN+'</div>';
+  }
+}
+
+function paintHint(q){
+  if(q.t==='mc'){
+    q.wrong.forEach(i=>{ const el=optEl(i); if(el) el.classList.add('gone'); });
+  }else{
+    const el=$('saIn'); if(el){ el.value=''; el.disabled=false; el.classList.remove('ng'); }
+  }
+  const left=3-q.tries;
+  let body, tag;
+  if(q.tries===1){ tag='힌트 1'; body=q.hint1; }
+  else{
+    tag='힌트 2';
+    if(q.t==='sa'){
+      if(/[\uAC00-\uD7A3]/.test(q.ans)){          /* 한글 정답일 때만 초성 힌트 */
+        body = (q.hint2? q.hint2+' ' : '') + '정답의 초성은 아래와 같습니다.';
+        const cs=choseong(q.ans);
+        $('csZone').innerHTML='<div class="chosLabel">초성 힌트</div><div class="choseong">'+
+          cs.map(c=>'<span class="cs">'+c+'</span>').join('')+'</div>';
+      }else{                                        /* 숫자 정답은 초성을 보이지 않음 */
+        body = q.hint2 || q.hint1;
+        $('csZone').innerHTML='';
+      }
+    }else{
+      body = (q.hint2||q.hint1) + ' 빗금 친 선택지는 정답이 아니에요.';
+    }
+  }
+  $('fb').innerHTML='<div class="msg hint"><b class="hl">'+tag+'</b>'+body+
+    '<span class="left">다시 답할 수 있어요 — 남은 기회 '+left+'번'+(left===1?' (마지막)':'')+'</span></div>';
+}
+
+/* ================= 채점 ================= */
+function award(q){
+  let gain;
+  if(q.tries===1){
+    S.combo++; if(S.combo>S.best) S.best=S.combo;
+    const bonus=Math.min(S.combo-1,5)*10;
+    gain=100+bonus; q.firstTry=true;
+    q.gained=gain; S.score+=gain;
+    if(bonus>0) sCombo(); else sOK();
+    renderQ();
+    if(bonus>0){
+      const m=document.querySelector('.msg.ok');
+      if(m) m.insertAdjacentHTML('afterbegin','<div style="font-size:12.5px;color:#a5761d;font-weight:700;margin-bottom:2px">🔥 '+S.combo+'연속! 콤보 보너스 +'+bonus+'점</div>');
+    }
+    return;
+  }
+  S.combo=0; gain=(q.tries===2?50:25); q.gained=gain; S.score+=gain; sOK();
+  renderQ();
+}
+function penalize(q){
+  S.combo=0; S.score=Math.max(0,S.score-20); sNG();
+  $('pScore').textContent=S.score+'점'; $('pCombo').textContent='연속 0';
+}
+
+function pickMC(idx){
+  const q=S.qs[S.i]; if(q.done) return;
+  if(q.wrong.indexOf(idx)>=0) return;
+  q.tries++;
+  if(idx===q.a){ q.done=true; q.correct=true; q.myAns=q.opts[idx]; award(q); return; }
+  q.wrong.push(idx); q.myAns=q.opts[idx];
+  penalize(q);
+  const el=optEl(idx);
+  if(el){ el.classList.remove('ng'); void el.offsetWidth; el.classList.add('ng'); }
+  if(q.tries>=3){ q.done=true; q.correct=false; setTimeout(()=>renderQ(),430); }
+  else setTimeout(()=>paintHint(q),430);
+}
+
+function submitSA(){
+  const q=S.qs[S.i]; if(q.done) return;
+  const el=$('saIn'); const raw=el.value.trim();
+  if(!raw){ el.focus(); return; }
+  q.tries++;
+  const accept=[q.ans].concat(q.alt||[]).map(norm);
+  const mine=norm(raw);
+  if(accept.indexOf(mine)>=0){ q.done=true; q.correct=true; q.myAns=raw; award(q); return; }
+  if(q.wrong.indexOf(raw)<0) q.wrong.push(raw);
+  q.myAns=raw;
+  penalize(q);
+  el.classList.remove('ng'); void el.offsetWidth; el.classList.add('ng');
+  if(q.tries>=3){ q.done=true; q.correct=false; setTimeout(()=>renderQ(),450); }
+  else setTimeout(()=>{ paintHint(q); const e2=$('saIn'); if(e2) e2.focus(); },450);
+}
+
+/* ================= 이동 ================= */
+window.goNext=goNext;
+function goNext(){
+  const q=S.qs[S.i];
+  if(!q.done){ q.done=true; q.correct=false; q.skipped=(q.tries===0); S.combo=0; }
+  if(S.i>=S.qs.length-1){ finish(); return; }
+  S.i++; renderQ();
+}
+function goPrev(){ if(S.i>0){ S.i--; renderQ(); } }
+
+$('btnNext').addEventListener('click',goNext);
+$('btnPrev').addEventListener('click',goPrev);
+$('btnEnd').addEventListener('click',()=>{ if(confirm('게임을 끝내고 결과 화면으로 이동할까요?')) finish(); });
+
+document.addEventListener('keydown',e=>{
+  if(!$('play').classList.contains('on')) return;
+  const q=S.qs[S.i];
+  const typing = document.activeElement && document.activeElement.id==='saIn';
+  if(!q.done && q.t==='mc' && e.key>='1' && e.key<='9'){
+    const idx=parseInt(e.key,10)-1;
+    if(idx<q.opts.length) pickMC(idx);
+    return;
+  }
+  if(e.key==='Enter'||e.key===' '||e.key==='Spacebar'||e.key==='ArrowRight'){
+    if(typing && !q.done) return;           /* 입력 중에는 입력창이 처리 */
+    if(e.key===' '&&typing) return;
+    e.preventDefault(); goNext();
+  }else if(e.key==='ArrowLeft'){
+    if(typing) return;
+    e.preventDefault(); goPrev();
+  }
+});
+
+/* ================= 종료 ================= */
+function pad(n){ return n<10?'0'+n:''+n; }
+function fmtTime(ms){ const s=Math.max(0,Math.round(ms/1000)); return Math.floor(s/60)+'분 '+pad(s%60)+'초'; }
+function todayStr(){ const d=new Date(); return d.getFullYear()+'. '+(d.getMonth()+1)+'. '+d.getDate()+'.'; }
+function todayFile(){ const d=new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+
+function finish(){
+  S.elapsed=Date.now()-S.t0;
+  S.qs.forEach(q=>{ if(!q.done){ q.done=true; q.correct=false; q.skipped=(q.tries===0); } });
+  sEnd();
+  const total=S.qs.length, right=S.qs.filter(q=>q.correct).length, first=S.qs.filter(q=>q.correct&&q.firstTry).length;
+  $('fScore').textContent=S.score;
+  $('fAcc').textContent=Math.round(right/total*100)+'%';
+  $('fFirst').textContent=first+' / '+total;
+  $('fTime').textContent=fmtTime(S.elapsed);
+  $('endStage').textContent=STAGES[S.stage].full;
+  $('inDate').value=todayStr();
+  $('inTime').value=fmtTime(S.elapsed);
+  const wl=$('wrongList'); wl.innerHTML='';
+  const wrongs=S.qs.filter(q=>!q.correct);
+  if(!wrongs.length){ wl.innerHTML='<div class="perfect">🎉 틀린 문항이 하나도 없어요! 한글의 창제 원리와 가치를 완벽하게 이해했습니다.</div>'; }
+  else wrongs.forEach((q,n)=>{
+    const mine = q.skipped ? '답하지 않음' : '내 답 <s>'+(q.t==='mc'?q.wrong.map(i=>q.opts[i]).join(', '):q.wrong.join(', '))+'</s>';
+    wl.insertAdjacentHTML('beforeend',
+      '<div class="witem'+(q.skipped?' skip':'')+'">'+
+      '<div class="wq">'+(n+1)+'. ['+q.area+'] '+stripTags(q.q)+(q.sub?' <span style="color:#7a8399;font-weight:500">'+stripTags(q.sub)+'</span>':'')+'</div>'+
+      '<span class="wtag">'+mine+' → 정답 <b>'+answerText(q)+'</b></span>'+
+      '<div class="wex">'+q.ex+'</div></div>');
+  });
+  show('end');
+}
+$('btnRetry').addEventListener('click',()=>startStage(S.stage));
+$('btnHome').addEventListener('click',()=>show('start'));
+
+/* ================= JPG 저장 (canvas · 시스템 폰트 · 동기식 toDataURL) ================= */
+const SYSFONT="'Malgun Gothic','맑은 고딕','Apple SD Gothic Neo','Noto Sans KR',sans-serif";
+function F(size,weight){ return (weight?weight+' ':'')+size+"px "+SYSFONT; }
+function wrap(ctx,text,maxW){
+  const out=[]; let line='';
+  for(const chr of text){
+    if(chr==='\n'){ out.push(line); line=''; continue; }
+    if(ctx.measureText(line+chr).width>maxW){ out.push(line); line=chr; }
+    else line+=chr;
+  }
+  out.push(line); return out;
+}
+function checkInput(){
+  const n=$('inName').value.trim(), m=$('inMemo').value.trim();
+  if(!n||!m){ $('warn').classList.add('on'); (!n?$('inName'):$('inMemo')).focus(); return null; }
+  $('warn').classList.remove('on'); return {name:n,memo:m};
+}
+function download(canvas,fname,usedH){
+  if(usedH && usedH<canvas.height){
+    const t=document.createElement('canvas'); t.width=canvas.width; t.height=Math.round(usedH);
+    const tx=t.getContext('2d'); tx.fillStyle='#fbf8f1'; tx.fillRect(0,0,t.width,t.height);
+    tx.drawImage(canvas,0,0); canvas=t;
+  }
+  const url=canvas.toDataURL('image/jpeg',0.92);
+  const bin=atob(url.split(',')[1]);
+  const buf=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) buf[i]=bin.charCodeAt(i);
+  const blob=new Blob([buf],{type:'image/jpeg'});
+  const href=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=href; a.download=fname;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(href),4000);
+}
+function headerBand(ctx,W,title,sub){
+  ctx.fillStyle='#26365c'; ctx.fillRect(0,0,W,104);
+  ctx.fillStyle='#c19a3e'; ctx.fillRect(0,104,W,6);
+  ctx.fillStyle='#fff'; ctx.font=F(30,'bold'); ctx.textBaseline='alphabetic';
+  ctx.fillText(title,44,50);
+  ctx.fillStyle='#c8d4ee'; ctx.font=F(17);
+  ctx.fillText(sub,44,84);
+}
+function footer(ctx,W,y){
+  ctx.fillStyle='#8b8570'; ctx.font=F(14);
+  ctx.fillText('제작 · 보라라샘 / 전주서신중학교 교사 / siaawase@gmail.com / '+MADE_DATE,44,y);
+}
+function metaRow(ctx,y,info,W){
+  ctx.fillStyle='#f4efe2'; ctx.fillRect(44,y,W-88,54);
+  ctx.strokeStyle='#ded3bd'; ctx.lineWidth=1.5; ctx.strokeRect(44,y,W-88,54);
+  ctx.font=F(17); ctx.fillStyle='#3d4a6b';
+  ctx.fillText('이름  '+info.name+'      날짜  '+todayStr()+'      학습 시간  '+fmtTime(S.elapsed)+
+               '      점수  '+S.score+'점      정답률  '+Math.round(S.qs.filter(q=>q.correct).length/S.qs.length*100)+'%',66,y+34);
+}
+function memoBox(ctx,y,memo,W){
+  ctx.font=F(17);
+  const lines=wrap(ctx,memo,W-140);
+  const h=42+lines.length*27;
+  ctx.fillStyle='#fffdf6'; ctx.strokeStyle='#e8d9ae'; ctx.lineWidth=2;
+  ctx.fillRect(44,y,W-88,h); ctx.strokeRect(44,y,W-88,h);
+  ctx.fillStyle='#a5871f'; ctx.font=F(15,'bold'); ctx.fillText('학습 소감',66,y+26);
+  ctx.fillStyle='#4a4433'; ctx.font=F(17);
+  lines.forEach((l,i)=>ctx.fillText(l,66,y+52+i*27));
+  return y+h;
+}
+
+/* ── 오답노트 ── */
+$('btnNote').addEventListener('click',()=>{
+  const info=checkInput(); if(!info) return;
+  const W=1040, wrongs=S.qs.filter(q=>!q.correct);
+  const cv=document.createElement('canvas'); const ctx=cv.getContext('2d');
+  ctx.font=F(17);
+  const blocks=wrongs.map((q,n)=>{
+    const qt=(n+1)+'. ['+q.area+'] '+stripTags(q.q)+(q.sub?'  '+stripTags(q.sub):'');
+    const mine=q.skipped?'답하지 않음':'내 답 '+(q.t==='mc'?q.wrong.map(i=>q.opts[i]).join(', '):q.wrong.join(', '));
+    ctx.font=F(18,'bold'); const qL=wrap(ctx,qt,W-140);
+    ctx.font=F(17); const eL=wrap(ctx,q.ex,W-140);
+    return {q,qL,eL,tag:mine+'   →   정답 '+answerText(q)};
+  });
+  let bodyH=0; blocks.forEach(b=>bodyH+=26+b.qL.length*28+30+b.eL.length*26+18);
+  if(!wrongs.length) bodyH=110;
+  ctx.font=F(17);
+  const memoLines=wrap(ctx,info.memo,W-140).length;
+  const H=110+30+54+30+40+bodyH+24+(42+memoLines*27)+70;
+  cv.width=W; cv.height=H;
+  ctx.fillStyle='#fbf8f1'; ctx.fillRect(0,0,W,H);
+  headerBand(ctx,W,GAME_NAME+' — 오답노트',STAGES[S.stage].full);
+  let y=140; metaRow(ctx,y,info,W); y+=54+30;
+  ctx.fillStyle='#26365c'; ctx.font=F(20,'bold'); ctx.fillText('틀리거나 넘어간 문항 ('+wrongs.length+'개)',44,y+8); y+=40;
+  if(!wrongs.length){
+    ctx.fillStyle='#e9f8ef'; ctx.strokeStyle='#a9dcbf'; ctx.lineWidth=2;
+    ctx.fillRect(44,y,W-88,84); ctx.strokeRect(44,y,W-88,84);
+    ctx.fillStyle='#166b40'; ctx.font=F(22,'bold');
+    ctx.fillText('틀린 문항이 하나도 없습니다. 아주 훌륭해요!',80,y+50);
+    y+=84+24;
+  }else{
+    blocks.forEach(b=>{
+      const h=26+b.qL.length*28+30+b.eL.length*26;
+      ctx.fillStyle='#ffffff'; ctx.fillRect(44,y,W-88,h);
+      ctx.strokeStyle='#e3dbc9'; ctx.lineWidth=1.5; ctx.strokeRect(44,y,W-88,h);
+      ctx.fillStyle=b.q.skipped?'#b9a15f':'#cf4340'; ctx.fillRect(44,y,7,h);
+      let ty=y+32;
+      ctx.fillStyle='#26365c'; ctx.font=F(18,'bold');
+      b.qL.forEach(l=>{ ctx.fillText(l,68,ty); ty+=28; });
+      ty+=4;
+      ctx.font=F(17); ctx.fillStyle='#9c322f';
+      ctx.fillText(b.tag,68,ty); ty+=26;
+      ctx.fillStyle='#4d5a76'; ctx.font=F(17);
+      b.eL.forEach(l=>{ ctx.fillText(l,68,ty); ty+=26; });
+      y+=h+18;
+    });
+    y+=6;
+  }
+  y=memoBox(ctx,y,info.memo,W)+40;
+  footer(ctx,W,y);
+  download(cv,GAME_NAME+'_'+STAGES[S.stage].file+'_오답노트_'+info.name+'_'+todayFile()+'.jpg',y+22);
+});
+
+/* ── 학습 결과 분석 리포트 ── */
+$('btnReport').addEventListener('click',()=>{
+  const info=checkInput(); if(!info) return;
+  const W=1040;
+  const cats=[]; const map={};
+  S.qs.forEach(q=>{ if(!map[q.area]){ map[q.area]={area:q.area,t:0,c:0}; cats.push(map[q.area]); } map[q.area].t++; if(q.correct) map[q.area].c++; });
+  cats.forEach(c=>c.r=c.c/c.t);
+  const sorted=cats.slice().sort((a,b)=>b.r-a.r);
+  const good=sorted.filter(c=>c.r>=0.8), weak=sorted.filter(c=>c.r<0.8).reverse();
+  const mcT=S.qs.filter(q=>q.t==='mc'), saT=S.qs.filter(q=>q.t==='sa');
+  const mcR=mcT.length?Math.round(mcT.filter(q=>q.correct).length/mcT.length*100):0;
+  const saR=saT.length?Math.round(saT.filter(q=>q.correct).length/saT.length*100):0;
+
+  const cv=document.createElement('canvas'); const ctx=cv.getContext('2d');
+  ctx.font=F(17);
+  const memoLines=wrap(ctx,info.memo,W-140).length;
+  const chartH=cats.length*50+26;
+  const gTxt=good.length?good.map(c=>c.area+' ('+Math.round(c.r*100)+'%)').join('  ·  '):'아직 없어요. 조금만 더 연습해 볼까요?';
+  const wTxt=weak.length?weak.map(c=>c.area+' ('+Math.round(c.r*100)+'%)').join('  ·  '):'없습니다. 모든 분야를 잘 이해했어요!';
+  ctx.font=F(18);
+  const gLines=wrap(ctx,gTxt,W-160).length, wLines=wrap(ctx,wTxt,W-160).length;
+  const H=110+30+54+34+40+chartH+30+64+34+(54+gLines*26)+16+(54+wLines*26)+30+(42+memoLines*27)+70;
+  cv.width=W; cv.height=H;
+  ctx.fillStyle='#fbf8f1'; ctx.fillRect(0,0,W,H);
+  headerBand(ctx,W,GAME_NAME+' — 학습 결과 분석 리포트',STAGES[S.stage].full);
+  let y=140; metaRow(ctx,y,info,W); y+=54+34;
+
+  ctx.fillStyle='#26365c'; ctx.font=F(20,'bold'); ctx.fillText('분야별 정답률',44,y+8); y+=40;
+  const bx=300, bw=W-bx-130;
+  cats.forEach(c=>{
+    ctx.fillStyle='#3d4a6b'; ctx.font=F(16); ctx.textAlign='right';
+    ctx.fillText(c.area,bx-18,y+25); ctx.textAlign='left';
+    ctx.fillStyle='#e6ddc9'; ctx.fillRect(bx,y+7,bw,24);
+    const col = c.r>=0.8?'#1f8b52' : c.r>=0.5?'#c19a3e' : '#cf4340';
+    ctx.fillStyle=col; ctx.fillRect(bx,y+7,Math.max(3,bw*c.r),24);
+    ctx.fillStyle='#3d4a6b'; ctx.font=F(15,'bold');
+    ctx.fillText(Math.round(c.r*100)+'%  ('+c.c+'/'+c.t+')',bx+bw+12,y+26);
+    y+=50;
+  });
+  y+=30;
+
+  /* 문제 유형별 */
+  ctx.fillStyle='#eef3fb'; ctx.strokeStyle='#c9d8ef'; ctx.lineWidth=2;
+  ctx.fillRect(44,y,W-88,56); ctx.strokeRect(44,y,W-88,56);
+  ctx.fillStyle='#2f558f'; ctx.font=F(17,'bold');
+  ctx.fillText('문제 유형별 정답률',68,y+35);
+  ctx.fillStyle='#3d4a6b'; ctx.font=F(18);
+  ctx.fillText('객관식  '+mcR+'%  ('+mcT.filter(q=>q.correct).length+'/'+mcT.length+')          단답형  '+
+               saR+'%  ('+saT.filter(q=>q.correct).length+'/'+saT.length+')',300,y+35);
+  y+=56+34;
+
+  function panel(title,titleColor,bg,border,text){
+    ctx.font=F(18);
+    const lines=wrap(ctx,text,W-160);
+    const h=54+lines.length*26;
+    ctx.fillStyle=bg; ctx.fillRect(44,y,W-88,h);
+    ctx.strokeStyle=border; ctx.lineWidth=2; ctx.strokeRect(44,y,W-88,h);
+    ctx.fillStyle=titleColor; ctx.font=F(17,'bold'); ctx.fillText(title,68,y+30);
+    ctx.fillStyle='#3d4a6b'; ctx.font=F(18);
+    lines.forEach((l,i)=>ctx.fillText(l,68,y+58+i*26));
+    y+=h+16;
+  }
+  panel('잘하는 분야','#166b40','#eefaf2','#a9dcbf',gTxt);
+  panel('보완이 필요한 분야','#9c322f','#fdeeed','#f0b6b4',wTxt);
+  y+=14;
+  y=memoBox(ctx,y,info.memo,W)+40;
+  footer(ctx,W,y);
+  download(cv,GAME_NAME+'_'+STAGES[S.stage].file+'_학습결과분석리포트_'+info.name+'_'+todayFile()+'.jpg',y+22);
+});
+</script>
+</body>
+</html>

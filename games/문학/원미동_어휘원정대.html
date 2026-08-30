@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>원미동 어휘 원정대</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#3b2f26; --ink2:#6f5d4c; --pt:#c0562e; --pt-d:#9c3f1e; --pt-l:#eccdb9;
+  --paper:#fcf7ef; --paper2:#f3ead9; --line:#e2d4c0;
+  --ok:#1f8b52; --ng:#cf4340; --gold:#c1912e;
+  --s1:#d9822b; --s2:#3f7d6e; --s3:#7a5aa6; --s4:#b8443c;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Noto Sans KR',-apple-system,'Malgun Gothic',sans-serif;
+  color:var(--ink); word-break:keep-all; overflow:hidden;
+  background:linear-gradient(160deg,#fdf9f2 0%,#f5ecdd 55%,#eddfc9 100%);
+}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+.screen{display:none;height:100vh;width:100%}
+.screen.on{display:block}
+
+/* ===== 시작 화면 ===== */
+#start{overflow-y:auto}
+.wrap{max-width:1440px;margin:0 auto;padding:60px 16px 14px}
+.head{display:flex;align-items:center;gap:22px;margin-bottom:14px}
+.head img{height:90px;border-radius:12px;flex:0 0 auto}
+.title{font-size:41px;font-weight:700;letter-spacing:-1.5px;line-height:1.15}
+.title .dot{color:var(--pt)}
+.subtitle{font-size:16.5px;font-weight:400;color:var(--ink2);margin-top:6px}
+.cols{display:grid;grid-template-columns:1.02fr 1fr;gap:18px;align-items:start}
+.box{background:rgba(255,255,255,.74);border:1.5px solid var(--line);border-radius:16px;padding:13px 20px}
+.box h3{font-size:16px;font-weight:700;margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.box h3::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--pt)}
+.box p,.box li{font-size:14px;line-height:1.64;color:#4d4136}
+.box ul{list-style:none}
+.box li{padding-left:15px;position:relative}
+.box li::before{content:'·';position:absolute;left:4px;color:var(--pt);font-weight:700}
+.std{background:#f3f0e6;border-color:#ded3bd}
+.std h3::before{background:var(--ink)}
+.stages{display:flex;flex-direction:column;gap:8px}
+.stage-btn{display:flex;align-items:center;gap:13px;width:100%;text-align:left;
+  background:#fff;border:2px solid var(--line);border-radius:13px;padding:10px 15px;transition:.16s}
+.stage-btn:hover{border-color:var(--pt);transform:translateY(-2px);box-shadow:0 7px 16px rgba(150,90,50,.17)}
+.stage-btn .num{flex:0 0 auto;width:43px;height:43px;border-radius:11px;color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:14.5px;font-weight:700;line-height:1.1;text-align:center}
+.stage-btn[data-stage="1"] .num{background:var(--s1)}
+.stage-btn[data-stage="2"] .num{background:var(--s2)}
+.stage-btn[data-stage="3"] .num{background:var(--s3)}
+.stage-btn[data-stage="4"] .num{background:var(--s4)}
+.stage-btn .tx{flex:1;min-width:0}
+.stage-btn .t{display:block;font-size:15.5px;font-weight:700}
+.stage-btn .d{display:block;font-size:12.6px;line-height:1.5;color:#7b6b5b;margin-top:3px}
+.allbtn{width:100%;background:linear-gradient(180deg,var(--pt),var(--pt-d));color:#fff;
+  border-radius:13px;padding:13px;font-size:17px;font-weight:700;letter-spacing:-.3px;
+  box-shadow:0 7px 18px rgba(160,70,35,.32);transition:.15s;margin-bottom:10px}
+.allbtn:hover{transform:translateY(-2px)}
+.allbtn small{display:block;font-size:12.5px;font-weight:400;opacity:.88;margin-top:3px;letter-spacing:0}
+.credit{margin-top:12px;background:#fffdf7;border:1.5px dashed var(--pt-l);border-radius:14px;
+  padding:10px 18px;display:flex;flex-wrap:wrap;gap:5px 22px;align-items:center;justify-content:center;
+  font-size:13px;color:#856a52}
+.credit b{font-weight:700;color:#6a5138}
+.privacy{margin-top:8px;background:#f6f3ec;border:1px solid #e4dccd;border-radius:12px;
+  padding:9px 18px;font-size:12.2px;line-height:1.65;color:#6b5f51;text-align:center}
+.privacy b{color:#4a4034}
+
+/* ===== 플레이 화면 ===== */
+#play{display:none}
+#play.on{display:flex;height:100vh}
+.side{flex:0 0 134px;background:rgba(59,47,38,.95);color:#fff;
+  display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px 12px}
+.side .lv{font-size:12.5px;line-height:1.45;text-align:center;color:#e0cfbd;
+  border-bottom:1px solid rgba(255,255,255,.22);padding-bottom:12px;width:100%}
+.side .lv b{display:block;font-size:15px;color:#fff;margin-bottom:3px}
+.nav-btn{width:100%;padding:11px 0;border-radius:10px;background:rgba(255,255,255,.14);
+  font-size:14px;font-weight:500;transition:.15s}
+.nav-btn:hover{background:rgba(255,255,255,.28)}
+.nav-btn:disabled{opacity:.32;cursor:default}
+.nav-btn.end{margin-top:auto;background:rgba(233,120,110,.3)}
+.nav-btn.end:hover{background:rgba(233,120,110,.52)}
+.side .keyhint{font-size:11px;color:#c3ab93;line-height:1.7;text-align:center;margin-top:2px}
+.side .keyhint b{color:#e6d5c3;font-weight:700}
+
+.main{flex:1;display:flex;flex-direction:column;padding:14px 30px 10px;position:relative;min-width:0}
+.arena{flex:1;display:flex;flex-direction:column;justify-content:center;gap:15px;min-height:0}
+.topbar{display:flex;align-items:center;gap:15px;margin-bottom:6px}
+.qno{font-size:14px;font-weight:700;color:var(--ink2);white-space:nowrap}
+.bar{flex:1;height:9px;background:#e6dbc8;border-radius:5px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pt),#e39a5e);width:0;transition:.3s}
+.stat{display:flex;gap:8px}
+.pill{background:#fff;border:1.5px solid var(--line);border-radius:9px;padding:5px 12px;font-size:13px;font-weight:700;white-space:nowrap}
+.pill.combo{background:#fff5e5;border-color:#ecd0a0;color:#a5711d}
+.pill.sale{background:#eaf6ef;border-color:#a9dcbf;color:#1a7346}
+
+.prompt{text-align:center;font-size:15px;color:#7b6858;font-weight:500}
+.qbody{background:#fff;border:2px solid var(--line);border-radius:18px;
+  padding:22px 30px;text-align:center;box-shadow:0 8px 20px rgba(120,90,60,.1);
+  font-size:25px;font-weight:500;line-height:1.55;letter-spacing:-.4px}
+.qbody .blank{color:var(--pt);font-weight:700;letter-spacing:2px}
+.qbody .story{font-size:18.5px;font-weight:400;color:var(--ink2);line-height:1.62;margin-bottom:12px;white-space:pre-line}
+.qbody .ask{font-size:24px;font-weight:500}
+.qbody .day{display:inline-block;background:var(--s4);color:#fff;font-size:13px;font-weight:700;
+  border-radius:20px;padding:3px 14px;margin-bottom:10px;letter-spacing:.3px}
+
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.opt{display:flex;align-items:center;gap:12px;background:#fff;border:2px solid var(--line);
+  border-radius:13px;padding:13px 18px;text-align:left;transition:.14s;font-size:20px;font-weight:500}
+.opt:hover{border-color:var(--pt);transform:translateY(-2px);box-shadow:0 6px 14px rgba(150,90,50,.15)}
+.opt .knum{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--paper2);
+  color:#8a755f;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.opt.ok{border-color:var(--ok);background:#effaf3;color:var(--ok)}
+.opt.ok .knum{background:var(--ok);color:#fff}
+.opt.ng{border-color:var(--ng);background:#fdf0ef;color:var(--ng);animation:shake .42s}
+.opt.ng .knum{background:var(--ng);color:#fff}
+.opt.dim{opacity:.4}
+.opt:disabled{cursor:default;transform:none;box-shadow:none}
+@keyframes shake{0%,100%{transform:translateX(0)}15%{transform:translateX(-11px)}30%{transform:translateX(9px)}45%{transform:translateX(-7px)}60%{transform:translateX(5px)}80%{transform:translateX(-3px)}}
+
+.items{display:flex;flex-direction:column;gap:9px}
+.item{display:flex;align-items:center;gap:14px;background:#fff;border:2px solid var(--line);
+  border-radius:13px;padding:11px 18px;text-align:left;transition:.14s;width:100%}
+.item:hover{border-color:var(--pt);transform:translateY(-2px);box-shadow:0 6px 14px rgba(150,90,50,.15)}
+.item .knum{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--paper2);
+  color:#8a755f;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.item .iw{flex:0 0 auto;min-width:112px;font-size:20px;font-weight:700}
+.item .im{flex:1;font-size:15.5px;color:#5d5044;line-height:1.5}
+.item.ok{border-color:var(--ok);background:#effaf3}
+.item.ok .iw{color:var(--ok)}
+.item.ok .knum{background:var(--ok);color:#fff}
+.item.ng{border-color:var(--ng);background:#fdf0ef;animation:shake .42s}
+.item.ng .iw{color:var(--ng)}
+.item.ng .knum{background:var(--ng);color:#fff}
+.item.fake{border-color:#c1912e;background:#fff8e8}
+.item.fake .iw{color:#8a6716}
+.item.fake .knum{background:#c1912e;color:#fff}
+.item.fake .im{color:#9c8a6f}
+.item.fake .im .bad{text-decoration:line-through}
+.item.fake .fx{display:block;text-decoration:none;color:#166b40;font-weight:500;margin-top:3px}
+.item.dim{opacity:.42}
+.item:disabled{cursor:default;transform:none;box-shadow:none}
+
+.fb{min-height:74px;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+.msg{width:100%;max-width:980px;border-radius:12px;padding:9px 16px;font-size:14px;line-height:1.62;text-align:center}
+.msg.ok{background:#e9f8ef;border:1.5px solid #a9dcbf;color:#166b40}
+.msg.ng{background:#fdeeed;border:1.5px solid #f0b6b4;color:#9c322f}
+.msg.hint{background:#fff6e0;border:2px dashed #e2be6a;color:#8a6716;text-align:left}
+.msg.hint b{display:block;font-size:12.5px;color:#a9832a;margin-bottom:2px;letter-spacing:.5px}
+.msg .ans{font-weight:700}
+.msg .nextkey{display:block;font-size:11.8px;color:#5d7f68;margin-top:3px}
+.sig{position:absolute;right:16px;bottom:6px;font-size:10.5px;color:rgba(70,58,46,.4);letter-spacing:.2px}
+
+/* ===== 종료 화면 ===== */
+#end{overflow-y:auto}
+.ewrap{max-width:1260px;margin:0 auto;padding:34px 26px 26px}
+.ehead{display:flex;align-items:center;gap:18px;margin-bottom:14px}
+.ehead img{height:76px;border-radius:12px}
+.ehead h2{font-size:30px;font-weight:700;letter-spacing:-1px}
+.ehead p{font-size:14px;color:var(--ink2);margin-top:4px}
+.ecols{display:grid;grid-template-columns:1fr 1.06fr;gap:18px;align-items:start}
+.scoreline{display:flex;gap:10px;margin-bottom:12px}
+.sbox{flex:1;background:#fff;border:1.5px solid var(--line);border-radius:13px;padding:11px 8px;text-align:center}
+.sbox .v{font-size:24px;font-weight:700;color:var(--ink)}
+.sbox .l{font-size:11.8px;color:#7b6b5b;margin-top:2px}
+.field{margin-bottom:10px}
+.field label{display:block;font-size:13.2px;font-weight:700;margin-bottom:4px}
+.field label i{color:var(--ng);font-style:normal}
+.field input,.field textarea{width:100%;font-family:inherit;font-size:14px;color:var(--ink);
+  border:1.5px solid var(--line);border-radius:10px;padding:9px 12px;background:#fff}
+.field textarea{resize:none;height:76px;line-height:1.6}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--pt)}
+.metaline{display:flex;gap:10px}
+.metaline .field{flex:1}
+.dlrow{display:flex;gap:10px;margin-top:4px}
+.dlbtn{flex:1;background:var(--ink);color:#fff;border-radius:11px;padding:13px 8px;font-size:14.5px;font-weight:700;transition:.16s}
+.dlbtn.alt{background:var(--pt)}
+.dlbtn:hover{filter:brightness(1.13);transform:translateY(-2px)}
+.againrow{display:flex;gap:10px;margin-top:10px}
+.ghost{flex:1;border:2px solid var(--ink);border-radius:11px;padding:11px;font-size:14px;font-weight:700;color:var(--ink)}
+.ghost:hover{background:var(--ink);color:#fff}
+.wronglist{max-height:340px;overflow-y:auto;padding-right:5px}
+.witem{background:#fff;border:1.5px solid var(--line);border-left:5px solid var(--ng);border-radius:11px;padding:9px 13px;margin-bottom:8px}
+.witem.skip{border-left-color:#bda15f}
+.witem .wq{font-size:18px;font-weight:700;margin-right:9px}
+.witem .wstg{font-size:11px;font-weight:700;color:#fff;background:#a89684;border-radius:5px;padding:2px 7px;margin-right:7px;vertical-align:2px}
+.witem .wtag{font-size:12.5px;color:#7b6b5b}
+.witem .wtag s{color:var(--ng);text-decoration:line-through}
+.witem .wtag b{color:var(--ok)}
+.witem .wex{font-size:12.6px;color:#655849;line-height:1.6;margin-top:4px}
+.perfect{background:#eefaf2;border:1.5px solid #a9dcbf;border-radius:12px;padding:22px;text-align:center;font-size:15px;color:#166b40;font-weight:700}
+.warn{font-size:12.5px;color:var(--ng);margin-top:5px;display:none}
+.warn.on{display:block}
+.catbars{margin-top:2px}
+.cb{display:flex;align-items:center;gap:10px;margin-bottom:7px;font-size:13px}
+.cb .cbn{flex:0 0 84px;text-align:right;color:#5d5044;font-weight:500}
+.cb .cbt{flex:1;height:20px;background:#eee2cf;border-radius:5px;overflow:hidden}
+.cb .cbt i{display:block;height:100%;border-radius:5px}
+.cb .cbv{flex:0 0 76px;font-size:12.5px;font-weight:700;color:#5d5044}
+
+/* ===== 모바일 ===== */
+.nextbtn{display:none}
+.mo-only{display:none}
+@media (max-width:900px){
+  html,body{height:auto} body{overflow:auto}
+  .screen{height:auto;min-height:100vh;min-height:100dvh}
+  .wrap{padding:16px 13px 20px}
+  .head{gap:11px;margin-bottom:11px} .head img{height:56px}
+  .title{font-size:25px;letter-spacing:-1px} .subtitle{font-size:13px;margin-top:4px}
+  .cols{grid-template-columns:1fr;gap:11px}
+  .box{padding:11px 14px;border-radius:13px} .box h3{font-size:15px}
+  .box p,.box li{font-size:13.4px;line-height:1.62}
+  .box[style]{margin-top:11px!important}
+  .stage-btn{padding:10px 12px;gap:11px}
+  .stage-btn .num{width:38px;height:38px;font-size:13px;border-radius:10px}
+  .stage-btn .t{font-size:14.5px} .stage-btn .d{font-size:11.8px}
+  .allbtn{font-size:15.5px;padding:12px}
+  .credit{flex-direction:column;gap:3px;font-size:12px;padding:9px 12px;margin-top:11px}
+  .privacy{font-size:11.5px;padding:9px 12px;line-height:1.6}
+
+  #play.on{flex-direction:column;height:100vh;height:100dvh}
+  .side{flex:0 0 auto;width:100%;flex-direction:row;align-items:center;gap:7px;padding:7px 9px}
+  .side .lv{width:auto;flex:0 0 auto;border-bottom:none;border-right:1px solid rgba(255,255,255,.25);
+    padding:1px 9px 1px 2px;font-size:10.5px;text-align:left;line-height:1.3}
+  .side .lv b{display:block;font-size:12.5px;margin:0}
+  .nav-btn{width:auto;flex:1 1 0;padding:9px 0;font-size:13px;border-radius:9px}
+  .nav-btn.end{margin-top:0;flex:0 0 auto;padding:9px 11px;font-size:12.5px}
+  .side .keyhint{display:none}
+  .main{padding:8px 11px 4px;overflow-y:auto}
+  .arena{gap:10px;justify-content:flex-start;padding-top:4px}
+  .topbar{gap:9px;margin-bottom:4px} .qno{font-size:12px} .pill{padding:4px 9px;font-size:11.5px}
+  .prompt{font-size:13px;line-height:1.45}
+  .qbody{padding:15px 16px;font-size:18px;border-radius:14px;border-width:1.5px}
+  .qbody .story{font-size:15px;margin-bottom:9px} .qbody .ask{font-size:17.5px}
+  .opts{grid-template-columns:1fr;gap:8px}
+  .opt{padding:11px 14px;font-size:16.5px;gap:10px}
+  .item{padding:9px 13px;gap:10px;flex-wrap:wrap}
+  .item .iw{font-size:16.5px;min-width:0} .item .im{font-size:13.4px;flex:1 1 100%;padding-left:36px}
+  .fb{min-height:0;margin-top:5px}
+  .msg{font-size:12.6px;line-height:1.55;padding:8px 11px} .msg .nextkey{display:none}
+  .pc-only{display:none} .mo-only{display:list-item}
+  .nextbtn{display:inline-block;margin-top:7px;background:#1f8b52;color:#fff;padding:9px 20px;border-radius:9px;font-size:13.5px;font-weight:700}
+  .msg.ng .nextbtn{background:#cf4340}
+  .sig{display:none}
+
+  .ewrap{padding:16px 13px 22px}
+  .ehead{gap:12px;margin-bottom:11px} .ehead img{height:54px}
+  .ehead h2{font-size:22px} .ehead p{font-size:12.5px}
+  .ecols{grid-template-columns:1fr;gap:12px}
+  .scoreline{flex-wrap:wrap;gap:7px}
+  .sbox{flex:1 1 44%;padding:9px 6px} .sbox .v{font-size:20px} .sbox .l{font-size:11px}
+  .dlrow{flex-direction:column} .dlbtn{font-size:13.5px;padding:12px 8px}
+  .wronglist{max-height:none} .field textarea{height:70px}
+  .cb .cbn{flex:0 0 68px;font-size:12px} .cb .cbv{flex:0 0 66px;font-size:11.5px}
+}
+::-webkit-scrollbar{width:9px}
+::-webkit-scrollbar-thumb{background:#d5c5ae;border-radius:5px}
+</style>
+</head>
+<body>
+<!-- ================= 시작 화면 ================= -->
+<div id="start" class="screen on">
+ <div class="wrap">
+  <div class="head">
+   <img id="mascot1" alt="보라라샘" style="height:90px;border-radius:12px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAACxCAMAAAAyLeWLAAAB/lBMVEUAAABMNSXZ1s7hupPcto7alVnNxba4uryMqcKptsLQiEyTp7jTmmfXpXTkwZxGLBvipW3i2snLeDWcscPUrIR8osLnx6NqSDBNMR7FvbLb0b2telCoq6vGxsb7+vqth2eHm6ivpJaMZ0rhmlvgnWGLeGm2g1ipmozGfUJtWEjTgTySlpVaRDS2lHXo6OeVhXbk4dl0UjmdsL6+wL1ELiDFbCd4mraGWDe8wcLGxsaXc1Z4ZVZ8oL77+vo6JhhiPSWoq6uTjIa4urzZ1s6DXELwsnh6bWK8dTuSYzwIBQUbFRNuOBZ3Qh3groDi0rsqHRdMNSWcoJuvpJbFvbLi2sl1nsKSlpWzajKptsLawZ7Nxbbo6OdtWEiLeGmpmowxIyF7c2l+lJ2BTSeTjIa2WBG8YhyjbUXd4eLk4dk8MS1ELiBlT0B4ZVaVhXaTp7imf2GvpJbAZh3An4De3+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADGtm7NAAAAgHRSTlMA///////////////////////////////////////////////////////////////////////////c////3P//3P/c3P///////////////9z/3Nzc/9z/3P/c3Nzc3P/////c/////9z/3P/c3Nz/oP///wAAAAAAAAAAAAAAAKaTQcIAABeqSURBVHja7VwHd+JItl4kUUpVKCAjhMjYYINxTh2me3q6e3vyvNnZ3dmcw8vx/5/z7r1VEghjLLfp3XPeebVjaANWffrud0PdKvYHP/j/sa3xC5Ml7cmrSdLRnvxdAPwjm+wdVPIRH+wN/sZAnhwfVJpepTi8SnzMPvqbQdg79C4q68fhr/8mED5+VvEqm8bBJx8cw68r9w7v4DcfFMJP72EhG3u//GAQXv+wHIRKpXn4iw+E4buDshhwfCBFxg/BUPnnD4Hhk8oD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">
+   <div>
+    <div class="title">원미동 <span class="dot">어휘 원정대</span></div>
+    <div class="subtitle">양귀자 「일용할 양식」 어휘 57개 — 훑고, 넣어 보고, 가려내고, 직접 써 보는 네 단계</div>
+   </div>
+  </div>
+
+  <div class="cols">
+   <div>
+    <div class="box">
+     <h3>게임 방법</h3>
+     <ul>
+      <li>네 단계를 차례로 지나며 같은 낱말을 서로 다른 방식으로 네 번 만납니다.</li>
+      <li class="pc-only">답은 <b>보기를 클릭</b>하거나 <b>숫자키 1~4</b>를 눌러 고릅니다.</li>
+      <li class="mo-only">답은 <b>보기를 손가락으로 톡 누르면</b> 됩니다.</li>
+      <li>틀리면 힌트가 나옵니다. 한 문제당 <b>세 번</b>까지 도전할 수 있고, 세 번째로 틀리면 그때 정답을 알려줍니다.</li>
+      <li class="pc-only">맞힌 뒤 <b>Enter · Spacebar · →</b> 를 누르면 다음 문제로 넘어갑니다.</li>
+      <li class="mo-only">답을 고른 뒤 <b>«다음 문제 ▶»</b> 단추를 누르면 넘어갑니다.</li>
+      <li class="pc-only">왼쪽 사이드바의 <b>이전 · 다음 · 게임 끝내기</b>로 이동합니다.</li>
+      <li class="mo-only">화면 맨 위의 <b>이전 · 다음 · 게임 끝내기</b> 단추로 이동합니다.</li>
+      <li>전체 도전에서는 <b>1단계에서 틀린 낱말이 2·3단계에 먼저 나옵니다.</b></li>
+     </ul>
+    </div>
+    <div class="box" style="margin-top:11px">
+     <h3>점수 규칙</h3>
+     <ul>
+      <li>첫 번째 시도에 정답 <b>+100점</b> / 두 번째 시도 <b>+50점</b> / 세 번째 시도 <b>+25점</b> / 오답은 <b>−20점</b>(0점 아래로 내려가지 않음)</li>
+      <li>연속으로 한 번에 맞히면 <b>콤보 보너스</b>가 최대 +50점까지 붙습니다.</li>
+      <li>답하지 않고 넘어간 문제는 점수를 얻지 못하며, 각 문항은 한 번만 채점됩니다.</li>
+     </ul>
+    </div>
+    <div class="box std" style="margin-top:11px">
+     <h3>성취기준</h3>
+     <p>[9국05-05] 작품에 반영된 사회·문화적 상황을 이해하며 작품을 감상한다.</p>
+     <p style="margin-top:3px">[9국04-07] 세대·분야·매체에 따른 어휘의 양상과 쓰임을 분석한다.</p>
+    </div>
+   </div>
+
+   <div>
+    <div class="box" style="padding:14px 16px">
+     <h3>단계를 골라 시작하세요</h3>
+     <button class="allbtn" id="btnAll">전체 도전 — 1단계부터 4단계까지<small>121문제 · 약 30분 / 낱말 57개를 모두 다룹니다</small></button>
+     <div class="stages">
+      <button class="stage-btn" data-stage="1">
+       <span class="num">1<br>단계</span>
+       <span class="tx"><span class="t">어휘 스프린트</span><span class="d">57문제 — 뜻을 보고 알맞은 낱말 고르기<br>학습지의 낱말 전체를 한 번씩 훑습니다</span></span>
+      </button>
+      <button class="stage-btn" data-stage="2">
+       <span class="num">2<br>단계</span>
+       <span class="tx"><span class="t">문맥 빈칸 채우기</span><span class="d">30문제 — 원미동 골목 이야기 속 빈칸에<br>알맞은 낱말 넣기</span></span>
+      </button>
+      <button class="stage-btn" data-stage="3">
+       <span class="num">3<br>단계</span>
+       <span class="tx"><span class="t">가짜 뜻풀이 찾기</span><span class="d">20문제 — 넷 중 뜻풀이가 잘못된 것<br>하나를 가려내기</span></span>
+      </button>
+      <button class="stage-btn" data-stage="4">
+       <span class="num">4<br>단계</span>
+       <span class="tx"><span class="t">원미동 골목 상점 대작전</span><span class="d">14일 — 가게 주인이 되어 어휘로 사건에<br>대응하고 매상을 올리기</span></span>
+      </button>
+     </div>
+    </div>
+   </div>
+  </div>
+
+  <div class="credit">
+   <span>제작 <b>보라라샘</b></span>
+   <span><b>전주서신중학교 교사</b></span>
+   <span><b>siaawase@gmail.com</b></span>
+   <span>만든 날짜 <b>2026. 8. 25.</b></span>
+  </div>
+
+  <div class="privacy">
+   <b>🔒 개인정보 보호 안내</b><br>
+   본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다.<br>
+   게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.
+  </div>
+ </div>
+</div>
+
+<!-- ================= 플레이 화면 ================= -->
+<div id="play" class="screen">
+ <div class="side">
+  <div class="lv"><b id="sideStage">1단계</b><span id="sideDesc">어휘 스프린트</span></div>
+  <button class="nav-btn" id="btnPrev">◀ 이전</button>
+  <button class="nav-btn" id="btnNext">다음 ▶</button>
+  <div class="keyhint"><b>1~4</b> 보기 선택<br><b>Enter</b> 다음<br><b>← →</b> 앞뒤 이동</div>
+  <button class="nav-btn end" id="btnEnd">게임 끝내기</button>
+ </div>
+ <div class="main">
+  <div class="topbar">
+   <div class="qno" id="qno">1 / 57</div>
+   <div class="bar"><i id="barFill"></i></div>
+   <div class="stat">
+    <div class="pill" id="pScore">0점</div>
+    <div class="pill combo" id="pCombo">연속 0</div>
+    <div class="pill sale" id="pSale" style="display:none">매상 0</div>
+   </div>
+  </div>
+  <div class="arena">
+   <div class="prompt" id="prompt"></div>
+   <div class="qbody" id="qbody"></div>
+   <div id="answers"></div>
+   <div class="fb" id="fb"></div>
+  </div>
+  <div class="sig">제작 · 보라라샘 / 2026. 8. 25.</div>
+ </div>
+</div>
+
+<!-- ================= 종료 화면 ================= -->
+<div id="end" class="screen">
+ <div class="ewrap">
+  <div class="ehead">
+   <img id="mascot2" alt="보라라샘">
+   <div>
+    <h2>학습을 마쳤어요!</h2>
+    <p id="endStage">1단계 · 어휘 스프린트</p>
+   </div>
+  </div>
+
+  <div class="ecols">
+   <div>
+    <div class="scoreline">
+     <div class="sbox"><div class="v" id="fScore">0</div><div class="l">점수</div></div>
+     <div class="sbox"><div class="v" id="fAcc">0%</div><div class="l">정답률</div></div>
+     <div class="sbox"><div class="v" id="fFirst">0</div><div class="l">한 번에 맞힘</div></div>
+     <div class="sbox"><div class="v" id="fTime">0분</div><div class="l">학습 시간</div></div>
+    </div>
+
+    <div class="box" style="background:#fff">
+     <div class="field">
+      <label>학생 이름 <i>*</i></label>
+      <input id="inName" type="text" maxlength="20" placeholder="이름을 입력하세요 (예: 김보라)">
+     </div>
+     <div class="metaline">
+      <div class="field"><label>날짜</label><input id="inDate" type="text" readonly></div>
+      <div class="field"><label>학습 시간</label><input id="inTime" type="text" readonly></div>
+     </div>
+     <div class="field">
+      <label>학습 소감 <i>*</i></label>
+      <textarea id="inMemo" maxlength="200" placeholder="오늘 배운 점이나 어려웠던 점을 적어 보세요."></textarea>
+     </div>
+     <div class="warn" id="warn">이름과 학습 소감을 모두 입력해야 저장할 수 있습니다.</div>
+     <div class="dlrow">
+      <button class="dlbtn" id="btnNote">오답노트 JPG 저장</button>
+      <button class="dlbtn alt" id="btnReport">학습 결과 분석 리포트 JPG</button>
+     </div>
+     <div class="privacy" style="margin-top:10px;text-align:left">
+      입력하신 이름과 소감은 서버에 저장되지 않으며, 리포트 이미지(JPG) 생성용으로만 쓰입니다.
+     </div>
+     <div class="againrow">
+      <button class="ghost" id="btnRetry">이 단계 다시 하기</button>
+      <button class="ghost" id="btnHome">단계 선택으로</button>
+     </div>
+    </div>
+   </div>
+
+   <div>
+    <div class="box" style="background:#fff">
+     <h3>분야별 정답률</h3>
+     <div class="catbars" id="catBars"></div>
+    </div>
+    <div class="box" style="background:#fff;margin-top:12px">
+     <h3>오답노트</h3>
+     <div class="wronglist" id="wrongList"></div>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<script>
+/* =========================================================
+   원미동 어휘 원정대
+   비상교육 중학 국어 2 (박현숙) 1단원 「함께 살아가는 즐거움」
+   01. 사회를 비추는 문학 — 양귀자 「일용할 양식」 어휘 학습지
+   제작 · 보라라샘 (전주서신중학교 교사) / 2026. 8. 25.
+   ========================================================= */
+const MADE_DATE = '2026. 8. 25.';
+
+/* ================= 학습 데이터 ================= */
+/* 비상교육 중학 국어 2 (박현숙) 1단원 「함께 살아가는 즐거움」
+   01. 사회를 비추는 문학 — 양귀자 「일용할 양식」 어휘 학습지 57개 */
+
+const CAT = {
+  jang: '장사·살림',
+  tae : '사람의 태도',
+  yet : '옛말·생활',
+  jeong:'정도·상태',
+  sahoe:'문학·사회'
+};
+
+const WORDS = [
+ {k:'양식',    d:'양식(樣式)',      m:'오랜 시간이 지나면서 자연히 정하여진 방식.', c:'sahoe'},
+ {k:'사회상',  d:'사회상(社會相)',  m:'사회의 양상이나 실태.', c:'sahoe'},
+ {k:'반영하다',d:'반영(反映)하다',  m:'다른 것에 영향을 받아 어떤 현상을 나타내다.', c:'sahoe'},
+ {k:'족하다',  d:'족(足)하다',      m:'모자람이 없다고 여겨 더 바라는 바가 없다.', n:'유의어 · 만족하다', c:'tae'},
+ {k:'변소',    d:'변소(便所)',      m:'대소변을 보도록 만들어 놓은 곳.', c:'yet'},
+ {k:'여간',    d:'여간(如干)',      m:'그 상태가 보통으로 보아 넘길 만한 것임을 나타내는 말.', n:'유의어 · 어지간히', c:'jeong'},
+ {k:'결사적',  d:'결사적(決死的)',  m:'죽기를 각오하고 있는 힘을 다할 것을 결심한 것.', n:'유의어 · 필사적', c:'tae'},
+ {k:'외상',    d:'외상',            m:'값은 나중에 치르기로 하고 물건을 사거나 파는 일.', c:'jang'},
+ {k:'악착스럽다',d:'악착(齷齪)스럽다',m:'매우 모질고 끈덕지게 일을 해 나가는 태도가 있다.', c:'tae'},
+ {k:'달음박질',d:'달음박질',        m:'급히 뛰어 달려감.', c:'yet'},
+ {k:'이왕지사',d:'이왕지사(已往之事)',m:'이미 지나간 일.', c:'jeong'},
+ {k:'일용하다',d:'일용(日用)하다',  m:'날마다 쓰다.', c:'jang'},
+ {k:'열악하다',d:'열악(劣惡)하다',  m:'품질이나 능력, 시설 등이 매우 떨어지고 나쁘다.', c:'jeong'},
+ {k:'일면식',  d:'일면식(一面識)',  m:'서로 한 번 만나 인사나 나눈 정도로 조금 앎.', c:'jeong'},
+ {k:'눈요기',  d:'눈요기(療飢)',    m:'눈으로 보기만 하면서 어느 정도 만족을 느끼는 일.', c:'yet'},
+ {k:'도약하다',d:'도약(跳躍)하다',  m:'더 높은 단계로 발전하다.', n:'유의어 · 뛰어오르다, 발전하다', c:'tae'},
+ {k:'상호',    d:'상호(商戶)',      m:'장사하는 집.', c:'jang'},
+ {k:'싸전',    d:'싸전(廛)',        m:'쌀과 그 밖의 곡식을 파는 가게.', c:'jang'},
+ {k:'야망',    d:'야망(野望)',      m:'크게 무엇을 이루어 보겠다는 희망.', c:'tae'},
+ {k:'품팔이',  d:'품팔이',          m:'품삯을 받고 남의 일을 해 주는 일. 또는 그런 사람.', c:'jang'},
+ {k:'내외',    d:'내외(內外)',      m:'남편과 아내를 아울러 이르는 말.', n:'유의어 · 부부', c:'yet'},
+ {k:'억척스럽다',d:'억척스럽다',    m:'어떤 어려움에도 굴하지 아니하고 몹시 모질고 끈덕지게 일을 해 나가는 태도가 있다.', c:'tae'},
+ {k:'노상',    d:'노상',            m:'언제나 변함없이 한 모양으로 줄곧.', c:'jeong'},
+ {k:'옹색하다',d:'옹색(壅塞)하다',  m:'형편이 넉넉하지 못하여 생활에 필요한 것이 없거나 부족하다.', c:'jang'},
+ {k:'여의다',  d:'여의다',          m:'딸을 시집보내다.', c:'yet'},
+ {k:'해거름',  d:'해거름',          m:'해가 서쪽으로 넘어가는 일. 또는 그런 때.', c:'yet'},
+ {k:'일견',    d:'일견(一見)',      m:'한 번 봄. 또는 언뜻 봄.', c:'jeong'},
+ {k:'매상',    d:'매상(賣上)',      m:'상품 등을 판 금액. 또는 그 돈의 총액.', c:'jang'},
+ {k:'부식',    d:'부식(副食)',      m:'주식에 곁들여 먹는 음식. 밥에 딸린 반찬 등을 이른다.', n:'반의어 · 주식', c:'yet'},
+ {k:'부리다',  d:'부리다',          m:'기계나 기구 등을 마음대로 조종하다.', c:'jang'},
+ {k:'구실',    d:'구실',            m:'자기가 마땅히 해야 할 맡은 바 책임.', c:'tae'},
+ {k:'취급하다',d:'취급(取扱)하다',  m:'물건이나 일 등을 대상으로 삼거나 처리하다.', c:'jang'},
+ {k:'망태기',  d:'망(網)태기',      m:'물건을 담아 들거나 어깨에 메고 다닐 수 있도록 만든 그릇.', c:'yet'},
+ {k:'석발기',  d:'석발기(石拔機)',  m:'정미한 쌀에 섞인 돌을 골라내는 기계.', c:'yet'},
+ {k:'분개하다',d:'분개(憤慨)하다',  m:'몹시 분하게 여기다.', c:'tae'},
+ {k:'십상',    d:'십상(十常)',      m:'열에 여덟이나 아홉 정도로 거의 예외가 없음.', c:'jeong'},
+ {k:'원성',    d:'원성(怨聲)',      m:'원망하는 소리.', c:'tae'},
+ {k:'대변자',  d:'대변자(代辯者)',  m:'어떤 사람이나 단체를 대신하여 의견이나 태도를 표하는 일을 맡은 사람.', c:'tae'},
+ {k:'기득권',  d:'기득권(旣得權)',  m:'특정한 자연인, 법인, 국가가 정당한 절차를 밟아 이미 차지한 권리.', c:'sahoe'},
+ {k:'밑천',    d:'밑천',            m:'어떤 일을 하는 데 바탕이 되는 돈이나 물건, 기술, 재주 등을 이르는 말.', c:'jang'},
+ {k:'내막',    d:'내막(內幕)',      m:'겉으로 드러나지 아니한 일의 속 내용.', n:'유의어 · 실상', c:'jeong'},
+ {k:'안주인',  d:'안주인(主人)',    m:'집안의 여자 주인.', c:'yet'},
+ {k:'잔돈푼',  d:'잔돈푼',          m:'얼마 안 되는 돈.', c:'jang'},
+ {k:'공방전',  d:'공방전(攻防戰)',  m:'서로 공격하고 방어하는 싸움.', c:'tae'},
+ {k:'이판사판',d:'이판사판',        m:'막다른 데 이르러 어찌할 수 없게 된 지경.', c:'tae'},
+ {k:'자부하다',d:'자부(自負)하다',  m:'자기 자신이나 자기와 관련된 것에 대하여 스스로 그 가치나 능력을 믿고 마음을 당당히 가지다.', n:'유의어 · 자신하다', c:'tae'},
+ {k:'즐비하다',d:'즐비(櫛比)하다',  m:'빗살처럼 줄지어 빽빽하게 늘어서 있다.', c:'jang'},
+ {k:'시세',    d:'시세(時勢)',      m:'일정한 시기의 물건값.', c:'jang'},
+ {k:'조성하다',d:'조성(造成)하다',  m:'무엇을 만들어서 이루다.', c:'jang'},
+ {k:'영세하다',d:'영세(零細)하다',  m:'살림이 보잘것없고 몹시 가난하다.', c:'jang'},
+ {k:'예사',    d:'예사(例事)',      m:'보통 있는 일.', n:'유의어 · 다반사', c:'jeong'},
+ {k:'작자',    d:'작자(作者)',      m:'나 아닌 다른 사람을 낮잡아 이르는 말.', c:'yet'},
+ {k:'쟁이다',  d:'쟁이다',          m:'물건을 차곡차곡 포개어 쌓아 두다.', c:'jang'},
+ {k:'묘책',    d:'묘책(妙策)',      m:'매우 교묘한 꾀.', c:'tae'},
+ {k:'산지',    d:'산지(産地)',      m:'생산되어 나오는 곳.', c:'jang'},
+ {k:'작당하다',d:'작당(作黨)하다',  m:'떼를 짓다. 또는 무리를 이루다.', c:'tae'},
+ {k:'방침',    d:'방침(方針)',      m:'앞으로 일을 치러 나갈 방향과 계획.', c:'tae'}
+];
+
+/* ── 2단계 · 문맥 빈칸 (30문항) ── */
+/* f = 문장에 실제로 들어가는 활용형 (빈칸 길이 계산용) */
+const CLOZE = [
+ {k:'밑천',    f:'밑천',     s:'그는 평생 모아 온 돈을 {} 삼아 골목 어귀에 조그만 가게를 열었다.'},
+ {k:'상호',    f:'상호',     s:'간판을 새로 달면서 가게 {}도 아예 바꾸어 버렸다.'},
+ {k:'싸전',    f:'싸전',     s:'골목 어귀 {}에서는 쌀과 잡곡을 되로 되어 팔았다.'},
+ {k:'외상',    f:'외상',     s:'주머니가 가벼운 동네 사람들은 김 반장 가게에서 {}으로 물건을 가져갔다.'},
+ {k:'매상',    f:'매상',     s:'앞집에 새 가게가 생기자 우리 집 {}이 절반으로 뚝 떨어졌다.'},
+ {k:'시세',    f:'시세',     s:'쌀 {}가 오르자 주인은 분필로 값을 다시 적었다.'},
+ {k:'품팔이',  f:'품팔이',   s:'아버지는 남의 집 일을 해 주는 {}로 여섯 식구를 먹여 살렸다.'},
+ {k:'영세하다',f:'영세한',   s:'골목의 가게들은 하나같이 {} 살림이라 하루 벌어 하루를 살았다.'},
+ {k:'즐비하다',f:'즐비하게', s:'시장 골목에는 크고 작은 가게들이 {} 늘어서 있었다.'},
+ {k:'쟁이다',  f:'쟁여',     s:'창고 한쪽에는 팔다 남은 쌀가마가 차곡차곡 {} 있었다.'},
+ {k:'산지',    f:'산지',     s:'이 고추는 {}에서 곧바로 떼 온 것이라 값이 훨씬 싸다.'},
+ {k:'취급하다',f:'취급했다', s:'그 가게는 쌀뿐 아니라 연탄과 소금까지 {}.'},
+ {k:'옹색하다',f:'옹색해서', s:'살림이 {} 아이들 학용품 값도 겨우겨우 마련했다.'},
+ {k:'잔돈푼',  f:'잔돈푼',   s:'그는 {}이나 벌자고 온종일 찬 바람 부는 골목에 서 있었다.'},
+ {k:'조성하다',f:'조성했다', s:'새로 들어선 가게가 손님들 사이에 묘한 분위기를 {}.'},
+ {k:'방침',    f:'방침',     s:'우리 가게도 값을 내리기로 {}을 정하고 종이에 크게 써 붙였다.'},
+ {k:'묘책',    f:'묘책',     s:'떠난 손님을 다시 끌어올 {}이 도무지 떠오르지 않았다.'},
+ {k:'작당하다',f:'작당하여', s:'가게 주인들이 밤중에 몰래 모여 {} 값을 함께 올리기로 했다.'},
+ {k:'공방전',  f:'공방전',   s:'두 가게 사이의 {}은 며칠이 지나도 끝날 줄을 몰랐다.'},
+ {k:'이판사판',f:'이판사판', s:'더는 물러설 데가 없자 그는 {}으로 쌀값을 반이나 내렸다.'},
+ {k:'기득권',  f:'기득권',   s:'먼저 자리를 잡은 가게들은 자기들의 {}을 놓지 않으려 했다.'},
+ {k:'원성',    f:'원성',     s:'값을 자꾸 올리자 동네 사람들의 {}이 자자했다.'},
+ {k:'분개하다',f:'분개했다', s:'함께 정한 약속을 혼자 어긴 것을 알고 그는 몹시 {}.'},
+ {k:'자부하다',f:'자부했다', s:'그는 이 골목에서 자기가 제일 정직한 장사꾼이라고 늘 {}.'},
+ {k:'악착스럽다',f:'악착스럽게',s:'어머니는 {} 새벽부터 밤까지 가게 문을 지켰다.'},
+ {k:'억척스럽다',f:'억척스러운',s:'그 아주머니는 어떤 어려움에도 굽히지 않는 {} 사람이었다.'},
+ {k:'여간',    f:'여간',     s:'골목 장사로 아이 넷을 키우는 일이 {} 힘든 게 아니었다.'},
+ {k:'십상',    f:'십상',     s:'그렇게 허둥지둥 나가면 물건을 놓고 오기 {}이다.'},
+ {k:'예사',    f:'예사',     s:'값을 깎아 달라고 조르는 손님은 이 골목에서 {}였다.'},
+ {k:'해거름',  f:'해거름',   s:'{}이 되어서야 겨우 가게 문을 닫고 집으로 향했다.'}
+];
+
+/* ── 3단계 · 가짜 뜻풀이 찾기 (20문항) ── */
+/* bad = 뜻풀이가 잘못된 항목의 번호(0부터), fix = 실제 뜻 */
+const IMPOSTER = [
+ {items:[{w:'십상',m:'열에 여덟이나 아홉 정도로 거의 예외가 없음.'},
+         {w:'예사',m:'보통 있는 일.'},
+         {w:'노상',m:'언제나 변함없이 한 모양으로 줄곧.'},
+         {w:'여간',m:'아주 많이. 대단히.'}], bad:3,
+  fix:'‘여간’은 그 상태가 보통으로 보아 넘길 만한 것임을 나타내는 말입니다. 주로 ‘여간 ~이 아니다’처럼 부정하는 말과 함께 쓰여 오히려 정도가 심함을 나타냅니다.'},
+ {items:[{w:'일견',m:'한 번 봄. 또는 언뜻 봄.'},
+         {w:'일면식',m:'서로 한 번 만나 인사나 나눈 정도로 조금 앎.'},
+         {w:'이왕지사',m:'이미 지나간 일.'},
+         {w:'내막',m:'겉으로 드러난 일의 결과.'}], bad:3,
+  fix:'‘내막’은 겉으로 드러나지 아니한 일의 속 내용을 뜻합니다. 드러난 것이 아니라 숨겨진 속사정이라는 점이 중요합니다.'},
+ {items:[{w:'싸전',m:'쌀과 그 밖의 곡식을 파는 가게.'},
+         {w:'상호',m:'장사하는 집.'},
+         {w:'산지',m:'생산되어 나오는 곳.'},
+         {w:'매상',m:'물건을 사들인 금액.'}], bad:3,
+  fix:'‘매상’은 상품 등을 판 금액, 또는 그 돈의 총액입니다. 사들인 것이 아니라 판 금액이라는 점에서 방향이 반대입니다.'},
+ {items:[{w:'밑천',m:'어떤 일을 하는 데 바탕이 되는 돈이나 물건, 기술, 재주.'},
+         {w:'시세',m:'일정한 시기의 물건값.'},
+         {w:'잔돈푼',m:'얼마 안 되는 돈.'},
+         {w:'외상',m:'값을 미리 치르고 물건을 나중에 받는 일.'}], bad:3,
+  fix:'‘외상’은 값은 나중에 치르기로 하고 물건을 먼저 사거나 파는 일입니다. 값을 치르는 시점이 물건보다 뒤라는 점이 핵심입니다.'},
+ {items:[{w:'악착스럽다',m:'매우 모질고 끈덕지게 일을 해 나가는 태도가 있다.'},
+         {w:'억척스럽다',m:'어떤 어려움에도 굴하지 않고 몹시 모질고 끈덕지게 일을 해 나가는 태도가 있다.'},
+         {w:'결사적',m:'죽기를 각오하고 있는 힘을 다할 것을 결심한 것.'},
+         {w:'족하다',m:'어떤 일을 감당하기에 힘이 모자라다.'}], bad:3,
+  fix:'‘족하다’는 모자람이 없다고 여겨 더 바라는 바가 없다는 뜻입니다. ‘만족하다’와 뜻이 통하며, 모자란다는 뜻과는 정반대입니다.'},
+ {items:[{w:'자부하다',m:'스스로 그 가치나 능력을 믿고 마음을 당당히 가지다.'},
+         {w:'분개하다',m:'몹시 분하게 여기다.'},
+         {w:'도약하다',m:'더 높은 단계로 발전하다.'},
+         {w:'야망',m:'남을 이기려고 드는 얄궂은 욕심.'}], bad:3,
+  fix:'‘야망’은 크게 무엇을 이루어 보겠다는 희망입니다. 남을 깎아내리려는 마음이 아니라, 크게 이루려는 포부에 가깝습니다.'},
+ {items:[{w:'작당하다',m:'떼를 짓다. 또는 무리를 이루다.'},
+         {w:'공방전',m:'서로 공격하고 방어하는 싸움.'},
+         {w:'이판사판',m:'막다른 데 이르러 어찌할 수 없게 된 지경.'},
+         {w:'대변자',m:'남이 한 말을 그대로 받아 적는 일을 맡은 사람.'}], bad:3,
+  fix:'‘대변자’는 어떤 사람이나 단체를 대신하여 의견이나 태도를 표하는 일을 맡은 사람입니다. 받아 적는 것이 아니라 대신 말해 주는 사람입니다.'},
+ {items:[{w:'묘책',m:'매우 교묘한 꾀.'},
+         {w:'방침',m:'앞으로 일을 치러 나갈 방향과 계획.'},
+         {w:'기득권',m:'정당한 절차를 밟아 이미 차지한 권리.'},
+         {w:'구실',m:'그럴듯하게 꾸며 대는 핑계.'}], bad:3,
+  fix:'이 단원에서 ‘구실’은 자기가 마땅히 해야 할 맡은 바 책임을 뜻합니다. ‘제구실을 하다’처럼 쓰이며, 핑계라는 뜻의 ‘구실’과는 다른 낱말입니다.'},
+ {items:[{w:'변소',m:'대소변을 보도록 만들어 놓은 곳.'},
+         {w:'망태기',m:'물건을 담아 들거나 어깨에 메고 다닐 수 있도록 만든 그릇.'},
+         {w:'석발기',m:'정미한 쌀에 섞인 돌을 골라내는 기계.'},
+         {w:'달음박질',m:'이리저리 천천히 거닒.'}], bad:3,
+  fix:'‘달음박질’은 급히 뛰어 달려감을 뜻합니다. 천천히 걷는 것이 아니라 냅다 뛰는 모습입니다.'},
+ {items:[{w:'해거름',m:'해가 서쪽으로 넘어가는 일. 또는 그런 때.'},
+         {w:'눈요기',m:'눈으로 보기만 하면서 어느 정도 만족을 느끼는 일.'},
+         {w:'노상',m:'언제나 변함없이 한 모양으로 줄곧.'},
+         {w:'여의다',m:'딸을 데려와 며느리로 삼다.'}], bad:3,
+  fix:'‘여의다’는 딸을 시집보낸다는 뜻입니다. 데려오는 것이 아니라 내보내는 쪽입니다.'},
+ {items:[{w:'내외',m:'남편과 아내를 아울러 이르는 말.'},
+         {w:'안주인',m:'집안의 여자 주인.'},
+         {w:'작자',m:'나 아닌 다른 사람을 낮잡아 이르는 말.'},
+         {w:'품팔이',m:'삯을 주고 남에게 일을 시키는 일.'}], bad:3,
+  fix:'‘품팔이’는 품삯을 받고 남의 일을 해 주는 일, 또는 그런 사람입니다. 삯을 주는 쪽이 아니라 받는 쪽입니다.'},
+ {items:[{w:'부식',m:'주식에 곁들여 먹는 음식. 밥에 딸린 반찬 등.'},
+         {w:'일용하다',m:'날마다 쓰다.'},
+         {w:'부리다',m:'기계나 기구 등을 마음대로 조종하다.'},
+         {w:'쟁이다',m:'물건을 여기저기 흩어 놓다.'}], bad:3,
+  fix:'‘쟁이다’는 물건을 차곡차곡 포개어 쌓아 두는 것입니다. 흩어 놓는 것과는 정반대입니다.'},
+ {items:[{w:'옹색하다',m:'형편이 넉넉하지 못하여 생활에 필요한 것이 없거나 부족하다.'},
+         {w:'영세하다',m:'살림이 보잘것없고 몹시 가난하다.'},
+         {w:'열악하다',m:'품질이나 능력, 시설 등이 매우 떨어지고 나쁘다.'},
+         {w:'즐비하다',m:'드문드문 사이를 두고 떨어져 서 있다.'}], bad:3,
+  fix:'‘즐비하다’는 빗살처럼 줄지어 빽빽하게 늘어서 있다는 뜻입니다. 드문드문한 것이 아니라 빽빽한 모습입니다.'},
+ {items:[{w:'양식',m:'오랜 시간이 지나면서 자연히 정하여진 방식.'},
+         {w:'사회상',m:'사회의 양상이나 실태.'},
+         {w:'반영하다',m:'다른 것에 영향을 받아 어떤 현상을 나타내다.'},
+         {w:'조성하다',m:'이미 있는 것을 그대로 본떠 따라 하다.'}], bad:3,
+  fix:'‘조성하다’는 무엇을 만들어서 이룬다는 뜻입니다. 따라 하는 것이 아니라 새로 만들어 내는 쪽입니다.'},
+ {items:[{w:'원성',m:'원망하는 소리.'},
+         {w:'분개하다',m:'몹시 분하게 여기다.'},
+         {w:'이판사판',m:'막다른 데 이르러 어찌할 수 없게 된 지경.'},
+         {w:'공방전',m:'한쪽이 일방적으로 몰아붙이는 싸움.'}], bad:3,
+  fix:'‘공방전’은 서로 공격하고 방어하는 싸움입니다. 한쪽만 몰아붙이는 것이 아니라 주고받는 싸움입니다.'},
+ {items:[{w:'일면식',m:'서로 한 번 만나 인사나 나눈 정도로 조금 앎.'},
+         {w:'일견',m:'한 번 봄. 또는 언뜻 봄.'},
+         {w:'예사',m:'보통 있는 일.'},
+         {w:'십상',m:'열에 한둘 정도로 아주 드묾.'}], bad:3,
+  fix:'‘십상’은 열에 여덟이나 아홉 정도로 거의 예외가 없다는 뜻입니다. 드문 것이 아니라 거의 그렇다는 쪽입니다.'},
+ {items:[{w:'밑천',m:'어떤 일을 하는 데 바탕이 되는 돈이나 물건, 기술, 재주.'},
+         {w:'산지',m:'생산되어 나오는 곳.'},
+         {w:'상호',m:'장사하는 집.'},
+         {w:'싸전',m:'소금을 파는 가게.'}], bad:3,
+  fix:'‘싸전’은 쌀과 그 밖의 곡식을 파는 가게입니다. ‘싸’는 ‘쌀’에서 온 말입니다.'},
+ {items:[{w:'결사적',m:'죽기를 각오하고 있는 힘을 다할 것을 결심한 것.'},
+         {w:'야망',m:'크게 무엇을 이루어 보겠다는 희망.'},
+         {w:'도약하다',m:'더 높은 단계로 발전하다.'},
+         {w:'자부하다',m:'남이 저지른 잘못을 대신 떠맡다.'}], bad:3,
+  fix:'‘자부하다’는 스스로 그 가치나 능력을 믿고 마음을 당당히 가진다는 뜻입니다. ‘자신하다’와 뜻이 통합니다.'},
+ {items:[{w:'내막',m:'겉으로 드러나지 아니한 일의 속 내용.'},
+         {w:'구실',m:'자기가 마땅히 해야 할 맡은 바 책임.'},
+         {w:'대변자',m:'어떤 사람이나 단체를 대신하여 의견이나 태도를 표하는 사람.'},
+         {w:'이왕지사',m:'앞으로 닥쳐올 일.'}], bad:3,
+  fix:'‘이왕지사’는 이미 지나간 일을 뜻합니다. ‘이왕(已往)’이 ‘이미 지나감’이라는 뜻입니다.'},
+ {items:[{w:'잔돈푼',m:'얼마 안 되는 돈.'},
+         {w:'매상',m:'상품 등을 판 금액. 또는 그 돈의 총액.'},
+         {w:'시세',m:'일정한 시기의 물건값.'},
+         {w:'기득권',m:'앞으로 얻게 될 것으로 기대되는 권리.'}], bad:3,
+  fix:'‘기득권’은 정당한 절차를 밟아 이미 차지한 권리입니다. ‘기득(旣得)’이 ‘이미 얻음’이라는 뜻입니다.'}
+];
+
+/* ── 4단계 · 원미동 골목 상점 대작전 (14일) ── */
+const SHOP = [
+ {day:1, t:'드디어 원미동 골목 한 귀퉁이에 가게를 열었습니다.\n평생 모아 온 돈을 몽땅 털어 넣었습니다.',
+  q:'가게를 여는 데 바탕이 된 이 돈을 뭐라고 할까요?', a:'밑천', o:['매상','시세','외상'], sale:6,
+  ex:'‘밑천’은 어떤 일을 하는 데 바탕이 되는 돈이나 물건, 기술, 재주를 이릅니다.'},
+ {day:2, t:'간판을 달 차례입니다.\n페인트칠하는 아저씨가 가게 이름을 묻습니다.',
+  q:'장사하는 집, 곧 가게 이름을 가리키는 말은?', a:'상호', o:['산지','내막','양식'], sale:5,
+  ex:'‘상호(商戶)’는 장사하는 집을 이르는 말로, 가게 이름의 뜻으로도 쓰입니다.'},
+ {day:3, t:'우리 가게는 쌀과 잡곡을 되로 되어 팝니다.\n동네 어른들은 이런 가게를 옛말로 부릅니다.',
+  q:'쌀과 그 밖의 곡식을 파는 가게를 뭐라고 할까요?', a:'싸전', o:['망태기','석발기','변소'], sale:5,
+  ex:'‘싸전’은 쌀과 그 밖의 곡식을 파는 가게입니다. ‘싸’는 ‘쌀’에서 온 말입니다.'},
+ {day:4, t:'단골 아주머니가 쌀 한 말을 담아 놓고 말합니다.\n“오늘은 돈이 없으니 월급날 갚을게요.”',
+  q:'값은 나중에 치르기로 하고 물건을 사거나 파는 이 일은?', a:'외상', o:['잔돈푼','품팔이','부식'], sale:3,
+  ex:'‘외상’은 값은 나중에 치르기로 하고 물건을 사거나 파는 일입니다. 인심은 얻지만 당장 돈은 들어오지 않습니다.'},
+ {day:5, t:'도매상에서 연락이 왔습니다.\n“이번 주에 쌀값이 또 올랐습니다.”',
+  q:'이렇게 오르내리는, 일정한 시기의 물건값을 뭐라고 할까요?', a:'시세', o:['매상','밑천','산지'], sale:4,
+  ex:'‘시세(時勢)’는 일정한 시기의 물건값입니다. 때에 따라 달라진다는 점이 핵심입니다.'},
+ {day:6, t:'하루를 마치고 돈통을 열어 셈을 해 봅니다.\n오늘 판 물건값이 모두 얼마인지 적어 둡니다.',
+  q:'이렇게 상품을 판 금액의 총액을 뭐라고 할까요?', a:'매상', o:['시세','잔돈푼','기득권'], sale:6,
+  ex:'‘매상(賣上)’은 상품 등을 판 금액, 또는 그 돈의 총액입니다.'},
+ {day:7, t:'앞집에 새 가게가 문을 열었습니다.\n저쪽이 값을 내리면 이쪽도 내리고, 며칠째 서로 밀고 밀립니다.',
+  q:'서로 공격하고 방어하는 이 싸움을 뭐라고 할까요?', a:'공방전', o:['이판사판','원성','일면식'], sale:-4,
+  ex:'‘공방전(攻防戰)’은 서로 공격하고 방어하는 싸움입니다. 한쪽만 몰아붙이는 것이 아닙니다.'},
+ {day:8, t:'밤중에 골목 가게 주인들이 우리 집에 모였습니다.\n“다 같이 값을 도로 올립시다. 우리끼리 뭉치면 됩니다.”',
+  q:'이렇게 떼를 지어 무리를 이루는 일을 뭐라고 할까요?', a:'작당하다', o:['자부하다','도약하다','반영하다'], sale:2,
+  ex:'‘작당(作黨)하다’는 떼를 짓다, 무리를 이루다는 뜻입니다. 주로 좋지 않은 일을 꾸밀 때 씁니다.'},
+ {day:9, t:'값을 도로 올리자 동네 사람들이 수군거립니다.\n“짜고서 올린 것 아니냐”는 말이 골목에 돕니다.',
+  q:'이렇게 원망하는 소리를 뭐라고 할까요?', a:'원성', o:['눈요기','일견','예사'], sale:-5,
+  ex:'‘원성(怨聲)’은 원망하는 소리입니다. 값을 올려 당장 돈은 벌어도 인심은 잃습니다.'},
+ {day:10,t:'손님이 뚝 끊겼습니다.\n쌀은 쌓여 가는데 아이들 학용품 값도 겨우 마련합니다.',
+  q:'형편이 넉넉하지 못해 생활에 필요한 것이 부족한 이 상태는?', a:'옹색하다', o:['즐비하다','족하다','일용하다'], sale:-3,
+  ex:'‘옹색(壅塞)하다’는 형편이 넉넉하지 못하여 생활에 필요한 것이 없거나 부족하다는 뜻입니다.'},
+ {day:11,t:'더는 물러설 자리가 없습니다.\n“밑지더라도 값을 반으로 내리자. 이렇게 된 바에야….”',
+  q:'막다른 데 이르러 어찌할 수 없게 된 이 지경을 뭐라고 할까요?', a:'이판사판', o:['이왕지사','일면식','달음박질'], sale:3,
+  ex:'‘이판사판’은 막다른 데 이르러 어찌할 수 없게 된 지경을 뜻합니다.'},
+ {day:12,t:'값 내리기로는 오래 못 버팁니다.\n밤새 궁리한 끝에 아주 그럴듯한 꾀 하나가 떠올랐습니다.',
+  q:'매우 교묘한 이 꾀를 뭐라고 할까요?', a:'묘책', o:['구실','내막','방침'], sale:7,
+  ex:'‘묘책(妙策)’은 매우 교묘한 꾀입니다.'},
+ {day:13,t:'앞으로는 값싸움 대신 좋은 쌀만 팔기로 했습니다.\n종이에 크게 써서 벽에 붙여 둡니다.',
+  q:'앞으로 일을 치러 나갈 방향과 계획을 뭐라고 할까요?', a:'방침', o:['묘책','기득권','사회상'], sale:6,
+  ex:'‘방침(方針)’은 앞으로 일을 치러 나갈 방향과 계획입니다.'},
+ {day:14,t:'한 해가 지났습니다.\n작은 싸전이던 우리 가게가 골목에서 제일 큰 가게가 되었습니다.',
+  q:'이렇게 더 높은 단계로 발전하는 것을 뭐라고 할까요?', a:'도약하다', o:['영세하다','열악하다','취급하다'], sale:9,
+  ex:'‘도약(跳躍)하다’는 더 높은 단계로 발전한다는 뜻입니다. ‘뛰어오르다’와 뜻이 통합니다.'}
+];
+
+
+/* ================= 사운드 (WebAudio · 외부 파일 없음) ================= */
+let AC=null;
+function ac(){ if(!AC){ try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return AC; }
+function tone(f,t0,dur,type,vol){
+  const c=ac(); if(!c) return;
+  const o=c.createOscillator(), g=c.createGain();
+  o.type=type||'sine'; o.frequency.setValueAtTime(f,c.currentTime+t0);
+  g.gain.setValueAtTime(0.0001,c.currentTime+t0);
+  g.gain.exponentialRampToValueAtTime(vol||0.18,c.currentTime+t0+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001,c.currentTime+t0+dur);
+  o.connect(g); g.connect(c.destination);
+  o.start(c.currentTime+t0); o.stop(c.currentTime+t0+dur+0.05);
+}
+function sOK(){ tone(660,0,0.13,'sine',0.16); tone(880,0.1,0.2,'sine',0.15); }
+function sNG(){ tone(200,0,0.16,'square',0.1); tone(150,0.13,0.24,'square',0.09); }
+function sCombo(){ tone(784,0,0.1,'triangle',0.13); tone(988,0.08,0.1,'triangle',0.13); tone(1319,0.16,0.22,'triangle',0.12); }
+function sEnd(){ [523,659,784,1047].forEach((f,i)=>tone(f,i*0.13,0.3,'sine',0.14)); }
+
+/* ================= 유틸 ================= */
+const $=id=>document.getElementById(id);
+const WMAP={}; WORDS.forEach(w=>WMAP[w.k]=w);
+function shuffle(a){const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function len(s){return Array.from(s).length;}
+
+/* 같은 분야에서 오답 보기 3개 뽑기 (모자라면 전체에서 채움) */
+function distract(k,n){
+  const me=WMAP[k], same=WORDS.filter(w=>w.k!==k && w.c===me.c);
+  let pick=shuffle(same).slice(0,n);
+  if(pick.length<n){
+    const rest=shuffle(WORDS.filter(w=>w.k!==k && pick.indexOf(w)<0));
+    pick=pick.concat(rest.slice(0,n-pick.length));
+  }
+  return pick.map(w=>w.k);
+}
+
+/* ================= 단계별 문항 생성 ================= */
+const STAGE_INFO={
+ 1:{label:'1단계',desc:'어휘 스프린트',full:'1단계 · 어휘 스프린트 (뜻 → 낱말)',file:'1단계_어휘스프린트'},
+ 2:{label:'2단계',desc:'문맥 빈칸 채우기',full:'2단계 · 문맥 빈칸 채우기',file:'2단계_문맥빈칸'},
+ 3:{label:'3단계',desc:'가짜 뜻풀이 찾기',full:'3단계 · 가짜 뜻풀이 찾기',file:'3단계_가짜뜻풀이'},
+ 4:{label:'4단계',desc:'원미동 골목 상점',full:'4단계 · 원미동 골목 상점 대작전',file:'4단계_상점대작전'},
+ 0:{label:'전체 도전',desc:'1 → 4단계',full:'전체 도전 · 1단계 ~ 4단계',file:'전체도전_1-4단계'}
+};
+
+function buildStage1(){
+  return shuffle(WORDS).map(w=>{
+    const opts=shuffle([w.k].concat(distract(w.k,3)));
+    return {stage:1,type:'word',key:w.k,cat:w.c,
+      prompt:'뜻풀이를 보고 알맞은 낱말을 고르세요.',
+      body:'<span style="font-size:.82em;color:#8a7663">뜻</span><br>'+esc(w.m),
+      opts:opts, ans:w.k,
+      hint:'낱말의 한자나 첫 글자를 떠올려 보세요. 힌트: 「'+w.d+'」에서 시작하는 낱말입니다.',
+      ex:'「'+w.d+'」 '+w.m+(w.n?'  ('+w.n+')':'')};
+  });
+}
+function buildStage2(){
+  return shuffle(CLOZE).map(c=>{
+    const w=WMAP[c.k];
+    const opts=shuffle([c.k].concat(distract(c.k,3)));
+    const blank='<span class="blank">'+'○'.repeat(len(c.f))+'</span>';
+    return {stage:2,type:'word',key:c.k,cat:w.c,
+      prompt:'빈칸에 들어갈 낱말을 고르세요. (○ 하나가 한 글자입니다)',
+      body:esc(c.s).replace('{}',blank),
+      opts:opts, ans:c.k,
+      hint:'빈칸의 글자 수를 세어 보세요. '+len(c.f)+'글자입니다. 앞뒤 문장이 어떤 상황인지도 살펴보세요.',
+      ex:'「'+w.d+'」 '+w.m+'\n→ '+c.s.replace('{}','<b>'+c.f+'</b>')};
+  });
+}
+function buildStage3(){
+  return shuffle(IMPOSTER).map(q=>{
+    const bw=q.items[q.bad].w, w=WMAP[bw];
+    return {stage:3,type:'imposter',key:bw,cat:w.c,
+      prompt:'네 낱말 가운데 뜻풀이가 잘못된 것 하나를 고르세요.',
+      body:'', items:q.items, ans:q.bad,
+      hint:'낱말에 쓰인 한자나 이미 아는 비슷한 말을 떠올려 보세요. 뜻의 방향이 거꾸로 된 것이 하나 숨어 있습니다.',
+      ex:'「'+w.d+'」 '+w.m+'\n'+q.fix};
+  });
+}
+function buildStage4(){
+  return SHOP.map(s=>{
+    const w=WMAP[s.a];
+    const opts=shuffle([s.a].concat(s.o));
+    return {stage:4,type:'word',key:s.a,cat:w.c,sale:s.sale,
+      prompt:'원미동 골목 '+s.day+'일째 — 알맞은 낱말로 대응하세요.',
+      body:'<span class="day">'+s.day+'일째</span><div class="story">'+esc(s.t)+'</div><div class="ask">'+esc(s.q)+'</div>',
+      opts:opts, ans:s.a,
+      hint:'상황을 한 문장으로 줄여 보세요. 그 문장에 딱 들어맞는 낱말이 보기 가운데 있습니다.',
+      ex:s.ex};
+  });
+}
+const BUILD={1:buildStage1,2:buildStage2,3:buildStage3,4:buildStage4};
+
+/* ================= 상태 ================= */
+let S={mode:1,stage:1,qs:[],i:0,score:0,combo:0,best:0,sale:0,t0:0,elapsed:0,ranges:{},reordered:{}};
+
+$('mascot2').src=$('mascot1').src;
+function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on')); $(id).classList.add('on'); }
+
+function newQ(q){ return Object.assign({},q,{done:false,tries:0,wrong:[],correct:false,firstTry:false,skipped:false,gained:0}); }
+
+function startMode(mode){
+  ac();
+  S.mode=mode; S.i=0; S.score=0; S.combo=0; S.best=0; S.sale=0; S.t0=Date.now();
+  S.ranges={}; S.reordered={};
+  let list=[];
+  if(mode===0){
+    [1,2,3,4].forEach(n=>{ const part=BUILD[n]().map(newQ); S.ranges[n]=[list.length,list.length+part.length]; list=list.concat(part); });
+  }else{
+    list=BUILD[mode]().map(newQ); S.ranges[mode]=[0,list.length];
+  }
+  S.qs=list; S.stage=S.qs[0].stage;
+  $('inMemo').value=''; $('inName').value=''; $('warn').classList.remove('on');
+  show('play'); renderQ();
+}
+
+/* 1단계에서 틀린 낱말을 2·3단계 앞쪽으로 재배치 (전체 도전 전용) */
+function reorderStage(n){
+  if(S.mode!==0 || (n!==2 && n!==3) || S.reordered[n] || !S.ranges[n]) return;
+  S.reordered[n]=true;
+  const missed={};
+  S.qs.forEach(q=>{ if(q.stage===1 && q.done && !q.correct) missed[q.key]=1; });
+  if(!Object.keys(missed).length) return;
+  const [a,b]=S.ranges[n];
+  const slice=S.qs.slice(a,b);
+  const hit=slice.filter(q=>missed[q.key]), rest=slice.filter(q=>!missed[q.key]);
+  const merged=hit.concat(rest);
+  for(let i=0;i<merged.length;i++) S.qs[a+i]=merged[i];
+}
+
+/* ================= 화면 그리기 ================= */
+function renderQ(){
+  const q=S.qs[S.i];
+  S.stage=q.stage;
+  const info=STAGE_INFO[q.stage];
+  $('sideStage').textContent=info.label;
+  $('sideDesc').textContent=info.desc;
+  $('qno').textContent=(S.i+1)+' / '+S.qs.length;
+  $('barFill').style.width=(S.i/S.qs.length*100)+'%';
+  $('pScore').textContent=S.score+'점';
+  $('pCombo').textContent='연속 '+S.combo;
+  $('pSale').style.display = (q.stage===4?'block':'none');
+  $('pSale').textContent='매상 '+S.sale;
+  $('prompt').textContent=q.prompt;
+  $('qbody').innerHTML=q.body;
+  $('qbody').style.display = q.body?'block':'none';
+
+  const box=$('answers');
+  if(q.type==='imposter'){
+    box.className='items';
+    box.innerHTML=q.items.map((it,i)=>
+      '<button class="item" data-i="'+i+'"><span class="knum">'+(i+1)+'</span>'+
+      '<span class="iw">'+esc(it.w)+'</span><span class="im">'+esc(it.m)+'</span></button>').join('');
+  }else{
+    box.className='opts';
+    box.innerHTML=q.opts.map((o,i)=>
+      '<button class="opt" data-i="'+i+'"><span class="knum">'+(i+1)+'</span><span>'+esc(o)+'</span></button>').join('');
+  }
+  Array.prototype.forEach.call(box.children,el=>{
+    el.addEventListener('click',()=>pick(parseInt(el.dataset.i,10)));
+  });
+
+  $('btnPrev').disabled=(S.i===0);
+  $('fb').innerHTML='';
+  if(q.done) paintDone(q);
+  else if(q.tries>0) paintHint(q);
+}
+
+function isRight(q,idx){ return q.type==='imposter' ? idx===q.ans : q.opts[idx]===q.ans; }
+function ansIdx(q){ return q.type==='imposter' ? q.ans : q.opts.indexOf(q.ans); }
+function labelOf(q,idx){ return q.type==='imposter' ? q.items[idx].w : q.opts[idx]; }
+
+const NEXT_BTN='<button class="nextbtn" onclick="goNext()">다음 문제 ▶</button>';
+
+function paintDone(q){
+  const box=$('answers'), kids=box.children, ai=ansIdx(q);
+  Array.prototype.forEach.call(kids,(el,i)=>{
+    el.disabled=true;
+    if(i===ai){
+      if(q.type==='imposter'){
+        el.classList.add('fake');
+        const im=el.querySelector('.im');
+        if(im && !im.querySelector('.fx'))
+          im.innerHTML='<span class="bad">'+im.innerHTML+'</span>'+
+            '<span class="fx">→ 바른 뜻 : '+esc(WMAP[q.key].m)+'</span>';
+      } else el.classList.add('ok');
+    }
+    else if(q.wrong.indexOf(i)>=0) el.classList.add('ng');
+    else el.classList.add('dim');
+  });
+  const fb=$('fb');
+  const exHtml=esc(q.ex).replace(/\n/g,'<br>').replace(/&lt;b&gt;/g,'<b>').replace(/&lt;\/b&gt;/g,'</b>');
+  if(q.correct){
+    const okHead = q.type==='imposter'
+      ? '정답입니다! <span class="ans">'+esc(labelOf(q,ai))+'</span> 의 뜻풀이가 가짜였어요.'
+      : '정답입니다! <span class="ans">'+esc(labelOf(q,ai))+'</span>';
+    fb.innerHTML='<div class="msg ok">'+okHead+'<br>'+exHtml+
+      '<span class="nextkey">Enter · Spacebar · → 를 누르면 다음 문제로 넘어갑니다.</span>'+NEXT_BTN+'</div>';
+  }else if(q.skipped){
+    const tail = q.type==='imposter' ? ' 의 뜻풀이가 가짜였습니다.' : ' 입니다.';
+    fb.innerHTML='<div class="msg ng">답하지 않고 넘어간 문제입니다. 정답은 <span class="ans">'+esc(labelOf(q,ai))+'</span>'+tail+'<br>'+exHtml+NEXT_BTN+'</div>';
+  }else{
+    const tail = q.type==='imposter' ? ' 의 뜻풀이가 가짜였습니다.' : ' 입니다.';
+    fb.innerHTML='<div class="msg ng">아쉬워요. 정답은 <span class="ans">'+esc(labelOf(q,ai))+'</span>'+tail+'<br>'+exHtml+NEXT_BTN+'</div>';
+  }
+}
+function paintHint(q){
+  const kids=$('answers').children;
+  q.wrong.forEach(i=>{ if(kids[i]) kids[i].classList.add('ng'); });
+  const left=3-q.tries;
+  const more=q.tries>=2?' 빨갛게 표시된 보기는 정답이 아니에요. 남은 보기 중에서 골라 보세요.':'';
+  $('fb').innerHTML='<div class="msg hint"><b>힌트 '+q.tries+'</b>'+esc(q.hint)+more+
+    '<br><span style="font-size:12.5px;color:#a9832a">다시 고를 수 있어요 — 남은 기회 '+left+'번'+(left===1?' (마지막)':'')+'</span></div>';
+}
+
+function pick(idx){
+  const q=S.qs[S.i];
+  if(q.done) return;
+  q.tries++;
+  if(isRight(q,idx)){
+    q.done=true; q.correct=true; q.firstTry=(q.tries===1);
+    let bonus=0;
+    if(q.tries===1){
+      S.combo++; if(S.combo>S.best) S.best=S.combo;
+      bonus=Math.min(S.combo-1,5)*10;
+      q.gained=100+bonus; S.score+=q.gained;
+      if(bonus>0) sCombo(); else sOK();
+    }else{
+      S.combo=0; q.gained=(q.tries===2?50:25); S.score+=q.gained; sOK();
+    }
+    if(q.stage===4 && q.sale) S.sale+=q.sale;
+    renderQ();
+    if(bonus>0){
+      const m=document.querySelector('.msg.ok');
+      if(m) m.insertAdjacentHTML('afterbegin','<div style="font-size:12.5px;color:#a5711d;font-weight:700;margin-bottom:2px">🔥 '+S.combo+'연속! 콤보 보너스 +'+bonus+'점</div>');
+    }
+    return;
+  }
+  if(q.wrong.indexOf(idx)<0) q.wrong.push(idx);
+  S.combo=0; S.score=Math.max(0,S.score-20);
+  if(q.stage===4) S.sale=Math.max(0,S.sale-2);
+  sNG();
+  $('pScore').textContent=S.score+'점'; $('pCombo').textContent='연속 0';
+  if(q.stage===4) $('pSale').textContent='매상 '+S.sale;
+  if(q.tries>=3){ q.done=true; q.correct=false; renderQ(); }
+  else{
+    const el=$('answers').children[idx];
+    if(el){ el.classList.remove('ng'); void el.offsetWidth; el.classList.add('ng'); }
+    paintHint(q);
+  }
+}
+
+window.goNext=goNext;
+function goNext(){
+  const q=S.qs[S.i];
+  if(!q.done){ q.done=true; q.correct=false; q.skipped=(q.tries===0); S.combo=0; }
+  if(S.i>=S.qs.length-1){ finish(); return; }
+  S.i++;
+  const nx=S.qs[S.i];
+  if(nx.stage!==q.stage) reorderStage(nx.stage);
+  renderQ();
+}
+function goPrev(){ if(S.i>0){ S.i--; renderQ(); } }
+
+$('btnAll').addEventListener('click',()=>startMode(0));
+document.querySelectorAll('.stage-btn').forEach(b=>b.addEventListener('click',()=>startMode(parseInt(b.dataset.stage,10))));
+$('btnNext').addEventListener('click',goNext);
+$('btnPrev').addEventListener('click',goPrev);
+$('btnEnd').addEventListener('click',()=>{ if(confirm('게임을 끝내고 결과 화면으로 이동할까요?')) finish(); });
+
+document.addEventListener('keydown',e=>{
+  if(!$('play').classList.contains('on')) return;
+  const q=S.qs[S.i];
+  const n=(q.type==='imposter'?q.items.length:q.opts.length);
+  if(e.key>='1'&&e.key<='9'){
+    const idx=parseInt(e.key,10)-1;
+    if(idx<n && !q.done) pick(idx);
+    return;
+  }
+  if(e.key==='Enter'||e.key===' '||e.key==='Spacebar'||e.key==='ArrowRight'){ e.preventDefault(); goNext(); }
+  else if(e.key==='ArrowLeft'){ e.preventDefault(); goPrev(); }
+});
+
+/* ================= 종료 ================= */
+function pad(n){ return n<10?'0'+n:''+n; }
+function fmtTime(ms){ const s=Math.max(0,Math.round(ms/1000)); return Math.floor(s/60)+'분 '+pad(s%60)+'초'; }
+function todayStr(){ const d=new Date(); return d.getFullYear()+'. '+(d.getMonth()+1)+'. '+d.getDate()+'.'; }
+function todayFile(){ const d=new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function stageTag(){ return STAGE_INFO[S.mode]; }
+
+function catStats(){
+  const map={},out=[];
+  S.qs.forEach(q=>{ if(!q.done) return; if(!map[q.cat]){ map[q.cat]={cat:q.cat,t:0,c:0}; out.push(map[q.cat]); } map[q.cat].t++; if(q.correct) map[q.cat].c++; });
+  out.forEach(c=>c.r=c.t?c.c/c.t:0);
+  return out.sort((a,b)=>b.r-a.r);
+}
+
+function finish(){
+  S.elapsed=Date.now()-S.t0;
+  S.qs.forEach(q=>{ if(!q.done){ q.done=true; q.correct=false; q.skipped=(q.tries===0); } });
+  sEnd();
+  const total=S.qs.length, right=S.qs.filter(q=>q.correct).length, first=S.qs.filter(q=>q.correct&&q.firstTry).length;
+  $('fScore').textContent=S.score;
+  $('fAcc').textContent=Math.round(right/total*100)+'%';
+  $('fFirst').textContent=first+' / '+total;
+  $('fTime').textContent=fmtTime(S.elapsed);
+  $('endStage').textContent=stageTag().full;
+  $('inDate').value=todayStr();
+  $('inTime').value=fmtTime(S.elapsed);
+
+  const cb=$('catBars'); cb.innerHTML='';
+  catStats().forEach(c=>{
+    const pct=Math.round(c.r*100);
+    const col=c.r>=0.8?'#1f8b52':c.r>=0.5?'#c1912e':'#cf4340';
+    cb.insertAdjacentHTML('beforeend','<div class="cb"><span class="cbn">'+CAT[c.cat]+'</span>'+
+      '<span class="cbt"><i style="width:'+Math.max(3,pct)+'%;background:'+col+'"></i></span>'+
+      '<span class="cbv">'+pct+'% ('+c.c+'/'+c.t+')</span></div>');
+  });
+
+  const wl=$('wrongList'); wl.innerHTML='';
+  const wrongs=S.qs.filter(q=>!q.correct);
+  if(!wrongs.length){ wl.innerHTML='<div class="perfect">🎉 틀린 문항이 하나도 없어요! 어휘를 완벽하게 익혔습니다.</div>'; }
+  else wrongs.forEach(q=>{
+    const ai=ansIdx(q);
+    const mine=q.skipped?'답하지 않음':'내 답 <s>'+q.wrong.map(i=>esc(labelOf(q,i))).join(', ')+'</s>';
+    const exHtml=esc(q.ex).replace(/\n/g,'<br>').replace(/&lt;b&gt;/g,'<b>').replace(/&lt;\/b&gt;/g,'</b>');
+    wl.insertAdjacentHTML('beforeend',
+      '<div class="witem'+(q.skipped?' skip':'')+'">'+
+      '<span class="wstg">'+STAGE_INFO[q.stage].label+'</span>'+
+      '<span class="wq">'+esc(WMAP[q.key]?WMAP[q.key].d:q.key)+'</span>'+
+      '<span class="wtag">'+mine+' → 정답 <b>'+esc(labelOf(q,ai))+'</b></span>'+
+      '<div class="wex">'+exHtml+'</div></div>');
+  });
+  show('end');
+}
+$('btnRetry').addEventListener('click',()=>startMode(S.mode));
+$('btnHome').addEventListener('click',()=>show('start'));
+
+/* ================= JPG 저장 (canvas · 시스템 폰트 · 동기식 toDataURL) ================= */
+const SYSFONT="'Malgun Gothic','맑은 고딕','Apple SD Gothic Neo','Noto Sans KR',sans-serif";
+function F(size,weight){ return (weight?weight+' ':'')+size+"px "+SYSFONT; }
+function plain(s){ return String(s).replace(/<[^>]*>/g,''); }
+function wrap(ctx,text,maxW){
+  const out=[]; let line='';
+  for(const chr of text){
+    if(chr==='\n'){ out.push(line); line=''; continue; }
+    if(ctx.measureText(line+chr).width>maxW){ out.push(line); line=chr; }
+    else line+=chr;
+  }
+  out.push(line); return out;
+}
+function checkInput(){
+  const n=$('inName').value.trim(), m=$('inMemo').value.trim();
+  if(!n||!m){ $('warn').classList.add('on'); (!n?$('inName'):$('inMemo')).focus(); return null; }
+  $('warn').classList.remove('on'); return {name:n,memo:m};
+}
+function download(canvas,fname,usedH){
+  if(usedH && usedH<canvas.height){
+    const t=document.createElement('canvas'); t.width=canvas.width; t.height=Math.round(usedH);
+    const tx=t.getContext('2d'); tx.fillStyle='#fcf7ef'; tx.fillRect(0,0,t.width,t.height);
+    tx.drawImage(canvas,0,0); canvas=t;
+  }
+  const url=canvas.toDataURL('image/jpeg',0.92);
+  const bin=atob(url.split(',')[1]);
+  const buf=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) buf[i]=bin.charCodeAt(i);
+  const blob=new Blob([buf],{type:'image/jpeg'});
+  const href=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=href; a.download=fname;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(href),4000);
+}
+function headerBand(ctx,W,title,sub){
+  ctx.fillStyle='#3b2f26'; ctx.fillRect(0,0,W,104);
+  ctx.fillStyle='#c0562e'; ctx.fillRect(0,104,W,6);
+  ctx.fillStyle='#fff'; ctx.font=F(29,'bold'); ctx.textBaseline='alphabetic';
+  ctx.fillText(title,44,50);
+  ctx.fillStyle='#e2cdb9'; ctx.font=F(17);
+  ctx.fillText(sub,44,84);
+}
+function footer(ctx,W,y){
+  ctx.fillStyle='#907d69'; ctx.font=F(14);
+  ctx.fillText('제작 · 보라라샘 / 전주서신중학교 교사 / siaawase@gmail.com / '+MADE_DATE,44,y);
+}
+function metaRow(ctx,y,info,W){
+  ctx.fillStyle='#f3ead9'; ctx.fillRect(44,y,W-88,54);
+  ctx.strokeStyle='#e2d4c0'; ctx.lineWidth=1.5; ctx.strokeRect(44,y,W-88,54);
+  ctx.font=F(17); ctx.fillStyle='#4d4136';
+  const acc=Math.round(S.qs.filter(q=>q.correct).length/S.qs.length*100);
+  ctx.fillText('이름  '+info.name+'      날짜  '+todayStr()+'      학습 시간  '+fmtTime(S.elapsed)+
+               '      점수  '+S.score+'점      정답률  '+acc+'%',66,y+34);
+}
+function memoBox(ctx,y,memo,W){
+  ctx.fillStyle='#fffdf6'; ctx.strokeStyle='#eccdb9'; ctx.lineWidth=2;
+  ctx.font=F(17);
+  const lines=wrap(ctx,memo,W-140);
+  const h=42+lines.length*27;
+  ctx.fillRect(44,y,W-88,h); ctx.strokeRect(44,y,W-88,h);
+  ctx.fillStyle='#a5711d'; ctx.font=F(15,'bold'); ctx.fillText('학습 소감',66,y+26);
+  ctx.fillStyle='#4a4033'; ctx.font=F(17);
+  lines.forEach((l,i)=>ctx.fillText(l,66,y+52+i*27));
+  return y+h;
+}
+
+$('btnNote').addEventListener('click',()=>{
+  const info=checkInput(); if(!info) return;
+  const W=1020, wrongs=S.qs.filter(q=>!q.correct);
+  const cv=document.createElement('canvas'); const ctx=cv.getContext('2d');
+  ctx.font=F(17);
+  const blocks=wrongs.map(q=>{
+    const ai=ansIdx(q);
+    const head=(q.skipped?'답하지 않음':'내 답 '+q.wrong.map(i=>labelOf(q,i)).join(', '))+'  →  정답 '+labelOf(q,ai);
+    return {q,head,lines:wrap(ctx,plain(q.ex),W-190)};
+  });
+  let bodyH=0; blocks.forEach(b=>bodyH+=70+b.lines.length*26+16);
+  if(!wrongs.length) bodyH=110;
+  const memoLines=wrap(ctx,info.memo,W-140).length;
+  const H=110+30+54+30+42+bodyH+24+(42+memoLines*27)+70;
+  cv.width=W; cv.height=H;
+  ctx.fillStyle='#fcf7ef'; ctx.fillRect(0,0,W,H);
+  headerBand(ctx,W,'원미동 어휘 원정대 — 오답노트',stageTag().full);
+  let y=140; metaRow(ctx,y,info,W); y+=54+30;
+  ctx.fillStyle='#3b2f26'; ctx.font=F(20,'bold'); ctx.fillText('틀리거나 넘어간 문항 ('+wrongs.length+'개)',44,y+8); y+=42;
+  if(!wrongs.length){
+    ctx.fillStyle='#e9f8ef'; ctx.strokeStyle='#a9dcbf'; ctx.lineWidth=2;
+    ctx.fillRect(44,y,W-88,84); ctx.strokeRect(44,y,W-88,84);
+    ctx.fillStyle='#166b40'; ctx.font=F(22,'bold');
+    ctx.fillText('틀린 문항이 하나도 없습니다. 아주 훌륭해요!',80,y+50);
+    y+=84+24;
+  }else{
+    blocks.forEach(b=>{
+      const h=70+b.lines.length*26;
+      ctx.fillStyle='#ffffff'; ctx.fillRect(44,y,W-88,h);
+      ctx.strokeStyle='#e6dbc8'; ctx.lineWidth=1.5; ctx.strokeRect(44,y,W-88,h);
+      ctx.fillStyle=b.q.skipped?'#bda15f':'#cf4340'; ctx.fillRect(44,y,7,h);
+      ctx.fillStyle='#8a7663'; ctx.font=F(13,'bold');
+      ctx.fillText(STAGE_INFO[b.q.stage].label,68,y+28);
+      ctx.fillStyle='#3b2f26'; ctx.font=F(22,'bold');
+      ctx.fillText(WMAP[b.q.key]?WMAP[b.q.key].d:b.q.key,138,y+30);
+      ctx.font=F(16); ctx.fillStyle='#7b6b5b';
+      ctx.fillText(b.head,68,y+56);
+      ctx.fillStyle='#544738'; ctx.font=F(17);
+      b.lines.forEach((l,i)=>ctx.fillText(l,68,y+82+i*26));
+      y+=h+16;
+    });
+    y+=8;
+  }
+  y=memoBox(ctx,y,info.memo,W)+40;
+  footer(ctx,W,y);
+  download(cv,'원미동어휘원정대_'+stageTag().file+'_오답노트_'+info.name+'_'+todayFile()+'.jpg',y+22);
+});
+
+$('btnReport').addEventListener('click',()=>{
+  const info=checkInput(); if(!info) return;
+  const W=1020, cats=catStats();
+  const good=cats.filter(c=>c.r>=0.8), weak=cats.filter(c=>c.r<0.8).slice().reverse();
+  const cv=document.createElement('canvas'); const ctx=cv.getContext('2d');
+  ctx.font=F(17);
+  const memoLines=wrap(ctx,info.memo,W-140).length;
+  const chartH=cats.length*54+30;
+  const gTxt=good.length?good.map(c=>CAT[c.cat]).join(' , '):'아직 없어요. 조금만 더 연습해 볼까요?';
+  const wTxt=weak.length?weak.map(c=>CAT[c.cat]).join(' , '):'없습니다. 모든 분야를 잘 이해했어요!';
+  const gLines=wrap(ctx,gTxt,W-160).length, wLines=wrap(ctx,wTxt,W-160).length;
+  const H=110+30+54+34+42+chartH+34+(54+gLines*26)+16+(54+wLines*26)+30+(42+memoLines*27)+70;
+  cv.width=W; cv.height=H;
+  ctx.fillStyle='#fcf7ef'; ctx.fillRect(0,0,W,H);
+  headerBand(ctx,W,'원미동 어휘 원정대 — 학습 결과 분석 리포트',stageTag().full);
+  let y=140; metaRow(ctx,y,info,W); y+=54+34;
+
+  ctx.fillStyle='#3b2f26'; ctx.font=F(20,'bold'); ctx.fillText('분야별 정답률',44,y+8); y+=42;
+  const bx=210, bw=W-bx-130;
+  cats.forEach(c=>{
+    ctx.fillStyle='#4d4136'; ctx.font=F(17); ctx.textAlign='right';
+    ctx.fillText(CAT[c.cat],bx-18,y+26); ctx.textAlign='left';
+    ctx.fillStyle='#eee2cf'; ctx.fillRect(bx,y+8,bw,26);
+    const col=c.r>=0.8?'#1f8b52':c.r>=0.5?'#c1912e':'#cf4340';
+    ctx.fillStyle=col; ctx.fillRect(bx,y+8,Math.max(3,bw*c.r),26);
+    ctx.fillStyle='#4d4136'; ctx.font=F(16,'bold');
+    ctx.fillText(Math.round(c.r*100)+'%  ('+c.c+'/'+c.t+')',bx+bw+12,y+28);
+    y+=54;
+  });
+  y+=34;
+  function panel(title,titleColor,bg,border,text){
+    const lines=wrap(ctx,text,W-160);
+    const h=54+lines.length*26;
+    ctx.fillStyle=bg; ctx.fillRect(44,y,W-88,h);
+    ctx.strokeStyle=border; ctx.lineWidth=2; ctx.strokeRect(44,y,W-88,h);
+    ctx.fillStyle=titleColor; ctx.font=F(17,'bold'); ctx.fillText(title,68,y+30);
+    ctx.fillStyle='#4d4136'; ctx.font=F(18);
+    lines.forEach((l,i)=>ctx.fillText(l,68,y+58+i*26));
+    y+=h+16;
+  }
+  panel('잘하는 분야','#166b40','#eefaf2','#a9dcbf',gTxt);
+  panel('보완이 필요한 분야','#9c322f','#fdeeed','#f0b6b4',wTxt);
+  y+=14;
+  y=memoBox(ctx,y,info.memo,W)+40;
+  footer(ctx,W,y);
+  download(cv,'원미동어휘원정대_'+stageTag().file+'_학습결과분석리포트_'+info.name+'_'+todayFile()+'.jpg',y+22);
+});
+</script>
+</body>
+</html>
