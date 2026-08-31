@@ -336,11 +336,35 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
    <span>만든 날짜 <b>2026. 8. 25.</b></span>
   </div>
 
-  <div class="privacy">
+  <div class="privacy" id="privacyOffline">
    <b>🔒 개인정보 보호 안내</b><br>
    본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다.<br>
    게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.
   </div>
+  <div class="privacy" id="privacyOnline" style="display:none">
+   <b>🔒 개인정보 보호 안내</b><br>
+   본 게임의 학습 결과(학번, 이름, 점수, 오답 정보, 학습 소감)는 담당 선생님의 학습 관리용 스프레드시트에 안전하게 전송·저장됩니다.<br>
+   수집된 정보는 학습 지도 목적으로만 사용되며, 제3자에게 제공되지 않습니다.
+  </div>
+ </div>
+</div>
+
+<div id="loginOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;justify-content:center;align-items:center">
+ <div style="background:#fff;border-radius:20px;padding:32px;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center">
+  <div style="font-size:36px;margin-bottom:8px">🔑</div>
+  <h2 style="font-size:20px;margin-bottom:4px;color:var(--ink)">학생 인증</h2>
+  <p style="font-size:13px;color:var(--ink2);margin-bottom:20px">학번과 이름을 입력하면 게임을 시작할 수 있어요.</p>
+  <div style="text-align:left;margin-bottom:12px">
+   <label style="font-size:13px;font-weight:700;color:var(--ink)">학번 (5자리)</label>
+   <input id="loginId" type="text" maxlength="5" inputmode="numeric" placeholder="예: 20101" style="width:100%;padding:10px 14px;border:2px solid var(--line);border-radius:10px;font-size:16px;margin-top:4px;box-sizing:border-box">
+  </div>
+  <div style="text-align:left;margin-bottom:16px">
+   <label style="font-size:13px;font-weight:700;color:var(--ink)">이름</label>
+   <input id="loginName" type="text" maxlength="10" placeholder="예: 김민준" style="width:100%;padding:10px 14px;border:2px solid var(--line);border-radius:10px;font-size:16px;margin-top:4px;box-sizing:border-box">
+  </div>
+  <div id="loginMsg" style="font-size:13px;color:var(--ng);min-height:20px;margin-bottom:12px"></div>
+  <button id="loginBtn" onclick="doLogin()" style="width:100%;padding:12px;background:var(--ink);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer">확인</button>
+  <div id="loginSpinner" style="display:none;margin-top:12px"><div style="width:28px;height:28px;border:3px solid var(--line);border-top-color:var(--ink);border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto"></div><style>@keyframes spin{to{transform:rotate(360deg)}}</style></div>
  </div>
 </div>
 
@@ -411,7 +435,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
       <button class="dlbtn" id="btnNote">오답노트 JPG 저장</button>
       <button class="dlbtn alt" id="btnReport">학습 결과 분석 리포트 JPG</button>
      </div>
-     <div class="privacy" style="margin-top:10px;text-align:left">
+     <div class="privacy" style="margin-top:10px;text-align:left" id="endPrivacy">
       입력하신 이름과 소감은 서버에 저장되지 않으며, 리포트 이미지(JPG) 생성용으로만 쓰입니다.
      </div>
      <div class="againrow">
@@ -442,6 +466,47 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
    제작 · 보라라샘 (전주서신중학교 교사) / 2026. 8. 25.
    ========================================================= */
 const MADE_DATE = '2026. 8. 25.';
+
+// ═══════════════════════════════════════════
+// ★ Apps Script 연동 설정
+// ═══════════════════════════════════════════
+const GAME_CONFIG = {
+  gameCode: "VOC01",
+  gameName: "원미동 어휘원정대",
+  webAppUrl: "https://script.google.com/macros/s/AKfycbzgq9yT5svpFzeFwW5p2pWOpL-lKpj5_RldoJejFT1EOk1Osjcf6hDx85jGQzvr5rU0ww/exec"
+};
+const params = new URLSearchParams(location.search);
+const TEACHER_KEY = params.get("key");
+const IS_ONLINE = !!TEACHER_KEY;
+let STUDENT = { id: "", name: "", className: "", verified: false };
+
+async function verifyStudent(studentId, studentName) {
+  if (!IS_ONLINE) return { status: "ok" };
+  try {
+    const res = await fetch(GAME_CONFIG.webAppUrl, {
+      method: "POST", headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ action: "verify", teacherKey: TEACHER_KEY, studentId, studentName })
+    });
+    return await res.json();
+  } catch (e) { return { status: "error", message: "서버에 연결할 수 없습니다. 인터넷 연결을 확인해주세요." }; }
+}
+function notifyGameStart(studentId, studentName, className) {
+  if (!IS_ONLINE) return;
+  fetch(GAME_CONFIG.webAppUrl, {
+    method: "POST", headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify({ action: "start", teacherKey: TEACHER_KEY, gameCode: GAME_CONFIG.gameCode, studentId, studentName, className })
+  }).catch(() => {});
+}
+async function submitResult(resultData) {
+  if (!IS_ONLINE) return { status: "ok" };
+  try {
+    const res = await fetch(GAME_CONFIG.webAppUrl, {
+      method: "POST", headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ action: "submit", teacherKey: TEACHER_KEY, gameCode: GAME_CONFIG.gameCode, gameName: GAME_CONFIG.gameName, ...resultData })
+    });
+    return await res.json();
+  } catch (e) { return { status: "error", message: "결과 전송에 실패했습니다." }; }
+}
 
 /* ================= 학습 데이터 ================= */
 /* 비상교육 중학 국어 2 (박현숙) 1단원 「함께 살아가는 즐거움」
@@ -803,7 +868,39 @@ function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.r
 
 function newQ(q){ return Object.assign({},q,{done:false,tries:0,wrong:[],correct:false,firstTry:false,skipped:false,gained:0}); }
 
+// ── 연동 모드 초기화 ──
+let pendingMode = 1;
+if(IS_ONLINE){
+  document.getElementById('privacyOffline').style.display='none';
+  document.getElementById('privacyOnline').style.display='block';
+  const ep=document.getElementById('endPrivacy');
+  if(ep) ep.textContent='학습 결과는 담당 선생님의 학습 관리 시스템에 자동 전송됩니다. 이름과 소감은 리포트 이미지(JPG) 생성에도 사용됩니다.';
+}
+
+async function doLogin(){
+  const idVal=$('loginId').value.trim();
+  const nameVal=$('loginName').value.trim();
+  const msg=$('loginMsg');
+  if(!idVal||idVal.length!==5||!/^\d{5}$/.test(idVal)){msg.textContent='학번은 5자리 숫자여야 합니다.';return;}
+  if(!nameVal){msg.textContent='이름을 입력하세요.';return;}
+  msg.textContent='';$('loginBtn').style.display='none';$('loginSpinner').style.display='block';
+  const result=await verifyStudent(idVal,nameVal);
+  $('loginBtn').style.display='block';$('loginSpinner').style.display='none';
+  if(result.status==='ok'){
+    STUDENT={id:idVal,name:nameVal,className:result.className||'',verified:true};
+    $('loginOverlay').style.display='none';
+    notifyGameStart(STUDENT.id,STUDENT.name,STUDENT.className);
+    doStartMode(pendingMode);
+  } else { msg.textContent=result.message||'인증에 실패했습니다.'; }
+}
+
 function startMode(mode){
+  if(IS_ONLINE&&!STUDENT.verified){pendingMode=mode;$('loginOverlay').style.display='flex';$('loginId').focus();return;}
+  if(IS_ONLINE&&STUDENT.verified){notifyGameStart(STUDENT.id,STUDENT.name,STUDENT.className);}
+  doStartMode(mode);
+}
+
+function doStartMode(mode){
   ac();
   S.mode=mode; S.i=0; S.score=0; S.combo=0; S.best=0; S.sale=0; S.t0=Date.now();
   S.ranges={}; S.reordered={};
@@ -1035,6 +1132,17 @@ function finish(){
       '<span class="wtag">'+mine+' → 정답 <b>'+esc(labelOf(q,ai))+'</b></span>'+
       '<div class="wex">'+exHtml+'</div></div>');
   });
+  if(IS_ONLINE&&STUDENT.verified){
+    const nameInput=$('inName');nameInput.value=STUDENT.name;nameInput.readOnly=true;nameInput.style.background='#f0ede5';
+    const wrongItems=S.qs.map((q,idx)=>q.correct?null:(idx+1)).filter(x=>x!==null).join(',');
+    submitResult({studentId:STUDENT.id,studentName:STUDENT.name,className:STUDENT.className,totalQuestions:total,correctCount:right,score:S.score,elapsedSeconds:Math.round(S.elapsed/1000),wrongItems:wrongItems,reflection:''}).then(res=>{
+      const el=document.createElement('div');el.style.cssText='margin-top:8px;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:600;text-align:center;';
+      if(res.status==='ok'){el.style.background='#e8f5e9';el.style.color='#2e7d32';el.textContent='✅ 결과가 선생님께 전송되었습니다.';}
+      else{el.style.background='#ffebee';el.style.color='#c62828';el.innerHTML='❌ 전송 실패 <button onclick="this.parentElement.remove();finish();" style="margin-left:8px;padding:4px 12px;border:1px solid #c62828;border-radius:6px;background:#fff;color:#c62828;cursor:pointer;font-size:12px;">재전송</button>';}
+      const p=document.getElementById('endPrivacy');if(p)p.before(el);
+    });
+  }
+
   show('end');
 }
 $('btnRetry').addEventListener('click',()=>startMode(S.mode));
