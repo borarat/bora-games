@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<!-- 리모델링 2026.10.01 07:40 (4차 야간)
+     문항: 1단계 뒤 14문항·2단계의 가획자 8자(ㅋㄷㅌㅂㅍㅈㅊㅎ)는 '어느 기본자에 획을 더해 만들었을까요?'로 묻고 컵을 기본자 ㄱㄴㅁㅅㅇ으로 바꿈(교사 승인),
+           해설도 '기본자 ○에 획을 더해 만든 가획자, ○보다 소리가 셈'으로 바꿈. 기본자 문항은 그대로
+           가획자·이체자 판정법을 '획을 더해 소리가 세졌는가'로(교과서 기준), 이체자 설명을 교과서 문구로 통일, 시작 화면 목구멍소리에 '(목청소리)' 병기
+     버그: 답하기 전 Enter·Space·→ 로 문제가 넘어가던 문제 — 채점 전에는 키로 넘기지 않음 -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -182,6 +187,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .cups[data-n="4"] .cname{font-size:26px;letter-spacing:-.5px}
 .cups[data-n="5"] .cname{font-size:24px}
 .cup .cname.long{font-size:18.5px;line-height:1.4}
+.cup .cname.jm{font-size:46px;line-height:1.1;margin-top:6px}
 .cups[data-n="3"] .csub{font-size:14px;margin-top:6px}
 .cups[data-n="4"] .csub{font-size:13px;margin-top:5px}
 .cup .csub{font-size:12px;color:#67718c;margin-top:3px}
@@ -481,7 +487,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
      <div class="box">
       <h3>이 게임에서 배우는 것</h3>
       <div class="klist">
-       <div><b>발음 기관</b> <span class="nb">어금닛소리</span> · <span class="nb">혓소리</span> · <span class="nb">입술소리</span> · <span class="nb">잇소리</span> · <span class="nb">목구멍소리</span></div>
+       <div><b>발음 기관</b> <span class="nb">어금닛소리</span> · <span class="nb">혓소리</span> · <span class="nb">입술소리</span> · <span class="nb">잇소리</span> · <span class="nb">목구멍소리(목청소리)</span></div>
        <div><b>자음자를 만든 방법</b> <span class="nb">기본자</span> · <span class="nb">가획자</span> · <span class="nb">이체자</span></div>
        <div><b>모음자를 만든 방법</b> <span class="nb">기본자</span> · <span class="nb">초출자</span> · <span class="nb">재출자</span> · <span class="nb">합용자</span></div>
        <div><b>옛 글자</b> <span class="nb">ㆁ(옛이응)</span> · <span class="nb">ㆆ(여린히읗)</span> · <span class="nb">ㅿ(반시옷)</span> · <span class="nb">ㆍ(아래아)</span></div>
@@ -495,11 +501,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
       <div class="stages">
        <button class="stage-btn" data-stage="1">
         <span class="num">1<br>단계</span>
-        <span class="tx"><span class="t">자음의 발음 기관 · 초급</span><span class="d">28문제 — 앞 14문제는 소리의 이름으로,<br>뒤 14문제는 본뜬 발음 기관의 모양으로 분류</span></span>
+        <span class="tx"><span class="t">자음의 발음 기관 · 초급</span><span class="d">28문제 — 앞 14문제는 소리의 이름으로,<br>뒤 14문제는 본뜬 발음 기관의 모양 또는 획을 더한 기본자로 분류</span></span>
        </button>
        <button class="stage-btn" data-stage="2">
         <span class="num">2<br>단계</span>
-        <span class="tx"><span class="t">자음의 발음 기관 · 고급</span><span class="d">14문제 — 컵에 이름 없이 발음 기관 그림만 보고 분류</span></span>
+        <span class="tx"><span class="t">자음의 발음 기관 · 고급</span><span class="d">14문제 — 기본자는 발음 기관 그림만 보고,<br>가획자는 획을 더한 기본자를 찾아 분류</span></span>
        </button>
        <button class="stage-btn" data-stage="3">
         <span class="num">3<br>단계</span>
@@ -516,7 +522,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 
    <div class="credit">
     제작 · <b>보라라샘</b> · <b>전주서신중학교 교사</b> · <b>siaawase@gmail.com</b><br>
-    제작일 2026.08.23 · <span id="lastMod">최종 수정 2026.09.24 16:56</span>
+    제작일 2026.08.23 · <span id="lastMod">최종 수정 2026.10.01 07:40</span>
    </div>
 
    <div class="privacy" id="privacyOffline">
@@ -699,10 +705,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 /* =========================================================
    G209 한글 창제 원리 컵스
    제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com
-   제작일 2026.08.23 · 최종 수정 2026.09.24 16:56
+   제작일 2026.08.23 · 최종 수정 2026.10.01 07:40
    ========================================================= */
 const MADE_DATE = '2026.08.23';
-const LAST_MOD  = '2026.09.24 16:56';
+const LAST_MOD  = '2026.10.01 07:40';
 const GAME_NAME = '한글 창제 원리 컵스';
 
 // ═══════════════════════════════════════════
@@ -852,10 +858,10 @@ const CATEGORIES={
    tip:'혀와 입술이 아무 데도 닿지 않는지 확인하세요. 목에서 바로 나오면 목구멍소리예요. ㅇ·ㆆ·ㅎ이 여기에 듭니다.'},
  con_base:{label:'기본자(자음)',desc:'발음 기관의 모양을 본떠 만든 글자',
    tip:'기본자는 ㄱ ㄴ ㅁ ㅅ ㅇ 다섯 자뿐입니다. 이 다섯을 먼저 외워 두고, 그중 하나인지부터 따져 보세요.'},
- con_add:{label:'가획자',desc:'기본자에 획을 더해 만든 글자',
-   tip:'획을 하나 지워 보세요. 지운 뒤에도 쓰이는 자음자가 남으면 가획자예요. ㅋ에서 가로획을 지우면 ㄱ이 남습니다.'},
- con_var:{label:'이체자',desc:'소리의 세기와 관계없이 모양을 달리해 만든 글자',
-   tip:'획을 더하는 원리를 따르지 않는 글자가 ㆁ·ㄹ·ㅿ 셋입니다. 이 셋은 통째로 외워 두는 편이 빠릅니다.'},
+ con_add:{label:'가획자',desc:'소리가 세지는 원리에 따라 기본자에 획을 더해 만든 글자',
+   tip:'“획을 더해 소리가 세졌는가?”를 따져 보세요. 획을 더해 소리가 세졌으면 가획자, 획을 더했지만 소리가 세지지 않았으면 이체자입니다. ㄱ에 획을 더한 ㅋ은 ㄱ보다 소리가 세므로 가획자예요.'},
+ con_var:{label:'이체자',desc:'‘ㅇ, ㄴ, ㅅ’에 획을 더하여 만들었지만 소리가 세지는 특성은 나타나지 않는 글자',
+   tip:'“획을 더해 소리가 세졌는가?”를 따져 보세요. ㆁ·ㄹ·ㅿ은 ‘ㅇ, ㄴ, ㅅ’에 획을 더하여 만들었지만 소리가 세지는 특성은 나타나지 않는 이체자입니다. 이 셋은 통째로 외워 두는 편이 빠릅니다.'},
  vow_base:{label:'기본자(모음)',desc:'하늘·땅·사람의 모양을 본뜬 글자',
    tip:'하늘·땅·사람을 본뜬 세 글자뿐입니다. 획이 하나로 끝나면 기본자예요.'},
  vow_first:{label:'초출자',desc:'기본자를 한 번 합해 만든 글자',
@@ -888,8 +894,22 @@ const IMG_CUPS=[
  {id:'pos_a',img:'아',alt:'혀뿌리가 목구멍을 막는 모양',color:'var(--c1)'}];
 const MAKE_CUPS=[
  {id:'con_base',name:'기본자',sub:'발음 기관을 본뜸',color:'var(--c1)'},
- {id:'con_add',name:'가획자',sub:'획을 더함',color:'var(--c2)'},
- {id:'con_var',name:'이체자',sub:'모양을 달리함',color:'var(--c3)'}];
+ {id:'con_add',name:'가획자',sub:'획을 더함 · 소리가 세짐',color:'var(--c2)'},
+ {id:'con_var',name:'이체자',sub:'획을 더함 · 소리가 세지지 않음',color:'var(--c3)'}];
+/* 가획자 문항용 컵 — '어느 기본자에 획을 더해 만들었을까요?' (교사 승인 2026.10) */
+const BASE_CUPS=[
+ {id:'pos_a',name:'ㄱ',sub:'기본자',jm:1,color:'var(--c1)'},
+ {id:'pos_s',name:'ㄴ',sub:'기본자',jm:1,color:'var(--c2)'},
+ {id:'pos_m',name:'ㅁ',sub:'기본자',jm:1,color:'var(--c3)'},
+ {id:'pos_c',name:'ㅅ',sub:'기본자',jm:1,color:'var(--c4)'},
+ {id:'pos_h',name:'ㅇ',sub:'기본자',jm:1,color:'var(--c5)'}];
+const BASE_OF={pos_a:'ㄱ',pos_s:'ㄴ',pos_m:'ㅁ',pos_c:'ㅅ',pos_h:'ㅇ'};
+const GAHOEK=['ㅋ','ㄷ','ㅌ','ㅂ','ㅍ','ㅈ','ㅊ','ㆆ','ㅎ'];
+const isGahoek=ch=>GAHOEK.indexOf(ch)>=0;
+const BASE_PROMPT='이 자음자는 어느 기본자에 획을 더해 만들었을까요?';
+const BASE_HINT='이 글자와 같은 자리에서 나는 소리를 떠올려 보세요. 그 가운데 발음 기관의 모양을 본뜬 기본자는 무엇인가요?';
+/* 정답·내 답 표시: 기본자 컵 문항은 '기본자 ㄱ', 나머지는 유형 이름 */
+function ansName(q,cid){ return q.baseQ ? '기본자 '+BASE_OF[cid] : CATLABEL(cid); }
 const VOW_CUPS=[
  {id:'vow_base',name:'기본자',sub:'하늘 · 땅 · 사람',color:'var(--c1)'},
  {id:'vow_first',name:'초출자',sub:'기본자를 한 번 합함',color:'var(--c2)'},
@@ -904,8 +924,8 @@ const HINT={
  pos_c:'소리를 내 보세요. 공기가 이 사이의 좁은 틈으로 빠져나갑니다.',
  pos_h:'소리를 내 보세요. 입안 어디에도 닿지 않고 목구멍에서 바로 납니다.',
  con_base:'발음 기관의 모양을 본떠 만든 바탕 글자는 ㄱ ㄴ ㅁ ㅅ ㅇ 다섯 자뿐입니다. 이 글자가 그중 하나인지 살펴보세요.',
- con_add:'이 글자에서 획을 하나 지우면 다른 자음자가 되나요? 그렇다면 획을 더해 만든 글자입니다.',
- con_var:'소리의 세기와 상관없이 모양만 달리해 만든 글자가 셋 있습니다. ㆁ, ㄹ, ㅿ를 떠올려 보세요.',
+ con_add:'이 글자는 기본자에 획을 더한 글자인가요? 그렇다면 획을 더해 소리가 세졌나요?',
+ con_var:'획을 더했지만 소리가 세지지 않은 글자가 셋 있습니다. ㆁ, ㄹ, ㅿ를 떠올려 보세요.',
  vow_base:'하늘 · 땅 · 사람의 모양을 본뜬 세 글자를 떠올려 보세요. 획이 하나뿐입니다.',
  vow_first:'기본자끼리 한 번만 합해 만든 글자입니다. 짧은 획이 하나뿐인지 보세요.',
  vow_second:'초출자에 짧은 획을 하나 더 더한 글자입니다. 짧은 획이 둘로 보이나요?',
@@ -917,31 +937,31 @@ const CONS14=[
  {ch:'ㄱ',cat:'pos_a',ex:'ㄱ은 혀뿌리가 목구멍을 막는 모양을 본뜬 어금닛소리(아음)의 기본자입니다.',
   exS:'어금닛소리 기본자 ㄱ이 혀뿌리가 목구멍을 막는 모양을 그대로 본떴습니다.'},
  {ch:'ㅋ',cat:'pos_a',ex:'ㅋ은 어금닛소리 기본자 ㄱ에 획을 더해 만든 글자입니다.',
-  exS:'ㅋ은 ㄱ에 획을 더한 글자이므로 본뜬 모양도 ㄱ과 같습니다.'},
+  exS:'ㅋ은 기본자 ㄱ에 획을 더해 만든 가획자입니다. ㄱ보다 소리가 셉니다.'},
  {ch:'ㄴ',cat:'pos_s',ex:'ㄴ은 혀끝이 윗잇몸에 붙는 모양을 본뜬 혓소리(설음)의 기본자입니다.',
   exS:'혓소리 기본자 ㄴ이 혀끝이 윗잇몸에 붙는 모양을 본떴습니다.'},
  {ch:'ㄷ',cat:'pos_s',ex:'ㄷ은 혓소리 기본자 ㄴ에 획을 더해 만든 글자입니다.',
-  exS:'ㄷ은 ㄴ에 획을 더한 글자이므로 본뜬 모양이 ㄴ과 같습니다.'},
+  exS:'ㄷ은 기본자 ㄴ에 획을 더해 만든 가획자입니다. ㄴ보다 소리가 셉니다.'},
  {ch:'ㅌ',cat:'pos_s',ex:'ㅌ은 ㄴ → ㄷ에 다시 획을 더해 만든 혓소리입니다.',
-  exS:'ㅌ도 ㄴ 계열이므로 본뜬 모양이 ㄴ과 같습니다.'},
+  exS:'ㅌ은 기본자 ㄴ에 획을 더한 ㄷ에 다시 획을 더해 만든 가획자입니다. ㄴ → ㄷ → ㅌ 순서로 소리가 세집니다.'},
  {ch:'ㄹ',cat:'pos_s',ex:'ㄹ은 혀끝을 써서 내는 반혓소리(반설음)로, 혓소리 계열에 속합니다.',
   exS:'ㄹ은 반혓소리로 혀끝을 쓰는 글자입니다.'},
  {ch:'ㅁ',cat:'pos_m',ex:'ㅁ은 입의 모양을 본뜬 입술소리(순음)의 기본자입니다.',
   exS:'입술소리 기본자 ㅁ이 입의 모양을 본떴습니다.'},
  {ch:'ㅂ',cat:'pos_m',ex:'ㅂ은 입술소리 기본자 ㅁ에 획을 더해 만든 글자입니다.',
-  exS:'ㅂ은 ㅁ에 획을 더한 글자이므로 본뜬 모양이 ㅁ과 같습니다.'},
+  exS:'ㅂ은 기본자 ㅁ에 획을 더해 만든 가획자입니다. ㅁ보다 소리가 셉니다.'},
  {ch:'ㅍ',cat:'pos_m',ex:'ㅍ은 ㅁ → ㅂ에 다시 획을 더해 만든 입술소리입니다.',
-  exS:'ㅍ도 ㅁ 계열이므로 본뜬 모양이 ㅁ과 같습니다.'},
+  exS:'ㅍ은 기본자 ㅁ에 획을 더한 ㅂ에 다시 획을 더해 만든 가획자입니다. ㅁ → ㅂ → ㅍ 순서로 소리가 세집니다.'},
  {ch:'ㅅ',cat:'pos_c',ex:'ㅅ은 이의 모양을 본뜬 잇소리(치음)의 기본자입니다.',
   exS:'잇소리 기본자 ㅅ이 이의 모양을 본떴습니다.'},
  {ch:'ㅈ',cat:'pos_c',ex:'ㅈ은 잇소리 기본자 ㅅ에 획을 더해 만든 글자입니다.',
-  exS:'ㅈ은 ㅅ에 획을 더한 글자이므로 본뜬 모양이 ㅅ과 같습니다.'},
+  exS:'ㅈ은 기본자 ㅅ에 획을 더해 만든 가획자입니다. ㅅ보다 소리가 셉니다.'},
  {ch:'ㅊ',cat:'pos_c',ex:'ㅊ은 ㅅ → ㅈ에 다시 획을 더해 만든 잇소리입니다.',
-  exS:'ㅊ도 ㅅ 계열이므로 본뜬 모양이 ㅅ과 같습니다.'},
+  exS:'ㅊ은 기본자 ㅅ에 획을 더한 ㅈ에 다시 획을 더해 만든 가획자입니다. ㅅ → ㅈ → ㅊ 순서로 소리가 세집니다.'},
  {ch:'ㅇ',cat:'pos_h',ex:'ㅇ은 목구멍의 모양을 본뜬 목구멍소리(후음)의 기본자입니다.',
   exS:'목구멍소리 기본자 ㅇ이 목구멍의 둥근 모양을 본떴습니다.'},
  {ch:'ㅎ',cat:'pos_h',ex:'ㅎ은 목구멍소리 ㅇ → ㆆ에 다시 획을 더해 만든 글자입니다.',
-  exS:'ㅎ도 ㅇ 계열이므로 본뜬 모양이 ㅇ과 같습니다.'}];
+  exS:'ㅎ은 기본자 ㅇ에 획을 더한 ㆆ에 다시 획을 더해 만든 가획자입니다. ㅇ → ㆆ → ㅎ 순서로 소리가 세집니다.'}];
 
 const CONS17=[
  {id:43,ch:'ㄱ',cat:'con_base',ex:'ㄱ은 혀뿌리가 목구멍을 막는 모양을 본뜬 기본자입니다.'},
@@ -958,9 +978,9 @@ const CONS17=[
  {id:54,ch:'ㅊ',cat:'con_add',ex:'ㅊ은 ㅅ → ㅈ에 다시 획을 더해 만든 가획자입니다.'},
  {id:55,ch:'ㆆ',cat:'con_add',ex:'ㆆ(여린히읗)은 기본자 ㅇ에 획을 더해 만든 가획자입니다.'},
  {id:56,ch:'ㅎ',cat:'con_add',ex:'ㅎ은 ㅇ → ㆆ에 다시 획을 더해 만든 가획자입니다.'},
- {id:57,ch:'ㆁ',cat:'con_var',ex:'ㆁ(옛이응)은 소리의 세기와 관계없이 모양을 달리해 만든 이체자입니다.'},
- {id:58,ch:'ㄹ',cat:'con_var',ex:'ㄹ(반혓소리)은 획을 더하는 원리를 따르지 않고 모양을 달리해 만든 이체자입니다.'},
- {id:59,ch:'ㅿ',cat:'con_var',ex:'ㅿ(반잇소리)은 획을 더하는 원리를 따르지 않고 모양을 달리해 만든 이체자입니다.'}];
+ {id:57,ch:'ㆁ',cat:'con_var',ex:'ㆁ(옛이응)은 ㅇ에 획을 더했지만 소리가 세지지 않아 이체자입니다.'},
+ {id:58,ch:'ㄹ',cat:'con_var',ex:'ㄹ(반혓소리)은 ㄴ에 획을 더했지만 소리가 세지지 않아 이체자입니다.'},
+ {id:59,ch:'ㅿ',cat:'con_var',ex:'ㅿ(반잇소리)은 ㅅ에 획을 더했지만 소리가 세지지 않아 이체자입니다.'}];
 
 const VOW22=[
  {id:60,ch:'ㆍ',cat:'vow_base',ex:'ㆍ(아래아)는 하늘의 둥근 모양을 본뜬 기본자입니다.'},
@@ -1001,7 +1021,7 @@ const CONCEPT={
     cards:[
      {l:'기본자',d:'발음 기관의 모양을 본떠 만들었습니다. 다섯 자뿐입니다.',s:'ㄱ ㄴ ㅁ ㅅ ㅇ'},
      {l:'가획자',d:'소리가 세지면 기본자에 획을 더했습니다.',s:'ㅋ ㄷ ㅌ ㅂ ㅍ ㅈ ㅊ ㆆ ㅎ'},
-     {l:'이체자',d:'소리의 세기와 관계없이 모양만 달리했습니다.',s:'ㆁ ㄹ ㅿ'}]},
+     {l:'이체자',d:'‘ㅇ, ㄴ, ㅅ’에 획을 더하여 만들었지만 소리가 세지는 특성은 나타나지 않습니다.',s:'ㆁ ㄹ ㅿ'}]},
  4:{title:'모음자를 만든 방법',
     sub:'하늘 · 땅 · 사람 세 글자에서 모든 모음자가 나왔습니다.',
     cards:[
@@ -1012,7 +1032,7 @@ const CONCEPT={
 };
 CONCEPT[2]=Object.assign({},CONCEPT[1],{
   title:'이번에는 그림만 보고 찾습니다',
-  sub:'컵에 이름이 없습니다. 그림 속에서 빨갛게 표시된 자리가 어디인지 보고 고르세요.'});
+  sub:'기본자는 컵에 이름이 없습니다. 그림 속에서 빨갛게 표시된 자리가 어디인지 보고 고르세요. 가획자는 어느 기본자에 획을 더했는지 고르세요.'});
 
 /* ================= 단계 ================= */
 const BASE_PT=10, RETRY_PT=5, PENALTY=3;
@@ -1025,15 +1045,19 @@ const STAGES=[
   build(){
     const a=shuffle(CONS14.map((c,i)=>({id:i+1,ch:c.ch,cat:c.cat,cups:POS_CUPS,ex:c.ex,
       prompt:'이 자음자는 어느 발음 기관에서 나는 소리일까요?'})));
-    const b=shuffle(CONS14.map((c,i)=>({id:i+15,ch:c.ch,cat:c.cat,cups:SHAPE_CUPS,ex:c.exS,
-      prompt:'이 자음자는 어떤 발음 기관의 모양을 본떠 만들었을까요?'})));
+    const b=shuffle(CONS14.map((c,i)=>isGahoek(c.ch)
+      ? {id:i+15,ch:c.ch,cat:c.cat,cups:BASE_CUPS,ex:c.exS,baseQ:true,hint:BASE_HINT,prompt:BASE_PROMPT}
+      : {id:i+15,ch:c.ch,cat:c.cat,cups:SHAPE_CUPS,ex:c.exS,
+      prompt:'이 자음자는 어떤 발음 기관의 모양을 본떠 만들었을까요?'}));
     return a.concat(b);
   }},
- {label:'2단계',jamo:true,desc:'발음 기관 · 고급',goal:'그림을 보고 자음자의 발음 기관을 찾는다',
+ {label:'2단계',jamo:true,desc:'발음 기관 · 고급',goal:'그림을 보고 발음 기관을 찾고, 가획자는 기본자를 찾는다',
   full:'2단계 · 자음의 발음 기관에 따른 분류(고급)',file:'2단계_발음기관_고급',n:14,
   build(){
-    return shuffle(CONS14.map((c,i)=>({id:i+29,ch:c.ch,cat:c.cat,cups:IMG_CUPS,ex:c.ex,
-      prompt:'그림을 잘 보세요. 이 자음자는 어느 발음 기관의 모양을 본떴을까요?'})));
+    return shuffle(CONS14.map((c,i)=>isGahoek(c.ch)
+      ? {id:i+29,ch:c.ch,cat:c.cat,cups:BASE_CUPS,ex:c.exS,baseQ:true,hint:BASE_HINT,prompt:BASE_PROMPT}
+      : {id:i+29,ch:c.ch,cat:c.cat,cups:IMG_CUPS,ex:c.ex,
+      prompt:'그림을 잘 보세요. 이 자음자는 어느 발음 기관의 모양을 본떴을까요?'}));
   }},
  {label:'3단계',jamo:true,desc:'자음자 만들기',goal:'자음자를 만든 방법으로 나눈다',
   full:'3단계 · 자음자를 만든 방법에 따른 분류',file:'3단계_자음자를_만든_방법',n:17,
@@ -1192,7 +1216,7 @@ function renderQ(){
     d.className='cup'; d.style.background=c.color;
     let inner='<span class="knum">'+(idx+1)+'</span><span class="mark"></span>';
     if(c.img){ inner+='<img src="'+organSrc(c.img)+'" alt="'+c.alt+'">'; }
-    else{ inner+='<div class="cname'+(c.name.indexOf('<br>')>=0?' long':'')+'">'+c.name+'</div>'+(c.sub?'<div class="csub">'+c.sub+'</div>':''); }
+    else{ inner+='<div class="cname'+(c.jm?' jm':'')+(c.name.indexOf('<br>')>=0?' long':'')+'">'+c.name+'</div>'+(c.sub?'<div class="csub">'+c.sub+'</div>':''); }
     d.innerHTML=inner;
     d.addEventListener('click',()=>pick(c.id));
     d.dataset.cid=c.id;
@@ -1219,15 +1243,15 @@ function paintDone(q){
   const fb=$('fb');
   if(q.correct){
     const tag=q.firstTry?'✅ 정답입니다!':'✅ 다시 풀어 맞혔어요!';
-    fb.innerHTML='<div class="msg ok">'+tag+' <span class="ans">'+q.ch+' → '+CATLABEL(q.cat)+'</span><br>'+q.ex+
+    fb.innerHTML='<div class="msg ok">'+tag+' <span class="ans">'+q.ch+' → '+ansName(q,q.cat)+'</span><br>'+q.ex+
       '<span class="nextkey">Enter · Spacebar · → 를 누르면 다음 문제로 넘어갑니다.</span>'+NEXT_BTN+'</div>';
   }else{
-    fb.innerHTML='<div class="msg ng">❌ 아쉬워요. 정답은 <span class="ans">'+CATLABEL(q.cat)+'</span> 입니다.<br>'+q.ex+NEXT_BTN+'</div>';
+    fb.innerHTML='<div class="msg ng">❌ 아쉬워요. 정답은 <span class="ans">'+ansName(q,q.cat)+'</span> 입니다.<br>'+q.ex+NEXT_BTN+'</div>';
   }
 }
 function paintHint(q){
   q.wrong.forEach(c=>{ const el=cupEl(c); if(el){ el.classList.add('pick-ng'); el.querySelector('.mark').textContent='❌'; } });
-  $('fb').innerHTML='<div class="msg hint"><b>💡 힌트</b>'+HINT[q.cat]+
+  $('fb').innerHTML='<div class="msg hint"><b>💡 힌트</b>'+(q.hint||HINT[q.cat])+
     ' 빨갛게 표시된 컵은 정답이 아니에요.<br><span style="font-size:12.5px;color:#a9832a">한 번 더 고를 수 있어요 (마지막 기회)</span></div>';
 }
 
@@ -1294,7 +1318,10 @@ document.addEventListener('keydown',e=>{
     if(idx<q.cups.length && !q.done) pick(q.cups[idx].id);
     return;
   }
-  if(e.key==='Enter'||e.key===' '||e.key==='Spacebar'||e.key==='ArrowRight'){ e.preventDefault(); goNext(); }
+  if(e.key==='Enter'||e.key===' '||e.key==='Spacebar'||e.key==='ArrowRight'){
+    e.preventDefault();
+    if(S.qs[S.i].done) goNext();   /* 채점 전에는 넘기지 않는다 (지침 6-1) */
+  }
   else if(e.key==='ArrowLeft'){ e.preventDefault(); goPrev(); }
 });
 
@@ -1477,8 +1504,8 @@ function finish(){
       '<div class="witem'+(!q.answered?' skip':'')+'">'+
       '<span class="wcat">'+CATLABEL(q.cat)+'</span>'+
       '<span class="wq'+(ST().serif?' serif':'')+(gs?' draw':'')+'">'+(gs||q.ch)+'</span>'+
-      '<span class="wtag">'+(!q.answered?'답하지 않음':'내 답 <s>'+q.wrong.map(c=>CATLABEL(c)).join(', ')+'</s>')+
-      ' → 정답 <b>'+CATLABEL(q.cat)+'</b></span>'+
+      '<span class="wtag">'+(!q.answered?'답하지 않음':'내 답 <s>'+q.wrong.map(c=>ansName(q,c)).join(', ')+'</s>')+
+      ' → 정답 <b>'+ansName(q,q.cat)+'</b></span>'+
       '<div class="wex">'+q.ex+'</div></div>');
   });
 
@@ -1521,7 +1548,7 @@ function openReview(){
     const gs=jamoSVG(q.ch);
     const mk=!q.answered?'⏭️':(q.firstTry?'✅':(q.correct?'🔁':'❌'));
     return '<div class="ritem"><div class="rq'+(st.serif?' serif':'')+'">'+(gs||q.ch)+'</div>'+
-      '<div class="rt"><div class="ra">'+CATLABEL(q.cat)+'</div>'+
+      '<div class="rt"><div class="ra">'+ansName(q,q.cat)+'</div>'+
       '<div class="rx">'+q.ex+'</div></div><div class="rmk">'+mk+'</div></div>';
   }).join('')+
   '<div style="font-size:12px;color:#6f7c98;margin-top:10px;line-height:1.7">'+
@@ -1543,10 +1570,14 @@ function cupLabel(cups,cat){
 function teacherRows(si){
   if(si===0){
     const a=CONS14.map((c,i)=>({id:i+1,cat:c.cat,ch:c.ch,ans:cupLabel(POS_CUPS,c.cat),ex:c.ex,note:'소리의 이름으로 분류'}));
-    const b=CONS14.map((c,i)=>({id:i+15,cat:c.cat,ch:c.ch,ans:cupLabel(SHAPE_CUPS,c.cat),ex:c.exS,note:'본뜬 모양으로 분류'}));
+    const b=CONS14.map((c,i)=>isGahoek(c.ch)
+      ? ({id:i+15,cat:c.cat,ch:c.ch,ans:'기본자 '+BASE_OF[c.cat],ex:c.exS,note:'획을 더한 기본자로 분류'})
+      : ({id:i+15,cat:c.cat,ch:c.ch,ans:cupLabel(SHAPE_CUPS,c.cat),ex:c.exS,note:'본뜬 모양으로 분류'}));
     return a.concat(b);
   }
-  if(si===1) return CONS14.map((c,i)=>({id:i+29,cat:c.cat,ch:c.ch,ans:cupLabel(IMG_CUPS,c.cat),ex:c.ex,note:'컵은 그림만 표시'}));
+  if(si===1) return CONS14.map((c,i)=>isGahoek(c.ch)
+      ? ({id:i+29,cat:c.cat,ch:c.ch,ans:'기본자 '+BASE_OF[c.cat],ex:c.exS,note:'획을 더한 기본자로 분류(컵은 기본자 글자)'})
+      : ({id:i+29,cat:c.cat,ch:c.ch,ans:cupLabel(IMG_CUPS,c.cat),ex:c.ex,note:'컵은 그림만 표시'}));
   if(si===2) return CONS17.map(c=>({id:c.id,cat:c.cat,ch:c.ch,ans:cupLabel(MAKE_CUPS,c.cat),ex:c.ex,note:''}));
   return VOW22.map(c=>({id:c.id,cat:c.cat,ch:c.ch,ans:cupLabel(VOW_CUPS,c.cat),ex:c.ex,note:''}));
 }
@@ -1745,8 +1776,9 @@ $('btnNote').addEventListener('click',()=>{
       ctx.fillStyle='#EAE5F8'; ctx.fillRect(132,y+14,lw,24);
       ctx.fillStyle='#3C3489'; ctx.fillText(lab,141,y+31);
       ctx.font=F(16); ctx.fillStyle='#6f7c98';
-      const t=(!b.q.answered)?'답하지 않음  →  정답 '+lab
-                            :'내 답 '+b.q.wrong.map(c=>CATLABEL(c)).join(', ')+'  →  정답 '+lab;
+      const al=ansName(b.q,b.q.cat);
+      const t=(!b.q.answered)?'답하지 않음  →  정답 '+al
+                            :'내 답 '+b.q.wrong.map(c=>ansName(b.q,c)).join(', ')+'  →  정답 '+al;
       ctx.fillText(t,132+lw+12,y+31);
       ctx.fillStyle='#64748b'; ctx.font=F(14);
       b.lines.forEach((l,i)=>ctx.fillText(l,132,y+62+i*26));
