@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
-<!-- 리모델링 2026.10.01 08:05 (5차 야간)
-     기록: 게임 중 단계 이동 버튼을 누르면 화면 안 확인 창을 띄움 (채우거나 틀린 칸이 있을 때만). 취소하면 판과 기록이 그대로 남음. 다 푼 직후(완료 화면이 뜨기 전)에는 단계 이동을 막아 결과 전송이 빠지지 않게 함
+<!-- 리모델링 2026.10.01 08:55 (5차 야간)
+     기록: 게임 중 단계 이동 버튼을 누르면 화면 안 확인 창을 띄움 (채우거나 틀린 칸이 있을 때만). 취소하면 판과 기록이 그대로 남고 포커스는 누른 단계 버튼으로 돌아감. 다 푼 직후(완료 화면이 뜨기 전)에는 단계 이동을 막아 결과 전송이 빠지지 않게 함
      연동: 틀리게 채운 칸을 wrongItems로 전송 (칸 위치 · 정답 성분 · 넣은 성분). 소감(reflection)은 교사 결정으로 빈 값 유지 -->
 <head>
 <meta charset="UTF-8">
@@ -281,7 +281,7 @@
 
       <div class="credit-box">
         <p>제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com</p>
-        <p>제작일 2026.09.25 · <span id="lastMod">최종 수정 2026.10.01 08:05</span></p>
+        <p>제작일 2026.09.25 · <span id="lastMod">최종 수정 2026.10.01 08:55</span></p>
       </div>
 
       <div class="privacy" id="privacyOffline">
@@ -753,14 +753,14 @@ function buildStageJump(){
   }
 }
 // 단계 이동: 채우거나 틀린 칸이 있으면 화면 안 확인 창을 먼저 띄운다 (브라우저 confirm 금지)
-let jumpTarget=null;
+let jumpTarget=null,jumpOpener=null;
 function requestStageJump(s){
   if(state.finished)return;  // 다 푼 판은 곧 완료 화면이 뜨고 결과가 전송된다. 그 사이 이동하면 결과가 사라지므로 막는다
   if(state.ok>0||state.no>0){openJumpConfirm(s);return;}
   startStage(s,false);
 }
 function openJumpConfirm(s){
-  jumpTarget=s;
+  jumpTarget=s;jumpOpener=document.activeElement;
   $('jumpTitle').textContent=(s===currentStage?s+'단계를 새 판으로 시작할까요?':s+'단계로 옮길까요?');
   $('jumpMsg').innerHTML='지금 '+currentStage+'단계 판에서 채운 칸 <b>'+state.ok+'개</b>, 오답 <b>'+state.no+'번</b>, 점수 <b>'+state.score+'점</b>이 모두 사라져요.';
   pauseTimer();
@@ -771,6 +771,7 @@ function closeJumpConfirm(){
   if(jumpTarget===null)return;
   jumpTarget=null;$('jumpConfirm').classList.remove('show');
   if($('game').classList.contains('active'))runTimer();
+  if(jumpOpener&&document.contains(jumpOpener))jumpOpener.focus();  // 취소 뒤 포커스를 누른 단계 버튼으로 돌려준다
 }
 function confirmJump(){
   if(jumpTarget===null)return;
