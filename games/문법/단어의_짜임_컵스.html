@@ -1,5 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko">
+<!-- 리모델링 2026.10.01 05:20 (2차 야간)
+     개념: 1단계 어근 슬라이드의 "어근은 홀로 단어를 이룰 수 있어요." 삭제 (교사 승인: 어근 = 실질적인 뜻을 나타내는 부분)
+     힌트: 합성어 tip을 교사 승인 문장으로, 합성어 힌트를 "실질적인 뜻을 나타내는가" 기준으로
+     채점: 4단계에서 틀린 적이 있으면 1과정 끝과 문항 끝 모두 '정답!' 대신 재시도 배너(색종이·광선 없음). 점수·기록은 원래도 재시도 정답
+     버그: 채점 전 → 키로 문항이 넘어가던 것 막음 (지침 6-1) -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -179,6 +184,7 @@ img.mascot{height:90px;border-radius:12px;-webkit-touch-callout:none;user-select
 .bn .sub2{font-size:clamp(22px,3.2vw,32px);margin-top:8px}
 .bn .pts{position:relative;font-size:34px;font-weight:700;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.4)}
 .bn.crit2 .big{background:none;color:#fff;-webkit-text-fill-color:#fff;font-size:clamp(40px,7vw,68px);filter:drop-shadow(0 3px 6px rgba(0,0,0,.4))}
+.bn.re .big{background:none;color:#fff;-webkit-text-fill-color:#fff;font-size:clamp(34px,5.5vw,56px);filter:drop-shadow(0 3px 6px rgba(0,0,0,.4))}
 .bn.crit2 .sub2{background:#C2410C;border-radius:16px;padding:10px 24px;display:inline-block}
 .bn.c3 .big{background:linear-gradient(90deg,#ffb347,#ff6a00);-webkit-background-clip:text;background-clip:text}
 .bn.c5 .big{background:linear-gradient(90deg,#ff5f6d,#ffc371,#47e891,#4facfe,#a66cff);-webkit-background-clip:text;background-clip:text;animation:wob .6s}
@@ -307,7 +313,7 @@ body.glow::after{content:'';position:fixed;inset:0;pointer-events:none;box-shado
    </div>
    <div class="credit">
     제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-    제작일 2025.09 · <span id="lastMod">최종 수정 2026.09.23 14:20</span>
+    제작일 2025.09 · <span id="lastMod">최종 수정 2026.10.01 05:20</span>
    </div>
    <div class="privacy" id="privacyOffline">
     <b>🔒 개인정보 보호 안내</b><br>
@@ -434,7 +440,7 @@ body.glow::after{content:'';position:fixed;inset:0;pointer-events:none;box-shado
 
 <script>
 const MADE_DATE = '2025.09';
-const LAST_MOD = '2026.09.23 14:20';
+const LAST_MOD = '2026.10.01 05:20';
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
 // ═══════════════════════════════════════════
@@ -487,7 +493,7 @@ const CATEGORIES = {
   simple:  { label:'단일어', desc:'하나의 어근으로 된 단어',
              tip:"더 쪼갠 조각에 뜻이 남는지 보세요. '나비'를 '나'와 '비'로 나누면 나비와 상관없는 말이 되니, 하나의 어근으로 된 단일어예요." },
   compound:{ label:'합성어', desc:'어근 + 어근',
-             tip:"두 부분을 각각 떼어서 혼자 써 보세요. '봄비'의 '봄'과 '비'처럼 둘 다 제 뜻으로 쓰이면 둘 다 어근이고, 합성어예요." },
+             tip:"나뉜 두 부분이 모두 실질적인 뜻을 나타내나요? '봄비'의 '봄'과 '비'처럼 둘 다 실질적인 뜻을 나타내면 둘 다 어근이고, 합성어예요." },
   prefix:  { label:'접두사 파생어', desc:'접두사 + 어근',
              tip:"앞부분만 떼어 문장에 넣어 보세요. '맨발'의 '맨-'처럼 혼자 쓰이지 못하고 뒷말의 뜻만 좁혀 주면 접두사예요." },
   suffix:  { label:'접미사 파생어', desc:'어근 + 접미사',
@@ -595,7 +601,7 @@ const SLIDES = [
   {e:'📌', t:'꼭 기억하기', b:[`자립 형태소는 모두 실질 형태소예요.`, `용언의 어간(차-, 먹-)은 ${K('의존')}이면서 ${K('실질')} 형태소예요.`, `접사(풋-, 맨-)는 의존이면서 형식 형태소예요.`, `문제는 🧍 기준 1 다섯 문항 ➜ 💡 기준 2 다섯 문항 순서로 나와요.`]}
  ],
  [ // 1단계
-  {e:'🌱', t:'어근', b:[`${K('어근')}은 단어에서 실질적인 의미를 나타내는 형태소예요.`, `어근은 홀로 단어를 이룰 수 있어요.`]},
+  {e:'🌱', t:'어근', b:[`${K('어근')}은 단어에서 실질적인 의미를 나타내는 형태소예요.`]},
   {e:'🧩', t:'접사', b:[`${K('접사')}는 어근에 붙어 그 뜻을 제한하는 형태소예요.`, `접사는 홀로 단어를 이루지 못해요.`]},
   {e:'🌰', t:'예) 밤 ➜ 햇밤', b:[`<span class="chips"><span class="chip">햇-</span><span class="chip">밤</span></span>`, `'${K('햇-')}'이 '당해에 난'이라는 뜻을 더해요.`, `그래서 햇밤은 '그해에 새로 난 밤'이 돼요.`]},
   {e:'✂️', t:"용언은 '-다'를 빼고 나눠요", b:[`'먹다'는 '먹-'만, '엿듣다'는 '엿-'과 '듣-'만 보고 나눠요.`, `${K('-다')}는 어미라서 단어의 짜임을 볼 때는 빼요.`]}
@@ -830,7 +836,7 @@ function hintFor(q, card, correct, chosen){
     '어근':'이 단어의 중심 뜻을 담고 있지 않나요?',
     '접사':'혼자 쓰이지 못하고 다른 말에 뜻만 보태지 않나요?',
     '단일어':'더 나눈 조각에 원래 뜻이 남는지 보세요.',
-    '합성어':'두 부분이 모두 혼자 쓰일 수 있는 말인지 보세요.',
+    '합성어':'나뉜 두 부분이 모두 실질적인 뜻을 나타내는지 보세요.',
     '파생어':'혼자 쓰이지 못하고 뜻만 보태는 부분이 있는지 보세요.'
   };
   let h;
@@ -853,7 +859,7 @@ function dropTo(cupName, cupNode){
     renderCards();
     const el=document.querySelector(`.cup .card[data-k="${k}"]`); if(el) el.classList.add('hy');
     if(q.order.every(c=>q.placed[c.k])){
-      if(st.type==='combo'){ q.step=2; q.sel=null; setTimeout(()=>{ if(cur()===q&&!isDone(q)) infoBanner('정답!','이제 단어의 종류를 골라볼까? 🤔','',()=>{ if(cur()===q) renderQ(); }); },350); }
+      if(st.type==='combo'){ q.step=2; q.sel=null; const re=q.mistakes>0; setTimeout(()=>{ if(cur()===q&&!isDone(q)) infoBanner(re?'🔁 다시 풀어 맞혔어요':'정답!','이제 단어의 종류를 골라볼까? 🤔',re?'re':'',()=>{ if(cur()===q) renderQ(); }); },350); }
       else complete(q);
     }
   } else {
@@ -876,7 +882,8 @@ function complete(q, failed){
   if(q.stage===4) q.step=2;
   renderQ();
   if(q.status==='first'){ const h=$('hud'); h.classList.remove('pulse'); void h.offsetWidth; h.classList.add('pulse'); }
-  if(q.status!=='fail') showBanner(q.status==='first'?S.combo:0, gained);
+  if(q.status==='retry' && q.stage===4) retryBanner(gained);   // 4단계: 틀린 적이 있으면 '정답!' 대신 재시도 배너
+  else if(q.status!=='fail') showBanner(q.status==='first'?S.combo:0, gained);
   else { SND.bad(); if(allDone()){ const me=S; setTimeout(()=>{ if(S===me && !S.finished && $('play').classList.contains('on')) finish(); },2600); } }
 }
 function renderFb(){
@@ -906,10 +913,16 @@ function showBanner(combo, gained){
   S.banner={ t:setTimeout(()=>hideBanner(false),dur), iv };
 }
 let BTOK=0;
+function retryBanner(gained){   // 재시도 정답 — 작은 배너, 색종이·광선 없음 (화면연출표준 3-1)
+  const dim=$('dim'); BTOK++; SND.place();
+  dim.innerHTML=`<div class="bn re"><div class="big">🔁 다시 풀어 맞힘</div><div class="pts">+${gained}점</div></div>`;
+  dim.className='on';
+  S.banner={ t:setTimeout(()=>hideBanner(false),900), iv:null };
+}
 function infoBanner(big,sub,cls,after){
   const dim=$('dim'); BTOK++;
-  if(big==='정답!'){ SND.ok(); confetti(30); } else { SND.c3(); }
-  dim.innerHTML=`<div class="bn ${cls}">${REDUCED?'':'<div class="rays"></div>'}<div class="big">${big}</div><div class="pts sub2">${sub}</div></div>`;
+  if(big==='정답!'){ SND.ok(); confetti(30); } else if(cls==='re'){ SND.place(); } else { SND.c3(); }
+  dim.innerHTML=`<div class="bn ${cls}">${REDUCED||cls==='re'?'':'<div class="rays"></div>'}<div class="big">${big}</div><div class="pts sub2">${sub}</div></div>`;
   dim.className='on';
   S.banner={ t:setTimeout(()=>hideBanner(false),1500), iv:null, after:after||(()=>{}) };
 }
@@ -974,7 +987,7 @@ document.addEventListener('keydown',e=>{
     if(k===' '||k==='Enter'){ // 오답 상태: 힌트 닫고 다시 풀기
       if($('fb').querySelector('.hint')){ e.preventDefault(); $('fb').innerHTML=''; }
     }
-    if(k==='ArrowRight'){ e.preventDefault(); nextQ(); }
+    if(k==='ArrowRight'){ e.preventDefault(); } // 채점 전에는 → 키로 넘어가지 않음 (지침 6-1). 건너뛰기는 '다음' 버튼으로
     return;
   }
   if(k==='ArrowLeft'){ e.preventDefault(); prevQ(); return; }
