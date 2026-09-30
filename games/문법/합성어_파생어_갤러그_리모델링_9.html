@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko">
+<!-- 리모델링 2026.10.01 05:10 (2차 야간)
+     문항: '도움' 해설 "돕- + -움 → 접미사 '-움'" → "돕- + -(으)ㅁ → 도움 (ㅂ 불규칙으로 '도움'이 됨)" (교사 승인). 단어 분류는 바꾸지 않음
+     채점: 잘못 맞춤 감점 −5 → −10 (명중 기본점과 같게, 지침 3-6 속도형). 놓침 감점 −5는 그대로
+     진단: 그 판의 목표가 아닌 유형(늘 0/n)은 잘함·보완 필요 판정에서 뺌 -->
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -170,7 +174,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
       <p>◀ ▶ 방향키로 우주선을 움직이고, 스페이스바로 총알을 쏘세요.</p>
       <p>떨어지는 단어 중 내가 고른 목표 유형만 맞히세요.</p>
       <p>✅ 목표 단어를 맞히면 10점, 3연속부터 +5점, 5연속부터 +10점을 더 받아요.</p>
-      <p>❌ 다른 유형을 맞히거나 목표 단어를 놓치면 5점이 깎이고 생명이 1 줄어요.</p>
+      <p>❌ 다른 유형을 맞히면 −10점, 목표 단어를 놓치면 −5점이고 생명도 1 줄어요.</p>
       <p>⏱ 생명이 0이 되거나 시간이 끝나면 게임이 끝나요.</p>
      </div>
     </div>
@@ -198,7 +202,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
    <div class="start-foot">
     <div class="credit">
      제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br/>
-     제작일 2025.11.12 · <span class="lastMod">최종 수정 2026.09.15 21:57</span>
+     제작일 2025.11.12 · <span class="lastMod">최종 수정 2026.10.01 05:10</span>
     </div>
     <div class="privacy" id="privacyOffline">
      <b>🔒 개인정보 보호 안내</b><br>
@@ -286,7 +290,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
    </div>
    <div class="credit">
     제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br/>
-    제작일 2025.11.12 · <span class="lastMod">최종 수정 2026.09.15 21:57</span>
+    제작일 2025.11.12 · <span class="lastMod">최종 수정 2026.10.01 05:10</span>
    </div>
   </div>
  </div>
@@ -301,7 +305,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 
 <script>
 const MADE_DATE='2025.11.12';
-const LAST_MOD='2026.09.15 21:57';
+const LAST_MOD='2026.10.01 05:10';
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -424,7 +428,7 @@ const RAW=`1|comp_n|바람결|바람 + 결 → 두 명사가 결합
 57|comp_v|넘어가다|넘어 + 가다 → 두 동사가 이어진 합성어
 101|der_suf|덮개|덮- + -개 → 접미사 '-개'
 102|der_suf|먹이|먹- + -이 → 접미사 '-이'
-103|der_suf|도움|돕- + -움 → 접미사 '-움'
+103|der_suf|도움|돕- + -(으)ㅁ → 도움 (ㅂ 불규칙으로 '도움'이 됨)
 104|der_suf|웃기다|웃- + -기- → 시키는 뜻의 접미사
 105|der_suf|새롭다|새 + -롭다 → 접미사 '-롭다'
 106|der_suf|늦추다|늦- + -추- → 시키는 뜻의 접미사
@@ -485,7 +489,7 @@ const STAGES=[
   {name:'보통',interval:1.4,speed:50,time:180,lives:20},
   {name:'도전',interval:0.9,speed:72,time:150,lives:15}
 ];
-const BASE=10,PENALTY=5;
+const BASE=10,WRONG_PENALTY=10,MISS_PENALTY=5;   // 잘못 맞춤 감점 = 명중 기본점(지침 3-6 속도형). 놓침 감점은 그대로
 const stageLabel=n=>n+'단계 '+STAGES[n-1].name;
 const REDUCED=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -589,7 +593,7 @@ function onHitTarget(w,x,y){
   else{popText('✅ +'+pts,x,y,'#6ee7b7');sparkle(x,y);sCorrect()}
 }
 function onError(w,x,y,kind){
-  S.combo=0;S.lives--;S.score=Math.max(0,S.score-PENALTY);
+  S.combo=0;S.lives--;S.score=Math.max(0,S.score-(kind==='miss'?MISS_PENALTY:WRONG_PENALTY));
   S.events.push({id:w.id,cat:w.category,kind});
   popText((kind==='miss'?'⚠️ 놓침 · ':'❌ ')+w.text+' → '+w.answer,x,y,'#fca5a5',20);
   shakeStage();sWrong();
@@ -717,8 +721,10 @@ function analyze(){
   const cats={};
   ev.forEach(e=>{const c=cats[e.cat]||(cats[e.cat]={key:e.cat,total:0,correct:0,err:0});c.total++;if(e.kind==='hit')c.correct++;else c.err++});
   const list=Object.values(cats),shown=list.filter(c=>c.total>=2);
-  const strong=shown.filter(c=>c.correct===c.total),weak=shown.filter(c=>c.correct/c.total<.5);
-  const allLow=shown.length>0&&shown.every(c=>c.correct/c.total<.5);
+  // 이번 판 목표가 아닌 유형은 맞힐 수 없어 늘 0/n → 잘함·보완 판정에서 뺀다 (가장 먼저 공부할 것에는 남음)
+  const judged=shown.filter(c=>CATEGORIES[c.key].answer===S.target);
+  const strong=judged.filter(c=>c.correct===c.total),weak=judged.filter(c=>c.correct/c.total<.5);
+  const allLow=judged.length>0&&judged.every(c=>c.correct/c.total<.5);
   const cand=list.filter(c=>c.err>0).sort((a,b)=>(b.total>=2)-(a.total>=2)||b.err-a.err||a.correct/a.total-b.correct/b.total||b.total-a.total);
   let grade;
   if(!total)grade='아직 판정한 단어가 없어요';
@@ -939,7 +945,7 @@ function xSheet(name,widths,rows){
 }
 function downloadTeacherXls(){
   const d=new Date(),ymd=''+d.getFullYear()+pad2(d.getMonth()+1)+pad2(d.getDate());
-  const rule='목표 단어 적중 10점 · 3~4연속 +5 · 5연속 이상 +10 · 잘못 맞춤/놓침 −5점(0점 하한)·생명 −1 · 시간·생명제라 고정 만점 없음';
+  const rule='목표 단어 적중 10점 · 3~4연속 +5 · 5연속 이상 +10 · 잘못 맞춤 −10점 · 놓침 −5점(0점 하한) · 둘 다 생명 −1 · 시간·생명제라 고정 만점 없음';
   const s1=[{style:'h',cells:['id','유형 코드','유형','단어','정답','해설']},
     ...WORDS.map(w=>({cells:[w.id,w.category,CATEGORIES[w.category].label,w.text,w.answer,w.detail]})),
     {cells:[]},
