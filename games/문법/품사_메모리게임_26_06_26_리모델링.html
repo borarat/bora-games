@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
+<!-- 리모델링 2026.10.01 05:10 (2차 야간)
+     문항: 수사 단어 카드 '다섯' → '넷' ('다섯'은 관형사로도 쓰여 정답이 둘. 교사 승인)
+     채점: 총평 기준을 지침 5-2 표(95/85/70/50%)에 맞춤. 정답률 = 찾은 짝 ÷ 두 장씩 뒤집은 횟수 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -237,7 +240,7 @@ details.concept summary{cursor:pointer;font-weight:700;color:var(--deep);font-si
 
    <div class="credit">
     제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-    제작일 2026.06.26 · <span id="lastMod">최종 수정 2026.09.18 03:30</span>
+    제작일 2026.06.26 · <span id="lastMod">최종 수정 2026.10.01 05:10</span>
    </div>
 
    <div class="privacy" id="privacyOffline">
@@ -338,7 +341,7 @@ details.concept summary{cursor:pointer;font-weight:700;color:var(--deep);font-si
 
 <script>
 const MADE_DATE = '2026.06.26';
-const LAST_MOD = '2026.09.18 03:30';
+const LAST_MOD = '2026.10.01 05:10';
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -401,7 +404,7 @@ const CATEGORIES = {
 const POS = [
   { id: 1, name: '명사',   cat: 'che',   words: ['학교', '사랑', '연필'],       detail: '사람·사물·개념의 이름을 나타냅니다. 조사가 붙어 주어나 목적어가 됩니다.' },
   { id: 2, name: '대명사', cat: 'che',   words: ['그것', '우리', '여기'],       detail: '이름 대신 가리키는 말입니다. 명사처럼 조사가 붙습니다.' },
-  { id: 3, name: '수사',   cat: 'che',   words: ['하나', '셋', '다섯'],         detail: "수량이나 순서를 나타냅니다. '셋이', '하나를'처럼 조사가 붙습니다." },
+  { id: 3, name: '수사',   cat: 'che',   words: ['하나', '셋', '넷'],           detail: "수량이나 순서를 나타냅니다. '셋이', '하나를'처럼 조사가 붙습니다." },
   { id: 4, name: '동사',   cat: 'yong',  words: ['먹다', '달리다', '읽다'],     detail: '움직임을 나타내며, 쓰임에 따라 모양이 바뀝니다.' },
   { id: 5, name: '형용사', cat: 'yong',  words: ['예쁘다', '높다', '춥다'],     detail: '성질이나 상태를 나타내며, 동사처럼 모양이 바뀝니다.' },
   { id: 6, name: '관형사', cat: 'susik', words: ['모든', '헌', '온갖'],         detail: '체언 앞에서 꾸밉니다. 모양이 바뀌지 않고 조사가 붙지 않습니다.' },
@@ -786,11 +789,12 @@ $('fx').addEventListener('click', closeFx);
 /* =========================================================
    종료
    ========================================================= */
+// 총평 — 지침 5-2 표 (정답률 = 찾은 짝 ÷ 두 장씩 뒤집은 횟수)
 function gradeText(eff) {
-  if (eff >= .60) return '🌳 완벽해요!';
-  if (eff >= .45) return '🌿 아주 잘했어요';
-  if (eff >= .35) return '🌱 잘하고 있어요';
-  if (eff >= .25) return '🌱 기본은 잡혔어요';
+  if (eff >= .95) return '🌳 완벽해요!';
+  if (eff >= .85) return '🌿 아주 잘했어요';
+  if (eff >= .70) return '🌱 잘하고 있어요';
+  if (eff >= .50) return '🌱 기본은 잡혔어요';
   return '🌰 다시 한 번 도전해요';
 }
 
