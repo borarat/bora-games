@@ -313,7 +313,7 @@ body.glow::after{content:'';position:fixed;inset:0;pointer-events:none;box-shado
    </div>
    <div class="credit">
     제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-    제작일 2025.09 · <span id="lastMod">최종 수정 2026.10.01 05:20</span>
+    제작일 2025.09.05 · <span id="lastMod">최종 수정 2026.10.01 05:20</span>
    </div>
    <div class="privacy" id="privacyOffline">
     <b>🔒 개인정보 보호 안내</b><br>
@@ -389,7 +389,7 @@ body.glow::after{content:'';position:fixed;inset:0;pointer-events:none;box-shado
    </div>
   </div>
  </div>
- <div class="mini-credit">제작 · 보라라샘 / 2025.09</div>
+ <div class="mini-credit">제작 · 보라라샘 / 2025.09.05</div>
 </div>
 
 <!-- ================= 종료 화면 ================= -->
@@ -439,7 +439,7 @@ body.glow::after{content:'';position:fixed;inset:0;pointer-events:none;box-shado
 <div class="toast" id="toast"></div>
 
 <script>
-const MADE_DATE = '2025.09';
+const MADE_DATE = '2025.09.05';
 const LAST_MOD = '2026.10.01 05:20';
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -528,7 +528,7 @@ const STAGES = [
   {id:10, w:'맨손으로 잡았다.', crit:2, c:'맨-:형식|손:실질|으로:형식|잡-:실질|-았-:형식|-다:형식', cat:'lexical', d:"접두사 '맨-'은 의존 형태소이면서 형식 형태소예요."}
  ]},
  { name:'어근과 접사', goal:'단어를 어근과 접사로 나눈다', type:'sort', cups:['어근','접사'], items:[
-  {id:11, w:'봄비', c:'봄:어근|비:어근', cat:'compound', d:"'봄'과 '비' 모두 혼자 쓰이는 말로, 실질적인 뜻을 가진 어근이에요."},
+  {id:11, w:'봄비', c:'봄:어근|비:어근', cat:'compound', d:"'봄'과 '비' 모두 실질적인 뜻을 나타내는 어근이에요."},
   {id:12, w:'눈물', c:'눈:어근|물:어근', cat:'compound', d:"'눈'과 '물'이 각각 제 뜻을 가진 어근이에요."},
   {id:13, w:'돌다리', c:'돌:어근|다리:어근', cat:'compound', d:"'돌로 만든 다리'. '돌'과 '다리' 모두 어근이에요."},
   {id:14, w:'굳세다', v:1, c:'굳-:어근|세-:어근', cat:'compound', d:"'-다'는 빼고 봐요. '굳-'(굳다)과 '세-'(세다)가 모두 어근이에요."},
@@ -560,9 +560,9 @@ const STAGES = [
   {id:36, w:'거울', ans:'단일어', an:'거울', cat:'simple', d:"더 나누면 뜻이 사라져요. 하나의 어근으로 된 단일어예요."},
   {id:37, w:'노을', ans:'단일어', an:'노을', cat:'simple', d:"'노'와 '을'에는 노을의 뜻이 남지 않아요."},
   {id:38, w:'푸르다', ans:'단일어', an:'푸르- (+ -다)', cat:'simple', d:"'-다'는 어미라서 빼면 어근 '푸르-' 하나만 남아요."},
-  {id:39, w:'햇빛', ans:'합성어', an:'해 + 빛', cat:'compound', d:"햇밤의 '햇-'(접두사)과 달라요. 여기서는 혼자 쓰이는 '해'에 'ㅅ'이 들어간 것이라 어근+어근이에요."},
+  {id:39, w:'햇빛', ans:'합성어', an:'해 + 빛', cat:'compound', d:"햇밤의 '햇-'(접두사)과 달라요. 여기서는 실질적인 뜻을 나타내는 '해'에 'ㅅ'이 들어간 것이라 어근+어근이에요."},
   {id:40, w:'콧물', ans:'합성어', an:'코 + 물', cat:'compound', d:"'코'와 '물' 사이에 'ㅅ'이 들어갔을 뿐, 둘 다 어근이에요."},
-  {id:41, w:'손목', ans:'합성어', an:'손 + 목', cat:'compound', d:"'손'과 '목' 모두 혼자 쓰이는 어근이에요."},
+  {id:41, w:'손목', ans:'합성어', an:'손 + 목', cat:'compound', d:"'손'과 '목' 모두 실질적인 뜻을 나타내는 어근이에요."},
   {id:42, w:'굶주리다', ans:'합성어', an:'굶- + 주리-', cat:'compound', d:"'굶다'와 '주리다'의 어간이 바로 합쳐졌어요. 둘 다 어근이에요."},
   {id:43, w:'외아들', ans:'파생어', an:'외- + 아들', cat:'prefix', d:"'외-'는 '하나뿐인'이라는 뜻을 더하는 접두사예요."},
   {id:44, w:'날고기', ans:'파생어', an:'날- + 고기', cat:'prefix', d:"'날-'은 '익히지 않은'이라는 뜻을 더하는 접두사예요."},
@@ -615,7 +615,7 @@ const SLIDES = [
   {e:'①', t:'단일어', b:[`하나의 어근으로 이루어진 단어는 ${K('단일어')}예요.`, `<span class="chips"><span class="chip">사람</span></span>`]},
   {e:'➕', t:'합성어', b:[`어근 + 어근으로 이루어진 단어는 ${K('합성어')}예요.`, `<span class="chips"><span class="chip">물 + 방울</span></span>`]},
   {e:'🧩', t:'파생어', b:[`어근 + 접사로 이루어진 단어는 ${K('파생어')}예요.`, `<span class="chips"><span class="chip">풋- + 사랑</span><span class="chip">사냥 + -꾼</span></span>`, `합성어와 파생어를 묶어 복합어라고 해요.`]},
-  {e:'⚠️', t:'함정 주의', b:[`모양이 같아도 ${K('혼자 쓰이는 말')}인지 따져 보세요.`, `소리가 덧나거나 모양이 바뀌어도 어근은 어근이에요.`, `예) 나뭇잎 = 나무 + 잎`]}
+  {e:'⚠️', t:'함정 주의', b:[`모양이 같아도 ${K('실질적인 뜻을 나타내는지')} 따져 보세요.`, `소리가 덧나거나 모양이 바뀌어도 어근은 어근이에요.`, `예) 나뭇잎 = 나무 + 잎`]}
  ],
  [ // 4단계
   {e:'✂️', t:'① 카드 나누기', b:[`단어를 이루는 카드를 ${K('접두사')} / ${K('어근')} / ${K('접미사')} 컵에 넣어요.`]},
