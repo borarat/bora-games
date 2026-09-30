@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>단어의 짜임 컵스 · 보라라샘</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+html{color-scheme:light}
+:root{
+  --bg:#F7F3FC; --ac:#7C5CBF; --dk:#3C3489; --bd:#EAE5F8;
+  --ink:#3C3489; --ink2:#5b5670; --line:#EAE5F8; --ng:#d63b50; --ok:#1f9d55;
+  --txt:#333; --soft:#f1ecfa;
+  --ff:'Noto Sans KR','Malgun Gothic','맑은 고딕',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--ff);background:var(--bg);color:var(--txt);-webkit-text-size-adjust:100%;word-break:keep-all;overflow-wrap:break-word}
+button{font-family:inherit;cursor:pointer}
+img.mascot{height:90px;border-radius:12px;-webkit-touch-callout:none;user-select:none;-webkit-user-select:none;pointer-events:none}
+.screen{display:none}
+.screen.on{display:block}
+.band{height:40px;background:var(--ac);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-weight:700;font-size:15px;gap:10px}
+.band .pill{background:rgba(255,255,255,.22);border-radius:999px;padding:3px 12px;font-size:13px;font-weight:500;white-space:nowrap}
+.band .bl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.band .br{white-space:nowrap;font-weight:500;font-size:14px}
+
+/* ===== 시작 화면 ===== */
+#start .wrap{max-width:1100px;margin:0 auto 60px;background:#fff;border-radius:12px;box-shadow:0 2px 14px rgba(60,52,137,.07)}
+#start .inner{padding:48px 28px 28px}
+.titlebox{display:flex;align-items:center;gap:18px;margin-bottom:22px}
+.titlebox h1{font-size:clamp(26px,3.4vw,34px);font-weight:700;color:var(--dk);letter-spacing:-.5px}
+.titlebox p{font-size:15px;color:var(--ink2);margin-top:6px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.box{border:1px solid var(--bd);border-radius:12px;padding:14px 16px;background:#fff}
+.box h3{font-size:14px;color:var(--dk);margin-bottom:8px;font-weight:700}
+.box p,.box li{font-size:13.5px;line-height:1.65}
+.box ul{padding-left:18px}
+.std{background:var(--soft);border-color:#e0d7f3}
+.std b{color:var(--dk)}
+.stagebtns{display:flex;flex-direction:column;gap:8px}
+.stbtn{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:1.5px solid var(--bd);background:#fff;border-radius:12px;padding:10px 14px;transition:.15s}
+.stbtn:hover,.stbtn:focus-visible{border-color:var(--ac);background:var(--soft);outline:none}
+.stbtn .no{flex:0 0 auto;background:var(--ac);color:#fff;border-radius:10px;font-weight:700;font-size:13px;padding:5px 9px}
+.stbtn .nm{font-weight:700;color:var(--dk);font-size:15px}
+.stbtn .ds{font-size:12.5px;color:var(--ink2);margin-top:2px}
+.stbtn .mx{margin-left:auto;font-size:12px;color:var(--ink2);white-space:nowrap;text-align:right}
+.quick{display:none}
+.credit{margin-top:18px;font-size:12.5px;color:var(--ink2);text-align:center;line-height:1.8;border-top:1px dashed var(--bd);padding-top:12px}
+.privacy{margin-top:12px;font-size:12px;color:#6b6780;background:#faf8fe;border:1px solid var(--bd);border-radius:10px;padding:10px 14px;line-height:1.65}
+
+/* ===== 개념 화면 ===== */
+#concept .wrap{max-width:1000px;margin:0 auto 60px;background:#fff;border-radius:12px;box-shadow:0 2px 14px rgba(60,52,137,.07)}
+#concept .inner{padding:34px 28px 28px}
+#concept h2{font-size:24px;color:var(--dk);margin-bottom:4px}
+#concept .goal{color:var(--ink2);font-size:14px;margin-bottom:18px}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.ccard{border:1px solid var(--bd);border-radius:12px;padding:14px 16px}
+.ccard h4{color:var(--ac);font-size:15px;margin-bottom:6px}
+.ccard p{font-size:14px;line-height:1.7}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.chip{display:inline-block;background:var(--soft);border:1px solid #ddd3f2;border-radius:8px;padding:3px 10px;font-weight:700;color:var(--dk);font-size:14px}
+.remember{margin-top:14px;background:#fff8e6;border:1px solid #f3dfa6;border-radius:12px;padding:12px 16px;font-size:14px;line-height:1.75}
+.remember b{color:#8a5a00}
+/* 개념 슬라이드 */
+.slidebox{min-height:340px;display:flex;align-items:center;justify-content:center}
+.slide{width:100%;max-width:760px;text-align:center;background:linear-gradient(180deg,#faf7ff,#fff);border:2px solid var(--bd);border-radius:22px;padding:28px 30px 26px;animation:slin .35s ease-out}
+@keyframes slin{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+.slide .se{font-size:54px;line-height:1.1;margin-bottom:6px}
+.slide .st{font-size:clamp(22px,2.6vw,28px);font-weight:700;color:var(--dk);margin-bottom:14px}
+.slide p{font-size:clamp(16px,1.7vw,19px);line-height:1.75;margin:4px 0}
+.kw{font-size:2em;font-weight:700;color:#E8590C;line-height:1.2;vertical-align:-2px}
+.slide.c1{border-color:#7fc8cd;background:linear-gradient(180deg,#eefafa,#fff)}
+.slide.c1 .st{color:#0E7C86}
+.slide.c2{border-color:#f3b58f;background:linear-gradient(180deg,#fff4ec,#fff)}
+.slide.c2 .st{color:#C2410C}
+.slide .chips{justify-content:center}
+.slide .chip{font-size:20px;padding:5px 14px}
+.snav{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:20px}
+.dots{display:flex;align-items:center;gap:7px}
+.dots i{width:10px;height:10px;border-radius:50%;background:#d9cff0}
+.dots i.on{background:var(--ac);width:26px;border-radius:6px}
+.dots span{font-size:13px;color:var(--ink2);margin-left:6px}
+#cGo.go{background:#E8590C;animation:gobtn 1.4s infinite}
+@keyframes gobtn{0%,100%{box-shadow:0 0 0 0 rgba(232,89,12,.45)}50%{box-shadow:0 0 0 10px rgba(232,89,12,0)}}
+.shome{text-align:center;margin-top:10px}
+.linkbtn{border:none;background:none;color:var(--ink2);font-size:13px;text-decoration:underline;padding:6px}
+
+/* ===== 버튼 ===== */
+.btn{border:none;background:var(--ac);color:#fff;font-weight:700;border-radius:12px;padding:12px 26px;font-size:15px;min-height:44px}
+.btn:hover{filter:brightness(1.07)}
+.btn.sec{background:#fff;color:var(--ac);border:1.5px solid var(--ac)}
+.btn.sm{padding:8px 14px;font-size:13.5px}
+
+/* ===== 문제 화면 ===== */
+#play{min-height:100vh}
+#play.on{display:flex;flex-direction:column}
+#play .pwrap{max-width:1180px;width:100%;margin:0 auto;display:flex;flex-direction:column;flex:1}
+#play .band{border-radius:0 0 0 0}
+.progress{height:6px;background:var(--bd)}
+.progress i{display:block;height:100%;background:var(--ac);width:0;transition:width .3s}
+.pmain{flex:1;display:flex;align-items:center;padding:14px 18px 34px}
+.pgrid{display:grid;grid-template-columns:1fr 118px;gap:16px;width:100%}
+.qcard{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:16px 20px;position:relative}
+.qtop{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:26px}
+.qtag{white-space:nowrap;font-size:13px;color:var(--ac);font-weight:700;background:var(--soft);border-radius:999px;padding:3px 12px}
+.combo-hud{display:flex;align-items:center;gap:4px;font-weight:700;color:#e0641b;font-size:15px;opacity:.35;transition:opacity .2s}
+.combo-hud.live{opacity:1}
+.combo-hud.pulse{animation:hudp .45s}
+@keyframes hudp{0%{transform:scale(1)}40%{transform:scale(1.35)}100%{transform:scale(1)}}
+.prompt{text-align:center;margin:8px 0 6px}
+.crit{display:inline-block;color:#fff;border-radius:16px;padding:10px 28px;font-size:clamp(18px,2.2vw,28px);font-weight:700;margin-bottom:8px;box-shadow:0 4px 12px rgba(0,0,0,.12)}
+.crit.c1{background:#0E7C86}
+.crit.c2{background:#C2410C}
+.cups.c1 .cup{border-color:#8fd0d4;background:#f2fbfb}
+.cups.c1 .cup.ready{border-color:#0E7C86;background:#e3f6f6}
+.cups.c2 .cup{border-color:#f5bf9f;background:#fff7f1}
+.cups.c2 .cup.ready{border-color:#C2410C;background:#ffeee2}
+.word{font-size:clamp(26px,3.6vw,38px);font-weight:700;color:var(--dk);letter-spacing:1px}
+.word.sent{letter-spacing:0;font-size:clamp(22px,3vw,32px)}
+.sub{font-size:13px;color:var(--ink2);margin-top:4px;min-height:18px}
+.dachip{display:inline-block;background:#eee;color:#888;border-radius:8px;padding:2px 9px;font-size:12.5px;margin-left:6px}
+.steps{font-size:13px;color:var(--ink2);margin-top:2px}
+.steps b{color:var(--ac)}
+.cups{display:grid;gap:12px;margin-top:10px}
+.cup{border:2px dashed #cfc3ea;border-radius:16px;background:#fcfbff;min-height:150px;padding:8px 8px 10px;display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:.15s;position:relative}
+.cup.ready{border-style:solid;border-color:var(--ac);background:#f6f1ff}
+.cup:focus-visible{outline:3px solid var(--ac)}
+.cup .cn{font-weight:700;color:var(--dk);font-size:24px}
+.cup .cs{font-size:18px;color:var(--ink2);margin-bottom:8px;text-align:center;line-height:1.35}
+.cup .cc{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;width:100%}
+.cup.bad{animation:shake .35s;border-color:var(--ng);background:#fff0f2}
+.tray{margin-top:12px;min-height:58px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;background:#faf8fe;border-radius:14px;padding:8px}
+.tray .empty{font-size:13px;color:#a09bb3}
+.card{border:2px solid #d9cff0;background:#fff;border-radius:12px;padding:8px 16px;font-size:20px;font-weight:700;color:var(--dk);min-height:44px;min-width:44px;user-select:none;-webkit-user-select:none;transition:transform .12s,box-shadow .12s}
+.card.sel{border-color:var(--ac);background:#efe8ff;transform:translateY(-3px);box-shadow:0 4px 10px rgba(124,92,191,.25)}
+.card.bad{animation:shake .35s;border-color:var(--ng);background:#fff0f2}
+.card.placed{font-size:16px;padding:5px 11px;min-height:34px;background:#effaf3;border-color:#8fd3a8;color:#16623a;cursor:default}
+.card.placed::before{content:'✓ ';font-size:12px}
+.card.reveal{background:#fff4f4;border-color:#f0a3ad;color:#9b2335}
+.card.reveal::before{content:'👉 '}
+.card.hy{animation:hy .6s}
+@keyframes hy{0%{transform:scale(1.25);background:#fff4c2}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.fb{margin-top:10px;min-height:54px}
+.hint{background:#fff3e0;border:1.5px solid #f5b25c;border-left-width:6px;border-radius:10px;padding:8px 12px;font-size:14px;line-height:1.6;color:#6b4200}
+.hint b{color:#b35c00}
+.expl{border-radius:10px;padding:9px 14px;font-size:14px;line-height:1.65}
+.expl.ok{background:#eefaf2;border:1px solid #bfe6cc}
+.expl.re{background:#f3f0ff;border:1px solid #d9cff5}
+.expl.ng{background:#fff1f2;border:1px solid #f5c2c9}
+.expl .an{font-weight:700;color:var(--dk)}
+.expl .nx{font-size:12px;color:var(--ink2);margin-top:2px}
+.review{white-space:nowrap;font-size:12.5px;color:var(--ink2);background:#f4f4f7;border-radius:8px;padding:3px 10px}
+.side{display:flex;flex-direction:column;gap:10px}
+.side .btn{width:100%;padding:12px 6px;font-size:14px}
+.side .stagego{position:relative}
+.stmenu{display:none;position:absolute;right:0;top:48px;background:#fff;border:1px solid var(--bd);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.14);padding:6px;z-index:30;width:190px}
+.stmenu.on{display:block}
+.stmenu button{display:block;width:100%;text-align:left;border:none;background:none;padding:9px 10px;border-radius:8px;font-size:14px;color:var(--dk);min-height:40px}
+.stmenu button:hover{background:var(--soft)}
+.stmenu button.cur{font-weight:700;background:var(--soft)}
+.mini-credit{position:fixed;right:12px;bottom:8px;font-size:11px;color:#9e97b8;pointer-events:none}
+.toast{position:fixed;left:50%;top:60px;transform:translateX(-50%);background:rgba(40,30,70,.88);color:#fff;border-radius:999px;padding:7px 16px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:80}
+.toast.on{opacity:1}
+
+/* ===== 배너 ===== */
+#dim{position:fixed;inset:0;background:radial-gradient(circle,rgba(0,0,0,.18),rgba(0,0,0,.32));display:none;align-items:center;justify-content:center;z-index:60}
+#dim.on{display:flex}
+#dim.fade{animation:fadeo .3s forwards}
+@keyframes fadeo{to{opacity:0}}
+.bn{position:relative;text-align:center;animation:pop .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{0%{transform:scale(.3)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.rays{position:absolute;left:50%;top:50%;width:520px;height:520px;margin:-260px 0 0 -260px;border-radius:50%;background:repeating-conic-gradient(rgba(255,230,140,.35) 0 10deg,transparent 10deg 20deg);animation:spin 6s linear infinite;-webkit-mask:radial-gradient(circle,#000 30%,transparent 70%);mask:radial-gradient(circle,#000 30%,transparent 70%)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.bn .big{position:relative;font-size:clamp(56px,10vw,96px);font-weight:700;background:linear-gradient(180deg,#fff6c4,#ffc93c 55%,#f39c12);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 14px rgba(255,200,60,.8)) drop-shadow(0 3px 2px rgba(0,0,0,.25))}
+.bn .emo{position:relative;font-size:clamp(40px,7vw,64px);line-height:1.1}
+.bn .sub2{font-size:clamp(22px,3.2vw,32px);margin-top:8px}
+.bn .pts{position:relative;font-size:34px;font-weight:700;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+.bn.crit2 .big{background:none;color:#fff;-webkit-text-fill-color:#fff;font-size:clamp(40px,7vw,68px);filter:drop-shadow(0 3px 6px rgba(0,0,0,.4))}
+.bn.crit2 .sub2{background:#C2410C;border-radius:16px;padding:10px 24px;display:inline-block}
+.bn.c3 .big{background:linear-gradient(90deg,#ffb347,#ff6a00);-webkit-background-clip:text;background-clip:text}
+.bn.c5 .big{background:linear-gradient(90deg,#ff5f6d,#ffc371,#47e891,#4facfe,#a66cff);-webkit-background-clip:text;background-clip:text;animation:wob .6s}
+@keyframes wob{0%,100%{transform:rotate(0) scale(1)}25%{transform:rotate(-4deg) scale(1.08)}75%{transform:rotate(4deg) scale(1.08)}}
+.spark{position:absolute;font-size:22px;animation:spk .8s ease-out forwards;pointer-events:none}
+@keyframes spk{0%{transform:translate(0,0) scale(.4);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(1.1);opacity:0}}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:70}
+body.glow::after{content:'';position:fixed;inset:0;pointer-events:none;box-shadow:inset 0 0 40px 10px rgba(166,108,255,.55);animation:gp .5s 3 alternate;z-index:65}
+@keyframes gp{from{opacity:.2}to{opacity:1}}
+.emoji-fall{position:fixed;top:-40px;font-size:26px;pointer-events:none;z-index:71;animation:fall 1.4s linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
+
+/* ===== 종료 화면 ===== */
+#end .wrap{max-width:1000px;margin:0 auto 60px;background:#fff;border-radius:12px;box-shadow:0 2px 14px rgba(60,52,137,.07)}
+#end .inner{padding:30px 28px 26px}
+.score-big{text-align:center}
+.score-big .s{font-size:44px;font-weight:700;color:var(--dk)}
+.score-big .m{font-size:16px;color:var(--ink2)}
+.score-big .cm{font-size:18px;font-weight:700;color:var(--ac);margin-top:6px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}
+.stat{background:var(--soft);border-radius:12px;padding:10px;text-align:center}
+.stat b{display:block;font-size:20px;color:var(--dk)}
+.stat span{font-size:12.5px;color:var(--ink2)}
+.breakdown{text-align:center;font-size:14px;color:var(--ink2);margin-bottom:12px}
+.diag{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.diag .box p{font-size:14px}
+.first{margin-top:12px;background:#fff8e6;border:1px solid #f3dfa6;border-radius:12px;padding:12px 16px;font-size:14px;line-height:1.7}
+.form{display:grid;grid-template-columns:1fr 2fr;gap:12px;margin-top:16px}
+.form label{font-size:13px;font-weight:700;color:var(--dk);display:block;margin-bottom:4px}
+.form input,.form textarea{width:100%;border:1.5px solid #d9cff0;border-radius:10px;padding:10px 12px;font-size:15px;font-family:inherit;background:#fff;color:#222}
+.form textarea{height:46px;resize:vertical}
+.form input:focus,.form textarea:focus{outline:none;border-color:var(--ac)}
+.endbtns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:16px}
+.endnote{font-size:12.5px;color:var(--ink2);text-align:center;margin-top:10px}
+#reviewModal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:90;padding:16px}
+#reviewModal.on{display:flex}
+#reviewModal .mb{background:#fff;border-radius:16px;max-width:760px;width:100%;max-height:86vh;display:flex;flex-direction:column}
+#reviewModal .mh{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--bd);font-weight:700;color:var(--dk)}
+#reviewModal .ml{overflow:auto;padding:12px 18px}
+.ri{border-bottom:1px solid #f0ecf8;padding:10px 0;font-size:14px;line-height:1.6}
+.ri .rq{font-weight:700;color:var(--dk)}
+.ri .ra{color:#16623a}
+.ri .rd{color:#64748b;font-size:13px}
+
+@media (max-width:820px){
+  .cols,.cgrid,.diag{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .form{grid-template-columns:1fr}
+}
+@media (max-width:700px){
+  .pgrid{grid-template-columns:1fr}
+  .side{flex-direction:row;align-items:stretch}
+  .side>*{flex:1;min-width:0}
+  .side .btn{padding:8px 2px;font-size:13px;min-height:46px;height:100%}
+  .stmenu{top:auto;bottom:52px}
+  .pmain{padding:10px 10px 30px;align-items:flex-start}
+}
+@media (max-width:600px){
+  .band .goaltxt{display:none}
+  .band{padding:0 12px;font-size:14px}
+  #start .inner,#concept .inner,#end .inner{padding:28px 16px 20px}
+  .titlebox{gap:12px}
+  .titlebox img.mascot{height:70px}
+  .quick{display:block;width:100%;margin:-6px 0 16px}
+  .qcard{padding:12px 10px}
+  .cups{gap:6px}
+  .cup{min-height:118px;padding:6px 4px 8px}
+  .cup .cn{font-size:19px}
+  .cup .cs{font-size:13.5px}
+  .slide{padding:20px 14px}
+  .kw{font-size:1.6em}
+  #cGoal span{display:block}
+  #cGoal .gsep{display:none}
+  .dots span{display:none}
+  .snav .btn{white-space:nowrap;padding:10px 14px;font-size:14px}
+  .slide .se{font-size:44px}
+  .slidebox{min-height:300px}
+  .snav{gap:10px}
+  .card{font-size:18px;padding:7px 12px}
+  .card.placed{font-size:15px;padding:4px 8px}
+}
+@media (prefers-reduced-motion:reduce){
+  .rays{display:none}
+  .bn{animation:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= 시작 화면 ================= -->
+<div id="start" class="screen on">
+ <div class="wrap">
+  <div class="band"><span>문법</span><span class="pill">💻📱 노트북·모바일</span></div>
+  <div class="inner">
+   <div class="titlebox">
+    <img class="mascot" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAACxCAMAAAAyLeWLAAAB/lBMVEUAAABMNSXZ1s7hupPcto7alVnNxba4uryMqcKptsLQiEyTp7jTmmfXpXTkwZxGLBvipW3i2snLeDWcscPUrIR8osLnx6NqSDBNMR7FvbLb0b2telCoq6vGxsb7+vqth2eHm6ivpJaMZ0rhmlvgnWGLeGm2g1ipmozGfUJtWEjTgTySlpVaRDS2lHXo6OeVhXbk4dl0UjmdsL6+wL1ELiDFbCd4mraGWDe8wcLGxsaXc1Z4ZVZ8oL77+vo6JhhiPSWoq6uTjIa4urzZ1s6DXELwsnh6bWK8dTuSYzwIBQUbFRNuOBZ3Qh3groDi0rsqHRdMNSWcoJuvpJbFvbLi2sl1nsKSlpWzajKptsLawZ7Nxbbo6OdtWEiLeGmpmowxIyF7c2l+lJ2BTSeTjIa2WBG8YhyjbUXd4eLk4dk8MS1ELiBlT0B4ZVaVhXaTp7imf2GvpJbAZh3An4De3+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADGtm7NAAAAgHRSTlMA///////////////////////////////////////////////////////////////////////////c////3P//3P/c3P///////////////9z/3Nzc/9z/3P/c3Nzc3P/////c/////9z/3P/c3Nz/oP///wAAAAAAAAAAAAAAAKaTQcIAABeqSURBVHja7VwHd+JItl4kUUpVKCAjhMjYYINxTh2me3q6e3vyvNnZ3dmcw8vx/5/z7r1VEghjLLfp3XPeebVjaANWffrud0PdKvYHP/j/sa3xC5Ml7cmrSdLRnvxdAPwjm+wdVPIRH+wN/sZAnhwfVJpepTi8SnzMPvqbQdg79C4q68fhr/8mED5+VvEqm8bBJx8cw68r9w7v4DcfFMJP72EhG3u//GAQXv+wHIRKpXn4iw+E4buDshhwfCBFxg/BUPnnD4Hhk8oD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" alt="보라라샘" draggable="false" style="height:90px;border-radius:12px">
+    <div>
+     <h1>단어의 짜임 컵스</h1>
+     <p>형태소부터 단어의 종류까지, 카드를 알맞은 컵에 넣어 보세요.</p>
+    </div>
+   </div>
+   <button class="btn quick" onclick="startStage(0)">▶ 0단계부터 시작하기</button>
+   <div class="cols">
+    <div style="display:flex;flex-direction:column;gap:14px">
+     <div class="box std">
+      <h3>📘 성취기준</h3>
+      <p><b>[9국04-02]</b> 단어의 짜임을 분석하여 새말 형성의 원리를 이해한다.</p>
+     </div>
+     <div class="box">
+      <h3>🎮 게임 방법</h3>
+      <ul>
+       <li>카드를 누른 뒤, 알맞은 컵을 누르세요.</li>
+       <li>한 번에 맞히면 10점이고, 연속으로 맞히면 콤보 보너스가 붙어요.</li>
+       <li>3~4콤보는 +5점, 5콤보부터는 +10점이에요.</li>
+       <li>카드를 잘못 넣으면 2점이 깎이고, 힌트가 나와요.</li>
+       <li>힌트를 보고 다시 맞히면 5점을 받아요.</li>
+       <li>한 문항에서 두 번 틀리면 정답과 해설이 공개돼요.</li>
+       <li>컵에 들어간 카드에는 붙임표(-)가 나타나요. 어디에 붙는 말인지 꼭 확인하세요.</li>
+      </ul>
+     </div>
+    </div>
+    <div class="box">
+     <h3>🧩 단계 선택</h3>
+     <div class="stagebtns" id="stageBtns"></div>
+    </div>
+   </div>
+   <div class="credit">
+    제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
+    제작일 2025.09 · <span id="lastMod">최종 수정 2026.09.23 14:20</span>
+   </div>
+   <div class="privacy" id="privacyOffline">
+    <b>🔒 개인정보 보호 안내</b><br>
+    본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다.<br>
+    게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.
+   </div>
+   <div class="privacy" id="privacyOnline" style="display:none">
+    <b>🔒 개인정보 보호 안내</b><br>
+    본 게임의 학습 결과(학번, 이름, 점수, 오답 정보, 학습 소감)는 담당 선생님의 학습 관리용 스프레드시트에 안전하게 전송·저장됩니다.<br>
+    수집된 정보는 학습 지도 목적으로만 사용되며, 제3자에게 제공되지 않습니다.
+   </div>
+  </div>
+ </div>
+</div>
+
+<div id="loginOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;justify-content:center;align-items:center">
+ <div style="background:#fff;border-radius:20px;padding:32px;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center">
+  <div style="font-size:36px;margin-bottom:8px">🔑</div>
+  <h2 style="font-size:20px;margin-bottom:4px;color:var(--ink)">학생 인증</h2>
+  <p style="font-size:13px;color:var(--ink2);margin-bottom:20px">학번과 이름을 입력하면 게임을 시작할 수 있어요.</p>
+  <div style="text-align:left;margin-bottom:12px">
+   <label style="font-size:13px;font-weight:700;color:var(--ink)">학번 (5자리)</label>
+   <input id="loginId" type="text" maxlength="5" inputmode="numeric" placeholder="예: 20101" style="width:100%;padding:10px 14px;border:2px solid var(--line);border-radius:10px;font-size:16px;margin-top:4px;box-sizing:border-box">
+  </div>
+  <div style="text-align:left;margin-bottom:16px">
+   <label style="font-size:13px;font-weight:700;color:var(--ink)">이름</label>
+   <input id="loginName" type="text" maxlength="10" placeholder="예: 김민준" style="width:100%;padding:10px 14px;border:2px solid var(--line);border-radius:10px;font-size:16px;margin-top:4px;box-sizing:border-box">
+  </div>
+  <div id="loginMsg" style="font-size:13px;color:var(--ng);min-height:20px;margin-bottom:12px"></div>
+  <button id="loginBtn" onclick="doLogin()" style="width:100%;padding:12px;background:var(--ink);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer">확인</button>
+  <div id="loginSpinner" style="display:none;margin-top:12px"><div style="width:28px;height:28px;border:3px solid var(--line);border-top-color:var(--ink);border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto"></div></div>
+ </div>
+</div>
+
+<!-- ================= 개념 화면 ================= -->
+<div id="concept" class="screen">
+ <div class="wrap">
+  <div class="band"><span id="cBand">문법</span><span class="pill">💻📱 노트북·모바일</span></div>
+  <div class="inner">
+   <h2 id="cTitle"></h2>
+   <div class="goal" id="cGoal"></div>
+   <div class="slidebox" id="cSlide"></div>
+   <div class="snav">
+    <button class="btn sec" id="sPrev" onclick="slideGo(-1)">◀ 이전</button>
+    <div class="dots" id="sDots"></div>
+    <button class="btn" id="cGo" onclick="slideGo(1)">다음 ▶</button>
+   </div>
+   <div class="shome"><button class="linkbtn" onclick="show('start')">시작화면으로</button></div>
+  </div>
+ </div>
+</div>
+
+<!-- ================= 문제 화면 ================= -->
+<div id="play" class="screen">
+ <div class="pwrap">
+  <div class="band"><span class="bl"><span>문법</span><span class="goaltxt" id="pGoal"></span></span><span class="br" id="pStat"></span></div>
+  <div class="progress"><i id="pBar"></i></div>
+  <div class="pmain">
+   <div class="pgrid">
+    <div class="qcard">
+     <div class="qtop"><span class="qtag" id="qTag"></span><span id="qReview"></span><span class="combo-hud" id="hud">🔥 <span id="hudN">0</span></span></div>
+     <div class="prompt" id="prompt"></div>
+     <div class="cups" id="cups"></div>
+     <div class="tray" id="tray"></div>
+     <div class="fb" id="fb"></div>
+    </div>
+    <div class="side">
+     <button class="btn sec" onclick="prevQ()">◀ 이전</button>
+     <button class="btn" onclick="nextQ()">다음 ▶</button>
+     <div class="stagego"><button class="btn sec" style="width:100%" onclick="toggleStMenu(event)">단계 이동</button><div class="stmenu" id="stMenu"></div></div>
+     <button class="btn sec" id="quitBtn" onclick="quitGame()">게임 끝내기</button>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="mini-credit">제작 · 보라라샘 / 2025.09</div>
+</div>
+
+<!-- ================= 종료 화면 ================= -->
+<div id="end" class="screen">
+ <div class="wrap">
+  <div class="band"><span id="eBand">문법</span><span class="pill">학습 리포트</span></div>
+  <div class="inner">
+   <div class="score-big">
+    <div class="m" id="eStage"></div>
+    <div class="s" id="eScore"></div>
+    <div class="cm" id="eComment"></div>
+   </div>
+   <div class="stats">
+    <div class="stat"><b id="eAcc"></b><span>정답률 (첫 시도)</span></div>
+    <div class="stat"><b id="eCombo"></b><span>최고 콤보</span></div>
+    <div class="stat"><b id="eTime"></b><span>소요 시간</span></div>
+    <div class="stat"><b id="eDone"></b><span>채점된 문항</span></div>
+   </div>
+   <div class="breakdown" id="eBreak"></div>
+   <div class="diag">
+    <div class="box"><h3>💪 잘하는 유형</h3><p id="eGood"></p></div>
+    <div class="box"><h3>🛠 보완이 필요한 유형</h3><p id="eWeak"></p></div>
+   </div>
+   <div class="first" id="eFirst"></div>
+   <div class="form">
+    <div><label for="inName">이름 (실명, 필수)</label><input id="inName" type="text" maxlength="12" placeholder="이름을 입력하세요"></div>
+    <div><label for="inFeel">학습 소감 (선택)</label><textarea id="inFeel" maxlength="200" placeholder="오늘 새로 알게 된 것을 적어 보세요."></textarea></div>
+   </div>
+   <div class="endbtns">
+    <button class="btn" onclick="downloadWrongNote()">📝 오답노트 JPG</button>
+    <button class="btn" onclick="downloadReport()">📊 학습 리포트 JPG</button>
+    <button class="btn sec" onclick="openReview()">📖 오늘 나온 문제 모두 보기</button>
+   </div>
+   <div class="endbtns">
+    <button class="btn" id="btnNextStage">다음 단계로 ▶</button>
+    <button class="btn sec" id="btnRetry">이 단계 다시 하기</button>
+    <button class="btn sec" onclick="show('start')">시작화면으로</button>
+   </div>
+   <div class="privacy" style="margin-top:10px;text-align:left" id="endPrivacy">입력하신 이름과 소감은 서버에 저장되지 않으며, 리포트 이미지(JPG) 생성용으로만 쓰입니다.</div>
+  </div>
+ </div>
+</div>
+
+<div id="reviewModal"><div class="mb"><div class="mh"><span>📖 오늘 나온 문제</span><button class="btn sec sm" onclick="closeReview()">닫기</button></div><div class="ml" id="reviewList"></div></div></div>
+<div id="dim"></div>
+<canvas id="fx"></canvas>
+<div class="toast" id="toast"></div>
+
+<script>
+const MADE_DATE = '2025.09';
+const LAST_MOD = '2026.09.23 14:20';
+// ═══════════════════════════════════════════
+// ★ Apps Script 연동 설정
+// ═══════════════════════════════════════════
+const GAME_CONFIG = {
+  gameCode: "G104",
+  gameName: "단어의 짜임 컵스",
+  webAppUrl: "https://script.google.com/macros/s/AKfycbzgq9yT5svpFzeFwW5p2pWOpL-lKpj5_RldoJejFT1EOk1Osjcf6hDx85jGQzvr5rU0ww/exec"
+};
+const params = new URLSearchParams(location.search);
+const TEACHER_KEY = params.get("key");
+const IS_ONLINE = !!TEACHER_KEY;
+let STUDENT = { id: "", name: "", className: "", verified: false };
+
+async function verifyStudent(studentId, studentName) {
+  if (!IS_ONLINE) return { status: "ok" };
+  try {
+    const res = await fetch(GAME_CONFIG.webAppUrl, {
+      method: "POST", headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ action: "verify", teacherKey: TEACHER_KEY, studentId, studentName })
+    });
+    return await res.json();
+  } catch (e) { return { status: "error", message: "서버에 연결할 수 없습니다. 인터넷 연결을 확인해주세요." }; }
+}
+function notifyGameStart(studentId, studentName, className) {
+  if (!IS_ONLINE) return;
+  fetch(GAME_CONFIG.webAppUrl, {
+    method: "POST", headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify({ action: "start", teacherKey: TEACHER_KEY, gameCode: GAME_CONFIG.gameCode, studentId, studentName, className })
+  }).catch(() => {});
+}
+async function submitResult(resultData) {
+  if (!IS_ONLINE) return { status: "ok" };
+  try {
+    const res = await fetch(GAME_CONFIG.webAppUrl, {
+      method: "POST", headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ action: "submit", teacherKey: TEACHER_KEY, gameCode: GAME_CONFIG.gameCode, gameName: GAME_CONFIG.gameName, ...resultData })
+    });
+    return await res.json();
+  } catch (e) { return { status: "error", message: "결과 전송에 실패했습니다." }; }
+}
+
+const $ = id => document.getElementById(id);
+
+/* ══════════ 유형 마스터 ══════════ */
+const CATEGORIES = {
+  free:    { label:'자립·의존 가르기', desc:'홀로 쓰일 수 있는지로 형태소를 나눔',
+             tip:"그 조각만 떼어 혼자 말해 보세요. '하늘'은 혼자 말이 되지만 '이', '맑-', '-다'는 다른 말에 붙어야만 쓰여요. 용언의 어간도 혼자 쓰이지 못하니 의존 형태소예요." },
+  lexical: { label:'실질·형식 가르기', desc:'실질적인 의미가 있는지로 형태소를 나눔',
+             tip:"그 조각이 대상, 움직임, 상태 같은 내용을 가리키는지 보세요. '피-'는 혼자 못 쓰여도 '꽃이 핀다'는 내용이 있어 실질 형태소예요. '이', '-었-', '-다'처럼 문법적인 뜻만 더하면 형식 형태소예요." },
+  simple:  { label:'단일어', desc:'하나의 어근으로 된 단어',
+             tip:"더 쪼갠 조각에 뜻이 남는지 보세요. '나비'를 '나'와 '비'로 나누면 나비와 상관없는 말이 되니, 하나의 어근으로 된 단일어예요." },
+  compound:{ label:'합성어', desc:'어근 + 어근',
+             tip:"두 부분을 각각 떼어서 혼자 써 보세요. '봄비'의 '봄'과 '비'처럼 둘 다 제 뜻으로 쓰이면 둘 다 어근이고, 합성어예요." },
+  prefix:  { label:'접두사 파생어', desc:'접두사 + 어근',
+             tip:"앞부분만 떼어 문장에 넣어 보세요. '맨발'의 '맨-'처럼 혼자 쓰이지 못하고 뒷말의 뜻만 좁혀 주면 접두사예요." },
+  suffix:  { label:'접미사 파생어', desc:'어근 + 접미사',
+             tip:"뒷부분을 다른 단어 뒤에도 붙여 보세요. '-꾼'이 나무꾼, 일꾼, 사냥꾼처럼 여러 말 뒤에 붙어 같은 뜻만 더하면 접미사예요." },
+  double:  { label:'접두사·접미사 파생어', desc:'접두사 + 어근 + 접미사',
+             tip:"실질적인 뜻을 가진 가운데 부분(어근)을 먼저 찾으세요. 그 앞에 붙은 것은 접두사, 뒤에 붙은 것은 접미사예요." }
+};
+
+/* ══════════ 컵 정의 ══════════ */
+const CUPS = {
+  '자립':{i:'🧍',s:'홀로 쓰일 수 있음'}, '의존':{i:'🤝',s:'다른 말에 기대어 쓰임'},
+  '실질':{i:'💡',s:'실질적인 의미가 있음'}, '형식':{i:'⚙️',s:'문법적인 뜻만 더함'},
+  '어근':{i:'🌱',s:'실질적인 의미를 나타냄'}, '접사':{i:'🧩',s:'어근에 붙어 뜻을 제한함'},
+  '접두사':{i:'⬅️',s:'어근 앞에 붙는 접사'}, '접미사':{i:'➡️',s:'어근 뒤에 붙는 접사'},
+  '단일어':{i:'①',s:'어근 하나'}, '합성어':{i:'➕',s:'어근 + 어근'}, '파생어':{i:'🧩',s:'어근 + 접사'}
+};
+const TYPE_CUPS = ['단일어','합성어','파생어'];
+const POS_CUPS = ['접두사','어근','접미사'];
+
+/* ══════════ 문항 ══════════ */
+const STAGES = [
+ { name:'형태소의 종류', goal:'형태소를 두 기준으로 나눈다', type:'sort', ordered:true, items:[
+  {id:1, w:'하늘이 맑다.', crit:1, c:'하늘:자립|이:의존|맑-:의존|-다:의존', cat:'free', d:"혼자 쓰이는 것은 '하늘'뿐이에요. '맑-'은 뜻이 있지만 '-다' 같은 말이 붙어야 쓰이니 의존 형태소예요."},
+  {id:2, w:'동생이 밥을 먹었다.', crit:1, c:'동생:자립|이:의존|밥:자립|을:의존|먹-:의존|-었-:의존|-다:의존', cat:'free', d:"조사 '이', '을'과 어간 '먹-', 어미 '-었-', '-다'는 모두 다른 말에 기대어 쓰여요."},
+  {id:3, w:'물이 아주 깊다.', crit:1, c:'물:자립|이:의존|아주:자립|깊-:의존|-다:의존', cat:'free', d:"'아주'처럼 꾸며 주는 말도 혼자 쓰일 수 있어 자립 형태소예요."},
+  {id:4, w:'달이 참 밝다.', crit:1, c:'달:자립|이:의존|참:자립|밝-:의존|-다:의존', cat:'free', d:"'참'은 혼자 쓰여요. '밝-'은 뜻은 있어도 혼자 쓰이지 못해요."},
+  {id:5, w:'친구가 책을 읽었다.', crit:1, c:'친구:자립|가:의존|책:자립|을:의존|읽-:의존|-었-:의존|-다:의존', cat:'free', d:"과거를 나타내는 '-었-'도 혼자 못 쓰이는 의존 형태소예요."},
+  {id:6, w:'꽃이 활짝 피었다.', crit:2, c:'꽃:실질|이:형식|활짝:실질|피-:실질|-었-:형식|-다:형식', cat:'lexical', d:"'피-'는 혼자 못 쓰여도 '꽃이 피는' 내용을 담고 있어 실질 형태소예요."},
+  {id:7, w:'새가 하늘을 날았다.', crit:2, c:'새:실질|가:형식|하늘:실질|을:형식|날-:실질|-았-:형식|-다:형식', cat:'lexical', d:"조사와 어미는 문법적인 뜻만 더하는 형식 형태소예요."},
+  {id:8, w:'오늘은 날씨가 좋다.', crit:2, c:'오늘:실질|은:형식|날씨:실질|가:형식|좋-:실질|-다:형식', cat:'lexical', d:"'좋-'은 상태를 나타내는 실질 형태소, '은'과 '가'는 형식 형태소예요."},
+  {id:9, w:'형이 문을 닫았다.', crit:2, c:'형:실질|이:형식|문:실질|을:형식|닫-:실질|-았-:형식|-다:형식', cat:'lexical', d:"움직임을 나타내는 어간 '닫-'은 실질 형태소예요."},
+  {id:10, w:'맨손으로 잡았다.', crit:2, c:'맨-:형식|손:실질|으로:형식|잡-:실질|-았-:형식|-다:형식', cat:'lexical', d:"접두사 '맨-'은 의존 형태소이면서 형식 형태소예요."}
+ ]},
+ { name:'어근과 접사', goal:'단어를 어근과 접사로 나눈다', type:'sort', cups:['어근','접사'], items:[
+  {id:11, w:'봄비', c:'봄:어근|비:어근', cat:'compound', d:"'봄'과 '비' 모두 혼자 쓰이는 말로, 실질적인 뜻을 가진 어근이에요."},
+  {id:12, w:'눈물', c:'눈:어근|물:어근', cat:'compound', d:"'눈'과 '물'이 각각 제 뜻을 가진 어근이에요."},
+  {id:13, w:'돌다리', c:'돌:어근|다리:어근', cat:'compound', d:"'돌로 만든 다리'. '돌'과 '다리' 모두 어근이에요."},
+  {id:14, w:'굳세다', v:1, c:'굳-:어근|세-:어근', cat:'compound', d:"'-다'는 빼고 봐요. '굳-'(굳다)과 '세-'(세다)가 모두 어근이에요."},
+  {id:15, w:'맨발', c:'맨-:접사|발:어근', cat:'prefix', d:"'맨-'은 '다른 것이 없는'이라는 뜻을 더하는 접사예요. 혼자서는 쓰이지 못해요."},
+  {id:16, w:'알밤', c:'알-:접사|밤:어근', cat:'prefix', d:"'알-'은 '겉을 싼 것을 다 없앤'이라는 뜻을 더해요. 껍데기를 벗긴 밤이 알밤이에요."},
+  {id:17, w:'군침', c:'군-:접사|침:어근', cat:'prefix', d:"'군-'은 '쓸데없는'이라는 뜻을 더하는 접사예요. (군말, 군것도 같은 접사)"},
+  {id:18, w:'엿듣다', v:1, c:'엿-:접사|듣-:어근', cat:'prefix', d:"'-다'는 빼고 봐요. '엿-'은 '몰래'라는 뜻을 더하는 접사예요."},
+  {id:19, w:'나무꾼', c:'나무:어근|-꾼:접사', cat:'suffix', d:"'-꾼'은 '어떤 일을 하는 사람'의 뜻을 더하는 접사예요."},
+  {id:20, w:'덮개', c:'덮-:어근|-개:접사', cat:'suffix', d:"'덮-'(덮다)에 '그런 일을 하는 도구'라는 뜻의 '-개'가 붙었어요."},
+  {id:21, w:'욕심쟁이', c:'욕심:어근|-쟁이:접사', cat:'suffix', d:"'-쟁이'는 '그런 속성을 많이 가진 사람'의 뜻을 더하는 접사예요."},
+  {id:22, w:'믿음', c:'믿-:어근|-음:접사', cat:'suffix', d:"'믿-'(믿다)에 명사를 만드는 접사 '-음'이 붙었어요."}
+ ]},
+ { name:'접사의 자리', goal:'접사가 붙는 자리를 구분한다', type:'sort', cups:POS_CUPS, items:[
+  {id:23, w:'앞치마', c:'앞:어근|치마:어근', cat:'compound', d:"접사가 없어요. '앞'과 '치마' 모두 어근이에요."},
+  {id:24, w:'논밭', c:'논:어근|밭:어근', cat:'compound', d:"'논'과 '밭'이 나란히 합쳐진 말이에요. 둘 다 어근이에요."},
+  {id:25, w:'뛰놀다', v:1, c:'뛰-:어근|놀-:어근', cat:'compound', d:"'-다'는 빼고 봐요. '뛰-'(뛰다)와 '놀-'(놀다) 모두 어근이에요."},
+  {id:26, w:'풋고추', c:'풋-:접두사|고추:어근', cat:'prefix', d:"'풋-'은 '덜 익은'이라는 뜻을 더하며 어근 앞에 붙어요."},
+  {id:27, w:'개살구', c:'개-:접두사|살구:어근', cat:'prefix', d:"'개-'는 '야생 상태의, 질이 떨어지는'이라는 뜻을 더하는 접두사예요."},
+  {id:28, w:'새하얗다', v:1, c:'새-:접두사|하얗-:어근', cat:'prefix', d:"'새-'는 '매우 짙고 선명하게'라는 뜻을 더하는 접두사예요."},
+  {id:29, w:'멋쟁이', c:'멋:어근|-쟁이:접미사', cat:'suffix', d:"'-쟁이'는 어근 뒤에 붙는 접미사예요."},
+  {id:30, w:'잠꾸러기', c:'잠:어근|-꾸러기:접미사', cat:'suffix', d:"'-꾸러기'는 '그것이 심하거나 많은 사람'의 뜻을 더하는 접미사예요."},
+  {id:31, w:'울보', c:'울-:어근|-보:접미사', cat:'suffix', d:"'울-'(울다)에 '그런 특성을 가진 사람'이라는 뜻의 '-보'가 붙었어요."},
+  {id:32, w:'헛웃음', c:'헛-:접두사|웃-:어근|-음:접미사', cat:'double', d:"어근 '웃-' 앞에 '헛-'(보람 없는), 뒤에 '-음'이 붙었어요."},
+  {id:33, w:'헛손질', c:'헛-:접두사|손:어근|-질:접미사', cat:'double', d:"어근 '손' 앞에 '헛-', 뒤에 행위를 뜻하는 '-질'이 붙었어요."},
+  {id:34, w:'되풀이', c:'되-:접두사|풀-:어근|-이:접미사', cat:'double', d:"'되-'는 '다시'라는 뜻의 접두사, '-이'는 명사를 만드는 접미사예요."}
+ ]},
+ { name:'단어의 종류', goal:'짜임을 보고 단어의 종류를 가른다', type:'classify', cups:TYPE_CUPS, items:[
+  {id:35, w:'나비', ans:'단일어', an:'나비', cat:'simple', d:"'나'와 '비'로 나누면 나비와 관계없는 말이 돼요. 하나의 어근이에요."},
+  {id:36, w:'거울', ans:'단일어', an:'거울', cat:'simple', d:"더 나누면 뜻이 사라져요. 하나의 어근으로 된 단일어예요."},
+  {id:37, w:'노을', ans:'단일어', an:'노을', cat:'simple', d:"'노'와 '을'에는 노을의 뜻이 남지 않아요."},
+  {id:38, w:'푸르다', ans:'단일어', an:'푸르- (+ -다)', cat:'simple', d:"'-다'는 어미라서 빼면 어근 '푸르-' 하나만 남아요."},
+  {id:39, w:'햇빛', ans:'합성어', an:'해 + 빛', cat:'compound', d:"햇밤의 '햇-'(접두사)과 달라요. 여기서는 혼자 쓰이는 '해'에 'ㅅ'이 들어간 것이라 어근+어근이에요."},
+  {id:40, w:'콧물', ans:'합성어', an:'코 + 물', cat:'compound', d:"'코'와 '물' 사이에 'ㅅ'이 들어갔을 뿐, 둘 다 어근이에요."},
+  {id:41, w:'손목', ans:'합성어', an:'손 + 목', cat:'compound', d:"'손'과 '목' 모두 혼자 쓰이는 어근이에요."},
+  {id:42, w:'굶주리다', ans:'합성어', an:'굶- + 주리-', cat:'compound', d:"'굶다'와 '주리다'의 어간이 바로 합쳐졌어요. 둘 다 어근이에요."},
+  {id:43, w:'외아들', ans:'파생어', an:'외- + 아들', cat:'prefix', d:"'외-'는 '하나뿐인'이라는 뜻을 더하는 접두사예요."},
+  {id:44, w:'날고기', ans:'파생어', an:'날- + 고기', cat:'prefix', d:"'날-'은 '익히지 않은'이라는 뜻을 더하는 접두사예요."},
+  {id:45, w:'짓밟다', ans:'파생어', an:'짓- + 밟-', cat:'prefix', d:"'짓-'은 '마구, 함부로'라는 뜻을 더하는 접두사예요."},
+  {id:46, w:'설익다', ans:'파생어', an:'설- + 익-', cat:'prefix', d:"'설-'은 '충분하지 못하게'라는 뜻을 더하는 접두사예요."},
+  {id:47, w:'달님', ans:'파생어', an:'달 + -님', cat:'suffix', d:"'-님'은 높임의 뜻을 더하는 접미사예요."},
+  {id:48, w:'슬기롭다', ans:'파생어', an:'슬기 + -롭-', cat:'suffix', d:"'-롭-'은 '그러함'의 뜻을 더해 형용사를 만드는 접미사예요."},
+  {id:49, w:'넓이', ans:'파생어', an:'넓- + -이', cat:'suffix', d:"'넓-'(넓다)에 명사를 만드는 접미사 '-이'가 붙었어요."},
+  {id:50, w:'일꾼', ans:'파생어', an:'일 + -꾼', cat:'suffix', d:"'-꾼'은 '그 일을 하는 사람'의 뜻을 더하는 접미사예요."}
+ ]},
+ { name:'종합', goal:'단어를 분석하고 종류까지 판별한다', type:'combo', cups:POS_CUPS, items:[
+  {id:51, w:'하늘', c:'하늘:어근', ans:'단일어', cat:'simple', d:"더 나눌 수 없는 하나의 어근이에요."},
+  {id:52, w:'달리다', v:1, c:'달리-:어근', ans:'단일어', cat:'simple', d:"'-다'를 빼면 어근 '달리-' 하나뿐이에요."},
+  {id:53, w:'비바람', c:'비:어근|바람:어근', ans:'합성어', cat:'compound', d:"'비'와 '바람' 두 어근이 합쳐졌어요."},
+  {id:54, w:'꽃잎', c:'꽃:어근|잎:어근', ans:'합성어', cat:'compound', d:"'꽃'과 '잎' 두 어근이 합쳐졌어요."},
+  {id:55, w:'검푸르다', v:1, c:'검-:어근|푸르-:어근', ans:'합성어', cat:'compound', d:"'검다'와 '푸르다'의 어간이 합쳐졌어요."},
+  {id:56, w:'애벌레', c:'애-:접두사|벌레:어근', ans:'파생어', cat:'prefix', d:"'애-'는 '어린'이라는 뜻을 더하는 접두사예요."},
+  {id:57, w:'맏딸', c:'맏-:접두사|딸:어근', ans:'파생어', cat:'prefix', d:"'맏-'은 '맏이'라는 뜻을 더하는 접두사예요."},
+  {id:58, w:'들볶다', v:1, c:'들-:접두사|볶-:어근', ans:'파생어', cat:'prefix', d:"'들-'은 '마구, 몹시'라는 뜻을 더하는 접두사예요."},
+  {id:59, w:'칼질', c:'칼:어근|-질:접미사', ans:'파생어', cat:'suffix', d:"'-질'은 '그 도구로 하는 일'이라는 뜻을 더하는 접미사예요."},
+  {id:60, w:'사랑스럽다', v:1, c:'사랑:어근|-스럽-:접미사', ans:'파생어', cat:'suffix', d:"'-스럽-'은 '그러한 성질이 있음'의 뜻을 더하는 접미사예요."},
+  {id:61, w:'군것질', c:'군-:접두사|것:어근|-질:접미사', ans:'파생어', cat:'double', d:"'군-'(쓸데없는)과 '-질'이 어근 '것'의 앞뒤에 붙었어요."},
+  {id:62, w:'헛발질', c:'헛-:접두사|발:어근|-질:접미사', ans:'파생어', cat:'double', d:"어근 '발' 앞에 '헛-', 뒤에 '-질'이 붙었어요."}
+ ]}
+];
+const CRIT = { 1:{label:'🧍 기준 1 · 홀로 쓰일 수 있는가?', cups:['자립','의존']}, 2:{label:'💡 기준 2 · 실질적인 의미가 있는가?', cups:['실질','형식']} };
+
+/* 개념 화면 — 한 장에 한 가지 내용 */
+const K = t => `<span class="kw">${t}</span>`;
+const SLIDES = [
+ [ // 0단계
+  {e:'🔬', t:'형태소란?', b:[`${K('형태소')}는 뜻을 가진 가장 작은 말의 단위예요.`, `'나무'를 '나'와 '무'로 나누면 뜻이 사라져요. 🌳 ➜ ❌`, `그래서 '나무'는 더 나눌 수 없는 형태소 하나예요.`]},
+  {e:'✂️', t:'문장을 형태소로 나누면', b:[`가을바람이 차다.`, `<span class="chips"><span class="chip">가을</span><span class="chip">바람</span><span class="chip">이</span><span class="chip">차-</span><span class="chip">-다</span></span>`, `붙임표(-)는 혼자 쓰이지 못하고<br>${K('다른 말과 결합해서만')} 쓰이는 형태소에 붙여요.`, `붙임표가 있는 쪽에 다른 말이 붙어요.<br>👉 차-는 뒤에, -다는 앞에 다른 말이 와요.`, `⚠️ 조사 '이'도 혼자 쓰이지 못하지만,<br>단어로 인정되어 붙임표를 붙이지 않아요.`]},
+  {e:'🧍 🤝', t:'기준 1 · 홀로 쓰일 수 있는가?', c:'c1', b:[`혼자 쓰일 수 있으면 ${K('자립')} 형태소예요. 👉 가을, 바람`, `다른 말에 기대어 쓰이면 ${K('의존')} 형태소예요. 👉 이(조사), 차-(어간), -다(어미)`]},
+  {e:'💡 ⚙️', t:'기준 2 · 실질적인 의미가 있는가?', c:'c2', b:[`대상·움직임·상태 같은 내용이 있으면 ${K('실질')} 형태소예요. 👉 가을, 바람, 차-(어간)`, `문법적인 뜻만 더하면 ${K('형식')} 형태소예요. 👉 이(조사), -다(어미)`]},
+  {e:'📌', t:'꼭 기억하기', b:[`자립 형태소는 모두 실질 형태소예요.`, `용언의 어간(차-, 먹-)은 ${K('의존')}이면서 ${K('실질')} 형태소예요.`, `접사(풋-, 맨-)는 의존이면서 형식 형태소예요.`, `문제는 🧍 기준 1 다섯 문항 ➜ 💡 기준 2 다섯 문항 순서로 나와요.`]}
+ ],
+ [ // 1단계
+  {e:'🌱', t:'어근', b:[`${K('어근')}은 단어에서 실질적인 의미를 나타내는 형태소예요.`, `어근은 홀로 단어를 이룰 수 있어요.`]},
+  {e:'🧩', t:'접사', b:[`${K('접사')}는 어근에 붙어 그 뜻을 제한하는 형태소예요.`, `접사는 홀로 단어를 이루지 못해요.`]},
+  {e:'🌰', t:'예) 밤 ➜ 햇밤', b:[`<span class="chips"><span class="chip">햇-</span><span class="chip">밤</span></span>`, `'${K('햇-')}'이 '당해에 난'이라는 뜻을 더해요.`, `그래서 햇밤은 '그해에 새로 난 밤'이 돼요.`]},
+  {e:'✂️', t:"용언은 '-다'를 빼고 나눠요", b:[`'먹다'는 '먹-'만, '엿듣다'는 '엿-'과 '듣-'만 보고 나눠요.`, `${K('-다')}는 어미라서 단어의 짜임을 볼 때는 빼요.`]}
+ ],
+ [ // 2단계
+  {e:'⬅️', t:'접두사', b:[`어근의 ${K('앞')}에 붙는 접사예요.`, `<span class="chips"><span class="chip">맨-주먹</span><span class="chip">햇-감자</span></span>`]},
+  {e:'➡️', t:'접미사', b:[`어근의 ${K('뒤')}에 붙는 접사예요.`, `<span class="chips"><span class="chip">장난-꾸러기</span><span class="chip">지우-개</span></span>`]},
+  {e:'📌', t:'붙임표(-)가 알려 주는 것', b:[`'맨-'처럼 뒤에 붙임표가 있으면 뒷말 앞에 붙는 접두사예요.`, `'-꾸러기'처럼 앞에 붙임표가 있으면 앞말 뒤에 붙는 접미사예요.`, `이 단계에는 접두사와 접미사가 ${K('한꺼번에')} 붙은 단어도 나와요.`]}
+ ],
+ [ // 3단계
+  {e:'①', t:'단일어', b:[`하나의 어근으로 이루어진 단어는 ${K('단일어')}예요.`, `<span class="chips"><span class="chip">사람</span></span>`]},
+  {e:'➕', t:'합성어', b:[`어근 + 어근으로 이루어진 단어는 ${K('합성어')}예요.`, `<span class="chips"><span class="chip">물 + 방울</span></span>`]},
+  {e:'🧩', t:'파생어', b:[`어근 + 접사로 이루어진 단어는 ${K('파생어')}예요.`, `<span class="chips"><span class="chip">풋- + 사랑</span><span class="chip">사냥 + -꾼</span></span>`, `합성어와 파생어를 묶어 복합어라고 해요.`]},
+  {e:'⚠️', t:'함정 주의', b:[`모양이 같아도 ${K('혼자 쓰이는 말')}인지 따져 보세요.`, `소리가 덧나거나 모양이 바뀌어도 어근은 어근이에요.`, `예) 나뭇잎 = 나무 + 잎`]}
+ ],
+ [ // 4단계
+  {e:'✂️', t:'① 카드 나누기', b:[`단어를 이루는 카드를 ${K('접두사')} / ${K('어근')} / ${K('접미사')} 컵에 넣어요.`]},
+  {e:'🔎', t:'② 종류 고르기', b:[`나눈 결과를 보고 ${K('단일어')} / ${K('합성어')} / ${K('파생어')} 중 하나를 골라요.`]},
+  {e:'🏆', t:'두 과정을 모두 맞혀야 해요', b:[`두 과정을 모두 한 번에 맞혀야 첫 시도 정답이에요.`, `한 문항 안에서 두 번 틀리면 정답과 해설이 공개돼요.`]}
+ ]
+];
+
+
+/* ══════════ 유틸 ══════════ */
+const BASE = 10, RETRY = 5, PENALTY = 2;
+function maxScore(n){ let s=0,c=0; for(let i=0;i<n;i++){c++; s+=BASE+(c>=5?10:c>=3?5:0);} return s; }
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function parseCards(str){ return str.split('|').map((x,k)=>{const [h,a]=x.split(':'); return {k, h, t:h.replace(/-/g,''), a};}); }
+function esc(s){ return String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
+function pad(n){ return String(n).padStart(2,'0'); }
+function stamp(d){ return d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'_'+pad(d.getHours())+pad(d.getMinutes()); }
+function dateText(d){ return d.getFullYear()+'.'+pad(d.getMonth()+1)+'.'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes()); }
+function fmtTime(ms){ const s=Math.round(ms/1000); return Math.floor(s/60)+'분 '+pad(s%60)+'초'; }
+function stageLabel(n){ return n+'단계 '+STAGES[n].name; }
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('on'),1300); }
+function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on')); $(id).classList.add('on'); window.scrollTo(0,0); closeStMenu(); }
+
+/* 정답 문자열 (해설·엑셀·오답노트 공용) */
+function answerText(q){
+  const st = STAGES[q.stage];
+  if(st.type==='classify') return q.ans+' · '+q.an;
+  const parts = parseCards(q.c).map(c=>c.h+'('+c.a+')');
+  let s = parts.join(q.stage===0?' · ':' + ');
+  if(q.v) s += ' (+ -다)';
+  if(st.type==='combo') s += ' → '+q.ans;
+  return s;
+}
+function questionText(q){
+  if(q.stage===0) return '['+CRIT[q.crit].label+'] '+q.w;
+  if(q.stage===3) return q.w+' — 단어의 종류는?';
+  if(q.stage===4) return q.w+' — 나누고 종류 고르기';
+  return q.w;
+}
+
+/* ══════════ 사운드 ══════════ */
+let AC=null;
+function ac(){ if(!AC){ try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } if(AC&&AC.state==='suspended') AC.resume(); return AC; }
+function tone(f,t0,dur,type='sine',vol=.22){ const c=ac(); if(!c) return; const o=c.createOscillator(),g=c.createGain(); o.type=type; o.frequency.value=f; g.gain.setValueAtTime(vol,c.currentTime+t0); g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t0+dur); o.connect(g); g.connect(c.destination); o.start(c.currentTime+t0); o.stop(c.currentTime+t0+dur+.02); }
+function noise(t0,dur){ const c=ac(); if(!c) return; const b=c.createBuffer(1,c.sampleRate*dur,c.sampleRate),d=b.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*(1-i/d.length); const s=c.createBufferSource(),g=c.createGain(); g.gain.value=.18; s.buffer=b; s.connect(g); g.connect(c.destination); s.start(c.currentTime+t0); }
+const SND = {
+  ok(){ [523.25,659.25,783.99,1046.5].forEach((f,i)=>tone(f,i*.07,.12)); },
+  place(){ tone(880,0,.07,'sine',.12); },
+  bad(){ tone(392,0,.14,'triangle',.25); tone(262,.12,.22,'triangle',.25); },
+  c3(){ [523.25,659.25,783.99].forEach((f,i)=>tone(f,i*.09,.16,'square',.1)); },
+  c5(){ [523.25,659.25,783.99,1046.5,1318.5].forEach((f,i)=>tone(f,i*.09,.2,'square',.1)); noise(.45,.35); noise(.7,.3); }
+};
+
+/* ══════════ 상태 ══════════ */
+let S = null;
+const REDUCED = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ══════════ 시작 화면 ══════════ */
+function buildStart(){
+  $('stageBtns').innerHTML = STAGES.map((st,n)=>
+    `<button class="stbtn" onclick="startStage(${n})"><span class="no">${n}단계</span><span><div class="nm">${st.name}</div><div class="ds">${st.goal}</div></span><span class="mx">${st.items.length}문항<br>${maxScore(st.items.length)}점 만점</span></button>`).join('');
+}
+
+/* ══════════ 연동: 시작 래퍼 ══════════ */
+let pendingStage = 0;
+if(IS_ONLINE){
+  document.getElementById('privacyOffline').style.display='none';
+  document.getElementById('privacyOnline').style.display='block';
+  const ep=document.getElementById('endPrivacy');
+  if(ep) ep.textContent='학습 결과는 담당 선생님의 학습 관리 시스템에 자동 전송됩니다. 이름과 소감은 리포트 이미지(JPG) 생성에도 사용됩니다.';
+}
+async function doLogin(){
+  const idVal=$('loginId').value.trim();
+  const nameVal=$('loginName').value.trim();
+  const msg=$('loginMsg');
+  if(!idVal||idVal.length!==5||!/^\d{5}$/.test(idVal)){msg.textContent='학번은 5자리 숫자여야 합니다.';return;}
+  if(!nameVal){msg.textContent='이름을 입력하세요.';return;}
+  msg.textContent='';$('loginBtn').style.display='none';$('loginSpinner').style.display='block';
+  const result=await verifyStudent(idVal,nameVal);
+  $('loginBtn').style.display='block';$('loginSpinner').style.display='none';
+  if(result.status==='ok'){
+    STUDENT={id:idVal,name:nameVal,className:result.className||'',verified:true};
+    $('loginOverlay').style.display='none';
+    notifyGameStart(STUDENT.id,STUDENT.name,STUDENT.className);
+    doStartStage(pendingStage);
+  } else { msg.textContent=result.message||'인증에 실패했습니다.'; }
+}
+function startStage(n){
+  ac();
+  if(IS_ONLINE&&!STUDENT.verified){pendingStage=n;$('loginOverlay').style.display='flex';$('loginId').focus();return;}
+  if(IS_ONLINE&&STUDENT.verified){notifyGameStart(STUDENT.id,STUDENT.name,STUDENT.className);}
+  doStartStage(n);
+}
+function doStartStage(n){
+  const st = STAGES[n];
+  if(S&&S.banner){ clearTimeout(S.banner.t); clearInterval(S.banner.iv); }
+  $('dim').className=''; $('dim').innerHTML=''; clearFx(); $('inFeel').value='';
+  S = { stage:n, idx:0, score:0, combo:0, maxCombo:0, t0:0, elapsed:0, finished:false, banner:null,
+        qs: (st.ordered?st.items.slice():shuffle(st.items)).map(it=>({...it, stage:n, mistakes:0, status:'none', seen:false, order:shuffle(it.c?parseCards(it.c):[]), placed:{}, step:1, sel:null})) };
+  $('cBand').textContent = '문법 · '+n+'단계 '+st.name;
+  $('cTitle').textContent = n+'단계 · '+st.name;
+  $('cGoal').innerHTML = '<span>학습 목표: '+st.goal+'</span><span class="gsep"> · </span><span>'+st.items.length+'문항 · '+maxScore(st.items.length)+'점 만점</span>';
+  S.slide=0; renderSlide();
+  show('concept');
+}
+function renderSlide(){
+  const list=SLIDES[S.stage], k=S.slide, sl=list[k], last=k===list.length-1;
+  $('cSlide').innerHTML=`<div class="slide ${sl.c||''}"><div class="se">${sl.e}</div><div class="st">${sl.t}</div>${sl.b.map(x=>`<p>${x}</p>`).join('')}</div>`;
+  $('sDots').innerHTML=list.map((_,i)=>`<i class="${i===k?'on':''}"></i>`).join('')+`<span>${k+1} / ${list.length}</span>`;
+  $('sPrev').style.visibility=k===0?'hidden':'visible';
+  const g=$('cGo'); g.textContent=last?'문제 풀기 시작 ▶':'다음 ▶'; g.classList.toggle('go',last);
+}
+function slideGo(d){
+  const list=SLIDES[S.stage];
+  if(d>0&&S.slide===list.length-1){ beginPlay(); return; }
+  S.slide=Math.max(0,Math.min(list.length-1,S.slide+d)); renderSlide();
+}
+document.addEventListener('keydown',e=>{
+  if(!$('concept').classList.contains('on')) return;
+  if(e.key==='ArrowRight'||e.key==='Enter'||e.key===' '){ e.preventDefault(); e.stopImmediatePropagation(); slideGo(1); }
+  else if(e.key==='ArrowLeft'){ e.preventDefault(); e.stopImmediatePropagation(); slideGo(-1); }
+});
+function beginPlay(){
+  S.t0 = Date.now();
+  buildStMenu();
+  show('play');
+  renderQ();
+}
+
+/* ══════════ 문제 렌더링 ══════════ */
+function cur(){ return S.qs[S.idx]; }
+function cupsOf(q){
+  const st=STAGES[q.stage];
+  if(q.stage===0) return CRIT[q.crit].cups;
+  if(st.type==='combo') return q.step===1?POS_CUPS:TYPE_CUPS;
+  return st.cups;
+}
+function isDone(q){ return q.status!=='none'; }
+function renderHeader(){
+  const st=STAGES[S.stage], n=S.qs.length;
+  const graded=S.qs.filter(isDone).length;
+  $('pGoal').textContent=' · '+st.goal;
+  $('pStat').textContent=`${S.stage}단계 · 문항 ${S.idx+1} / ${n} · ${S.score}점`;
+  $('pBar').style.width=(graded/n*100)+'%';
+  $('hudN').textContent=S.combo;
+  $('hud').classList.toggle('live',S.combo>0);
+}
+function renderQ(){
+  const q=cur();
+  const critSwitch = S.stage===0 && q.crit===2 && !q.seen && !S.critShown;
+  q.seen=true;
+  renderHeader();
+  const st=STAGES[S.stage];
+  $('qTag').textContent = S.stage+'단계 · '+st.name;
+  $('qReview').innerHTML = isDone(q)&&!q.fresh?'<span class="review">채점한 문항 · 복습만 가능</span>':'';
+  // prompt
+  let p='';
+  if(S.stage===0) p+=`<div class="crit c${q.crit}">${CRIT[q.crit].label}</div><div class="word sent">${esc(q.w)}</div><div class="sub">문장을 이루는 형태소 카드를 알맞은 컵에 넣으세요.</div>`;
+  else {
+    p+=`<div class="word">${esc(q.w)}${q.v&&st.type!=='classify'?'<span class="dachip">-다 · 어미라서 빼요</span>':''}</div>`;
+    if(st.type==='classify') p+=`<div class="sub">이 단어는 어떤 종류일까요? 알맞은 컵을 누르세요.</div>`;
+    else if(st.type==='combo') p+=`<div class="steps">${q.step===1&&!isDone(q)?'<b>① 카드 나누기</b> → ② 종류 고르기':'① 카드 나누기 → <b>② 종류 고르기</b>'}</div><div class="sub">${q.step===2||isDone(q)?'나눈 결과: <b>'+esc(parseCards(q.c).map(c=>c.h).join(' + '))+'</b>':'카드를 접두사 / 어근 / 접미사 컵에 나눠 넣으세요.'}</div>`;
+    else p+=`<div class="sub">카드를 누른 뒤, 알맞은 컵을 누르세요.</div>`;
+  }
+  $('prompt').innerHTML=p;
+  // cups
+  const cups = isDone(q)&&st.type==='combo' ? TYPE_CUPS : cupsOf(q);
+  const cupsEl=$('cups');
+  cupsEl.style.gridTemplateColumns=`repeat(${cups.length},1fr)`;
+  cupsEl.className='cups'+(S.stage===0?' c'+q.crit:'');
+  cupsEl.innerHTML=cups.map((name,i)=>`<div class="cup" tabindex="0" data-cup="${name}" onclick="dropTo('${name}',this)"><div class="cn">${CUPS[name].i} ${name}</div><div class="cs">${CUPS[name].s}</div><div class="cc"></div></div>`).join('');
+  // cards
+  renderCards();
+  renderFb();
+  if(critSwitch && !S.banner){ S.critShown=true; infoBanner('🔄 기준이 바뀌어요!','💡 기준 2 · 실질적인 의미가 있는가?','crit2',null); }
+}
+function cupEl(name){ return document.querySelector(`.cup[data-cup="${name}"] .cc`); }
+function renderCards(){
+  const q=cur(), st=STAGES[S.stage], tray=$('tray');
+  tray.innerHTML=''; document.querySelectorAll('.cup .cc').forEach(c=>c.innerHTML='');
+  const done=isDone(q);
+  if(st.type==='classify' || (st.type==='combo' && (q.step===2 || done))){
+    const placedCup = done ? q.ans : null;
+    const el=document.createElement('button');
+    el.className='card'+(done?' placed'+(q.status==='fail'?' reveal':''):' sel');
+    el.textContent=q.w;
+    if(done){ cupEl(placedCup).appendChild(el); tray.innerHTML='<span class="empty">'+(q.status==='fail'?'정답을 확인하세요':'완료!')+'</span>'; }
+    else { q.sel='word'; tray.appendChild(el); el.onclick=()=>{}; markReady(); }
+    return;
+  }
+  (done?q.order.slice().sort((a,b)=>a.k-b.k):q.order).forEach(c=>{
+    const el=document.createElement('button');
+    const isPlaced = done || q.placed[c.k];
+    el.className='card'+(isPlaced?' placed':'')+(done&&q.status==='fail'&&!q.placed[c.k]?' reveal':'');
+    el.textContent=isPlaced?c.h:c.t;
+    el.dataset.k=c.k;
+    if(isPlaced){ cupEl(c.a).appendChild(el); }
+    else{
+      if(q.sel===c.k) el.classList.add('sel');
+      el.onclick=()=>selectCard(c.k);
+      tray.appendChild(el);
+    }
+  });
+  if(!tray.children.length) tray.innerHTML='<span class="empty">'+(done?(q.status==='fail'?'정답을 확인하세요':'완료!'):'')+'</span>';
+  markReady();
+}
+function markReady(){ const q=cur(); document.querySelectorAll('.cup').forEach(c=>c.classList.toggle('ready',q.sel!==null&&!isDone(q))); }
+function selectCard(k){ const q=cur(); if(isDone(q)||S.banner) return; q.sel=(q.sel===k?null:k); document.querySelectorAll('#tray .card').forEach(e=>e.classList.toggle('sel',+e.dataset.k===q.sel)); markReady(); }
+
+/* ══════════ 채점 ══════════ */
+function hintFor(q, card, correct, chosen){
+  const t = card ? `'${card}' 카드 — ` : '';
+  const H = {
+    '자립':'혼자 떼어 말해도 뜻이 통하지 않나요?',
+    '의존':'혼자 떼어 말해 보세요. 다른 말에 붙어야만 쓰이지 않나요?',
+    '실질':'대상이나 움직임, 상태 같은 내용이 담겨 있지 않나요?',
+    '형식':'내용 없이 문법적인 뜻만 더하고 있지 않나요?',
+    '어근':'이 단어의 중심 뜻을 담고 있지 않나요?',
+    '접사':'혼자 쓰이지 못하고 다른 말에 뜻만 보태지 않나요?',
+    '단일어':'더 나눈 조각에 원래 뜻이 남는지 보세요.',
+    '합성어':'두 부분이 모두 혼자 쓰일 수 있는 말인지 보세요.',
+    '파생어':'혼자 쓰이지 못하고 뜻만 보태는 부분이 있는지 보세요.'
+  };
+  let h;
+  if((correct==='접두사'||correct==='접미사')&&(chosen==='접두사'||chosen==='접미사')) h='접사는 맞아요. 단어에서 어근의 앞에 붙었는지 뒤에 붙었는지 보세요.';
+  else if(correct==='접두사'||correct==='접미사') h=H['접사'];
+  else h=H[correct];
+  return `<div class="hint"><b>💡 힌트</b> ${esc(t)}${h}<br>다시 한 번 해 보세요. (한 번 더 틀리면 정답이 공개돼요)</div>`;
+}
+function dropTo(cupName, cupNode){
+  const q=cur(); const st=STAGES[S.stage];
+  if(isDone(q)||S.banner) return;
+  if(q.sel===null){ toast('먼저 카드를 누르세요'); return; }
+  let correct, cardText;
+  if(q.sel==='word'){ correct=q.ans; cardText=null; }
+  else { const c=q.order.find(x=>x.k===q.sel); correct=c.a; cardText=c.t; }
+  if(cupName===correct){
+    SND.place();
+    if(q.sel==='word'){ complete(q); return; }
+    q.placed[q.sel]=true; const k=q.sel; q.sel=null;
+    renderCards();
+    const el=document.querySelector(`.cup .card[data-k="${k}"]`); if(el) el.classList.add('hy');
+    if(q.order.every(c=>q.placed[c.k])){
+      if(st.type==='combo'){ q.step=2; q.sel=null; setTimeout(()=>{ if(cur()===q&&!isDone(q)) infoBanner('정답!','이제 단어의 종류를 골라볼까? 🤔','',()=>{ if(cur()===q) renderQ(); }); },350); }
+      else complete(q);
+    }
+  } else {
+    q.mistakes++; SND.bad();
+    S.score=Math.max(0,S.score-PENALTY); S.combo=0; renderHeader();
+    cupNode.classList.remove('bad'); void cupNode.offsetWidth; cupNode.classList.add('bad');
+    const cEl=document.querySelector('#tray .card.sel'); if(cEl){ cEl.classList.remove('bad'); void cEl.offsetWidth; cEl.classList.add('bad'); }
+    toast('❌ 다른 컵이에요 (-'+PENALTY+'점)');
+    if(q.mistakes>=2){ q.sel=null; complete(q,true); }
+    else { $('fb').innerHTML=hintFor(q,cardText,correct,cupName); }
+  }
+}
+function complete(q, failed){
+  q.status = failed ? 'fail' : (q.mistakes===0 ? 'first' : 'retry');
+  let gained=0;
+  if(q.status==='first'){ S.combo++; S.maxCombo=Math.max(S.maxCombo,S.combo); gained=BASE+(S.combo>=5?10:S.combo>=3?5:0); }
+  else if(q.status==='retry'){ S.combo=0; gained=RETRY; }
+  else { S.combo=0; }
+  S.score+=gained; q.gained=gained; q.fresh=true;
+  if(q.stage===4) q.step=2;
+  renderQ();
+  if(q.status==='first'){ const h=$('hud'); h.classList.remove('pulse'); void h.offsetWidth; h.classList.add('pulse'); }
+  if(q.status!=='fail') showBanner(q.status==='first'?S.combo:0, gained);
+  else { SND.bad(); if(allDone()){ const me=S; setTimeout(()=>{ if(S===me && !S.finished && $('play').classList.contains('on')) finish(); },2600); } }
+}
+function renderFb(){
+  const q=cur(), fb=$('fb');
+  if(!isDone(q)){ fb.innerHTML=''; return; }
+  const cls={first:'ok',retry:'re',fail:'ng'}[q.status];
+  const head={first:'✅ 정답!',retry:'🔁 다시 풀어 맞혔어요',fail:'❌ 두 번 틀렸어요. 정답을 확인하세요'}[q.status];
+  const pts=q.status==='fail'?'':` (+${q.gained}점)`;
+  fb.innerHTML=`<div class="expl ${cls}"><b>${head}${pts}</b> <span class="an">${esc(answerText(q))}</span><br>${esc(q.d)}<div class="nx">Enter · Space · → 키나 '다음'을 누르면 넘어가요.</div></div>`;
+}
+
+/* ══════════ 배너·연출 ══════════ */
+function isComboMoment(c){ return c===3 || c===5 || (c>=10 && c%5===0); }
+function showBanner(combo, gained){
+  const dim=$('dim'); BTOK++; let cls='', big='정답!', dur=900, emo='';
+  if(isComboMoment(combo)){
+    if(combo===3){ cls='c3'; big='3콤보!'; emo='🔥'; SND.c3(); burst(2); rain(['🔥','✨'],12); dur=1300; }
+    else if(combo===5||combo===10){ cls='c5'; big=combo+'콤보!'; emo='🎉🎊'; SND.c5(); burst(4); rain(['🎉','🎊','⭐'],20); glow(); dur=1500; }
+    else { cls='c5'; big=combo+'연속! 최고예요'; emo='🌟'; SND.c5(); burst(4+Math.floor(combo/10)); rain(['🌟','🎉','💜'],20); glow(); dur=1600; }
+  } else { SND.ok(); confetti(50); }
+  const fs = cls && combo>=15 ? `style="font-size:clamp(${56+Math.min(combo,40)/2}px,11vw,${96+Math.min(combo,40)}px)"` : '';
+  dim.innerHTML=`<div class="bn ${cls}">${REDUCED?'':'<div class="rays"></div>'}<div class="big" ${fs}>${big}</div>${emo?`<div class="emo">${emo}</div>`:''}<div class="pts">+<span id="cnt">0</span>점</div></div>`;
+  dim.className='on';
+  if(!REDUCED) sparkles(dim.querySelector('.bn'));
+  let n=0; const cnt=$('cnt'); const step=Math.max(1,Math.ceil(gained/8));
+  const iv=setInterval(()=>{ n=Math.min(gained,n+step); cnt.textContent=n; if(n>=gained) clearInterval(iv); },35);
+  S.banner={ t:setTimeout(()=>hideBanner(false),dur), iv };
+}
+let BTOK=0;
+function infoBanner(big,sub,cls,after){
+  const dim=$('dim'); BTOK++;
+  if(big==='정답!'){ SND.ok(); confetti(30); } else { SND.c3(); }
+  dim.innerHTML=`<div class="bn ${cls}">${REDUCED?'':'<div class="rays"></div>'}<div class="big">${big}</div><div class="pts sub2">${sub}</div></div>`;
+  dim.className='on';
+  S.banner={ t:setTimeout(()=>hideBanner(false),1500), iv:null, after:after||(()=>{}) };
+}
+function hideBanner(advance){
+  if(!S||!S.banner) return;
+  const after=S.banner.after;
+  clearTimeout(S.banner.t); clearInterval(S.banner.iv); S.banner=null;
+  const dim=$('dim'); dim.classList.add('fade'); const tok=++BTOK; setTimeout(()=>{ if(tok===BTOK){dim.className='';dim.innerHTML='';} },REDUCED?0:280);
+  document.body.classList.remove('glow');
+  if(after){ after(); return; }
+  if(advance) nextQ();
+  else if(allDone()) setTimeout(()=>{ if(S && !S.finished && $('play').classList.contains('on')) finish(); },650);
+}
+let FXGEN=0;
+function clearFx(){ FXGEN++; const cv=$('fx'); cv.getContext('2d').clearRect(0,0,cv.width,cv.height); document.querySelectorAll('.emoji-fall').forEach(e=>e.remove()); document.body.classList.remove('glow'); }
+function sparkles(host){ for(let i=0;i<10;i++){ const s=document.createElement('span'); s.className='spark'; s.textContent=['✨','⭐','💫'][i%3]; const a=Math.random()*Math.PI*2, r=110+Math.random()*80; s.style.left='50%'; s.style.top='40%'; s.style.setProperty('--dx',Math.cos(a)*r+'px'); s.style.setProperty('--dy',Math.sin(a)*r+'px'); host.appendChild(s);} }
+function confetti(n){
+  if(REDUCED) return;
+  const cv=$('fx'), ctx=cv.getContext('2d'); cv.width=innerWidth; cv.height=innerHeight;
+  const cols=['#7C5CBF','#ffc93c','#ff6f91','#4facfe','#47e891','#ff9f43'];
+  const P=[]; for(let i=0;i<n;i++) P.push({x:cv.width/2+(Math.random()-.5)*120,y:cv.height*.42,vx:(Math.random()-.5)*14,vy:-Math.random()*13-4,r:Math.random()*6+4,a:Math.random()*6,va:(Math.random()-.5)*.4,c:cols[i%cols.length]});
+  const t0=performance.now(), gen=FXGEN;
+  (function f(t){ const k=(t-t0)/1200; ctx.clearRect(0,0,cv.width,cv.height); if(k>1||gen!==FXGEN) return;
+    P.forEach(p=>{p.vy+=.45;p.x+=p.vx;p.y+=p.vy;p.a+=p.va;ctx.save();ctx.globalAlpha=1-k;ctx.translate(p.x,p.y);ctx.rotate(p.a);ctx.fillStyle=p.c;ctx.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);ctx.restore();});
+    requestAnimationFrame(f); })(t0);
+}
+function burst(k){ if(REDUCED) return; for(let i=0;i<k;i++) setTimeout(()=>confetti(45),i*220); }
+function rain(emojis,n){ if(REDUCED) return; for(let i=0;i<n;i++){ const e=document.createElement('div'); e.className='emoji-fall'; e.textContent=emojis[i%emojis.length]; e.style.left=Math.random()*100+'vw'; e.style.animationDelay=(Math.random()*.5)+'s'; document.body.appendChild(e); setTimeout(()=>e.remove(),2200);} }
+function glow(){ if(REDUCED) return; document.body.classList.add('glow'); setTimeout(()=>document.body.classList.remove('glow'),1600); }
+
+/* ══════════ 내비게이션 ══════════ */
+function allDone(){ return S.qs.every(isDone); }
+function leaveQ(){ const q=cur(); q.fresh=false; if(!isDone(q)){ q.placed={}; q.sel=null; q.step=1; } }
+function nextQ(){
+  if(!S||S.finished) return;
+  if(S.banner){ hideBanner(false); }
+  if(allDone()){ finish(); return; }
+  leaveQ();
+  if(S.idx<S.qs.length-1){ S.idx++; renderQ(); }
+  else { const k=S.qs.findIndex(q=>!isDone(q)); S.idx=k; toast('아직 풀지 않은 문항으로 돌아왔어요'); renderQ(); }
+}
+function prevQ(){ if(!S||S.finished||S.banner) return; if(S.idx>0){ leaveQ(); S.idx--; renderQ(); } else toast('첫 문항이에요'); }
+let quitArm=0;
+function quitGame(){
+  const b=$('quitBtn');
+  if(Date.now()-quitArm<3000){ finish(); b.textContent='게임 끝내기'; return; }
+  quitArm=Date.now(); b.textContent='한 번 더 누르면 종료'; setTimeout(()=>{b.textContent='게임 끝내기';},3000);
+}
+function buildStMenu(){ $('stMenu').innerHTML=STAGES.map((st,n)=>`<button class="${n===S.stage?'cur':''}" onclick="startStage(${n})">${n}단계 · ${st.name}</button>`).join(''); }
+function toggleStMenu(e){ e.stopPropagation(); $('stMenu').classList.toggle('on'); }
+function closeStMenu(){ const m=$('stMenu'); if(m) m.classList.remove('on'); }
+document.addEventListener('click',closeStMenu);
+
+document.addEventListener('keydown',e=>{
+  if(!S||!$('play').classList.contains('on')) return;
+  if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
+  const q=cur();
+  const k=e.key;
+  if(k==='Enter'||k===' '||k==='ArrowRight'){
+    if(S.banner){ e.preventDefault(); hideBanner(true); return; }
+    if(isDone(q)){ e.preventDefault(); nextQ(); return; }
+    if(k===' '||k==='Enter'){ // 오답 상태: 힌트 닫고 다시 풀기
+      if($('fb').querySelector('.hint')){ e.preventDefault(); $('fb').innerHTML=''; }
+    }
+    if(k==='ArrowRight'){ e.preventDefault(); nextQ(); }
+    return;
+  }
+  if(k==='ArrowLeft'){ e.preventDefault(); prevQ(); return; }
+  if(/^[1-3]$/.test(k) && !isDone(q) && q.sel!==null){ const cups=document.querySelectorAll('.cup'); const c=cups[+k-1]; if(c) dropTo(c.dataset.cup,c); }
+});
+
+/* ══════════ 결과 계산 ══════════ */
+function computeStats(){
+  const graded=S.qs.filter(isDone);
+  const first=graded.filter(q=>q.status==='first').length;
+  const retry=graded.filter(q=>q.status==='retry').length;
+  const fail=graded.filter(q=>q.status==='fail').length;
+  const skipped=S.qs.length-graded.length;
+  const acc=graded.length?Math.round(first/graded.length*100):0;
+  const cats={};
+  graded.forEach(q=>{ const c=cats[q.cat]||(cats[q.cat]={n:0,ok:0}); c.n++; if(q.status==='first') c.ok++; });
+  const good=[],weak=[];
+  Object.keys(CATEGORIES).filter(k=>cats[k]).forEach(k=>{ const c=cats[k]; if(c.n<2) return; const r=c.ok/c.n; if(r===1) good.push(k); else if(r<.5) weak.push(k); });
+  const elig=Object.keys(cats).filter(k=>cats[k].n>=2);
+  let firstStudy=null, firstMsg='';
+  const wrongTotal=retry+fail;
+  if(!graded.length) firstMsg='채점된 문항이 없어요. 문제를 풀어 본 뒤 다시 확인해 보세요.';
+  else if(wrongTotal===0) firstMsg='약점이 보이지 않아요. 다음 단계에 도전해 보세요.';
+  else if(elig.length && elig.every(k=>cats[k].ok/cats[k].n<.5)) firstMsg='유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.';
+  else {
+    let cand=Object.keys(cats).filter(k=>cats[k].n-cats[k].ok>0 && cats[k].n>=2);
+    if(!cand.length) cand=Object.keys(cats).filter(k=>cats[k].n-cats[k].ok>0);
+    cand.sort((a,b)=>{ const A=cats[a],B=cats[b]; return (B.n-B.ok)-(A.n-A.ok) || (A.ok/A.n)-(B.ok/B.n) || B.n-A.n; });
+    firstStudy=cand[0];
+    firstMsg=CATEGORIES[firstStudy].label+' — '+CATEGORIES[firstStudy].tip;
+  }
+  const allWeak = firstMsg.startsWith('유형 구분 자체');
+  let comment = acc>=95?'완벽해요!':acc>=85?'아주 잘했어요':acc>=70?'잘하고 있어요':acc>=50?'기본은 잡혔어요':'다시 한 번 도전해요';
+  if(!graded.length) comment='아직 푼 문항이 없어요';
+  if(skipped>0) comment=`끝까지 풀지 않았어요 (${skipped}문항 남음) · `+comment;
+  return {graded:graded.length, first, retry, fail, skipped, acc, cats, good, weak, firstMsg, comment, allWeak, max:maxScore(S.qs.length)};
+}
+function catList(keys,cats){ return keys.length?keys.map(k=>`${CATEGORIES[k].label} ${cats[k].ok}/${cats[k].n}`).join(' · '):'—'; }
+
+/* ══════════ 종료 ══════════ */
+function finish(){
+  if(!S) return;
+  if(S.banner){ clearTimeout(S.banner.t); clearInterval(S.banner.iv); S.banner=null; $('dim').className=''; $('dim').innerHTML=''; }
+  clearFx();
+  if(!S.finished){ S.finished=true; S.elapsed=Date.now()-S.t0; S.endAt=new Date(); }
+  const R=computeStats(); S.R=R;
+  $('eBand').textContent='문법 · '+stageLabel(S.stage);
+  $('eStage').textContent=stageLabel(S.stage)+' · 학습 결과';
+  $('eScore').innerHTML=`${S.score}점 <span style="font-size:18px;color:#8a84a3;font-weight:500">/ ${R.max}점 만점</span>`;
+  $('eComment').textContent=R.comment;
+  $('eAcc').textContent=R.acc+'%';
+  $('eCombo').textContent=S.maxCombo;
+  $('eTime').textContent=fmtTime(S.elapsed);
+  $('eDone').textContent=R.graded+' / '+S.qs.length;
+  $('eBreak').textContent=`첫 시도 정답 ${R.first} · 다시 풀어 맞힘 ${R.retry} · 못 맞힘 ${R.fail}`+(R.skipped?` · 미응답 ${R.skipped}문항`:'');
+  $('eGood').textContent=R.allWeak?'—':catList(R.good,R.cats);
+  $('eWeak').textContent=R.allWeak?'—':catList(R.weak,R.cats);
+  $('eFirst').innerHTML='<b>📌 가장 먼저 공부할 것</b><br>'+esc(R.firstMsg);
+  const hasNext = S.stage < STAGES.length-1;
+  const bn=$('btnNextStage'), br=$('btnRetry');
+  bn.style.display = hasNext?'':'none';
+  bn.onclick = ()=>startStage(S.stage+1);
+  br.onclick = ()=>startStage(S.stage);
+  br.className = hasNext ? 'btn sec' : 'btn';
+
+  // ── 연동 모드: 결과 전송 ──
+  if(IS_ONLINE&&STUDENT.verified){
+    const nameInput=$('inName');nameInput.value=STUDENT.name;nameInput.readOnly=true;nameInput.style.background='#f0ede5';
+    const wrongItems=S.qs.filter(q=>q.status==='retry'||q.status==='fail').map(q=>q.id).sort((a,b)=>a-b).join(',');
+    submitResult({
+      studentId:STUDENT.id,
+      studentName:STUDENT.name,
+      className:STUDENT.className,
+      stage:stageLabel(S.stage),
+      totalQuestions:S.qs.length,
+      correctCount:R.first,
+      answeredCount:R.graded,
+      skippedCount:R.skipped,
+      score:S.score,
+      elapsedSeconds:Math.round(S.elapsed/1000),
+      wrongItems:wrongItems,
+      reflection:''
+    }).then(res=>{
+      const el=document.createElement('div');
+      el.style.cssText='margin-top:8px;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:600;text-align:center;';
+      if(res.status==='ok'){
+        el.style.background='#e8f5e9';el.style.color='#2e7d32';
+        el.textContent='✅ 결과가 선생님께 전송되었습니다.';
+      } else {
+        el.style.background='#ffebee';el.style.color='#c62828';
+        el.innerHTML='❌ 전송 실패 <button onclick="this.parentElement.remove();finish();" style="margin-left:8px;padding:4px 12px;border:1px solid #c62828;border-radius:6px;background:#fff;color:#c62828;cursor:pointer;font-size:12px;">재전송</button>';
+      }
+      const p=document.getElementById('endPrivacy');if(p)p.before(el);
+    });
+  }
+
+  show('end');
+}
+
+/* ══════════ 학생 복습 목록 (이번 판 출제분만) ══════════ */
+function openReview(){
+  const seen=S.qs.filter(q=>q.seen);
+  $('reviewList').innerHTML = seen.length ? seen.map(q=>`<div class="ri"><div class="rq">${esc(questionText(q))}</div><div class="ra">정답: ${esc(answerText(q))}</div><div class="rd">${esc(q.d)}</div></div>`).join('') : '<div class="ri">이번 판에 나온 문제가 없어요.</div>';
+  $('reviewModal').classList.add('on');
+}
+function closeReview(){ $('reviewModal').classList.remove('on'); }
+$('reviewModal').addEventListener('click',e=>{ if(e.target.id==='reviewModal') closeReview(); });
+
+/* ══════════ JPG 공통 ══════════ */
+const CF = "'Malgun Gothic','Apple SD Gothic Neo','Noto Sans CJK KR',sans-serif";
+function needName(){
+  const v=$('inName').value.trim();
+  if(!v){ toast('이름을 먼저 입력하세요'); $('inName').focus(); $('inName').style.borderColor='#d63b50'; return null; }
+  $('inName').style.borderColor=''; return v;
+}
+function wrapLines(ctx,text,maxW){
+  const out=[]; String(text).split('\n').forEach(para=>{
+    let line='';
+    para.split(' ').forEach(word=>{
+      const t=line?line+' '+word:word;
+      if(ctx.measureText(t).width<=maxW){ line=t; return; }
+      if(line) out.push(line);
+      if(ctx.measureText(word).width<=maxW){ line=word; return; }
+      line=''; for(const ch of word){ const u=line+ch; if(ctx.measureText(u).width>maxW&&line){ out.push(line); line=ch; } else line=u; }
+    });
+    out.push(line);
+  }); return out;
+}
+function privacyText(){ return IS_ONLINE ? '🔒 개인정보 보호 안내 · 본 게임의 학습 결과(학번, 이름, 점수, 오답 정보, 학습 소감)는 담당 선생님의 학습 관리용 스프레드시트에 안전하게 전송·저장됩니다. 수집된 정보는 학습 지도 목적으로만 사용되며, 제3자에게 제공되지 않습니다.'
+  : '🔒 개인정보 보호 안내 · 본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다. 게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.'; }
+const STD_TEXT='[9국04-02] 단어의 짜임을 분석하여 새말 형성의 원리를 이해한다.';
+const CREDIT_TEXT='제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com · 제작일 '+MADE_DATE;
+function saveJpg(canvas,fname){
+  const url=canvas.toDataURL('image/jpeg',0.92);
+  const a=document.createElement('a'); a.href=url; a.download=fname; document.body.appendChild(a); a.click(); a.remove();
+}
+function fileStage(){ return S.stage+'단계'+STAGES[S.stage].name.replace(/\s/g,''); }
+/* 레이아웃 계획형 그리기: 높이 먼저 계산 → 실제 그리기 */
+function makeDoc(W){
+  const items=[]; const m=document.createElement('canvas').getContext('2d');
+  return {
+    text(str,{size=15,bold=false,color='#333',gap=6,indent=0,lh=1.55}={}){ m.font=(bold?'700 ':'400 ')+size+'px '+CF; const lines=wrapLines(m,str,W-72-indent); items.push({k:'t',lines,size,bold,color,indent,lh,gap}); },
+    box(fn,{bg='#f7f3fc',border='#e0d7f3',pad=14}={}){ const inner=makeDoc(W-2*pad-8); fn(inner); items.push({k:'b',inner,bg,border,pad}); },
+    space(h){ items.push({k:'s',h}); },
+    rule(){ items.push({k:'r'}); },
+    height(){ return items.reduce((s,it)=>s+(it.k==='t'?it.lines.length*it.size*it.lh+it.gap:it.k==='s'?it.h:it.k==='r'?18:it.inner.height()+2*it.pad+10),0); },
+    draw(ctx,x,y,w){
+      items.forEach(it=>{
+        if(it.k==='t'){ ctx.font=(it.bold?'700 ':'400 ')+it.size+'px '+CF; ctx.fillStyle=it.color; ctx.textBaseline='top'; it.lines.forEach(l=>{ ctx.fillText(l,x+it.indent,y); y+=it.size*it.lh; }); y+=it.gap; }
+        else if(it.k==='s') y+=it.h;
+        else if(it.k==='r'){ ctx.strokeStyle='#e5e0f0'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(x,y+8); ctx.lineTo(x+w,y+8); ctx.stroke(); y+=18; }
+        else { const h=it.inner.height()+2*it.pad; ctx.fillStyle=it.bg; ctx.strokeStyle=it.border; ctx.lineWidth=1.2; rr(ctx,x,y,w,h,12); ctx.fill(); ctx.stroke(); it.inner.draw(ctx,x+it.pad,y+it.pad,w-2*it.pad); y+=h+10; }
+      }); return y;
+    }
+  };
+}
+function rr(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r); ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h); ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r); ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath(); }
+function renderDoc(doc,W,title){
+  const band=56, top=band+24, bottom=28;
+  const H=Math.ceil(top+doc.height()+bottom);
+  const cv=document.createElement('canvas'); cv.width=W; cv.height=H; const ctx=cv.getContext('2d');
+  ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#7C5CBF'; ctx.fillRect(0,0,W,band);
+  ctx.fillStyle='#fff'; ctx.font='700 20px '+CF; ctx.textBaseline='middle'; ctx.fillText(title,36,band/2);
+  doc.draw(ctx,36,top,W-72);
+  return cv;
+}
+
+/* ══════════ 오답노트 JPG ══════════ */
+function downloadWrongNote(){
+  const name=needName(); if(!name) return;
+  const W=900, d=S.endAt||new Date();
+  const wrong=S.qs.filter(q=>q.status==='retry'||q.status==='fail');
+  const doc=makeDoc(W);
+  doc.text(`${stageLabel(S.stage)} · ${name} · ${dateText(d)}`,{size:15,color:'#5b5670',gap:10});
+  if(!wrong.length){
+    doc.box(b=>{ b.text('🎉 틀린 문항이 없어요!',{size:22,bold:true,color:'#3C3489'}); b.text('모든 문항을 첫 시도에 맞혔어요. 다음 단계에 도전해 보세요.',{size:15}); },{bg:'#eefaf2',border:'#bfe6cc'});
+  } else {
+    doc.text(`다시 볼 문항 ${wrong.length}개`,{size:16,bold:true,color:'#3C3489',gap:8});
+    wrong.forEach(q=>{
+      doc.box(b=>{
+        b.text(`[${CATEGORIES[q.cat].label}] ${q.status==='fail'?'못 맞힘':'다시 풀어 맞힘'}`,{size:13,bold:true,color:'#7C5CBF',gap:4});
+        b.text('문제  '+questionText(q),{size:16,bold:true,color:'#222',gap:4});
+        b.text('정답  '+answerText(q),{size:15,bold:true,color:'#16623a',gap:4});
+        b.text('해설  '+q.d,{size:13,color:'#64748b',gap:0});
+      },{bg:'#fff',border:'#e3dcf3'});
+    });
+  }
+  doc.space(6); doc.rule();
+  doc.text(privacyText(),{size:12,color:'#777',gap:4});
+  doc.text(STD_TEXT,{size:12,color:'#777',gap:4});
+  doc.text(CREDIT_TEXT,{size:12,color:'#777',gap:0});
+  const cv=renderDoc(doc,W,'📝 오답노트 · 단어의 짜임 컵스');
+  saveJpg(cv,`${name}_오답노트_${fileStage()}_${stamp(d)}.jpg`);
+}
+
+/* ══════════ 학습 리포트 JPG ══════════ */
+function downloadReport(){
+  const name=needName(); if(!name) return;
+  const W=900, d=S.endAt||new Date(), R=S.R||computeStats(); const feel=$('inFeel').value.trim();
+  const doc=makeDoc(W);
+  doc.text(`단어의 짜임 컵스 · ${stageLabel(S.stage)} · ${name} · ${dateText(d)}`,{size:15,color:'#5b5670',gap:10});
+  doc.box(b=>{
+    b.text(`${S.score}점  /  ${R.max}점 만점`,{size:28,bold:true,color:'#3C3489',gap:6});
+    b.text(`정답률 ${R.acc}% (첫 시도 기준) · 정답 ${R.first} · 오답 ${R.retry+R.fail} · 최고 콤보 ${S.maxCombo} · 소요 시간 ${fmtTime(S.elapsed)}`,{size:15,gap:4});
+    b.text(`첫 시도 정답 ${R.first} · 다시 풀어 맞힘 ${R.retry} · 못 맞힘 ${R.fail}`+(R.skipped?` · 미응답 ${R.skipped}문항`:''),{size:14,color:'#5b5670',gap:0});
+  });
+  doc.text('💬 총평  '+R.comment,{size:18,bold:true,color:'#7C5CBF',gap:10});
+  if(!R.allWeak){
+    doc.text('💪 잘하는 유형',{size:15,bold:true,color:'#3C3489',gap:2});
+    doc.text(catList(R.good,R.cats),{size:15,gap:10,indent:8});
+    doc.text('🛠 보완이 필요한 유형',{size:15,bold:true,color:'#3C3489',gap:2});
+    doc.text(catList(R.weak,R.cats),{size:15,gap:10,indent:8});
+  }
+  doc.box(b=>{ b.text('📌 가장 먼저 공부할 것',{size:15,bold:true,color:'#8a5a00',gap:4}); b.text(R.firstMsg,{size:15,gap:0}); },{bg:'#fff8e6',border:'#f3dfa6'});
+  if(feel){ doc.text('✏️ 학습 소감',{size:15,bold:true,color:'#3C3489',gap:2}); doc.text(feel,{size:15,gap:10,indent:8}); }
+  doc.rule();
+  doc.text('성취기준 '+STD_TEXT,{size:12,color:'#777',gap:4});
+  doc.text(privacyText(),{size:12,color:'#777',gap:4});
+  doc.text(CREDIT_TEXT,{size:12,color:'#777',gap:0});
+  const cv=renderDoc(doc,W,'📊 학습 결과 분석 리포트');
+  saveJpg(cv,`${name}_학습리포트_${fileStage()}_${stamp(d)}.jpg`);
+}
+
+/* ══════════ 교사용 학습 데이터 엑셀 ══════════ */
+function xmlEsc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function downloadTeacherXls(){
+  const row=(cells,style)=>'<Row>'+cells.map(c=>`<Cell${style?` ss:StyleID="${style}"`:''}><Data ss:Type="${typeof c==='number'?'Number':'String'}">${xmlEsc(c)}</Data></Cell>`).join('')+'</Row>';
+  const foot=(n)=>[
+    row([]),
+    row(['성취기준',STD_TEXT]),
+    row(['배점 규칙','첫 시도 정답 10점 + 콤보 보너스(3~4콤보 +5, 5콤보 이상 +10) · 재시도 정답 5점 · 잘못 넣을 때마다 -2점(하한 0점) · 한 문항에서 2번 틀리면 정답 공개']),
+    row(['총문항 수',n]),
+    row(['크레딧','제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com · 제작일 '+MADE_DATE+' · 최종 수정 '+LAST_MOD])
+  ].join('');
+  const cols='<Column ss:Width="50"/><Column ss:Width="150"/><Column ss:Width="230"/><Column ss:Width="300"/><Column ss:Width="420"/>';
+  let sheets='';
+  STAGES.forEach((st,n)=>{
+    const rows=st.items.map(it=>{ const q={...it,stage:n}; return row([it.id,CATEGORIES[it.cat].label,questionText(q),answerText(q),it.d]); }).join('');
+    sheets+=`<Worksheet ss:Name="${n}단계 ${st.name}"><Table>${cols}${row([`${n}단계 · ${st.name} · ${st.items.length}문항 · ${maxScore(st.items.length)}점 만점`],'h')}${row(['원본 id','유형','문제(예문)','정답','해설'],'h')}${rows}${foot(st.items.length)}</Table></Worksheet>`;
+  });
+  // 유형별 요약
+  let sum=row(['유형별 요약'],'h')+row(['단계','유형 코드','유형','문항 수','원본 id','판단 방법(tip)'],'h');
+  STAGES.forEach((st,n)=>{
+    const g={}; st.items.forEach(it=>{(g[it.cat]=g[it.cat]||[]).push(it.id);});
+    Object.keys(g).forEach(k=>{ sum+=row([`${n}단계 ${st.name}`,k,CATEGORIES[k].label,g[k].length,g[k].join(', '),CATEGORIES[k].tip]); });
+  });
+  const total=STAGES.reduce((s,st)=>s+st.items.length,0), totalMax=STAGES.reduce((s,st)=>s+maxScore(st.items.length),0);
+  sum+=row([]); sum+=row(['합계',`${total}문항 · ${totalMax}점 만점 (단계별 ${STAGES.map(st=>st.items.length).join('/')}문항 · ${STAGES.map(st=>maxScore(st.items.length)).join('/')}점)`]);
+  sum+=foot(total);
+  sheets+=`<Worksheet ss:Name="유형별 요약"><Table><Column ss:Width="130"/><Column ss:Width="80"/><Column ss:Width="170"/><Column ss:Width="60"/><Column ss:Width="160"/><Column ss:Width="520"/>${sum}</Table></Worksheet>`;
+  const xml=`<?xml version="1.0" encoding="UTF-8"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Styles><Style ss:ID="Default"><Alignment ss:Vertical="Top" ss:WrapText="1"/><Font ss:FontName="맑은 고딕" ss:Size="10"/></Style><Style ss:ID="h"><Font ss:FontName="맑은 고딕" ss:Bold="1" ss:Size="10"/><Interior ss:Color="#EAE5F8" ss:Pattern="Solid"/></Style></Styles>${sheets}</Workbook>`;
+  const blob=new Blob(['﻿'+xml],{type:'application/vnd.ms-excel'});
+  const d=new Date(); const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download=`G104_단어의짜임컵스_학습데이터목록_${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}.xls`;
+  document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);
+}
+(function(){ const trigger=document.getElementById('lastMod'); trigger.style.cursor='default'; trigger.addEventListener('click',downloadTeacherXls); })();
+
+buildStart();
+</script>
+</body>
+</html>
