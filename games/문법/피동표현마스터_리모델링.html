@@ -1,4 +1,8 @@
 <!doctype html>
+<!-- 리모델링 2026.10.01 06:30 (3차 야간)
+     정의: 시작 화면 피동 표현 정의를 교과서 문구로 ("주어가 다른 대상에게 동작이나 행위를 당하는 것을 나타내는 표현")
+     내용: 접미사 선택을 어간 끝소리로 설명한 부분 삭제 — 시작 화면 안내, 재시도 힌트, 유형별 tip 4개, 문항 해설 36개(형태 설명으로)
+     문항: 20번 피동문 '두꺼운 책 밑에 장난감이 눌려 있다.' → '두꺼운 책에 장난감이 눌렸다.' (교사 승인, '-어 있-' 제거) -->
 <html lang="ko">
 <head>
 <meta charset="utf-8"/>
@@ -266,7 +270,7 @@ button{font-family:inherit}
     </div>
     <div class="box">
      <h3>📘 피동 표현이란?</h3>
-     <p>주어가 남의 행동을 당하는 것을 나타내는 표현이에요.</p>
+     <p>주어가 다른 대상에게 동작이나 행위를 당하는 것을 나타내는 표현이에요.</p>
      <p>능동사의 어간에 피동 접미사를 붙여 피동사를 만들어요.</p>
      <div class="sfx-cards">
       <div class="sfx-card c-y"><b>-이-</b><span>꺾이다 · 묶이다</span></div>
@@ -274,7 +278,7 @@ button{font-family:inherit}
       <div class="sfx-card c-s"><b>-리-</b><span>갈리다 · 썰리다</span></div>
       <div class="sfx-card c-g"><b>-기-</b><span>잠기다 · 뜯기다</span></div>
      </div>
-     <p class="note">어간의 받침 소리가 단서가 되지만 예외도 있어요.<br>헷갈리면 접미사를 붙여 문장 속에서 소리 내 읽어 보세요.</p>
+     <p class="note">헷갈리면 접미사를 붙여 문장 속에서 소리 내 읽어 보세요.</p>
     </div>
    </div>
 
@@ -285,7 +289,7 @@ button{font-family:inherit}
 
    <div class="maker">
     제작 · <b>보라라샘</b> · 전주서신중학교 교사 · siaawase@gmail.com<br>
-    제작일 2026.04.01 · <span id="lastMod">최종 수정 2026.09.17 22:16</span>
+    제작일 2026.04.01 · <span id="lastMod">최종 수정 2026.10.01 06:30</span>
    </div>
 
    <div class="privacy" id="privacyOffline">
@@ -377,7 +381,7 @@ button{font-family:inherit}
     <button class="btn sec" onclick="goHome()">⌂ 시작화면으로</button>
    </div>
    <div class="privacy" style="margin-top:10px;text-align:left" id="endPrivacy">입력하신 이름과 소감은 서버에 저장되지 않으며, 리포트 이미지(JPG) 생성용으로만 쓰입니다.</div>
-   <div class="maker" style="margin-top:12px">제작 · <b>보라라샘</b> · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.04.01 · 최종 수정 2026.09.17 22:16</div>
+   <div class="maker" style="margin-top:12px">제작 · <b>보라라샘</b> · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.04.01 · 최종 수정 2026.10.01 06:30</div>
   </div>
  </div>
 </section>
@@ -396,7 +400,7 @@ button{font-family:inherit}
 
 <script>
 const MADE_DATE='2026.04.01';
-const LAST_MOD='2026.09.17 22:16';
+const LAST_MOD='2026.10.01 06:30';
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -448,54 +452,54 @@ const GAME_NAME='피동 표현 마스터';
 
 const CATEGORIES={
   yi:{label:'-이-', color:'y', desc:'-이-가 붙는 피동사',
-    tip:'받침 없는 어간(보-, 쓰-)이나 ㅎ·ㄲ 받침 어간(놓-, 섞-)에 자주 붙어요. "덮다"는 ㅂ 받침인데도 "덮이다"이니 따로 기억하세요.'},
+    tip:'보이다, 놓이다, 섞이다, 덮이다처럼 -이-가 붙어요.'},
   hi:{label:'-히-', color:'p', desc:'-히-가 붙는 피동사',
-    tip:'받침이 ㄱ·ㄷ·ㅂ 소리(먹-, 닫-, 잡-)이면 -히-를 먼저 넣어 보세요. 겹받침은 소리 나는 받침으로 따져요(읽- → [익], 밟- → [밥]).'},
+    tip:'먹히다, 막히다, 잡히다, 읽히다처럼 -히-가 붙어요.'},
   ri:{label:'-리-', color:'s', desc:'-리-가 붙는 피동사',
-    tip:'어간이 ㄹ로 끝나면(밀-, 열-) -리-를 먼저 떠올리세요. "듣다→들어", "누르다→눌러"처럼 활용할 때 ㄹ이 나타나는 말도 -리-가 붙어요.'},
+    tip:'밀리다, 팔리다, 들리다, 흔들리다처럼 -리-가 붙어요.'},
   gi:{label:'-기-', color:'g', desc:'-기-가 붙는 피동사',
-    tip:'받침이 ㄴ·ㅁ·ㅅ·ㅊ(안-, 담-, 빼앗-, 쫓-)이면 -기-를 먼저 넣어 보세요. ㅈ 받침은 "찢기다"와 "꽂히다"처럼 갈리니 문장에 넣어 읽어 보고 고르세요.'}
+    tip:'안기다, 담기다, 쫓기다, 찢기다처럼 -기-가 붙어요.'}
 };
 const CAT_ORDER=['yi','hi','ri','gi'];
 const SFX2CAT={'-이-':'yi','-히-':'hi','-리-':'ri','-기-':'gi'};
 
 const QUESTIONS=[
- {id:1,cat:'hi',verb:'잡다',stem:'잡-',active:'경찰이 도둑을 잡았다.',passive:'도둑이 경찰에게 잡혔다.',answer:'-히-',structure:'잡- + -히- + -었- + -다',detail:"'잡-'은 ㅂ 받침으로 끝나 -히-가 붙어요. 잡- + -히- → 잡히다"},
- {id:2,cat:'ri',verb:'밀다',stem:'밀-',active:'친구가 내 등을 밀었다.',passive:'내 등이 친구에게 밀렸다.',answer:'-리-',structure:'밀- + -리- + -었- + -다',detail:"'밀-'은 ㄹ 받침으로 끝나 -리-가 붙어요. 밀- + -리- → 밀리다"},
- {id:3,cat:'yi',verb:'보다',stem:'보-',active:'아이가 멀리 있는 산을 본다.',passive:'멀리 있는 산이 아이에게 보인다.',answer:'-이-',structure:'보- + -이- + -ㄴ- + -다',detail:"'보-'는 모음으로 끝나 -이-가 붙어요. 보- + -이- → 보이다"},
- {id:4,cat:'ri',verb:'듣다',stem:'듣-',active:'그가 내 목소리를 들었다.',passive:'내 목소리가 그에게 들렸다.',answer:'-리-',structure:'듣- + -리- + -었- + -다',detail:"'듣-'은 '들어'처럼 ㄷ이 ㄹ로 바뀌는 말이라 -리-가 붙어요. 듣- + -리- → 들리다"},
- {id:5,cat:'yi',verb:'쓰다',stem:'쓰-',active:'학생이 감상문을 썼다.',passive:'감상문이 학생에 의해 쓰였다.',answer:'-이-',structure:'쓰- + -이- + -었- + -다',detail:"'쓰-'는 모음으로 끝나 -이-가 붙어요. 쓰- + -이- → 쓰이다"},
- {id:6,cat:'hi',verb:'읽다',stem:'읽-',active:'사람들이 이 책을 많이 읽는다.',passive:'이 책은 사람들에게 많이 읽힌다.',answer:'-히-',structure:'읽- + -히- + -ㄴ- + -다',detail:"'읽-'은 겹받침 ㄺ이 [ㄱ]으로 소리 나 -히-가 붙어요. 읽- + -히- → 읽히다"},
- {id:7,cat:'ri',verb:'열다',stem:'열-',active:'주인이 가게 문을 열었다.',passive:'가게 문이 주인에 의해 열렸다.',answer:'-리-',structure:'열- + -리- + -었- + -다',detail:"'열-'은 ㄹ 받침으로 끝나 -리-가 붙어요. 열- + -리- → 열리다"},
- {id:8,cat:'hi',verb:'닫다',stem:'닫-',active:'바람이 창문을 세게 닫았다.',passive:'창문이 바람에 세게 닫혔다.',answer:'-히-',structure:'닫- + -히- + -었- + -다',detail:"'닫-'은 ㄷ 받침으로 끝나 -히-가 붙어요. 닫- + -히- → 닫히다"},
- {id:9,cat:'hi',verb:'먹다',stem:'먹-',active:'고양이가 생선을 먹었다.',passive:'생선이 고양이에게 먹혔다.',answer:'-히-',structure:'먹- + -히- + -었- + -다',detail:"'먹-'은 ㄱ 받침으로 끝나 -히-가 붙어요. 먹- + -히- → 먹히다"},
- {id:10,cat:'gi',verb:'쫓다',stem:'쫓-',active:'사자가 얼룩말을 쫓는다.',passive:'얼룩말이 사자에게 쫓긴다.',answer:'-기-',structure:'쫓- + -기- + -ㄴ- + -다',detail:"'쫓-'은 ㅊ 받침으로 끝나 -기-가 붙어요. 쫓- + -기- → 쫓기다"},
- {id:11,cat:'gi',verb:'안다',stem:'안-',active:'엄마가 아기를 품에 안았다.',passive:'아기가 엄마 품에 안겼다.',answer:'-기-',structure:'안- + -기- + -었- + -다',detail:"'안-'은 ㄴ 받침으로 끝나 -기-가 붙어요. 안- + -기- → 안기다"},
- {id:12,cat:'ri',verb:'풀다',stem:'풀-',active:'학생이 어려운 수학 문제를 풀었다.',passive:'어려운 수학 문제가 학생에 의해 풀렸다.',answer:'-리-',structure:'풀- + -리- + -었- + -다',detail:"'풀-'은 ㄹ 받침으로 끝나 -리-가 붙어요. 풀- + -리- → 풀리다"},
- {id:13,cat:'yi',verb:'쌓다',stem:'쌓-',active:'아이들이 모래를 높이 쌓았다.',passive:'모래가 아이들에 의해 높이 쌓였다.',answer:'-이-',structure:'쌓- + -이- + -었- + -다',detail:"'쌓-'은 ㅎ 받침이지만 -이-가 붙어요. 쌓- + -이- → 쌓이다"},
- {id:14,cat:'gi',verb:'끊다',stem:'끊-',active:'그가 갑자기 전화를 끊었다.',passive:'전화가 그에 의해 갑자기 끊겼다.',answer:'-기-',structure:'끊- + -기- + -었- + -다',detail:"'끊-'은 겹받침 ㄶ(ㄴ 소리)으로 끝나 -기-가 붙어요. 끊- + -기- → 끊기다"},
- {id:15,cat:'ri',verb:'걸다',stem:'걸-',active:'화가가 벽에 그림을 걸었다.',passive:'그림이 화가에 의해 벽에 걸렸다.',answer:'-리-',structure:'걸- + -리- + -었- + -다',detail:"'걸-'은 ㄹ 받침으로 끝나 -리-가 붙어요. 걸- + -리- → 걸리다"},
- {id:16,cat:'yi',verb:'놓다',stem:'놓-',active:'아이가 책상 위에 책을 놓았다.',passive:'책이 아이에 의해 책상 위에 놓였다.',answer:'-이-',structure:'놓- + -이- + -었- + -다',detail:"'놓-'은 ㅎ 받침이지만 -이-가 붙어요. 놓- + -이- → 놓이다"},
- {id:17,cat:'yi',verb:'바꾸다',stem:'바꾸-',active:'회사가 내부 규칙을 바꾸었다.',passive:'내부 규칙이 회사에 의해 바뀌었다.',answer:'-이-',structure:'바꾸- + -이- + -었- + -다',detail:"'바꾸-'는 모음으로 끝나 -이-가 붙고, 'ㅜ+ㅣ'가 'ㅟ'로 줄어요. 바꾸- + -이- → 바뀌다"},
- {id:18,cat:'ri',verb:'팔다',stem:'팔-',active:'상인이 낡은 물건을 팔았다.',passive:'낡은 물건이 상인에게 팔렸다.',answer:'-리-',structure:'팔- + -리- + -었- + -다',detail:"'팔-'은 ㄹ 받침으로 끝나 -리-가 붙어요. 팔- + -리- → 팔리다"},
- {id:19,cat:'yi',verb:'덮다',stem:'덮-',active:'눈이 온 세상을 하얗게 덮었다.',passive:'온 세상이 눈에 하얗게 덮였다.',answer:'-이-',structure:'덮- + -이- + -었- + -다',detail:"'덮-'은 ㅂ 소리 받침인데도 -이-가 붙는 말이에요. 덮- + -이- → 덮이다"},
- {id:20,cat:'ri',verb:'누르다',stem:'누르-',active:'두꺼운 책이 장난감을 눌렀다.',passive:'두꺼운 책 밑에 장난감이 눌려 있다.',answer:'-리-',structure:'누르- + -리- + -어 + 있- + -다',detail:"'누르-'는 '눌러'처럼 활용할 때 ㄹ이 나타나 -리-가 붙어요. 누르- + -리- → 눌리다",masked:'두꺼운 책 밑에 장난감이 ?? 있다.'},
- {id:21,cat:'hi',verb:'업다',stem:'업-',active:'아빠가 아들을 등에 업었다.',passive:'아들이 아빠 등에 업혔다.',answer:'-히-',structure:'업- + -히- + -었- + -다',detail:"'업-'은 ㅂ 받침으로 끝나 -히-가 붙어요. 업- + -히- → 업히다"},
- {id:22,cat:'yi',verb:'파다',stem:'파-',active:'인부들이 땅에 구덩이를 팠다.',passive:'구덩이가 인부들에 의해 땅에 파였다.',answer:'-이-',structure:'파- + -이- + -었- + -다',detail:"'파-'는 모음으로 끝나 -이-가 붙어요. 파- + -이- → 파이다"},
- {id:23,cat:'hi',verb:'밟다',stem:'밟-',active:'코끼리가 실수로 꽃을 밟았다.',passive:'꽃이 코끼리에게 실수로 밟혔다.',answer:'-히-',structure:'밟- + -히- + -었- + -다',detail:"'밟-'은 겹받침 ㄼ이 [ㅂ]으로 소리 나 -히-가 붙어요. 밟- + -히- → 밟히다"},
- {id:24,cat:'gi',verb:'찢다',stem:'찢-',active:'화가 난 아이가 종이를 찢었다.',passive:'종이가 화가 난 아이에 의해 찢겼다.',answer:'-기-',structure:'찢- + -기- + -었- + -다',detail:"'찢-'은 ㅈ 받침으로 끝나 -기-가 붙어요. 찢- + -기- → 찢기다"},
- {id:25,cat:'yi',verb:'섞다',stem:'섞-',active:'그는 두 가지 액체를 섞었다.',passive:'두 가지 액체가 그에 의해 섞였다.',answer:'-이-',structure:'섞- + -이- + -었- + -다',detail:"'섞-'은 ㄲ 받침이지만 -이-가 붙어요. 섞- + -이- → 섞이다"},
- {id:26,cat:'hi',verb:'박다',stem:'박-',active:'목수가 벽에 못을 박았다.',passive:'못이 목수에 의해 벽에 박혔다.',answer:'-히-',structure:'박- + -히- + -었- + -다',detail:"'박-'은 ㄱ 받침으로 끝나 -히-가 붙어요. 박- + -히- → 박히다"},
- {id:27,cat:'yi',verb:'깎다',stem:'깎-',active:'미용사가 손님의 머리를 깎았다.',passive:'손님의 머리가 미용사에게 깎였다.',answer:'-이-',structure:'깎- + -이- + -었- + -다',detail:"'깎-'은 ㄲ 받침이지만 -이-가 붙어요. 깎- + -이- → 깎이다"},
- {id:28,cat:'gi',verb:'담다',stem:'담-',active:'엄마가 도시락에 과일을 담았다.',passive:'과일이 엄마에 의해 도시락에 담겼다.',answer:'-기-',structure:'담- + -기- + -었- + -다',detail:"'담-'은 ㅁ 받침으로 끝나 -기-가 붙어요. 담- + -기- → 담기다"},
- {id:29,cat:'ri',verb:'물다',stem:'물-',active:'모기가 내 팔을 물었다.',passive:'내 팔이 모기에게 물렸다.',answer:'-리-',structure:'물- + -리- + -었- + -다',detail:"'물-'은 ㄹ 받침으로 끝나 -리-가 붙어요. 물- + -리- → 물리다"},
- {id:30,cat:'hi',verb:'막다',stem:'막-',active:'큰 바위가 길을 막았다.',passive:'길이 큰 바위에 의해 막혔다.',answer:'-히-',structure:'막- + -히- + -었- + -다',detail:"'막-'은 ㄱ 받침으로 끝나 -히-가 붙어요. 막- + -히- → 막히다"},
- {id:31,cat:'gi',verb:'빼앗다',stem:'빼앗-',active:'강도가 행인의 가방을 빼앗았다.',passive:'행인의 가방이 강도에게 빼앗겼다.',answer:'-기-',structure:'빼앗- + -기- + -었- + -다',detail:"'빼앗-'은 ㅅ 받침으로 끝나 -기-가 붙어요. 빼앗- + -기- → 빼앗기다"},
- {id:32,cat:'hi',verb:'뽑다',stem:'뽑-',active:'심사위원이 우승자를 뽑았다.',passive:'우승자가 심사위원에 의해 뽑혔다.',answer:'-히-',structure:'뽑- + -히- + -었- + -다',detail:"'뽑-'은 ㅂ 받침으로 끝나 -히-가 붙어요. 뽑- + -히- → 뽑히다"},
- {id:33,cat:'ri',verb:'싣다',stem:'싣-',active:'인부들이 트럭에 짐을 실었다.',passive:'짐이 인부들에 의해 트럭에 실렸다.',answer:'-리-',structure:'싣- + -리- + -었- + -다',detail:"'싣-'은 '실어'처럼 ㄷ이 ㄹ로 바뀌는 말이라 -리-가 붙어요. 싣- + -리- → 실리다"},
- {id:34,cat:'ri',verb:'이끌다',stem:'이끌-',active:'알 수 없는 운명이 나를 이곳으로 이끌었다.',passive:'나는 알 수 없는 운명에 이끌려 이곳에 오게 되었다.',answer:'-리-',structure:'이끌- + -리- + -어',detail:"'이끌-'은 ㄹ 받침으로 끝나 -리-가 붙어요. 이끌- + -리- → 이끌리다",masked:'나는 알 수 없는 운명에 ?? 이곳에 오게 되었다.'},
- {id:35,cat:'yi',verb:'차다',stem:'차-',active:'선수가 공을 힘껏 찼다.',passive:'공이 선수의 발에 힘껏 차였다.',answer:'-이-',structure:'차- + -이- + -었- + -다',detail:"'차-'는 모음으로 끝나 -이-가 붙어요. 차- + -이- → 차이다"},
- {id:36,cat:'ri',verb:'흔들다',stem:'흔들-',active:'바람이 나뭇가지를 심하게 흔들었다.',passive:'나뭇가지가 바람에 심하게 흔들렸다.',answer:'-리-',structure:'흔들- + -리- + -었- + -다',detail:"'흔들-'은 ㄹ 받침으로 끝나 -리-가 붙어요. 흔들- + -리- → 흔들리다"}
+ {id:1,cat:'hi',verb:'잡다',stem:'잡-',active:'경찰이 도둑을 잡았다.',passive:'도둑이 경찰에게 잡혔다.',answer:'-히-',structure:'잡- + -히- + -었- + -다',detail:"'잡다'의 어간 '잡-'에 피동 접미사 '-히-'가 붙은 말이에요. 잡- + -히- → 잡히다"},
+ {id:2,cat:'ri',verb:'밀다',stem:'밀-',active:'친구가 내 등을 밀었다.',passive:'내 등이 친구에게 밀렸다.',answer:'-리-',structure:'밀- + -리- + -었- + -다',detail:"'밀다'의 어간 '밀-'에 피동 접미사 '-리-'가 붙은 말이에요. 밀- + -리- → 밀리다"},
+ {id:3,cat:'yi',verb:'보다',stem:'보-',active:'아이가 멀리 있는 산을 본다.',passive:'멀리 있는 산이 아이에게 보인다.',answer:'-이-',structure:'보- + -이- + -ㄴ- + -다',detail:"'보다'의 어간 '보-'에 피동 접미사 '-이-'가 붙은 말이에요. 보- + -이- → 보이다"},
+ {id:4,cat:'ri',verb:'듣다',stem:'듣-',active:'그가 내 목소리를 들었다.',passive:'내 목소리가 그에게 들렸다.',answer:'-리-',structure:'듣- + -리- + -었- + -다',detail:"'듣다'의 어간 '듣-'에 피동 접미사 '-리-'가 붙은 말이에요. 이때 어간이 '들-'로 바뀌어요. 듣- + -리- → 들리다"},
+ {id:5,cat:'yi',verb:'쓰다',stem:'쓰-',active:'학생이 감상문을 썼다.',passive:'감상문이 학생에 의해 쓰였다.',answer:'-이-',structure:'쓰- + -이- + -었- + -다',detail:"'쓰다'의 어간 '쓰-'에 피동 접미사 '-이-'가 붙은 말이에요. 쓰- + -이- → 쓰이다"},
+ {id:6,cat:'hi',verb:'읽다',stem:'읽-',active:'사람들이 이 책을 많이 읽는다.',passive:'이 책은 사람들에게 많이 읽힌다.',answer:'-히-',structure:'읽- + -히- + -ㄴ- + -다',detail:"'읽다'의 어간 '읽-'에 피동 접미사 '-히-'가 붙은 말이에요. 읽- + -히- → 읽히다"},
+ {id:7,cat:'ri',verb:'열다',stem:'열-',active:'주인이 가게 문을 열었다.',passive:'가게 문이 주인에 의해 열렸다.',answer:'-리-',structure:'열- + -리- + -었- + -다',detail:"'열다'의 어간 '열-'에 피동 접미사 '-리-'가 붙은 말이에요. 열- + -리- → 열리다"},
+ {id:8,cat:'hi',verb:'닫다',stem:'닫-',active:'바람이 창문을 세게 닫았다.',passive:'창문이 바람에 세게 닫혔다.',answer:'-히-',structure:'닫- + -히- + -었- + -다',detail:"'닫다'의 어간 '닫-'에 피동 접미사 '-히-'가 붙은 말이에요. 닫- + -히- → 닫히다"},
+ {id:9,cat:'hi',verb:'먹다',stem:'먹-',active:'고양이가 생선을 먹었다.',passive:'생선이 고양이에게 먹혔다.',answer:'-히-',structure:'먹- + -히- + -었- + -다',detail:"'먹다'의 어간 '먹-'에 피동 접미사 '-히-'가 붙은 말이에요. 먹- + -히- → 먹히다"},
+ {id:10,cat:'gi',verb:'쫓다',stem:'쫓-',active:'사자가 얼룩말을 쫓는다.',passive:'얼룩말이 사자에게 쫓긴다.',answer:'-기-',structure:'쫓- + -기- + -ㄴ- + -다',detail:"'쫓다'의 어간 '쫓-'에 피동 접미사 '-기-'가 붙은 말이에요. 쫓- + -기- → 쫓기다"},
+ {id:11,cat:'gi',verb:'안다',stem:'안-',active:'엄마가 아기를 품에 안았다.',passive:'아기가 엄마 품에 안겼다.',answer:'-기-',structure:'안- + -기- + -었- + -다',detail:"'안다'의 어간 '안-'에 피동 접미사 '-기-'가 붙은 말이에요. 안- + -기- → 안기다"},
+ {id:12,cat:'ri',verb:'풀다',stem:'풀-',active:'학생이 어려운 수학 문제를 풀었다.',passive:'어려운 수학 문제가 학생에 의해 풀렸다.',answer:'-리-',structure:'풀- + -리- + -었- + -다',detail:"'풀다'의 어간 '풀-'에 피동 접미사 '-리-'가 붙은 말이에요. 풀- + -리- → 풀리다"},
+ {id:13,cat:'yi',verb:'쌓다',stem:'쌓-',active:'아이들이 모래를 높이 쌓았다.',passive:'모래가 아이들에 의해 높이 쌓였다.',answer:'-이-',structure:'쌓- + -이- + -었- + -다',detail:"'쌓다'의 어간 '쌓-'에 피동 접미사 '-이-'가 붙은 말이에요. 쌓- + -이- → 쌓이다"},
+ {id:14,cat:'gi',verb:'끊다',stem:'끊-',active:'그가 갑자기 전화를 끊었다.',passive:'전화가 그에 의해 갑자기 끊겼다.',answer:'-기-',structure:'끊- + -기- + -었- + -다',detail:"'끊다'의 어간 '끊-'에 피동 접미사 '-기-'가 붙은 말이에요. 끊- + -기- → 끊기다"},
+ {id:15,cat:'ri',verb:'걸다',stem:'걸-',active:'화가가 벽에 그림을 걸었다.',passive:'그림이 화가에 의해 벽에 걸렸다.',answer:'-리-',structure:'걸- + -리- + -었- + -다',detail:"'걸다'의 어간 '걸-'에 피동 접미사 '-리-'가 붙은 말이에요. 걸- + -리- → 걸리다"},
+ {id:16,cat:'yi',verb:'놓다',stem:'놓-',active:'아이가 책상 위에 책을 놓았다.',passive:'책이 아이에 의해 책상 위에 놓였다.',answer:'-이-',structure:'놓- + -이- + -었- + -다',detail:"'놓다'의 어간 '놓-'에 피동 접미사 '-이-'가 붙은 말이에요. 놓- + -이- → 놓이다"},
+ {id:17,cat:'yi',verb:'바꾸다',stem:'바꾸-',active:'회사가 내부 규칙을 바꾸었다.',passive:'내부 규칙이 회사에 의해 바뀌었다.',answer:'-이-',structure:'바꾸- + -이- + -었- + -다',detail:"'바꾸다'의 어간 '바꾸-'에 피동 접미사 '-이-'가 붙은 말이에요. 'ㅜ'와 'ㅣ'가 만나 'ㅟ'로 줄어요. 바꾸- + -이- → 바뀌다"},
+ {id:18,cat:'ri',verb:'팔다',stem:'팔-',active:'상인이 낡은 물건을 팔았다.',passive:'낡은 물건이 상인에게 팔렸다.',answer:'-리-',structure:'팔- + -리- + -었- + -다',detail:"'팔다'의 어간 '팔-'에 피동 접미사 '-리-'가 붙은 말이에요. 팔- + -리- → 팔리다"},
+ {id:19,cat:'yi',verb:'덮다',stem:'덮-',active:'눈이 온 세상을 하얗게 덮었다.',passive:'온 세상이 눈에 하얗게 덮였다.',answer:'-이-',structure:'덮- + -이- + -었- + -다',detail:"'덮다'의 어간 '덮-'에 피동 접미사 '-이-'가 붙은 말이에요. 덮- + -이- → 덮이다"},
+ {id:20,cat:'ri',verb:'누르다',stem:'누르-',active:'두꺼운 책이 장난감을 눌렀다.',passive:'두꺼운 책에 장난감이 눌렸다.',answer:'-리-',structure:'누르- + -리- + -었- + -다',detail:"'누르다'의 어간 '누르-'에 피동 접미사 '-리-'가 붙은 말이에요. 이때 어간이 '눌-'로 바뀌어요. 누르- + -리- → 눌리다"},
+ {id:21,cat:'hi',verb:'업다',stem:'업-',active:'아빠가 아들을 등에 업었다.',passive:'아들이 아빠 등에 업혔다.',answer:'-히-',structure:'업- + -히- + -었- + -다',detail:"'업다'의 어간 '업-'에 피동 접미사 '-히-'가 붙은 말이에요. 업- + -히- → 업히다"},
+ {id:22,cat:'yi',verb:'파다',stem:'파-',active:'인부들이 땅에 구덩이를 팠다.',passive:'구덩이가 인부들에 의해 땅에 파였다.',answer:'-이-',structure:'파- + -이- + -었- + -다',detail:"'파다'의 어간 '파-'에 피동 접미사 '-이-'가 붙은 말이에요. 파- + -이- → 파이다"},
+ {id:23,cat:'hi',verb:'밟다',stem:'밟-',active:'코끼리가 실수로 꽃을 밟았다.',passive:'꽃이 코끼리에게 실수로 밟혔다.',answer:'-히-',structure:'밟- + -히- + -었- + -다',detail:"'밟다'의 어간 '밟-'에 피동 접미사 '-히-'가 붙은 말이에요. 밟- + -히- → 밟히다"},
+ {id:24,cat:'gi',verb:'찢다',stem:'찢-',active:'화가 난 아이가 종이를 찢었다.',passive:'종이가 화가 난 아이에 의해 찢겼다.',answer:'-기-',structure:'찢- + -기- + -었- + -다',detail:"'찢다'의 어간 '찢-'에 피동 접미사 '-기-'가 붙은 말이에요. 찢- + -기- → 찢기다"},
+ {id:25,cat:'yi',verb:'섞다',stem:'섞-',active:'그는 두 가지 액체를 섞었다.',passive:'두 가지 액체가 그에 의해 섞였다.',answer:'-이-',structure:'섞- + -이- + -었- + -다',detail:"'섞다'의 어간 '섞-'에 피동 접미사 '-이-'가 붙은 말이에요. 섞- + -이- → 섞이다"},
+ {id:26,cat:'hi',verb:'박다',stem:'박-',active:'목수가 벽에 못을 박았다.',passive:'못이 목수에 의해 벽에 박혔다.',answer:'-히-',structure:'박- + -히- + -었- + -다',detail:"'박다'의 어간 '박-'에 피동 접미사 '-히-'가 붙은 말이에요. 박- + -히- → 박히다"},
+ {id:27,cat:'yi',verb:'깎다',stem:'깎-',active:'미용사가 손님의 머리를 깎았다.',passive:'손님의 머리가 미용사에게 깎였다.',answer:'-이-',structure:'깎- + -이- + -었- + -다',detail:"'깎다'의 어간 '깎-'에 피동 접미사 '-이-'가 붙은 말이에요. 깎- + -이- → 깎이다"},
+ {id:28,cat:'gi',verb:'담다',stem:'담-',active:'엄마가 도시락에 과일을 담았다.',passive:'과일이 엄마에 의해 도시락에 담겼다.',answer:'-기-',structure:'담- + -기- + -었- + -다',detail:"'담다'의 어간 '담-'에 피동 접미사 '-기-'가 붙은 말이에요. 담- + -기- → 담기다"},
+ {id:29,cat:'ri',verb:'물다',stem:'물-',active:'모기가 내 팔을 물었다.',passive:'내 팔이 모기에게 물렸다.',answer:'-리-',structure:'물- + -리- + -었- + -다',detail:"'물다'의 어간 '물-'에 피동 접미사 '-리-'가 붙은 말이에요. 물- + -리- → 물리다"},
+ {id:30,cat:'hi',verb:'막다',stem:'막-',active:'큰 바위가 길을 막았다.',passive:'길이 큰 바위에 의해 막혔다.',answer:'-히-',structure:'막- + -히- + -었- + -다',detail:"'막다'의 어간 '막-'에 피동 접미사 '-히-'가 붙은 말이에요. 막- + -히- → 막히다"},
+ {id:31,cat:'gi',verb:'빼앗다',stem:'빼앗-',active:'강도가 행인의 가방을 빼앗았다.',passive:'행인의 가방이 강도에게 빼앗겼다.',answer:'-기-',structure:'빼앗- + -기- + -었- + -다',detail:"'빼앗다'의 어간 '빼앗-'에 피동 접미사 '-기-'가 붙은 말이에요. 빼앗- + -기- → 빼앗기다"},
+ {id:32,cat:'hi',verb:'뽑다',stem:'뽑-',active:'심사위원이 우승자를 뽑았다.',passive:'우승자가 심사위원에 의해 뽑혔다.',answer:'-히-',structure:'뽑- + -히- + -었- + -다',detail:"'뽑다'의 어간 '뽑-'에 피동 접미사 '-히-'가 붙은 말이에요. 뽑- + -히- → 뽑히다"},
+ {id:33,cat:'ri',verb:'싣다',stem:'싣-',active:'인부들이 트럭에 짐을 실었다.',passive:'짐이 인부들에 의해 트럭에 실렸다.',answer:'-리-',structure:'싣- + -리- + -었- + -다',detail:"'싣다'의 어간 '싣-'에 피동 접미사 '-리-'가 붙은 말이에요. 이때 어간이 '실-'로 바뀌어요. 싣- + -리- → 실리다"},
+ {id:34,cat:'ri',verb:'이끌다',stem:'이끌-',active:'알 수 없는 운명이 나를 이곳으로 이끌었다.',passive:'나는 알 수 없는 운명에 이끌려 이곳에 오게 되었다.',answer:'-리-',structure:'이끌- + -리- + -어',detail:"'이끌다'의 어간 '이끌-'에 피동 접미사 '-리-'가 붙은 말이에요. 이끌- + -리- → 이끌리다",masked:'나는 알 수 없는 운명에 ?? 이곳에 오게 되었다.'},
+ {id:35,cat:'yi',verb:'차다',stem:'차-',active:'선수가 공을 힘껏 찼다.',passive:'공이 선수의 발에 힘껏 차였다.',answer:'-이-',structure:'차- + -이- + -었- + -다',detail:"'차다'의 어간 '차-'에 피동 접미사 '-이-'가 붙은 말이에요. 차- + -이- → 차이다"},
+ {id:36,cat:'ri',verb:'흔들다',stem:'흔들-',active:'바람이 나뭇가지를 심하게 흔들었다.',passive:'나뭇가지가 바람에 심하게 흔들렸다.',answer:'-리-',structure:'흔들- + -리- + -었- + -다',detail:"'흔들다'의 어간 '흔들-'에 피동 접미사 '-리-'가 붙은 말이에요. 흔들- + -리- → 흔들리다"}
 ];
 const SUFFIXES=[{s:'-이-',c:'y'},{s:'-히-',c:'p'},{s:'-리-',c:'s'},{s:'-기-',c:'g'}];
 const STAGES=[{no:1,label:'1단계'},{no:2,label:'2단계'}];
@@ -637,7 +641,7 @@ function render(){
     let head = e.st==='c1' ? '✅ 정답! (+'+e.gained+'점)' : e.st==='c2' ? '✅ 다시 풀어 맞혔어요! (+'+RETRY_PTS+'점)' : '❌ 정답은 '+q.answer+' 예요';
     fb.innerHTML='<div class="explain '+(e.st==='x'?'ng':'ok')+'"><span class="h">'+head+'</span><div class="struct">짜임 : '+parts+'</div><div>'+q.detail+'</div></div><div class="tipline">Enter · Space · → 키로 다음 문제</div>';
   }else if(e.st==='retry'){
-    fb.innerHTML='<div class="hint"><span class="hl">💡 힌트</span><span class="ht">어간 <b>\''+q.stem+'\'</b>의 받침 소리를 확인해 보세요. 남은 접미사를 하나씩 붙여 문장 속에서 소리 내 읽으면 가장 자연스러운 것을 찾을 수 있어요.</span>'+(S.awaitRetry?'<button class="retry-btn" onclick="retryQ()">↺ 다시 풀기 (Enter)</button>':'')+'</div>';
+    fb.innerHTML='<div class="hint"><span class="hl">💡 힌트</span><span class="ht">남은 접미사를 하나씩 붙여 문장 속에서 소리 내 읽고, 가장 자연스러운 말을 고르세요.</span>'+(S.awaitRetry?'<button class="retry-btn" onclick="retryQ()">↺ 다시 풀기 (Enter)</button>':'')+'</div>';
   }else{
     fb.innerHTML='<div class="tipline">버튼을 누르거나 숫자 키 1~4로 고르세요. 모르면 → 키로 넘어가도 돼요.</div>';
   }
