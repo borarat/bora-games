@@ -118,7 +118,7 @@ table.ct{border-collapse:collapse;margin:0 auto;min-width:640px;width:100%}
 .ct .cc .nt{display:block;font-size:10.5px;font-weight:500;color:var(--muted);line-height:1.2}
 .p-side{display:flex;flex-direction:column;gap:10px;min-width:0}
 .p-btns{display:flex;gap:6px;flex-wrap:wrap}
-.p-btns button{flex:1;min-height:44px;border-radius:10px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:13px;font-weight:700;padding:4px 6px}
+.p-btns button{flex:1 1 auto;min-height:44px;border-radius:10px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:13px;font-weight:700;padding:4px 8px;white-space:nowrap}
 .p-btns button:hover{border-color:var(--accent);background:#fbf9ff}
 .p-btns .end-b{background:var(--accent);border-color:var(--accent);color:#fff}
 .p-btns .end-b:hover{background:#6a4bb0}
@@ -884,9 +884,9 @@ function vowChartHTML(){
   };
   let h='<table class="vt"><tr><th class="corner" rowspan="2">혀의 높이 ＼<br>혀의 최고점의 위치</th>';
   POSITIONS.forEach(p=>h+='<th colspan="2">'+lab('pos:'+p,p==='전설'?'전설 모음 (앞)':'후설 모음 (뒤)',p==='전설'?'front':'back')+'</th>');
-  h+='<th rowspan="2" class="corner" style="vertical-align:middle">← 입술의<br>모양</th></tr><tr>';
+  h+='<th></th></tr><tr>';
   POSITIONS.forEach(p=>SHAPES.forEach(s=>h+='<th>'+lab('shape:'+p+'-'+s,s+'모음','')+'</th>'));
-  h+='</tr>';
+  h+='<th class="corner" style="vertical-align:middle;text-align:left">← 입술의<br>모양</th></tr>';
   HEIGHTS.forEach(ht=>{
     h+='<tr><th>'+lab('height:'+ht,ht+'모음','')+'</th>';
     POSITIONS.forEach(p=>SHAPES.forEach(s=>{
@@ -1070,7 +1070,7 @@ function checkWord(){
     // 원본 점수 규칙 그대로: 정답 +10, 콤보 3~4 +5, 5 이상 +10 (몇 번째 시도든 같음)
     const nc=S.combo+1,bonus=nc>=5?10:nc>=3?5:0,pts=BASE+bonus;
     S.score+=pts;S.combo=nc;S.maxCombo=Math.max(S.maxCombo,nc);
-    S.res[q.id]={status:'correct',attempts:na,userCho:sel.cho,userJung:sel.jung,userJong:sel.jong,pts};
+    S.res[q.id]={status:'correct',attempts:na,userCho:sel.cho,userJung:sel.jung,userJong:sel.jong,pts,hist:r.hist||[]};
     S.fb={qid:q.id,type:'correct',text:'정답! "'+q.word+'" (+'+pts+'점'+(bonus>0?' 콤보 보너스!':'')+')'};
     updateHud();render();celebrate(pts,nc,na>1);
   }else{
@@ -1201,8 +1201,7 @@ function finishGame(){
   const c=stats(),st=STAGES[S.stage];
   $('endBandRight').textContent=stageTag();
   $('resEmoji').textContent=c.emoji;$('resTitle').textContent=c.verdict;
-  $('resNote').textContent=c.skip>0&&c.graded?'끝까지 풀지 않았어요 ('+c.skip+(S.kind==='place'?'장':'문항')+' 남음)':(c.graded?'':'');
-  if(!c.graded&&S.kind==='place'&&c.skip)$('resNote').textContent='';
+  $('resNote').textContent=c.skip>0&&c.graded?'끝까지 풀지 않았어요 ('+c.skip+(S.kind==='place'?'장':'문항')+' 남음)':'';
   if(S.kind==='word'){$('resScoreRow').style.display='';$('resScore').textContent=S.score;$('resMax').textContent='/ 만점 '+W_MAX+'점'}
   else $('resScoreRow').style.display='none';
   const sb=S.kind==='place'?
@@ -1379,7 +1378,7 @@ function downloadNote(){
       c.font='14px '+SF;const dl=x.detail?wrapLines(c,x.detail,iw-40):[];
       c.font='bold 15px '+SF;const al=wrapLines(c,'✅ '+x.ans,iw-40);
       c.font='15px '+SF;const ml=wrapLines(c,'✏️ '+x.my,iw-40);
-      const h=20+34+14+ml.length*22+al.length*22+(dl.length?8+dl.length*21:0)+16;
+      const h=20+34+14+ml.length*22+al.length*22+(dl.length?8+dl.length*21:0)+4;
       c.fillStyle='#fffafa';roundBox(c,P,y,iw,h,12);c.fill();c.strokeStyle='#f2b3b3';c.lineWidth=1.2;c.stroke();
       let yy=y+20;
       const lab='유형 · '+x.label;c.font='bold 13px '+SF;const lw=c.measureText(lab).width+20;
