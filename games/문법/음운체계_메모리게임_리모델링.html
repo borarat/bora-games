@@ -1,4 +1,8 @@
 <!DOCTYPE html>
+<!-- 리모델링 2026.10.01 03:01 (1차 야간)
+     피드백: 짝이 맞으면 한 줄 설명(조음 위치 카드의 '소리 나는 방법' 문구, ㅇ은 받침 [ŋ] 메모)
+     채점: 격려 문구 기준을 지침 5-2 표(95/85/70/50%)로
+     연동: wrongItems를 원본 id(교사용 엑셀의 id)로 전송 -->
 <html lang="ko">
 <head>
 <meta charset="utf-8"/>
@@ -204,7 +208,7 @@ button{font-family:var(--font)}
 
    <div class="credit">
     제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-    제작일 2025.11.06 · <span id="lastMod">최종 수정 2026.09.17 22:03</span>
+    제작일 2025.11.06 · <span id="lastMod">최종 수정 2026.10.01 03:01</span>
    </div>
 
    <div class="privacy" id="privacyOffline">
@@ -317,7 +321,7 @@ button{font-family:var(--font)}
 
 <script>
 const MADE_DATE = '2025.11.06';
-const LAST_MOD = '2026.09.17 22:03';
+const LAST_MOD = '2026.10.01 03:01';
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -379,6 +383,9 @@ const PLACES = {
             how: '목청 사이에서 나는 소리' }
 };
 const PAIR_TOTAL = Object.values(PLACES).reduce((s,p)=>s+p.cons.length,0); // 19
+// 원본 id: PLACES 순서대로 1~19 (교사용 엑셀의 id, 앱스크립트 wrongItems에 같은 번호를 쓴다)
+const CONS_ID = {};
+Object.values(PLACES).forEach(p=>p.cons.forEach(c=>{ CONS_ID[c]=Object.keys(CONS_ID).length+1; }));
 
 // ═══════════════════════════════════════════
 // 점수 규칙
@@ -623,7 +630,8 @@ function onFlip(el){
       const pts=BASE+comboBonus(S.combo); S.score+=pts;
       [A,B].forEach(x=>x.classList.add('match'));
       const cons=a.kind==='cons'?a:b;
-      setTip(`✅ 정답! <b>${cons.label}</b>${josaEun(cons.label)} <b>${PLACES[cons.group].label}</b>예요.`,'good');
+      const pl=PLACES[cons.group];
+      setTip(`✅ 정답! <b>${cons.label}</b>${josaEun(cons.label)} <b>${pl.label}</b>예요. ${pl.how}예요.${cons.label==='ㅇ'&&pl.note?` (${pl.note})`:''}`,'good');
       if(S.combo>=2) pulseHud();
       celebrate(S.combo,pts);
       S.opened=[]; S.locked=false; updateHud();
@@ -689,18 +697,17 @@ function revealAll(){
 function show(id){ ['start','game','end'].forEach(s=>$(s).classList.toggle('on',s===id)); window.scrollTo(0,0); }
 
 function verdictOf(acc){
-  // 메모리게임 기준표: 기억력·지식이 완벽한 경우에도 정확도는 약 65% 안팎이다
-  if(acc>=60) return '완벽해요!';
-  if(acc>=50) return '아주 잘했어요';
-  if(acc>=40) return '잘하고 있어요';
-  if(acc>=30) return '기본은 잡혔어요';
+  // 지침 5-2 표 (정확도 = 맞힌 시도 ÷ 전체 시도)
+  if(acc>=95) return '완벽해요!';
+  if(acc>=85) return '아주 잘했어요';
+  if(acc>=70) return '잘하고 있어요';
+  if(acc>=50) return '기본은 잡혔어요';
   return '다시 한 번 도전해요';
 }
 
-function confusionText(){
-  const seen=new Set(), out=[];
-  S.confusions.forEach(c=>{ const k=c.cons+'|'+c.wrong; if(!seen.has(k)){ seen.add(k); out.push(`${c.cons}(${PLACES[c.wrong].label})`); } });
-  return out.join(',');
+// 앱스크립트 wrongItems: 잘못 짝지은 자음의 원본 id (중복 없이, 오름차순)
+function wrongItemIds(){
+  return [...new Set(S.confusions.map(c=>CONS_ID[c.cons]))].sort((a,b)=>a-b).join(',');
 }
 
 function finish(){
@@ -737,7 +744,7 @@ function sendResult(){
     skippedCount:S.left,
     score:S.score,
     elapsedSeconds:elapsedSec(),
-    wrongItems:confusionText(),
+    wrongItems:wrongItemIds(),
     reflection:''
   }).then(res=>{
     const el=document.createElement('div');
@@ -815,9 +822,9 @@ function downloadTeacherXls(){
     ['총 문항 수', `${PAIR_TOTAL}쌍 (카드 ${PAIR_TOTAL*2}장: 자음 ${PAIR_TOTAL}장 + 조음 위치 ${PAIR_TOTAL}장)`],
     ['크레딧', `제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com · 제작일 ${MADE_DATE} · 최종 수정 ${LAST_MOD}`]
   ];
-  let id=0;
+  let id;
   const s1=[row(['id','유형(조음 위치)','문제(자음 카드)','정답(짝이 되는 위치 카드)','해설'],'h')];
-  Object.values(PLACES).forEach(p=>p.cons.forEach(c=>{ id++; s1.push(row([id,p.label,c,p.label,`${c}${josaEun(c)} ${p.label}: ${p.how}${p.note&&c==='ㅇ'?' ('+p.note+')':''}`])); }));
+  Object.values(PLACES).forEach(p=>p.cons.forEach(c=>{ id=CONS_ID[c]; s1.push(row([id,p.label,c,p.label,`${c}${josaEun(c)} ${p.label}: ${p.how}${p.note&&c==='ㅇ'?' ('+p.note+')':''}`])); }));
   tail.forEach(t=>s1.push(row(t)));
   const s2=[row(['조음 위치','자음 수','자음','소리 나는 방법'],'h')];
   Object.values(PLACES).forEach(p=>s2.push(row([p.label,p.cons.length,p.cons.join(' '),p.how+(p.note?' ('+p.note+')':'')])));
