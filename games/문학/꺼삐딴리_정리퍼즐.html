@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+<!-- 리모델링 2026.10.01 01:05 (0차 야간)
+     채점: 쉬움 모드의 틀린 선택(정답 단어가 아닌 글자 묶음)을 다음에 찾은 단어의 문항 오답으로 기록
+           → 정답률·오답 목록·결과 전송에 반영. 보통·도전 모드와 쉬움 모드의 다른 규칙은 그대로 -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -324,7 +327,7 @@
 
       <div class="creator">
         <span class="nm">제작 · 보라라샘</span> · 전주서신중학교 교사 · siaawase@gmail.com<br>
-        제작일 2026.05.31 · <span id="lastMod">최종 수정 2026.09.18 03:54</span>
+        제작일 2026.05.31 · <span id="lastMod">최종 수정 2026.10.01 01:05</span>
       </div>
 
       <div class="privacy" id="privacyOffline">
@@ -434,7 +437,7 @@
             <button class="btn sec" onclick="goStart()">시작화면으로</button>
           </div>
           <div class="fc-priv" id="endPrivacy">입력하신 이름과 소감은 서버에 저장되지 않으며,<br>리포트 이미지(JPG) 생성용으로만 쓰입니다.</div>
-          <div class="end-credit">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.05.31 · <span id="lastMod2">최종 수정 2026.09.18 03:54</span></div>
+          <div class="end-credit">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.05.31 · <span id="lastMod2">최종 수정 2026.10.01 01:05</span></div>
         </div>
       </div>
     </div>
@@ -446,7 +449,7 @@
 <script>
 /* ===== 기본 정보 ===== */
 const MADE_DATE = "2026.05.31";
-const LAST_MOD  = "2026.09.18 03:54";
+const LAST_MOD  = "2026.10.01 01:05";
 const ACHIEVE   = "(2022) [9국05-05] 작품에 반영된 사회·문화적 상황을 이해하며 작품을 감상한다.";
 const GAME_TITLE= "꺼삐딴 리 정리 퍼즐";
 const PRIVACY_OFF = "입력하신 이름과 소감은 서버에 저장되지 않으며, 리포트 이미지(JPG) 생성용으로만 쓰입니다.";
@@ -572,6 +575,7 @@ let timerId=null, startTime=0, elapsedSec=0, timeStopped=false;
 let solvedWords=new Set(), solvedClues=new Set(), foundCellKeys=new Set();
 let clueRecord={};      // clueRecord[n] = {wrong, hinted, status:''|'first'|'retry'|'fail', revealed}
 let finishAt=null, msgDone=false, msgWrong=0, msgRevealed=false, gameOver=false;
+let easyPendingWrong=0; // 쉬움: 아직 어느 문항에도 넣지 않은 틀린 선택 수 → 다음에 찾은 단어의 문항에 오답으로 넣는다
 const isTyping = ()=> difficulty!=="easy";
 function rec(n){ if(!clueRecord[n]) clueRecord[n]={wrong:0,hinted:false,status:"",revealed:false}; return clueRecord[n]; }
 
@@ -617,7 +621,7 @@ function resetState(){
   hintsLeft = difficulty==="easy"?99 : difficulty==="normal"?3 : 0;
   score=0; combo=0; maxCombo=0; elapsedSec=0; timeStopped=false; finishAt=null;
   solvedWords=new Set(); solvedClues=new Set(); foundCellKeys=new Set(); clueRecord={};
-  msgDone=false; msgWrong=0; msgRevealed=false; gameOver=false;
+  msgDone=false; msgWrong=0; msgRevealed=false; gameOver=false; easyPendingWrong=0;
   if(timerId){clearInterval(timerId);timerId=null;}
   $("msgstage").style.display="none"; $("cluepanel").style.display="block";
   $("reveal").style.display="none"; $("reveal").textContent="";
@@ -728,7 +732,11 @@ function attachSelection(g){
 function evaluate(sel){
   const match=WORDS.find(w=>!solvedWords.has(w.word)&&cellsEqualSet(sel,w));
   if(match){ solveWord(match); }
-  else{ penalizeWrong("그 자리에는 정답이 없어요");
+  else{
+    // 이미 찾은 정답 단어를 다시 고른 것은 틀린 선택으로 세지 않는다 (감점은 기존대로)
+    const again=WORDS.some(w=>solvedWords.has(w.word)&&cellsEqualSet(sel,w));
+    if(!again) easyPendingWrong++;
+    penalizeWrong("그 자리에는 정답이 없어요");
     sel.forEach(([r,c])=>{const el=cellEl(r,c);if(!el.classList.contains("found"))el.classList.add("bad");});
     setTimeout(()=>document.querySelectorAll(".cell.bad").forEach(e=>e.classList.remove("bad")),420); }
 }
@@ -779,6 +787,8 @@ function solveWord(w){
   solvedWords.add(w.word);
   w.cells.forEach(([r,c])=>{foundCellKeys.add(key(r,c));cellEl(r,c).classList.add("found");});
   const clue=CLUES.find(c=>c.n===w.clue);
+  // 쉬움: 이 단어를 찾기 전에 한 틀린 선택을 이 문항의 오답으로 기록 (보통·도전의 r.wrong과 같은 기준)
+  if(!isTyping() && easyPendingWrong>0){ rec(clue.n).wrong+=easyPendingWrong; easyPendingWrong=0; }
   if(!isTyping()) fillBlankEasy(clue);
   if(clue.words.every(ww=>solvedWords.has(ww)) && !solvedClues.has(clue.n)) completeClue(clue);
 }
