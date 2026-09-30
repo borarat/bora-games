@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
+<!-- 리모델링 2026.10.01 02:23 (1차 야간)
+     채점: 잘못 탭 감점 −5 → −10 (맞힘 득점과 같게, 지침 3-6 속도형). 놓친 목표 모음 감점(−5)은 그대로
+     화면: 시작 화면에 ㅚ·ㅟ 이중 모음 발음 허용 안내 한 줄, '게임 끝내기' 확인 단계(확인창이 떠 있는 동안 시간·두더지 멈춤) -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -309,7 +312,7 @@ body.playing{overflow:hidden;}
       <div class="ruleChips">
        <div class="chip"><span class="k">정답</span><span class="v">✅ +10</span></div>
        <div class="chip"><span class="k">콤보 3~4 / 5+</span><span class="v">+5 / +10</span></div>
-       <div class="chip"><span class="k">잘못 탭 · 놓침</span><span class="v">❌ −5</span></div>
+       <div class="chip"><span class="k">잘못 탭 / 놓침</span><span class="v">❌ −10 / −5</span></div>
        <div class="chip"><span class="k">시간 · 생명</span><span class="v">3분 · ❤15</span></div>
       </div>
      </div>
@@ -319,6 +322,7 @@ body.playing{overflow:hidden;}
       <p><b>혀의 앞뒤</b> — 혀의 앞부분이 올라가면 전설, 뒷부분이 올라가면 후설이에요.</p>
       <p><b>혀의 높낮이</b> — 입을 조금 벌리면 고모음, 더 벌리면 중모음, 크게 벌리면 저모음.</p>
       <p><b>입술 모양</b> — 입술을 둥글게 오므리면 원순, 그대로 두면 평순이에요.</p>
+      <p>※ ㅚ·ㅟ는 이중 모음으로도 발음할 수 있지만, 여기서는 단모음으로 분류해요.</p>
       <table class="vtable">
        <tr><th></th><th colspan="2">전설 모음</th><th colspan="2">후설 모음</th></tr>
        <tr><th></th><th>평순</th><th>원순</th><th>평순</th><th>원순</th></tr>
@@ -364,7 +368,7 @@ body.playing{overflow:hidden;}
 
    <div class="credit">
     <span class="seg">제작 · 보라라샘</span> · <span class="seg">전주서신중학교 교사</span> · <span class="seg">siaawase@gmail.com</span><br>
-    <span class="seg">제작일 2026.08.13</span> · <span class="seg" id="lastMod">최종 수정 2026.09.19 00:13</span>
+    <span class="seg">제작일 2026.08.13</span> · <span class="seg" id="lastMod">최종 수정 2026.10.01 02:23</span>
    </div>
 
    <div class="privacy" id="privacyOffline">
@@ -452,7 +456,7 @@ body.playing{overflow:hidden;}
 
    <div class="credit">
     <span class="seg">제작 · 보라라샘</span> · <span class="seg">전주서신중학교 교사</span> · <span class="seg">siaawase@gmail.com</span><br>
-    <span class="seg">제작일 2026.08.13</span> · <span class="seg" id="lastMod2">최종 수정 2026.09.19 00:13</span>
+    <span class="seg">제작일 2026.08.13</span> · <span class="seg" id="lastMod2">최종 수정 2026.10.01 02:23</span>
    </div>
   </div>
  </div>
@@ -478,7 +482,7 @@ body.playing{overflow:hidden;}
 
 <script>
 const MADE_DATE = "2026.08.13";
-const LAST_MOD = "2026.09.19 00:13";
+const LAST_MOD = "2026.10.01 02:23";
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -569,7 +573,7 @@ const STAGES = [
   { n:3, key:"hard",   label:"고급", spawn:800,  visible:1400, maxActive:4 }
 ];
 const TIME_LIMIT = 180, MAX_LIVES = 15, TARGET_RATIO = 0.55;
-const BASE_POINT = 10, WRONG_PENALTY = 5, HOLES = 9;
+const BASE_POINT = 10, WRONG_PENALTY = 10, MISS_PENALTY = 5, HOLES = 9;  // 잘못 탭 감점 = 맞힘 기본점 (지침 3-6)
 const KEYMAP = { KeyQ:0, KeyW:1, KeyE:2, KeyA:3, KeyS:4, KeyD:5, KeyZ:6, KeyX:7, KeyC:8,
   Numpad7:0, Numpad8:1, Numpad9:2, Numpad4:3, Numpad5:4, Numpad6:5, Numpad1:6, Numpad2:7, Numpad3:8 };
 const KEYCAPS = ["Q","W","E","A","S","D","Z","X","C"];
@@ -717,12 +721,14 @@ function runGame(){
   updateHUD();
   show("playScreen");
   spawnTimer = setInterval(spawn, cfg.spawn);
+  S.lastTickAt = Date.now();
   gameTimer = setInterval(tick, 1000);
   spawn(); setTimeout(spawn, 200); if(cfg.maxActive >= 3) setTimeout(spawn, 400);
 }
 
 function tick(){
   if(!S || S.endAt) return;
+  S.lastTickAt = Date.now();
   S.time--;
   if(S.time <= 0){ S.time = 0; updateHUD(); endGame("time"); return; }
   updateHUD();
@@ -765,6 +771,7 @@ function spawn(){
   S.appear[v.id] = (S.appear[v.id]||0) + 1;
   if(!S.seen.includes(v.id)) S.seen.push(v.id);
   sndPop();
+  h.hideAt = Date.now() + S.cfg.visible;
   h.hideTO = setTimeout(() => hideMole(idx, false), S.cfg.visible);
 }
 
@@ -777,9 +784,9 @@ function hideMole(idx, tapped){
     // 놓친 목표 모음 = 오답 (감점·생명·콤보 초기화)
     S.missed[h.v.id] = (S.missed[h.v.id]||0) + 1; S.missedN++;
     logAdd(S.missedLog, h.v.id);
-    S.score = Math.max(0, S.score - WRONG_PENALTY);
+    S.score = Math.max(0, S.score - MISS_PENALTY);
     S.lives--; S.combo = 0;
-    floatText(h.hole, "👀 놓침 −" + WRONG_PENALTY, "#b45309");
+    floatText(h.hole, "👀 놓침 −" + MISS_PENALTY, "#b45309");
     sndMissed();
     showHint(h.v, true);
     updateHUD();
@@ -895,7 +902,31 @@ function comboFx(c){
 
 
 $("muteBtn").addEventListener("click", () => { muted = !muted; $("muteBtn").textContent = muted ? "🔇 소리" : "🔊 소리"; });
-$("quitBtn").addEventListener("click", () => endGame("quit"));
+// 게임 끝내기: 한 번 확인한 뒤 끝낸다. 확인창이 떠 있는 동안에는 시간과 두더지를 멈춘다
+$("quitBtn").addEventListener("click", () => {
+  if(!S || S.endAt) return;
+  const now = Date.now();
+  clearInterval(spawnTimer); clearInterval(gameTimer);
+  const rest = holeData.map(h => {
+    if(!h.active || !h.hideTO) return null;
+    clearTimeout(h.hideTO); h.hideTO = null;
+    return Math.max(0, (h.hideAt || now) - now);
+  });
+  if(confirm("게임을 끝낼까요? 지금까지의 결과로 마무리돼요.")){ endGame("quit"); return; }
+  if(document.activeElement) document.activeElement.blur();
+  const t = Date.now();
+  S.startAt += t - now;  // 확인창이 떠 있던 시간은 소요 시간에서 뺀다
+  holeData.forEach((h, i) => {
+    if(rest[i] === null || !h.active) return;
+    h.hideAt = t + rest[i];
+    h.hideTO = setTimeout(() => hideMole(i, false), rest[i]);
+  });
+  spawnTimer = setInterval(spawn, S.cfg.spawn);
+  // 멈추기 전 1초 가운데 남은 부분부터 다시 센다 (끝내기→취소를 반복해 시간을 버는 일이 없게)
+  const tickRest = Math.max(0, 1000 - (now - (S.lastTickAt || now)));
+  S.lastTickAt = t - (1000 - tickRest);
+  gameTimer = setTimeout(() => { tick(); if(S && !S.endAt) gameTimer = setInterval(tick, 1000); }, tickRest);
+});
 
 /* ═══════════ 분석 (유형 = 모음) ═══════════ */
 function gradeText(rate){
@@ -1234,7 +1265,7 @@ function downloadTeacherXls(){
   const foot = [
     xRow([]),
     xRow(["성취기준", "[" + STANDARD.code + "] " + STANDARD.text]),
-    xRow(["배점 규칙", "바르게 탭 +10 · 3~4콤보 +5 · 5콤보 이상 +10 · 잘못 탭 −5(생명 −1) · 놓친 목표 모음 −5(생명 −1, 오답 집계) · 0점 하한"]),
+    xRow(["배점 규칙", "바르게 탭 +10 · 3~4콤보 +5 · 5콤보 이상 +10 · 잘못 탭 −10(생명 −1) · 놓친 목표 모음 −5(생명 −1, 오답 집계) · 0점 하한"]),
     xRow(["총 모음 수", VOWELS.length + "개 · 분류 기준 " + Object.keys(TARGETS).length + "개"]),
     xRow(["크레딧", CREDIT_LINE + " · 제작일 " + MADE_DATE + " · 최종 수정 " + LAST_MOD])
   ];
