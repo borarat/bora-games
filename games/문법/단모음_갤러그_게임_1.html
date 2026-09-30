@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko">
+<!-- 리모델링 2026.10.01 02:10 (1차 야간)
+     채점: 정답률 = 맞힌 목표 ÷ (나온 목표 + 잘못 쏜 비목표). 그냥 통과시킨 비목표는 정답률에 넣지 않음
+     채점: 잘못 격추 감점 −5 → −10 (명중 득점과 같게, 지침 3-6 속도형)
+     화면: 시작 화면에 ㅚ·ㅟ 이중 모음 발음 허용 안내 한 줄, '게임 끝내기' 확인 단계 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -207,10 +211,11 @@ details.vtable summary{cursor:pointer;font-size:.9rem;font-weight:700;color:var(
           <p>목표에 해당하는 모음은 격추하고, 해당하지 않는 모음은 그대로 흘려보내세요.</p>
           <p>← → 키로 움직이고 스페이스바로 발사해요.</p>
           <p>화면의 ◀ 발사 ▶ 버튼으로도 조작할 수 있어요.</p>
+          <p>※ ㅚ·ㅟ는 이중 모음으로도 발음할 수 있지만, 여기서는 단모음으로 분류해요.</p>
           <div class="rules">
             <div>✅ <b>목표 모음 격추</b> +10점</div>
-            <div>✅ <b>비목표 모음 통과</b> 정답 인정</div>
-            <div>❌ <b>비목표 모음 격추</b> −5점</div>
+            <div>⭕ <b>비목표 모음 통과</b> 0점</div>
+            <div>❌ <b>비목표 모음 격추</b> −10점</div>
             <div>❌ <b>목표 모음 놓침</b> 오답 · 콤보 끊김</div>
             <div>🔥 <b>3~4콤보</b> 격추마다 +5</div>
             <div>🔥 <b>5콤보 이상</b> 격추마다 +10</div>
@@ -250,7 +255,7 @@ details.vtable summary{cursor:pointer;font-size:.9rem;font-weight:700;color:var(
 
     <div class="credit-box">
       제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-      제작일 2026.08.13 · <span id="lastMod">최종 수정 2026.09.16 06:47</span>
+      제작일 2026.08.13 · <span id="lastMod">최종 수정 2026.10.01 02:10</span>
     </div>
 
     <div class="privacy" id="privacyOffline">
@@ -314,7 +319,7 @@ details.vtable summary{cursor:pointer;font-size:.9rem;font-weight:700;color:var(
         <button class="ctrl fire" id="btnFire">🔫 발사</button>
         <button class="ctrl move" id="btnR" aria-label="오른쪽">▶</button>
         <button class="ctrl small" id="muteBtn" onclick="toggleMute()">🔊</button>
-        <button class="ctrl quit" onclick="endGame(true)">게임 끝내기</button>
+        <button class="ctrl quit" onclick="quitGame()">게임 끝내기</button>
       </div>
       <div class="key-help">← → 이동 · 스페이스바 또는 ↑ 발사 (누르고 있으면 연사)</div>
     </div>
@@ -374,7 +379,7 @@ details.vtable summary{cursor:pointer;font-size:.9rem;font-weight:700;color:var(
 
 <script>
 const MADE_DATE='2026.08.13';
-const LAST_MOD='2026.09.16 06:47';
+const LAST_MOD='2026.10.01 02:10';
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -493,7 +498,7 @@ const STAGES=[
   {n:2,name:'보통',interval:1.4,speed:50},
   {n:3,name:'빠름',interval:0.9,speed:72}
 ];
-const GAME_SEC=60, BASE=10, WRONG_PENALTY=5, REF_H=460, ENEMY=52;
+const GAME_SEC=60, BASE=10, WRONG_PENALTY=10, REF_H=460, ENEMY=52;
 function comboBonus(c){return c>=5?10:c>=3?5:0}
 function maxScoreFor(n){let s=0;for(let k=1;k<=n;k++)s+=BASE+comboBonus(k);return s}
 
@@ -740,12 +745,12 @@ function stepFx(dt){
 
 /* ═════════ 조작 ═════════ */
 let controlsReady=false;
+const keys=new Set();
 function setupControls(){
   const hold=(btn,down,up)=>{btn.addEventListener('pointerdown',e=>{e.preventDefault();down()});['pointerup','pointerleave','pointercancel'].forEach(t=>btn.addEventListener(t,up))};
   hold($('btnL'),()=>moveDir=-1,()=>{if(moveDir===-1)moveDir=0});
   hold($('btnR'),()=>moveDir=1,()=>{if(moveDir===1)moveDir=0});
   hold($('btnFire'),()=>{if(!S||S.ended)return;fire();fireCd=.25;firing=true},()=>firing=false);
-  const keys=new Set();
   document.addEventListener('keydown',e=>{
     if(!S||S.ended||$('game-screen').classList.contains('hidden'))return;
     if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A'){e.preventDefault();moveDir=-1;keys.add('L')}
@@ -764,12 +769,13 @@ function stats(){
   const judged=S.appeared.filter(r=>r.outcome);
   const cnt=o=>judged.filter(r=>r.outcome===o).length;
   const hit=cnt('hit'),pass=cnt('pass'),miss=cnt('miss'),wrongHit=cnt('wrongHit');
-  const correct=hit+pass,answered=judged.length,skipped=S.appeared.length-answered;
+  // 정답률(지침 5-2 속도형) = 맞힘 ÷ (맞힘 + 잘못 격추 + 놓친 목표). 그냥 통과시킨 비목표(pass)는 넣지 않는다
+  const correct=hit,graded=hit+miss+wrongHit,answered=judged.length,skipped=S.appeared.length-answered;
   const targetsJudged=judged.filter(r=>r.isTarget).length;
   const perV={};
   judged.forEach(r=>{const p=perV[r.vowel]||(perV[r.vowel]={n:0,ok:0,miss:0,wrongHit:0});p.n++;if(r.outcome==='hit'||r.outcome==='pass')p.ok++;else p[r.outcome]++});
   return {hit,pass,miss,wrongHit,correct,answered,skipped,targetsJudged,maxScore:maxScoreFor(targetsJudged),
-          rate:answered?correct/answered:0,perV};
+          graded,rate:graded?correct/graded:0,perV};
 }
 function gradeText(rate){return rate>=.95?['🏆','완벽해요!']:rate>=.85?['🎉','아주 잘했어요']:rate>=.70?['😊','잘하고 있어요']:rate>=.50?['🙂','기본은 잡혔어요']:['💪','다시 한 번 도전해요']}
 function analyze(st){
@@ -796,6 +802,12 @@ function stageLabel(){return `${S.stage}단계 ${S.stageName}`}
 
 /* ═════════ 종료 ═════════ */
 let ST=null,AN=null;
+function quitGame(){
+  if(!S||S.ended)return;
+  moveDir=0;firing=false;keys.clear();
+  if(confirm('게임을 끝낼까요? 지금까지의 결과로 마무리돼요.'))endGame(true);
+  else{lastTs=performance.now();if(document.activeElement)document.activeElement.blur()}
+}
 function endGame(byUser){
   if(!S||S.ended)return;
   S.ended=true;cancelAnimationFrame(raf);firing=false;moveDir=0;
@@ -807,12 +819,12 @@ function endGame(byUser){
 function finish(){
   ST=stats();AN=analyze(ST);
   const [emo,title]=gradeText(ST.rate);
-  $('endEmoji').textContent=ST.answered?emo:'🙂';
-  $('endTitle').textContent=ST.answered?title:'판정된 모음이 없어요';
+  $('endEmoji').textContent=ST.graded?emo:'🙂';
+  $('endTitle').textContent=ST.graded?title:'판정된 모음이 없어요';
   $('endDesc').textContent=`${stageLabel()} · 목표: ${S.target}`;
   $('endBand').textContent=`${stageLabel()} · ${S.target}`;
   $('endScore').innerHTML=`${S.score}점 <small>/ ${ST.maxScore}점 만점</small>`;
-  $('endRate').textContent=`정답률 ${Math.round(ST.rate*100)}% (${ST.correct}/${ST.answered})`;
+  $('endRate').textContent=`정답률 ${Math.round(ST.rate*100)}% (${ST.correct}/${ST.graded})`;
   $('stHit').textContent=ST.hit;$('stPass').textContent=ST.pass;$('stMiss').textContent=ST.miss;$('stWrong').textContent=ST.wrongHit;
   $('stCombo').textContent=S.maxCombo;$('stTime').textContent=fmtDur(S.elapsedSec);
   const sk=$('skipNote');
@@ -842,9 +854,9 @@ function sendResult(){
     studentName:STUDENT.name,
     className:STUDENT.className,
     stage:`${stageLabel()} · ${S.target}`,
-    totalQuestions:ST.answered,
+    totalQuestions:ST.graded,
     correctCount:ST.correct,
-    answeredCount:ST.answered,
+    answeredCount:ST.graded,
     skippedCount:ST.skipped,
     score:S.score,
     maxScore:ST.maxScore,
@@ -1005,7 +1017,7 @@ function downloadReport(){
       dd.text(`격추 정답 ${ST.hit} · 올바른 통과 ${ST.pass} · 놓침 ${ST.miss} · 잘못 격추 ${ST.wrongHit} · 최고 콤보 ${S.maxCombo} · 소요 시간 ${fmtDur(S.elapsedSec)}${ST.skipped?` · 미응답 ${ST.skipped}`:''}`,{size:14,color:'#333',x:PAD+18,maxW:W-PAD*2-36});
     },{pad:16});
     d.gap(12);
-    d.text(`총평  ${ST.skipped?`끝까지 풀지 않았어요 (${ST.skipped}문항 남음). `:''}${ST.answered?title:'판정된 모음이 없어요.'}`,{size:18,bold:true,color:'#3C3489'});
+    d.text(`총평  ${ST.skipped?`끝까지 풀지 않았어요 (${ST.skipped}문항 남음). `:''}${ST.graded?title:'판정된 모음이 없어요.'}`,{size:18,bold:true,color:'#3C3489'});
     if(AN.nature)d.text(AN.nature,{size:14,color:'#6b6b85'});
     d.gap(10);
     // 모음별 막대 (2회 이상 나온 모음만)
@@ -1052,7 +1064,7 @@ function sheetXml(name,rows,headRows=1){
 }
 function downloadTeacherXls(){
   const info=[[],['성취기준',`${STANDARD.code} ${STANDARD.text}`],
-    ['배점 규칙',`목표 모음 격추 +${BASE}점 · 3~4콤보 +5 · 5콤보 이상 +10 · 비목표 모음 격추 −${WRONG_PENALTY}점(하한 0) · 목표 모음 놓침 오답(콤보 초기화) · 비목표 모음 통과 정답`],
+    ['배점 규칙',`목표 모음 격추 +${BASE}점 · 3~4콤보 +5 · 5콤보 이상 +10 · 비목표 모음 격추 −${WRONG_PENALTY}점(하한 0) · 목표 모음 놓침 오답(콤보 초기화) · 비목표 모음 통과 0점(콤보 유지) · 정답률 = 격추 정답 ÷ (격추 정답 + 놓침 + 잘못 격추)`],
     ['총문항 수','가변 — 한 판 60초, 목표 50 : 비목표 50 무작위 등장'],
     ['만점','이번 판에 판정된 목표 모음 수 n으로 계산: n×10 + 콤보 보너스 (n≥5이면 10n + 10 + 10×(n−4))'],
     ['크레딧',`제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com · 제작일 ${MADE_DATE} · 최종 수정 ${LAST_MOD}`]];
