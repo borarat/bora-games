@@ -6,7 +6,7 @@
      문항: '욀' 초성 ㅇ(소리 없음) 설명, '톺' 받침 ㅍ([ㅂ]으로 소리 남) 설명, 받침 ㄱ(켁·쏙·책) '터뜨리면서' 설명 수정
            ㅎ은 세기 분류에서 제외(3·4단계 자음 체계표의 ㅎ 칸은 세기 줄을 합친 한 칸, '행' 초성 설명에서 '예사소리' 삭제)
      용어: 교과서 표 용어(입술소리~목청소리, 비음(콧소리)·유음(흐름소리)·파열음·마찰음·파찰음)
-     성취기준: 2022·2015 병기 (교사 확인 필요)
+     성취기준: 2022 [9국04-01] + 원본 표기 [9국04-10] (2015 코드·원문 교사 확인 필요)
      기록: 첫 시도 / 다시 풀어 맞힘 / 못 맞힘 / 미응답을 나눠 기록, 앱스크립트 연동, 교사용 엑셀('최종 수정' 클릭) -->
 <head>
 <meta charset="UTF-8">
@@ -525,7 +525,7 @@ table.mt{border-collapse:collapse;width:100%}
     <div class="btn-row">
      <button class="btn" id="btnNextStage">다음 단계로 ▶</button>
      <button class="btn sec" id="btnReplay" onclick="startStage(S.stage)">🔄 이 단계 다시 하기</button>
-     <button class="btn sec" onclick="goHome()">🏠 시작화면으로</button>
+     <button class="btn sec" onclick="goHome()">🏠 시작 화면으로</button>
     </div>
     <div class="btn-row">
      <button class="btn sec" onclick="openReview()">📖 오늘 나온 문제 모두 보기</button>
@@ -565,9 +565,9 @@ const GAME_TITLE='음운 체계 익히기';
 // 성취기준 — 지침 2-4 병기. 【교사 확인 필요】 원본 표기: "[9국04-10] 음운 체계를 알고, 한글의 자모 체계와 관련지어 이해한다."
 const STD=[
   {code:'9국04-01',year:'2022',text:'국어의 음운 체계와 문자 체계를 이해하고 국어생활에 활용한다.'},
-  {code:'9국04-10',year:'2015',text:'음운 체계를 알고, 한글의 자모 체계와 관련지어 이해한다.'}
+  {code:'9국04-10',year:'',text:'음운 체계를 알고, 한글의 자모 체계와 관련지어 이해한다.'}  // 원본 표기 그대로. 2015 개정 코드·원문은 교사 확인 후 연도를 붙인다
 ];
-const STD_LINE=STD.map(s=>'['+s.code+']('+s.year+') '+s.text).join('  ·  ');
+const STD_LINE=STD.map(s=>'['+s.code+']'+(s.year?'('+s.year+' 개정)':'')+' '+s.text).join('  ·  ');
 const BASE=10;           // 4단계 정답 점수 (원본 그대로)
 const MAX_TRY=3;         // 4단계 3회 오답 시 정답 공개 (원본 그대로)
 
@@ -634,60 +634,60 @@ const LABELS=[
 //    바꾼 문구는 주석 [수정]으로 표시 (보고서 대조표 참고)
 // ═══════════════════════════════════════════
 const QUESTIONS=[
-  {id:1,cat:'word',stage:4,word:'빵',answer:{cho:'ㅃ',jung:'ㅏ',jong:'ㅇ'},src:'기준표 1-1·1-2',clues:{
+  {id:1,cat:'word',stage:4,word:'빵',answer:{cho:'ㅃ',jung:'ㅏ',jong:'ㅇ'},src:'원본 게임',clues:{
     cho:['두 입술 사이에서 나는 소리이다.','입안의 통로를 막았다가 터뜨리면서 내는 된소리이다.'],
     jung:['혀의 최고점이 입천장의 중간점을 기준으로 뒤쪽에 놓인다.','입술을 둥글게 오므리지 않고 소리 낸다.','혀의 높이가 낮다.'],
     jong:['혀 뒷부분과 여린입천장 사이에서 나는 소리이다.','입안의 통로를 막았다가 코로 공기를 내보내면서 내는 소리이다.']}},
-  {id:2,cat:'word',stage:4,word:'널',answer:{cho:'ㄴ',jung:'ㅓ',jong:'ㄹ'},src:'기준표 1-1·1-2',clues:{
+  {id:2,cat:'word',stage:4,word:'널',answer:{cho:'ㄴ',jung:'ㅓ',jong:'ㄹ'},src:'원본 게임',clues:{
     cho:['혓끝과 윗잇몸 사이에서 나는 소리이다.','입안의 통로를 막았다가 코로 공기를 내보내면서 내는 소리이다.'],
     jung:['혀의 최고점이 입천장의 중간점을 기준으로 뒤쪽에 놓인다.','입술을 둥글게 오므리지 않고 소리 낸다.','혀의 높이가 중간이다.'],
     jong:['혓끝과 윗잇몸 사이에서 나는 소리이다.','혓끝을 윗잇몸에 가볍게 대었다가 떼거나, 혓끝을 윗잇몸에 댄 채 공기를 그 양옆으로 흘려보내면서 내는 소리이다.']}},
-  {id:3,cat:'word',stage:4,word:'물',answer:{cho:'ㅁ',jung:'ㅜ',jong:'ㄹ'},src:'기준표 1-1·1-2',clues:{
+  {id:3,cat:'word',stage:4,word:'물',answer:{cho:'ㅁ',jung:'ㅜ',jong:'ㄹ'},src:'원본 게임',clues:{
     cho:['두 입술 사이에서 나는 소리이다.','입안의 통로를 막았다가 코로 공기를 내보내면서 내는 소리이다.'],
     jung:['혀의 최고점이 입천장의 중간점을 기준으로 뒤쪽에 놓인다.','입술을 둥글게 오므리고 소리 낸다.','혀의 높이가 높다.'],
     jong:['혓끝과 윗잇몸 사이에서 나는 소리이다.','혓끝을 윗잇몸에 가볍게 대었다가 떼거나, 혓끝을 윗잇몸에 댄 채 공기를 그 양옆으로 흘려보내면서 내는 소리이다.']}},
-  {id:4,cat:'word',stage:4,word:'뱀',answer:{cho:'ㅂ',jung:'ㅐ',jong:'ㅁ'},src:'기준표 1-1·1-2',clues:{
+  {id:4,cat:'word',stage:4,word:'뱀',answer:{cho:'ㅂ',jung:'ㅐ',jong:'ㅁ'},src:'원본 게임',clues:{
     cho:['두 입술 사이에서 나는 소리이다.','입안의 통로를 막았다가 터뜨리면서 내는 예사소리이다.'],
     jung:['혀의 최고점이 입천장의 중간점을 기준으로 앞쪽에 놓인다.','입술을 둥글게 오므리지 않고 소리 낸다.','혀의 높이가 낮다.'],
     jong:['두 입술 사이에서 나는 소리이다.','입안의 통로를 막았다가 코로 공기를 내보내면서 내는 소리이다.']}},
-  {id:5,cat:'word',stage:4,word:'신',answer:{cho:'ㅅ',jung:'ㅣ',jong:'ㄴ'},src:'기준표 1-1·1-2',clues:{
+  {id:5,cat:'word',stage:4,word:'신',answer:{cho:'ㅅ',jung:'ㅣ',jong:'ㄴ'},src:'원본 게임',clues:{
     cho:['혓끝과 윗잇몸 사이에서 나는 소리이다.','좁은 틈 사이로 공기를 내보내면서 내는 예사소리이다.'],
     jung:['혀의 최고점이 입천장의 중간점을 기준으로 앞쪽에 놓인다.','입술을 둥글게 오므리지 않고 소리 낸다.','혀의 높이가 높다.'],
     jong:['혓끝과 윗잇몸 사이에서 나는 소리이다.','입안의 통로를 막았다가 코로 공기를 내보내면서 내는 소리이다.']}},
-  {id:6,cat:'word',stage:4,word:'켁',answer:{cho:'ㅋ',jung:'ㅔ',jong:'ㄱ'},src:'교사 제공(수정목록_초기판)',clues:{
+  {id:6,cat:'word',stage:4,word:'켁',answer:{cho:'ㅋ',jung:'ㅔ',jong:'ㄱ'},src:'제작자 작성(교사 검토 필요) · 수정목록_초기판 지시',clues:{
     cho:['혀 뒷부분과 여린입천장 사이에서 나는 소리이다.','입안의 통로를 막았다가 터뜨리면서 내는 거센소리이다.'],
     jung:['혀의 최고점이 입천장의 중간점을 기준으로 앞쪽에 놓인다.','입술을 둥글게 오므리지 않고 소리 낸다.','혀의 높이가 중간이다.'],
     jong:['혀 뒷부분과 여린입천장 사이에서 나는 소리이다.',
           '입안의 통로를 막았다가 터뜨리는 소리(파열음) 가운데 예사소리이다. 다만 받침에서는 막기만 하고 터뜨리지 않는다.']}}, // [수정] 받침 ㄱ
-  {id:7,cat:'word',stage:4,word:'쥐',answer:{cho:'ㅈ',jung:'ㅟ',jong:''},src:'기준표 1-1·1-2',clues:{
+  {id:7,cat:'word',stage:4,word:'쥐',answer:{cho:'ㅈ',jung:'ㅟ',jong:''},src:'원본 게임',clues:{
     cho:['혓바닥과 센입천장 사이에서 나는 소리이다.','입안의 통로를 막았다가 서서히 터뜨려 마찰을 일으키며 내는 예사소리이다.'],
     jung:['혀의 최고점이 입천장의 중간점을 기준으로 앞쪽에 놓인다.','입술을 둥글게 오므리고 소리 낸다.','혀의 높이가 높다.'],
     jong:['이 음절에는 종성(받침)이 없다.']}},
-  {id:8,cat:'word',stage:4,word:'쏙',answer:{cho:'ㅆ',jung:'ㅗ',jong:'ㄱ'},src:'교사 제공(수정목록_초기판)',clues:{
+  {id:8,cat:'word',stage:4,word:'쏙',answer:{cho:'ㅆ',jung:'ㅗ',jong:'ㄱ'},src:'제작자 작성(교사 검토 필요) · 수정목록_초기판 지시',clues:{
     cho:['혓끝과 윗잇몸 사이에서 나는 소리이다.','좁은 틈 사이로 공기를 내보내면서 내는 된소리이다.'],
     jung:['혀의 최고점이 입천장의 중간점을 기준으로 뒤쪽에 놓인다.','입술을 둥글게 오므리고 소리 낸다.','혀의 높이가 중간이다.'],
     jong:['혀 뒷부분과 여린입천장 사이에서 나는 소리이다.',
           '입안의 통로를 막았다가 터뜨리는 소리(파열음) 가운데 예사소리이다. 다만 받침에서는 막기만 하고 터뜨리지 않는다.']}}, // [수정] 받침 ㄱ
-  {id:9,cat:'word',stage:4,word:'책',answer:{cho:'ㅊ',jung:'ㅐ',jong:'ㄱ'},src:'교사 제공(수정목록_초기판)',clues:{
+  {id:9,cat:'word',stage:4,word:'책',answer:{cho:'ㅊ',jung:'ㅐ',jong:'ㄱ'},src:'제작자 작성(교사 검토 필요) · 수정목록_초기판 지시',clues:{
     cho:['혓바닥과 센입천장 사이에서 나는 소리이다.','입안의 통로를 막았다가 서서히 터뜨려 마찰을 일으키며 내는 거센소리이다.'],
     jung:['혀의 최고점이 입천장의 중간점을 기준으로 앞쪽에 놓인다.','입술을 둥글게 오므리지 않고 소리 낸다.','혀의 높이가 낮다.'],
     jong:['혀 뒷부분과 여린입천장 사이에서 나는 소리이다.',
           '입안의 통로를 막았다가 터뜨리는 소리(파열음) 가운데 예사소리이다. 다만 받침에서는 막기만 하고 터뜨리지 않는다.']}}, // [수정] 받침 ㄱ
-  {id:10,cat:'word',stage:4,word:'틈',answer:{cho:'ㅌ',jung:'ㅡ',jong:'ㅁ'},src:'기준표 1-1·1-2',clues:{
+  {id:10,cat:'word',stage:4,word:'틈',answer:{cho:'ㅌ',jung:'ㅡ',jong:'ㅁ'},src:'원본 게임',clues:{
     cho:['혓끝과 윗잇몸 사이에서 나는 소리이다.','입안의 통로를 막았다가 터뜨리면서 내는 거센소리이다.'],
     jung:['혀의 최고점이 입천장의 중간점을 기준으로 뒤쪽에 놓인다.','입술을 둥글게 오므리지 않고 소리 낸다.','혀의 높이가 높다.'],
     jong:['두 입술 사이에서 나는 소리이다.','입안의 통로를 막았다가 코로 공기를 내보내면서 내는 소리이다.']}},
-  {id:11,cat:'word',stage:4,word:'톺',answer:{cho:'ㅌ',jung:'ㅗ',jong:'ㅍ'},src:'교사 제공(수정목록_초기판)',clues:{
+  {id:11,cat:'word',stage:4,word:'톺',answer:{cho:'ㅌ',jung:'ㅗ',jong:'ㅍ'},src:'제작자 작성(교사 검토 필요) · 수정목록_초기판 지시',clues:{
     cho:['혓끝과 윗잇몸 사이에서 나는 소리이다.','입안의 통로를 막았다가 터뜨리면서 내는 거센소리이다.'],
     jung:['혀의 최고점이 입천장의 중간점을 기준으로 뒤쪽에 놓인다.','입술을 둥글게 오므리고 소리 낸다.','혀의 높이가 중간이다.'],
     jong:['두 입술 사이에서 나는 소리이다.',
           '입안의 통로를 막았다가 터뜨리는 소리(파열음) 가운데 거센소리를 나타내는 글자이다. 다만 받침에서는 [ㅂ]으로 소리 나고, 막기만 하고 터뜨리지 않는다.']}}, // [수정] 받침 ㅍ
-  {id:12,cat:'word',stage:4,word:'욀',answer:{cho:'ㅇ',jung:'ㅚ',jong:'ㄹ'},src:'기준표 1-2 · 교사 제공(수정목록_초기판)',clues:{
+  {id:12,cat:'word',stage:4,word:'욀',answer:{cho:'ㅇ',jung:'ㅚ',jong:'ㄹ'},src:'제작자 작성(교사 검토 필요) · 수정목록_초기판 지시',clues:{
     cho:['첫소리(초성)에 소리가 없다. 이 음절은 모음으로 바로 시작한다.',
-         '소리가 없는 첫소리 자리에 쓰는 글자를 자음 체계표에서 고른다.'], // [수정] 초성 ㅇ
+         '소리가 없는 첫소리 자리에 쓰는 글자와 모양이 같은 글자를 자음 체계표에서 고른다. (체계표의 그 칸은 받침에서 나는 소리의 자리이다.)'], // [수정] 초성 ㅇ
     jung:['혀의 최고점이 입천장의 중간점을 기준으로 앞쪽에 놓인다.','입술을 둥글게 오므리고 소리 낸다.','혀의 높이가 중간이다.'],
     jong:['혓끝과 윗잇몸 사이에서 나는 소리이다.','혓끝을 윗잇몸에 가볍게 대었다가 떼거나, 혓끝을 윗잇몸에 댄 채 공기를 그 양옆으로 흘려보내면서 내는 소리이다.']}},
-  {id:13,cat:'word',stage:4,word:'행',answer:{cho:'ㅎ',jung:'ㅐ',jong:'ㅇ'},src:'교사 제공(수정목록_1차 교과서 기준)',clues:{
+  {id:13,cat:'word',stage:4,word:'행',answer:{cho:'ㅎ',jung:'ㅐ',jong:'ㅇ'},src:'원본 게임 · 교과서 기준(수정목록_1차)에 따라 낱말 삭제',clues:{
     cho:['목청 사이에서 나는 소리이다.','좁은 틈 사이로 공기를 내보내면서 내는 소리이다.'], // [수정] '예사소리' 삭제 (ㅎ은 세기 분류 제외)
     jung:['혀의 최고점이 입천장의 중간점을 기준으로 앞쪽에 놓인다.','입술을 둥글게 오므리지 않고 소리 낸다.','혀의 높이가 낮다.'],
     jong:['혀 뒷부분과 여린입천장 사이에서 나는 소리이다.','입안의 통로를 막았다가 코로 공기를 내보내면서 내는 소리이다.']}}
@@ -729,7 +729,7 @@ function lSlotOK(card,slot){ // 2단계: slot = 'pos:전설' / 'height:고' / 's
 function cardInfo(st,id){ // 분류 정보 (원본 getCardInfo)
   if(st===0){const v=VOWELS.find(x=>x.char===id);return {char:v.char,cats:[v.height+'모음',v.pos+' 모음',v.shape+'모음'],where:v.pos+' 모음 · '+v.height+'모음 · '+v.shape+'모음'}}
   if(st===2){const c=CONSONANTS.find(x=>x.char===id);const cats=[MANNER_LABEL[c.manner],c.place];if(c.type)cats.push(c.type);
-    return {char:c.char,cats,where:c.place+' · '+MANNER_LABEL[c.manner]+(c.type?' · '+c.type:(c.char==='ㅎ'?' (세기 분류 없음)':''))}}
+    return {char:c.char,cats,where:c.place+' · '+MANNER_LABEL[c.manner]+(c.type?' · '+c.type:(c.char==='ㅎ'?' (세기 분류에 넣지 않음)':''))}}
   const l=LABELS.find(x=>x.id===id);
   const cat=l.type==='pos'?'혀의 위치':l.type==='height'?'혀의 높이':'입술 모양';
   const where=l.type==='pos'?'혀의 최고점의 위치(앞뒤) 칸':l.type==='height'?'혀의 높이 칸':'입술 모양 칸 ('+(l.target==='평순'?'평순 모음 두 칸 중 하나':'원순 모음 두 칸 중 하나')+')';
@@ -772,7 +772,7 @@ function stageTag(){const st=STAGES[S.stage];return st.no+'단계 '+st.label}
 // 5. 화면 로직
 // ═══════════════════════════════════════════
 (function buildStart(){
-  $('stdBox').innerHTML=STD.map(s=>'<div class="std-line"><span class="std-code">'+s.code+'</span><small>('+s.year+' 개정)</small><br>'+s.text+'</div>').join('');
+  $('stdBox').innerHTML=STD.map(s=>'<div class="std-line"><span class="std-code">'+s.code+'</span>'+(s.year?'<small>('+s.year+' 개정)</small>':'')+'<br>'+s.text+'</div>').join('');
   const box=$('stageList');
   STAGES.forEach((st,i)=>{
     const n=st.kind==='place'?placeCards(i).length:QUESTIONS.length;
@@ -930,7 +930,7 @@ function consChartHTML(forMini){
 }
 function cellHTML(c,rs,forMini,armed,noType){
   const rsA=rs>1?' rowspan="'+rs+'"':'';
-  const nt=noType?'<span class="nt">세기 구분 없음</span>':'';
+  const nt=noType?'<span class="nt">세기 분류 제외</span>':'';
   if(forMini)return '<td class="pk" data-ch="'+c.char+'"'+rsA+'>'+c.char+nt+'</td>';
   const placed=S.slotOf[cSlot(c)];
   return placed?'<td class="cc done"'+rsA+'>'+placed+nt+'</td>':'<td class="cc slot'+armed+'" data-slot="'+cSlot(c)+'"'+rsA+'>'+nt+'</td>';
@@ -1103,7 +1103,7 @@ function updateHud(){
 // ─────────── 공통: 끝내기 ───────────
 function askFinish(){
   const c=stats();const left=c.skip+(S.kind==='word'?c.items.filter(x=>x.st==='fail'&&x.r.status!=='giveup').length:0);
-  const msg=S.kind==='place'?'아직 배치하지 않은 카드가 '+(c.total-Object.keys(S.placed).length)+'장 있어요. 게임을 끝낼까요?':'아직 '+left+'문제가 남았어요. 게임을 끝낼까요?\n(남은 문제는 미응답으로 기록돼요)';
+  const msg=S.kind==='place'?'아직 배치하지 않은 카드가 '+(c.total-Object.keys(S.placed).length)+'장 있어요. 게임을 끝낼까요?':'아직 끝내지 않은 문제가 '+left+'개 있어요. 게임을 끝낼까요?\n(손대지 않은 문제는 미응답, 풀다 멈춘 문제는 못 맞힘으로 기록돼요)';
   const remain=S.kind==='place'?c.total-Object.keys(S.placed).length:left;
   if(!confirm(remain>0?msg:'게임을 끝내고 결과를 볼까요?'))return;
   finishGame();
@@ -1443,7 +1443,7 @@ function downloadReport(){
   const refl=$('inRefl').value.trim();
   if(refl)sec('💬 학습 소감','#3C3489','#F7F3FC',[refl]);
   y+=12;txt(c,'성취기준',P,y+4,'bold 14px','#3C3489');y+=24;
-  STD.forEach(s=>{y+=para(c,'['+s.code+']('+s.year+' 개정) '+s.text,P,y,iw,'14px','#444',21)+4});
+  STD.forEach(s=>{y+=para(c,'['+s.code+']'+(s.year?'('+s.year+' 개정)':'')+' '+s.text,P,y,iw,'14px','#444',21)+4});
   y+=6;
   y=drawFooter(c,W,y);
   finalize(big,y,safeName(name)+'_학습리포트_'+fileTag()+'_'+fileStamp(S.end)+'.jpg');
@@ -1468,13 +1468,13 @@ function downloadTeacherXls(){
   const s2=[xRow(['2단계 · 특징 라벨 배치 · 카드 9장'],'h'),xRow(['원본 id','카드','분류','정답 자리','팁'],'h')];
   LABELS.forEach(l=>{const inf=cardInfo(1,l.id);s2.push(xRow([l.id,l.text,inf.cats[0],inf.where,STAGES[1].tip]))});
   const s3=[xRow(['3단계 · 자음 배치하기 · 카드 19장'],'h'),xRow(['원본 id','자음','소리 나는 위치','소리 내는 방법','소리의 세기','팁'],'h')];
-  CONSONANTS.forEach(k=>s3.push(xRow([k.char,k.char,k.place,MANNER_LABEL[k.manner],k.type||(k.char==='ㅎ'?'(세기 분류 없음 — 교과서 기준)':'—'),STAGES[2].tip])));
+  CONSONANTS.forEach(k=>s3.push(xRow([k.char,k.char,k.place,MANNER_LABEL[k.manner],k.type||(k.char==='ㅎ'?'(세기 분류에 넣지 않음 — 교과서 기준)':'—'),STAGES[2].tip])));
   const s4=[xRow(['4단계 · 단어 찾기 · 13문제 · 만점 '+W_MAX+'점'],'h'),xRow(['원본 id','정답 단어','초성','중성','종성','초성 설명','중성 설명','종성 설명','근거'],'h')];
   QUESTIONS.forEach(q=>s4.push(xRow([q.id,q.word,q.answer.cho,q.answer.jung,jongText(q.answer.jong),q.clues.cho.join(' '),q.clues.jung.join(' '),q.clues.jong.join(' '),q.src])));
   const sum=[xRow(['단계','내용','수','만점','유의점'],'h'),
     xRow(['1단계 기본','단모음 배치하기',10,'점수 없음','']),
     xRow(['2단계 심화','특징 라벨 배치',9,'점수 없음','평순·원순 카드는 같은 이름 칸 두 곳 중 어디에 놓아도 정답']),
-    xRow(['3단계 심화','자음 배치하기',19,'점수 없음','ㅎ은 세기 분류 없음 — 목청소리·마찰음의 세기 줄을 합친 한 칸']),
+    xRow(['3단계 심화','자음 배치하기',19,'점수 없음','ㅎ은 세기 분류에 넣지 않음 — 목청소리·마찰음의 세기 줄을 합친 한 칸']),
     xRow(['4단계 적용','단어 찾기',13,W_MAX,'초성 ㅇ은 소리가 없음(욀) · 받침 ㄱ·ㅍ은 터뜨리지 않음'])];
   const sheets=[xSheet('1단계 단모음',s1.concat(tail),[50,40,150,80,80,300]),xSheet('2단계 특징 라벨',s2.concat(tail),[60,100,80,260,300]),
     xSheet('3단계 자음',s3.concat(tail),[50,40,100,100,170,300]),xSheet('4단계 단어 찾기',s4.concat(tail),[50,60,40,40,40,330,330,330,160]),
