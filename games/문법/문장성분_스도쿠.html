@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
+<!-- 리모델링 2026.10.01 08:05 (5차 야간)
+     기록: 게임 중 단계 이동 버튼을 누르면 화면 안 확인 창을 띄움 (채우거나 틀린 칸이 있을 때만). 취소하면 판과 기록이 그대로 남음. 다 푼 직후(완료 화면이 뜨기 전)에는 단계 이동을 막아 결과 전송이 빠지지 않게 함
+     연동: 틀리게 채운 칸을 wrongItems로 전송 (칸 위치 · 정답 성분 · 넣은 성분). 소감(reflection)은 교사 결정으로 빈 값 유지 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -278,7 +281,7 @@
 
       <div class="credit-box">
         <p>제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com</p>
-        <p>제작일 2026.09.25 · <span id="lastMod">최종 수정 2026.09.25 01:00</span></p>
+        <p>제작일 2026.09.25 · <span id="lastMod">최종 수정 2026.10.01 08:05</span></p>
       </div>
 
       <div class="privacy" id="privacyOffline">
@@ -415,6 +418,20 @@
   </div>
 </div>
 
+<!-- 단계 이동 확인 (진행 중 기록이 있을 때) -->
+<div class="overlay" id="jumpConfirm">
+  <div class="guide" role="alertdialog" aria-modal="true" aria-labelledby="jumpTitle" aria-describedby="jumpMsg">
+    <div class="guide-head" id="jumpTitle">단계를 옮길까요?</div>
+    <div class="guide-body">
+      <p id="jumpMsg"></p>
+      <div class="guide-foot btn-row">
+        <button class="btn sec" id="jumpCancel" onclick="closeJumpConfirm()">취소</button>
+        <button class="btn" id="jumpOk" onclick="confirmJump()">이동하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="banner" class="banner"></div>
 
 <script>
@@ -535,7 +552,8 @@ function freshState(){
   const sol=makeSolution(N),cfg=STAGES[currentStage];
   const fixed=makeFixed(sol,N,cfg.blanks,cfg.maxLine);
   state={grid:[],fixed,solution:sol,selChip:null,score:0,ok:0,no:0,combo:0,maxCombo:0,
-    totalBlanks:0,acc:0,runStart:0,elapsed:0,finished:false,locked:{},maxScore:0};
+    totalBlanks:0,acc:0,runStart:0,elapsed:0,finished:false,locked:{},maxScore:0,
+    wrongs:[]};  // wrongs: 틀리게 채운 칸 기록 {r,c,answer,guess} (앱스크립트 wrongItems용)
   for(let r=0;r<N;r++){state.grid[r]=[];for(let c=0;c<N;c++){
     if(fixed[r][c])state.grid[r][c]=sol[r][c];else{state.grid[r][c]=-1;state.totalBlanks++;}}}
   state.maxScore=calcMax(fixed,state.totalBlanks);
@@ -731,8 +749,33 @@ function buildStageJump(){
   const box=$('stageJump');box.innerHTML='';
   for(let s=1;s<=STAGE_COUNT;s++){
     const b=document.createElement('button');b.className='sbtn'+(s===currentStage?' cur':'');b.textContent=s+'단계';
-    b.onclick=()=>startStage(s,false);box.appendChild(b);
+    b.onclick=()=>requestStageJump(s);box.appendChild(b);
   }
+}
+// 단계 이동: 채우거나 틀린 칸이 있으면 화면 안 확인 창을 먼저 띄운다 (브라우저 confirm 금지)
+let jumpTarget=null;
+function requestStageJump(s){
+  if(state.finished)return;  // 다 푼 판은 곧 완료 화면이 뜨고 결과가 전송된다. 그 사이 이동하면 결과가 사라지므로 막는다
+  if(state.ok>0||state.no>0){openJumpConfirm(s);return;}
+  startStage(s,false);
+}
+function openJumpConfirm(s){
+  jumpTarget=s;
+  $('jumpTitle').textContent=(s===currentStage?s+'단계를 새 판으로 시작할까요?':s+'단계로 옮길까요?');
+  $('jumpMsg').innerHTML='지금 '+currentStage+'단계 판에서 채운 칸 <b>'+state.ok+'개</b>, 오답 <b>'+state.no+'번</b>, 점수 <b>'+state.score+'점</b>이 모두 사라져요.';
+  pauseTimer();
+  $('jumpConfirm').classList.add('show');
+  setTimeout(()=>{if(jumpTarget!==null)$('jumpCancel').focus();},50);
+}
+function closeJumpConfirm(){
+  if(jumpTarget===null)return;
+  jumpTarget=null;$('jumpConfirm').classList.remove('show');
+  if($('game').classList.contains('active'))runTimer();
+}
+function confirmJump(){
+  if(jumpTarget===null)return;
+  const s=jumpTarget;jumpTarget=null;$('jumpConfirm').classList.remove('show');
+  startStage(s,false);
 }
 function setHint(text,warn){const h=$('hintBox');h.textContent=text;h.className='hint-box'+(warn?' warn':'');}
 
@@ -761,6 +804,7 @@ function onCellClick(r,c){
     checkLineBonus(r,c);
   }else{
     state.no++;state.combo=0;state.score=Math.max(0,state.score-PT_NO);
+    state.wrongs.push({r,c,answer,guess});
     sndNo();banner('❌ 오답<small>−'+PT_NO+'점</small>','no');
     el.classList.add('wrong');state.locked[key]=true;
     setHint(wrongHint(r,c,guess),true);
@@ -812,6 +856,10 @@ function gradeText(acc){
   if(acc>=50)return '💪 기본은 잡혔어요';return '🔁 다시 한 번 도전해요';
 }
 let resultSent=false;
+// 오답 목록: 틀린 시도마다 '3행5열 정답 서술어/입력 주어' (칸 위치는 이번 판 기준, 쉼표로 구분)
+function wrongItemsText(){
+  return state.wrongs.map(w=>(w.r+1)+'행'+(w.c+1)+'열 정답 '+PARTS[w.answer].name+'/입력 '+PARTS[w.guess].name).join(',');
+}
 function finish(){
   if(!state.finished)return;
   if(!state.bonusGiven){state.timeBonus=timeBonus(state.elapsed);state.score+=state.timeBonus;state.bonusGiven=true;}
@@ -845,7 +893,7 @@ function finish(){
     submitResult({
       studentId:STUDENT.id,studentName:STUDENT.name,className:STUDENT.className,
       totalQuestions:state.totalBlanks,correctCount:state.ok,score:state.score,
-      elapsedSeconds:state.elapsed,wrongItems:'',reflection:''
+      elapsedSeconds:state.elapsed,wrongItems:wrongItemsText(),reflection:''
     }).then(res=>{
       const el=document.createElement('div');
       el.style.cssText='margin-bottom:12px;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:600;text-align:center;';
@@ -903,6 +951,11 @@ function downloadTeacherXls(){
 })();
 
 document.addEventListener('keydown',e=>{
+  if(jumpTarget!==null){
+    if(e.key==='Escape'){e.preventDefault();closeJumpConfirm();}
+    else if(e.key==='Tab'){e.preventDefault();($(document.activeElement===$('jumpCancel')?'jumpOk':'jumpCancel')).focus();}  // 포커스를 확인 창 안에 가둔다
+    return;
+  }  // 확인 창이 열려 있으면 카드 선택 키를 막는다 (Enter·Space는 포커스된 버튼이 받음)
   if(guideOpen&&(e.key==='Enter'||e.key===' ')){e.preventDefault();closeGuide();return;}
   if($('loginOverlay').style.display==='flex'){if(e.key==='Enter')doLogin();return;}
   if($('game').classList.contains('active')&&!guideOpen){
