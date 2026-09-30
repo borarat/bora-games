@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko">
+<!-- 리모델링 2026.10.01 02:20 (1차 야간)
+     문항: 소리의 세기 단계에서 ㅎ 제외 (교과서: ㅎ은 세기 분류에 넣지 않음) → 15문항에서 14문항
+     용어: 비음 → 비음(콧소리), 유음 → 유음(흐름소리) (교과서 괄호 병기). 단답형은 비음·콧소리·비음(콧소리) 모두 인정
+     해설: ㅇ 해설에 '첫소리 ㅇ은 소리가 없고, 여기서 말하는 ㅇ은 받침 [ŋ] 소리' 안내 추가 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -294,7 +298,7 @@ button{cursor:pointer}
     </div>
 
     <div class="start-foot">
-     <div class="credit">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.08.13 · <span id="lastMod">최종 수정 2026.09.17 22:17</span></div>
+     <div class="credit">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.08.13 · <span id="lastMod">최종 수정 2026.10.01 02:20</span></div>
      <div>
       <div class="privacy" id="privacyOffline">
        <b>🔒 개인정보 보호 안내</b><br>
@@ -443,7 +447,7 @@ button{cursor:pointer}
 
 <script>
 const MADE_DATE='2026.08.13';
-const LAST_MOD='2026.09.17 22:17';
+const LAST_MOD='2026.10.01 02:20';
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -515,7 +519,7 @@ const CONS=[
  {id:16,char:'ㅋ',name:'키읔', pos:'soft',   res:'obstruent',man:'plosive',  int:'aspirated'},
  {id:17,char:'ㅌ',name:'티읕', pos:'gum',    res:'obstruent',man:'plosive',  int:'aspirated'},
  {id:18,char:'ㅍ',name:'피읖', pos:'lips',   res:'obstruent',man:'plosive',  int:'aspirated'},
- {id:19,char:'ㅎ',name:'히읗', pos:'glottal',res:'obstruent',man:'fricative',int:'lenis'}
+ {id:19,char:'ㅎ',name:'히읗', pos:'glottal',res:'obstruent',man:'fricative',int:null}  // 세기: 교과서 기준 ㅎ은 세기 분류에 넣지 않는다
 ];
 
 // 유형 마스터
@@ -550,15 +554,15 @@ const CATEGORIES={
  affricate:{label:'파찰음',icon:'⚡',short:'막았다가 비빔',desc:'막았다가 곧바로 틈을 열어 비비는 소리',syn:['붙갈이소리'],
    act:'공기를 막았다가 곧바로 좁은 틈을 열어 비비며 소리를 내요.',
    tip:'이름을 풀어 보세요. 파열(막았다 터뜨림)+마찰(비빔)=파찰입니다. ㅈ·ㅉ·ㅊ만 여기에 속합니다.'},
- nasal:{label:'비음',icon:'👃',short:'코로 공기를 내보냄',desc:'입안 통로를 막고 코로 공기를 내보내는 소리',syn:['콧소리'],
+ nasal:{label:'비음(콧소리)',icon:'👃',short:'코로 공기를 내보냄',desc:'입안 통로를 막고 코로 공기를 내보내는 소리',syn:['비음','콧소리'],
    act:'입안 통로를 막고 공기를 코로 내보내며 소리를 내요.',
    tip:'코를 막고 \'음·은·응\'을 해 보세요. 소리가 답답해지면 코로 공기가 나가는 비음입니다.'},
- liquid:{label:'유음',icon:'〰️',short:'혀 옆으로 흘림',desc:'혀끝을 잇몸에 가볍게 대고 공기를 혀 옆으로 흘리는 소리',syn:['흐름소리'],
+ liquid:{label:'유음(흐름소리)',icon:'〰️',short:'혀 옆으로 흘림',desc:'혀끝을 잇몸에 가볍게 대고 공기를 혀 옆으로 흘리는 소리',syn:['유음','흐름소리'],
    act:'혀끝을 잇몸에 가볍게 대고 공기를 혀 옆으로 흘려보내며 소리를 내요.',
    tip:'\'랄라\'를 발음하며 혀끝이 잇몸을 살짝 치고 공기가 혀 옆으로 흐르는지 느껴 보세요.'},
  lenis:{label:'예사소리',icon:'🔵',short:'보통 세기 (평음)',desc:'보통 세기로 부드럽게 내는 소리',syn:['평음'],
    act:'보통 세기로 부드럽게 내요.',
-   tip:'획을 더하거나 겹치지 않은 ㄱ·ㄷ·ㅂ·ㅅ·ㅈ과 목청소리 ㅎ이 예사소리입니다. 기본 글자에 획을 더하면 거센소리, 겹쳐 쓰면 된소리예요.'},
+   tip:'획을 더하거나 겹치지 않은 ㄱ·ㄷ·ㅂ·ㅅ·ㅈ이 예사소리입니다. 기본 글자에 획을 더하면 거센소리, 겹쳐 쓰면 된소리예요.'},
  aspirated:{label:'거센소리',icon:'🔴',short:'거센 바람 (격음)',desc:'거센 바람과 함께 내는 소리',syn:['격음'],
    act:'거센 바람을 내뿜으며 내요.',
    tip:'입 앞에 손바닥을 대고 발음해 보세요. 바람이 확 느껴지면 거센소리(ㅊ·ㅋ·ㅌ·ㅍ)입니다.'},
@@ -577,27 +581,25 @@ const STAGES=[
  {key:'int',label:'소리의 세기',icon:'💪',ask:'이 자음은 어떤 세기의 소리일까요?',cats:['lenis','aspirated','fortis'],
   hint:'입 앞에 손바닥을 대고 발음해 보세요. 바람이 세게 나오는지, 목에 힘이 들어가는지 비교해 보세요.'}
 ];
-const PAIRS=[['ㄱ','ㄲ','ㅋ'],['ㄷ','ㄸ','ㅌ'],['ㅂ','ㅃ','ㅍ'],['ㅈ','ㅉ','ㅊ'],['ㅅ','ㅆ',null],['ㅎ',null,null]];
+const PAIRS=[['ㄱ','ㄲ','ㅋ'],['ㄷ','ㄸ','ㅌ'],['ㅂ','ㅃ','ㅍ'],['ㅈ','ㅉ','ㅊ'],['ㅅ','ㅆ',null]];
 
 function hasJong(w){const ch=w.charCodeAt(w.length-1);if(ch<0xAC00||ch>0xD7A3)return false;return (ch-0xAC00)%28!==0}
 function makeDetail(si,c){
   const st=STAGES[si],cat=c[st.key],C=CATEGORIES[cat];
-  let s=c.char+'('+c.name+')은 '+C.label+(hasJong(C.label)?'이에요':'예요')+'. ';
+  let s=c.char+'('+c.name+')은 '+C.label+(hasJong(C.label.replace(/\(.*\)$/,''))?'이에요':'예요')+'. ';  // 괄호 병기는 괄호 앞말에 조사를 맞춘다
   if(cat==='resonant') s+=(c.char==='ㄹ'?'공기가 혀 옆으로':'공기가 코로')+' 막힘없이 흘러나오며 목청이 울려요. ';
   else s+=C.act+' ';
   if(st.key==='int'){
     const row=PAIRS.find(r=>r.includes(c.char));
-    if(c.char==='ㅎ') s+='ㅎ은 목청에서 나는 소리라 된소리·거센소리 짝이 없어요.';
-    else{
-      const nm=['예사','된','거센'];const parts=[];
-      row.forEach((x,i)=>{if(x)parts.push(x+'('+nm[i]+')')});
-      s+='짝: '+parts.join('–')+(row[2]?'':' · 거센소리 짝은 없어요');
-    }
+    const nm=['예사','된','거센'];const parts=[];
+    row.forEach((x,i)=>{if(x)parts.push(x+'('+nm[i]+')')});
+    s+='짝: '+parts.join('–')+(row[2]?'':' · 거센소리 짝은 없어요');
   }else if(cat==='obstruent'){
     s+='울림소리 ㄴ·ㄹ·ㅁ·ㅇ을 뺀 나머지 15개가 모두 안울림소리예요.';
   }else{
     s+='같은 칸: '+CONS.filter(x=>x[st.key]===cat).map(x=>x.char).join('·');
   }
+  if(c.char==='ㅇ') s+=' ※ 첫소리(초성) ㅇ은 소리가 없어요. 여기서 말하는 ㅇ은 \'강\'의 받침처럼 나는 [ŋ] 소리예요.';
   return s;
 }
 function stagePool(si){
@@ -609,7 +611,7 @@ function stagePool(si){
   });
 }
 function maxScore(n){let s=0;for(let i=1;i<=n;i++)s+=BASE+(i>=5?10:i>=3?5:0);return s}
-function norm(s){return String(s).replace(/\s+/g,'')}
+function norm(s){return String(s).replace(/（/g,'(').replace(/）/g,')').replace(/\s+/g,'')}
 function isAccepted(cat,raw){
   const t=String(raw).trim();
   if(/[?？]$/.test(t))return false;
