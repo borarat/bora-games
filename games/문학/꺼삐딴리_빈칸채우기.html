@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>꺼삐딴 리 빈칸 채우기 · 보라라샘</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+html{color-scheme:light}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F2FBF7;--acc:#2E9B79;--dark:#0F6E56;--line:#DDF2E9;
+  --ink:#0F6E56;--ink2:#5b6b66;--body:#333;--ok:#1f9d63;--ng:#d64545;--warn:#e08a1e;
+  --font:'Noto Sans KR','Malgun Gothic','맑은 고딕',sans-serif;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--body);line-height:1.6;min-height:100vh;word-break:keep-all;overflow-wrap:break-word}
+button{font-family:inherit;cursor:pointer}
+input,textarea{font-family:inherit}
+.screen{display:none}
+.screen.on{display:block}
+
+/* ── 공통 틀 ── */
+.wrap{max-width:1040px;margin:0 auto;background:#fff;border:1px solid var(--line);border-top:none;border-radius:0 0 18px 18px}
+.band{display:flex;justify-content:space-between;align-items:center;gap:12px;height:40px;padding:0 18px;background:var(--acc);color:#fff;font-weight:700;font-size:15px;border-radius:12px 12px 0 0;white-space:nowrap}
+.wrap>.band{border-radius:0}
+.badge{font-size:12.5px;font-weight:700;background:rgba(255,255,255,.22);padding:3px 11px;border-radius:999px}
+.btn{border:2px solid var(--acc);background:var(--acc);color:#fff;font-weight:700;font-size:16px;border-radius:12px;padding:10px 18px;min-height:46px;transition:transform .08s,filter .15s}
+.btn:hover{filter:brightness(1.06)}
+.btn:active{transform:scale(.97)}
+.btn.sec{background:#fff;color:var(--dark)}
+.btn:disabled{opacity:.45;cursor:default;transform:none}
+
+/* ── 시작 화면 ── */
+#start .inner{padding:48px 40px 60px}
+.titleRow{display:flex;align-items:center;gap:20px;margin-bottom:24px}
+.mascot-img{height:90px;border-radius:12px;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:manipulation;-webkit-user-drag:none}
+h1{font-size:clamp(26px,3.6vw,36px);font-weight:700;color:var(--dark);line-height:1.25}
+.sub{color:var(--ink2);font-size:16px;margin-top:4px}
+.grid2{display:grid;grid-template-columns:1fr 1.7fr;gap:14px;margin-bottom:14px}
+.box{border:1px solid var(--line);border-radius:14px;padding:14px 18px;background:#fbfefd}
+.box h3{font-size:15px;color:var(--dark);margin-bottom:6px}
+.box p,.box li{font-size:14.5px}
+.box ul{list-style:none}
+.box li{padding-left:14px;position:relative}
+.box li::before{content:'·';position:absolute;left:3px;color:var(--acc);font-weight:700}
+.std code{font-family:inherit;font-weight:700;color:var(--dark)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:3px 12px;font-size:14px}
+.stages{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0 22px}
+.stageBtn{text-align:left;border:2px solid var(--acc);background:#fff;border-radius:16px;padding:16px 20px;min-height:44px;transition:transform .08s,box-shadow .15s}
+.stageBtn:hover{box-shadow:0 6px 18px rgba(46,155,121,.18)}
+.stageBtn:active{transform:scale(.98)}
+.stageBtn.primary{background:var(--acc);color:#fff}
+.stageBtn .sn{font-size:13px;font-weight:700;opacity:.85}
+.stageBtn .st{display:block;font-size:20px;font-weight:700;margin:2px 0}
+.stageBtn .sd{font-size:14px;opacity:.9}
+.credit{text-align:center;font-size:13px;color:var(--ink2);border:1px dashed var(--line);border-radius:12px;padding:10px;margin-bottom:12px;line-height:1.8}
+.privacy{font-size:13px;color:var(--ink2);background:#f6f9f8;border-radius:12px;padding:12px 16px;line-height:1.7}
+.privacy b{color:var(--dark)}
+
+/* ── 문제 화면 ── */
+#play{padding:10px 16px 6px}
+.playWrap{max-width:1180px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:12px 12px 16px 16px}
+.band .goal{font-weight:500}
+.prog{height:6px;background:var(--line)}
+#progBar{height:100%;width:0;background:var(--acc);transition:width .3s}
+.playBody{display:grid;grid-template-columns:1fr 136px;gap:16px;padding:14px 18px 16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 22px 14px;min-width:0}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.secTag{font-size:13px;font-weight:700;color:var(--dark);background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:3px 12px}
+.cat{font-size:13px;font-weight:700;color:#475569;background:#f1f5f9;border-radius:999px;padding:3px 12px}
+.passage{font-size:min(18.5px,max(15px,1.45vw),2.5vh);line-height:1.92;color:#222;word-break:keep-all}
+.passage p{margin:0 0 .3em}
+.bl{width:6.4em;font-size:.96em;font-family:inherit;padding:0 8px;margin:0 3px;border:none;border-bottom:2.5px solid var(--acc);background:rgba(46,155,121,.09);border-radius:6px 6px 0 0;color:#111;text-align:center;outline:none;line-height:1.55;vertical-align:baseline}
+.bl.cur{background:#fff4cf;border-bottom-color:#e39a10;box-shadow:0 0 0 2px rgba(227,154,16,.35)}
+.bl.bad{border-bottom-color:var(--ng);background:#fdeeee}
+.bl::placeholder{color:#a0781a;font-weight:700;letter-spacing:.06em;opacity:1}
+.bf{display:inline-block;padding:0 7px;margin:0 3px;border-radius:6px;font-weight:700;line-height:1.55;cursor:pointer}
+.bf.ok{color:#17603f;background:#e3f5ea}
+.bf.rv{color:#8a4f06;background:#fff0dc}
+.bf.pop{animation:popIn .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes popIn{0%{transform:scale(.6)}100%{transform:scale(1)}}
+.tools{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;align-items:center}
+.tools .btn{font-size:15px;padding:8px 14px}
+.toolNote{font-size:13px;color:#94a3b8;margin-left:auto}
+#btnHint.pulse{animation:pulseB 1s ease 2}
+@keyframes pulseB{50%{box-shadow:0 0 0 6px rgba(46,155,121,.25)}}
+.fb{margin-top:10px;min-height:3.4em;font-size:15.5px;border-radius:12px;padding:0}
+.fb.ok,.fb.ng,.fb.rv,.fb.info{padding:10px 14px}
+.fb.ok{background:#ecf8f1;color:#17603f}
+.fb.ng{background:#fdeeee;color:#9b2c2c}
+.fb.rv{background:#fff3e2;color:#8a4f06}
+.fb.info{background:#f1f5f9;color:#334155}
+.fb .ex{display:block;color:#475569;font-size:14.5px;margin-top:2px}
+.fb .mini{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap}
+.fb .mini .btn{font-size:14px;min-height:40px;padding:6px 12px}
+.shake{animation:shake .38s}
+@keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.side{display:flex;flex-direction:column;gap:10px}
+.side button{min-height:52px;border:2px solid var(--line);background:#fff;border-radius:12px;font-size:15px;font-weight:700;color:var(--dark)}
+.side button:hover{border-color:var(--acc)}
+.side #btnEnd{margin-top:auto;color:#9b2c2c;border-color:#f3d6d6}
+.miniCredit{position:fixed;right:12px;bottom:6px;font-size:11px;color:#9bb3ab;pointer-events:none}
+#comboHud{margin-left:auto;background:#fff;border:2px solid #f5b25b;border-radius:999px;padding:0 14px;font-weight:700;color:#c2410c;font-size:16px;line-height:26px}
+#comboHud.pop{animation:hud .45s}
+@keyframes hud{40%{transform:scale(1.35)}}
+
+/* ── 종료 화면 ── */
+#end{padding:0 0 60px}
+#end .inner{padding:36px 40px 40px}
+.scoreBig{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:14px 0 18px}
+.scoreBig b{font-size:46px;color:var(--dark);line-height:1}
+.scoreBig span{color:var(--ink2);font-size:17px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.stat{border:1px solid var(--line);border-radius:12px;padding:10px 12px;text-align:center}
+.stat small{display:block;color:var(--ink2);font-size:13px}
+.stat b{font-size:22px;color:#222}
+.verdict{font-size:19px;font-weight:700;color:var(--dark);margin-bottom:12px}
+.ana{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.focus{border:2px solid #f5c26b;background:#fffaf0;border-radius:14px;padding:12px 16px;margin-bottom:18px;font-size:15px}
+.focus b{color:#9a5b00}
+.form{display:grid;grid-template-columns:1fr 2fr;gap:12px;margin-bottom:8px}
+.form label{font-size:14px;font-weight:700;color:var(--dark);display:block;margin-bottom:4px}
+.form input,.form textarea{width:100%;border:2px solid var(--line);border-radius:10px;padding:9px 12px;font-size:16px;background:#fff;color:#222}
+.form textarea{height:46px;resize:vertical}
+.warn{display:none;color:var(--ng);font-size:14px;margin-bottom:8px}
+.warn.on{display:block}
+.btnRow{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+.note{font-size:13px;color:var(--ink2);margin-bottom:10px}
+
+/* ── 모달 ── */
+.modal{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.45);justify-content:center;align-items:center;padding:16px}
+.modal.on{display:flex}
+.mbox{background:#fff;border-radius:18px;max-width:760px;width:100%;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.mhead{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line);font-weight:700;color:var(--dark)}
+.mbody{overflow:auto;padding:14px 20px 20px}
+.ritem{border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:10px;font-size:15px}
+.ritem .rs{font-size:12.5px;color:var(--ink2);font-weight:700}
+.ritem .ra{color:var(--ok);font-weight:700}
+.ritem .rd{color:#64748b;font-size:14px}
+
+/* ── 배너·연출 ── */
+#banner{position:fixed;inset:0;z-index:150;display:none;align-items:center;justify-content:center;pointer-events:none}
+#banner.on{display:flex}
+.bn-dim{position:absolute;inset:0;background:radial-gradient(circle,rgba(0,0,0,.25) 0%,rgba(0,0,0,.25) 60%,rgba(0,0,0,.12) 100%)}
+.bn-rays{position:absolute;width:760px;height:760px;border-radius:50%;background:repeating-conic-gradient(rgba(255,230,140,.35) 0 10deg,transparent 10deg 20deg);animation:spinR 6s linear infinite;-webkit-mask:radial-gradient(circle,#000 20%,transparent 68%);mask:radial-gradient(circle,#000 20%,transparent 68%)}
+@keyframes spinR{to{transform:rotate(360deg)}}
+.bn-panel{position:relative;text-align:center;animation:pop .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.15);opacity:1}100%{transform:scale(1)}}
+.bn-title{font-size:clamp(56px,10vw,104px);font-weight:900;line-height:1.1;filter:drop-shadow(0 0 16px rgba(255,210,80,.85)) drop-shadow(0 4px 2px rgba(0,0,0,.25))}
+.bn-title .g{background:linear-gradient(180deg,#fff3b0,#f7c531 50%,#e39a10);-webkit-background-clip:text;background-clip:text;color:transparent}
+.bn-pts{font-size:clamp(30px,5vw,48px);font-weight:900;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.45)}
+.bn-sub{font-size:18px;color:#fff;font-weight:700;text-shadow:0 2px 6px rgba(0,0,0,.5)}
+#banner.c3 .bn-title .g{background:linear-gradient(180deg,#ffe0b2,#ff9a3c 55%,#e5541b);-webkit-background-clip:text;background-clip:text}
+#banner.c5 .bn-title .g,#banner.cbig .bn-title .g{background:linear-gradient(90deg,#ff5f6d,#ffc371,#47e891,#3ab4f2,#b36bff);-webkit-background-clip:text;background-clip:text}
+#banner.c5 .bn-title,#banner.cbig .bn-title{animation:wob .6s ease 2}
+#banner.cbig .bn-title{font-size:clamp(64px,11vw,120px)}
+@keyframes wob{25%{transform:rotate(-4deg) scale(1.08)}75%{transform:rotate(4deg) scale(1.08)}}
+.spark{position:absolute;font-size:26px;animation:spk .8s ease-out forwards}
+@keyframes spk{0%{transform:translate(0,0) scale(.4);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(1.1);opacity:0}}
+.emo{position:fixed;top:-40px;font-size:30px;z-index:160;pointer-events:none;animation:fall 1.6s linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
+#fx{position:fixed;inset:0;z-index:155;pointer-events:none}
+body.glow::after{content:'';position:fixed;inset:0;z-index:149;pointer-events:none;box-shadow:inset 0 0 0 0 rgba(255,190,60,0);animation:glowP 1.2s ease}
+@keyframes glowP{40%{box-shadow:inset 0 0 60px 18px rgba(255,190,60,.75)}}
+@media (prefers-reduced-motion:reduce){
+  .bn-rays,.spark,.emo{display:none!important}
+  .bn-panel,.bn-title{animation:fadeIn .3s!important}
+  @keyframes fadeIn{from{opacity:0}}
+}
+
+/* ── 반응형 ── */
+@media (max-width:860px){
+  .grid2,.ana{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:640px){
+  #start .inner,#end .inner{padding:32px 18px 40px}
+  .stages{grid-template-columns:1fr}
+  .playBody{grid-template-columns:1fr;padding:14px}
+  .side{flex-direction:row;flex-wrap:wrap}
+  .side button{flex:1 1 40%;min-height:46px}
+  .side #btnEnd{margin-top:0}
+  .toolNote{display:none}
+  .miniCredit{position:static;text-align:right;padding:6px 10px}
+  .card{padding:16px}
+  .form{grid-template-columns:1fr}
+  #play{padding:8px 6px}
+}
+@media (max-width:600px){
+  .band .goal,.band .dot{display:none}
+  .titleRow{gap:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- ═════════ 시작 화면 ═════════ -->
+<div id="start" class="screen on">
+ <div class="wrap">
+  <div class="band"><span>문학</span><span class="badge">💻 노트북 권장</span></div>
+  <div class="inner">
+   <div class="titleRow">
+    <img id="mascot" class="mascot-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAACxCAMAAAAyLeWLAAAB/lBMVEUAAABMNSXZ1s7hupPcto7alVnNxba4uryMqcKptsLQiEyTp7jTmmfXpXTkwZxGLBvipW3i2snLeDWcscPUrIR8osLnx6NqSDBNMR7FvbLb0b2telCoq6vGxsb7+vqth2eHm6ivpJaMZ0rhmlvgnWGLeGm2g1ipmozGfUJtWEjTgTySlpVaRDS2lHXo6OeVhXbk4dl0UjmdsL6+wL1ELiDFbCd4mraGWDe8wcLGxsaXc1Z4ZVZ8oL77+vo6JhhiPSWoq6uTjIa4urzZ1s6DXELwsnh6bWK8dTuSYzwIBQUbFRNuOBZ3Qh3groDi0rsqHRdMNSWcoJuvpJbFvbLi2sl1nsKSlpWzajKptsLawZ7Nxbbo6OdtWEiLeGmpmowxIyF7c2l+lJ2BTSeTjIa2WBG8YhyjbUXd4eLk4dk8MS1ELiBlT0B4ZVaVhXaTp7imf2GvpJbAZh3An4De3+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADGtm7NAAAAgHRSTlMA///////////////////////////////////////////////////////////////////////////c////3P//3P/c3P///////////////9z/3Nzc/9z/3P/c3Nzc3P/////c/////9z/3P/c3Nz/oP///wAAAAAAAAAAAAAAAKaTQcIAABeqSURBVHja7VwHd+JItl4kUUpVKCAjhMjYYINxTh2me3q6e3vyvNnZ3dmcw8vx/5/z7r1VEghjLLfp3XPeebVjaANWffrud0PdKvYHP/j/sa3xC5Ml7cmrSdLRnvxdAPwjm+wdVPIRH+wN/sZAnhwfVJpepTi8SnzMPvqbQdg79C4q68fhr/8mED5+VvEqm8bBJx8cw68r9w7v4DcfFMJP72EhG3u//GAQXv+wHIRKpXn4iw+E4buDshhwfCBFxg/BUPnnD4Hhk8oD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" alt="보라라샘" draggable="false">
+    <div>
+     <h1>꺼삐딴 리 빈칸 채우기</h1>
+     <p class="sub">이인국 박사의 삶을 장면별 지문으로 따라가며 빈칸을 채워요</p>
+    </div>
+   </div>
+
+   <div class="grid2">
+    <div class="box std">
+     <h3>📌 성취기준</h3>
+     <p><code>(2015) [9국05-06]</code></p>
+     <p>작품에 반영된 사회·문화적 상황을<br>파악하며 작품을 감상한다.</p>
+    </div>
+    <div class="box">
+     <h3>🎮 게임 방법</h3>
+     <ul>
+      <li>장면마다 지문 속 노란 빈칸에 알맞은 말을 쓰고 Enter를 누르세요.</li>
+      <li>맞히면 다음 빈칸으로 넘어가고, 다른 빈칸은 클릭이나 Tab으로 옮겨요.</li>
+      <li>막히면 💡 초성 힌트를, 그래도 모르면 👀 정답 보기를 누르세요.</li>
+      <li>힌트 없이 한 번에 맞히면 10점, 다시 풀어 맞히면 5점이에요.</li>
+      <li>연속으로 맞히면 콤보 보너스가 붙어요. (3연속 +5, 5연속부터 +10)</li>
+      <li>띄어쓰기와 끝에 붙은 조사는 채점에 영향을 주지 않아요.</li>
+     </ul>
+    </div>
+   </div>
+
+   <div class="box">
+    <h3>🧩 빈칸 유형</h3>
+    <div class="chips" id="catChips"></div>
+   </div>
+
+   <div class="stages">
+    <button class="stageBtn primary" onclick="startStage(1)">
+     <span class="sn">1단계</span><span class="st">줄거리 따라가기</span>
+     <span class="sd" id="sd1"></span>
+    </button>
+    <button class="stageBtn" onclick="startStage(2)">
+     <span class="sn">2단계</span><span class="st">작품 정리하기</span>
+     <span class="sd" id="sd2"></span>
+    </button>
+   </div>
+
+   <div class="credit">
+    제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
+    제작일 2026.09.16 · 최종 수정 2026.09.16 10:27
+   </div>
+
+  <div class="privacy" id="privacyOffline">
+   <b>🔒 개인정보 보호 안내</b><br>
+   본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다.<br>
+   게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.
+  </div>
+  <div class="privacy" id="privacyOnline" style="display:none">
+   <b>🔒 개인정보 보호 안내</b><br>
+   본 게임의 학습 결과(학번, 이름, 점수, 오답 정보, 학습 소감)는 담당 선생님의 학습 관리용 스프레드시트에 안전하게 전송·저장됩니다.<br>
+   수집된 정보는 학습 지도 목적으로만 사용되며, 제3자에게 제공되지 않습니다.
+  </div>
+  </div>
+ </div>
+</div>
+
+<div id="loginOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;justify-content:center;align-items:center">
+ <div style="background:#fff;border-radius:20px;padding:32px;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center">
+  <div style="font-size:36px;margin-bottom:8px">🔑</div>
+  <h2 style="font-size:20px;margin-bottom:4px;color:var(--ink)">학생 인증</h2>
+  <p style="font-size:13px;color:var(--ink2);margin-bottom:20px">학번과 이름을 입력하면 게임을 시작할 수 있어요.</p>
+  <div style="text-align:left;margin-bottom:12px">
+   <label style="font-size:13px;font-weight:700;color:var(--ink)">학번 (5자리)</label>
+   <input id="loginId" type="text" maxlength="5" inputmode="numeric" placeholder="예: 20101" style="width:100%;padding:10px 14px;border:2px solid var(--line);border-radius:10px;font-size:16px;margin-top:4px;box-sizing:border-box">
+  </div>
+  <div style="text-align:left;margin-bottom:16px">
+   <label style="font-size:13px;font-weight:700;color:var(--ink)">이름</label>
+   <input id="loginName" type="text" maxlength="10" placeholder="예: 김민준" style="width:100%;padding:10px 14px;border:2px solid var(--line);border-radius:10px;font-size:16px;margin-top:4px;box-sizing:border-box">
+  </div>
+  <div id="loginMsg" style="font-size:13px;color:var(--ng);min-height:20px;margin-bottom:12px"></div>
+  <button id="loginBtn" onclick="doLogin()" style="width:100%;padding:12px;background:var(--ink);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer">확인</button>
+  <div id="loginSpinner" style="display:none;margin-top:12px"><div style="width:28px;height:28px;border:3px solid var(--line);border-top-color:var(--ink);border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto"></div><style>@keyframes spin{to{transform:rotate(360deg)}}</style></div>
+ </div>
+</div>
+
+<!-- ═════════ 문제 화면 ═════════ -->
+<div id="play" class="screen">
+ <div class="playWrap">
+  <div class="band"><span>문학<span class="dot"> · </span><span class="goal" id="goal"></span></span><span id="bandR"></span></div>
+  <div class="prog"><div id="progBar"></div></div>
+  <div class="playBody">
+   <div class="card" id="card">
+    <div class="meta"><span class="secTag" id="secTag"></span><span class="cat" id="sceneLeft"></span><span id="comboHud" title="연속 정답">🔥 <b id="comboN">0</b></span></div>
+    <div class="passage" id="passage"></div>
+    <div class="tools">
+     <button class="btn" id="btnCheck">정답 확인</button>
+     <button class="btn sec" id="btnHint">💡 초성 힌트</button>
+     <button class="btn sec" id="btnReveal">👀 정답 보기</button>
+     <span class="toolNote">Enter 채점 · Tab 다음 빈칸</span>
+    </div>
+    <div class="fb" id="fb"></div>
+   </div>
+   <div class="side">
+    <button id="btnPrev">◀ 이전 장면</button>
+    <button id="btnNext">다음 장면 ▶</button>
+    <button id="btnJump"></button>
+    <button id="btnEnd">게임 끝내기</button>
+   </div>
+  </div>
+ </div>
+ <div class="miniCredit">제작 · 보라라샘 / 2026.09.16</div>
+</div>
+
+<!-- ═════════ 종료 화면 ═════════ -->
+<div id="end" class="screen">
+ <div class="wrap" style="border-radius:0 0 18px 18px">
+  <div class="band"><span>문학</span><span id="endBand"></span></div>
+  <div class="inner">
+   <h1 id="endTitle" style="font-size:28px"></h1>
+   <div class="scoreBig"><b id="endScore"></b><span id="endMax"></span></div>
+   <div class="stats" id="endStats"></div>
+   <div class="verdict" id="endVerdict"></div>
+   <div class="ana">
+    <div class="box"><h3>👍 잘하는 유형</h3><div id="endGood"></div></div>
+    <div class="box"><h3>🛠️ 보완이 필요한 유형</h3><div id="endWeak"></div></div>
+   </div>
+   <div class="focus" id="endFocus"></div>
+
+   <div class="form">
+    <div><label for="inName">이름 (필수)</label><input id="inName" type="text" maxlength="10" placeholder="실명을 입력하세요"></div>
+    <div><label for="inMemo">학습 소감 (선택)</label><textarea id="inMemo" maxlength="200" placeholder="오늘 게임에서 새로 알게 된 점이나 느낀 점"></textarea></div>
+   </div>
+   <div class="warn" id="warn">이름을 입력해야 이미지를 만들 수 있어요.</div>
+   <p class="note" id="endNote">입력하신 이름과 소감은 서버에 저장되지 않으며, 리포트 이미지(JPG) 생성용으로만 쓰입니다.</p>
+   <div class="btnRow">
+    <button class="btn" onclick="makeWrongNote()">📝 오답노트 JPG</button>
+    <button class="btn" onclick="makeReport()">📊 학습 리포트 JPG</button>
+    <button class="btn sec" onclick="openReview()">📖 오늘 나온 문제 모두 보기</button>
+   </div>
+   <div class="btnRow">
+    <button class="btn" id="btnNextStage">다음 단계로</button>
+    <button class="btn sec" id="btnRetry">이 단계 다시 하기</button>
+    <button class="btn sec" onclick="goHome()">시작화면으로</button>
+   </div>
+   <div class="privacy" style="margin-top:10px;text-align:left" id="endPrivacy">
+    <b>🔒 개인정보 보호 안내</b><br>
+    본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다.<br>
+    게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.
+   </div>
+  </div>
+ </div>
+</div>
+
+<!-- ═════════ 모달·연출 ═════════ -->
+<div class="modal" id="reviewModal">
+ <div class="mbox">
+  <div class="mhead"><span>📖 오늘 나온 문제</span><button class="btn sec" style="min-height:38px;padding:4px 12px;font-size:14px" onclick="closeModals()">닫기 ✕</button></div>
+  <div class="mbody" id="reviewBody"></div>
+ </div>
+</div>
+<div class="modal" id="teacherModal">
+ <div class="mbox" style="max-width:420px">
+  <div class="mhead"><span>학습 데이터 목록</span></div>
+  <div class="mbody">
+   <p style="margin-bottom:16px">전체 문항의 정답과 해설이 담긴 파일을 내려받습니다.</p>
+   <div style="display:flex;gap:10px;justify-content:flex-end">
+    <button class="btn sec" onclick="closeModals()">취소</button>
+    <button class="btn" onclick="downloadTeacherXls();closeModals()">내려받기</button>
+   </div>
+  </div>
+ </div>
+</div>
+<div id="banner"><div class="bn-dim"></div><div class="bn-rays"></div><div class="bn-panel"><div class="bn-title" id="bnTitle"></div><div class="bn-pts" id="bnPts"></div><div class="bn-sub" id="bnSub"></div></div><div id="bnSpark" style="position:absolute;left:50%;top:50%"></div></div>
+<canvas id="fx"></canvas>
+
+<script>
+const MADE_DATE = "2026.09.16";
+const MODIFIED = "2026.09.16 10:27";
+
+// ═══════════════════════════════════════════
+// ★ Apps Script 연동 설정
+// ═══════════════════════════════════════════
+const GAME_CONFIG = {
+  gameCode: "L301",
+  gameName: "꺼삐딴 리 빈칸 채우기",
+  webAppUrl: "https://script.google.com/macros/s/AKfycbzgq9yT5svpFzeFwW5p2pWOpL-lKpj5_RldoJejFT1EOk1Osjcf6hDx85jGQzvr5rU0ww/exec"
+};
+const params = new URLSearchParams(location.search);
+const TEACHER_KEY = params.get("key");
+const IS_ONLINE = !!TEACHER_KEY;
+let STUDENT = { id: "", name: "", className: "", verified: false };
+
+async function verifyStudent(studentId, studentName) {
+  if (!IS_ONLINE) return { status: "ok" };
+  try {
+    const res = await fetch(GAME_CONFIG.webAppUrl, {
+      method: "POST", headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ action: "verify", teacherKey: TEACHER_KEY, studentId, studentName })
+    });
+    return await res.json();
+  } catch (e) { return { status: "error", message: "서버에 연결할 수 없습니다. 인터넷 연결을 확인해주세요." }; }
+}
+function notifyGameStart(studentId, studentName, className) {
+  if (!IS_ONLINE) return;
+  fetch(GAME_CONFIG.webAppUrl, {
+    method: "POST", headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify({ action: "start", teacherKey: TEACHER_KEY, gameCode: GAME_CONFIG.gameCode, studentId, studentName, className })
+  }).catch(() => {});
+}
+async function submitResult(resultData) {
+  if (!IS_ONLINE) return { status: "ok" };
+  try {
+    const res = await fetch(GAME_CONFIG.webAppUrl, {
+      method: "POST", headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ action: "submit", teacherKey: TEACHER_KEY, gameCode: GAME_CONFIG.gameCode, gameName: GAME_CONFIG.gameName, ...resultData })
+    });
+    return await res.json();
+  } catch (e) { return { status: "error", message: "결과 전송에 실패했습니다." }; }
+}
+
+/* ================= 유형 마스터 ================= */
+const CATEGORIES = {
+  plot:      { icon:'🎬', label:'사건 흐름',  desc:'누가 무엇을 했고 어떻게 되었는가',
+               tip:'빈칸 앞뒤에서 "누가, 언제, 무엇을" 했는지 먼저 찾아보세요. 사건은 원인 → 행동 → 결과 순서로 이어집니다.' },
+  character: { icon:'👤', label:'인물',       desc:'인물의 이름과 이인국과의 관계',
+               tip:'이름이 떠오르지 않으면 그 인물이 이인국에게 가족인지, 적대자인지, 기댈 권력자인지부터 떠올려 보세요.' },
+  setting:   { icon:'🗺️', label:'시대·공간',  desc:'사건이 일어난 시기와 장소',
+               tip:'장면이 일제 강점기 · 광복 직후 · 소련군 주둔 · 6·25 이후 중 어디인지 먼저 정하세요. 시기가 정해지면 북쪽·남쪽도 따라옵니다.' },
+  symbol:    { icon:'🔑', label:'소재·상징',  desc:'시계·액자·청자처럼 뜻을 담은 물건',
+               tip:'그 물건이 이인국에게 자랑할 출세의 증거인지, 숨겨야 할 증거인지 따져 보세요.' },
+  motive:    { icon:'💭', label:'속마음·까닭', desc:'인물이 그렇게 행동한 이유와 심리',
+               tip:'이인국이 그 행동으로 무엇을 얻거나 피하려 하는지 스스로 물어보세요.' },
+  theme:     { icon:'🎯', label:'주제·표현',  desc:'제목·구성·풍자 등 작가의 의도',
+               tip:'작가가 이인국을 칭찬하는지 비꼬는지 먼저 판단하세요. 겉으로 좋게 그리면서 비꼬는 방식이 풍자와 반어입니다.' }
+};
+
+/* ================= 문항 데이터 ================= */
+// 장면 지문(paras: 글 조각과 빈칸 id) + 빈칸 정보(text: 오답노트용 문장, ___ = 빈칸)
+const DATA = {"stages": [{"no": 1, "name": "줄거리 따라가기", "fileLabel": "1단계줄거리", "goal": "줄거리를 따라가며 빈칸을 채운다", "scenes": [{"title": "지금까지의 이야기", "paras": [["이인국 박사는 일제 강점기에 ", 101, "을 졸업한 뒤 수술 실력이 뛰어난 ", 102, "로 이름을 날렸다. 8·15 광복 이후 혼란의 소용돌이 속에서도 뛰어난 ", 103, "로 난국을 헤쳐 나왔고, 1·4 후퇴 때 ", 104, "가 든 손가방 하나를 들고 남으로 내려와 ", 105, "에 병원을 차렸다."], ["그사이 소련으로 유학 간 아들은 ", 106, "를 모르게 되었고, ", 107, "는 거제도 수용소에서 죽었다. 전쟁이 끝난 뒤 딸은 ", 108, "으로 유학을 가서 ", 109, "을 공부했다."], ["이인국은 현재 종합 병원의 원장으로 있으며, 재혼한 혜숙과 그 사이에서 태어난 돌 지난 아들과 함께 살고 있다. 딸 ", 111, "가 그곳의 지도 교수와 결혼하겠다고 하자, 이인국은 딸이 있는 나라에 가기 위해 미국 대사관의 ", 112, " 씨를 만날 준비를 하고 있다."]], "plain": "이인국 박사는 일제 강점기에 【101】을 졸업한 뒤 수술 실력이 뛰어난 【102】로 이름을 날렸다. 8·15 광복 이후 혼란의 소용돌이 속에서도 뛰어난 【103】로 난국을 헤쳐 나왔고, 1·4 후퇴 때 【104】가 든 손가방 하나를 들고 남으로 내려와 【105】에 병원을 차렸다.\n그사이 소련으로 유학 간 아들은 【106】를 모르게 되었고, 【107】는 거제도 수용소에서 죽었다. 전쟁이 끝난 뒤 딸은 【108】으로 유학을 가서 【109】을 공부했다.\n이인국은 현재 종합 병원의 원장으로 있으며, 재혼한 혜숙과 그 사이에서 태어난 돌 지난 아들과 함께 살고 있다. 딸 【111】가 그곳의 지도 교수와 결혼하겠다고 하자, 이인국은 딸이 있는 나라에 가기 위해 미국 대사관의 【112】 씨를 만날 준비를 하고 있다."}, {"title": "발단 — 과거 회상 (8·15 광복 직후, 북쪽)", "paras": [["해방이 되었지만 이인국은 자신의 ", 113, " 행위 때문에 불안과 초조에 휘몰려 잠을 제대로 이루지 못했다."], ["그렇게 붐비던 병원이 텅 빈 것은, 주로 ", 114, " 환자를 받던 곳이었는데 광복으로 그들이 물러가거나 끌려갔기 때문이다. 다다미방에서 훈도시와 유카타 바람으로 뒹구는 이인국은 생활 방식까지 ", 115, "을 그대로 따르고 있었다."], ["은행 철문에 붙은 ", 116, "에는 '", 117, ", 민족 반역자를 타도하자'라고 쓰여 있었다. 이인국은 그것을 보면서 어제저녁에 마주쳤던 ", 118, "의 비웃는 듯한 얼굴을 떠올리고 꺼림텁텁함을 느꼈다."]], "plain": "해방이 되었지만 이인국은 자신의 【113】 행위 때문에 불안과 초조에 휘몰려 잠을 제대로 이루지 못했다.\n그렇게 붐비던 병원이 텅 빈 것은, 주로 【114】 환자를 받던 곳이었는데 광복으로 그들이 물러가거나 끌려갔기 때문이다. 다다미방에서 훈도시와 유카타 바람으로 뒹구는 이인국은 생활 방식까지 【115】을 그대로 따르고 있었다.\n은행 철문에 붙은 【116】에는 '【117】, 민족 반역자를 타도하자'라고 쓰여 있었다. 이인국은 그것을 보면서 어제저녁에 마주쳤던 【118】의 비웃는 듯한 얼굴을 떠올리고 꺼림텁텁함을 느꼈다."}, {"title": "전개 1 — 더 먼 과거 회상 (일제 강점기)", "paras": [["형무소에서 ", 119, "으로 가출옥된 중환자가 병원에 업혀 왔다. 이인국은 환자를 받을지 망설였다."], ["환자의 몰골로 보아 ", 120, "를 받기 어려울 만큼 가난해 보였고, 일본인 간부급들이 제집처럼 들락날락하는 병원에 이런 ", 121, "을 들이는 것이 떳떳하지 못했으며, 자타가 공인하는 모범적인 ", 122, "의 공든 탑이 하루아침에 무너질 것 같았기 때문이다. 이인국은 환자의 목숨보다 자신의 안위와 ", 123, "을 더 중요하게 여긴 것이다."], ["결국 이인국은 중환자에게 ", 124, "만 해 주고 ", 125, "이 없다는 구실로 돌려보냈다."]], "plain": "형무소에서 【119】으로 가출옥된 중환자가 병원에 업혀 왔다. 이인국은 환자를 받을지 망설였다.\n환자의 몰골로 보아 【120】를 받기 어려울 만큼 가난해 보였고, 일본인 간부급들이 제집처럼 들락날락하는 병원에 이런 【121】을 들이는 것이 떳떳하지 못했으며, 자타가 공인하는 모범적인 【122】의 공든 탑이 하루아침에 무너질 것 같았기 때문이다. 이인국은 환자의 목숨보다 자신의 안위와 【123】을 더 중요하게 여긴 것이다.\n결국 이인국은 중환자에게 【124】만 해 주고 【125】이 없다는 구실로 돌려보냈다."}, {"title": "전개 1 — 과거 회상 (8·15 광복 직후, 북쪽)", "paras": [["해방 경축 시가행진에서 살기 어린 눈으로 이인국을 노려보던 젊은이는, 이인국이 입원을 ", 126, "했던 사상범 환자 춘석이었다. 이인국은 ", 127, "이 두려워 되도록 거리에 나가지 않으려 했다."], [128, "이 시가로 들어오며 밖이 시끄러워지자, 이인국은 벽장문을 열고 '", 129, "'라고 쓰인 액자의 모조지를 꺼내어 잘게 찢어 버렸다. 그 표창은 온 가족이 집 안에서도 ", 130, "만 쓰는 집에 주어지는 것으로, 이인국은 그것이 일본인과의 교제에서 떳떳한 구실이 된다고 여겨 ", 131, "롭게 생각하였다. 이인국은 아이들을 소학교 때부터 ", 132, "에 보낼 만큼 일제에 적극 협조하였다."], ["이인국은 저금통장의 잔액을 깡그리 ", 133, "으로 바꾸어 안방 단스의 손금고에 넣어 두었다. 그리고 ", 134, " 다이얼을 돌려 서울 소식까지 살피며 시대 상황을 빠르게 파악하고 거기에 맞추어 ", 135, "하려 하였다."], ["진군해 오는 군대를 보면서도 이인국은 앞으로 닥칠 자기 앞일만 걱정할 뿐, 지난 일에 대한 ", 136, "이나 가책 같은 것은 아예 없었다."]], "plain": "해방 경축 시가행진에서 살기 어린 눈으로 이인국을 노려보던 젊은이는, 이인국이 입원을 【126】했던 사상범 환자 춘석이었다. 이인국은 【127】이 두려워 되도록 거리에 나가지 않으려 했다.\n【128】이 시가로 들어오며 밖이 시끄러워지자, 이인국은 벽장문을 열고 '【129】'라고 쓰인 액자의 모조지를 꺼내어 잘게 찢어 버렸다. 그 표창은 온 가족이 집 안에서도 【130】만 쓰는 집에 주어지는 것으로, 이인국은 그것이 일본인과의 교제에서 떳떳한 구실이 된다고 여겨 【131】롭게 생각하였다. 이인국은 아이들을 소학교 때부터 【132】에 보낼 만큼 일제에 적극 협조하였다.\n이인국은 저금통장의 잔액을 깡그리 【133】으로 바꾸어 안방 단스의 손금고에 넣어 두었다. 그리고 【134】 다이얼을 돌려 서울 소식까지 살피며 시대 상황을 빠르게 파악하고 거기에 맞추어 【135】하려 하였다.\n진군해 오는 군대를 보면서도 이인국은 앞으로 닥칠 자기 앞일만 걱정할 뿐, 지난 일에 대한 【136】이나 가책 같은 것은 아예 없었다."}, {"title": "전개 2 — 현재(서울) → 과거 회상 (소련군 주둔 시기, 북쪽)", "paras": [["이인국은 석간신문의 '북한 소련 유학생 ", 201, "으로 탈출'이라는 기사를 보고 ", 202, "로 유학 보낸 아들 원식을 떠올렸다."], ["이인국은 아들에게 \"왜정 때는 ", 204, " 말이 출세를 시켰지만, 이제는 ", 205, "가 판을 친다\"라며 공부를 열심히 하라고 일렀다. 출신 계급이나 ", 206, "으로는 아들을 유학 보낼 처지가 아니었으나, 이인국은 요직에 있는 당 간부의 ", 207, "을 받아 냈다."]], "plain": "이인국은 석간신문의 '북한 소련 유학생 【201】으로 탈출'이라는 기사를 보고 【202】로 유학 보낸 아들 원식을 떠올렸다.\n이인국은 아들에게 \"왜정 때는 【204】 말이 출세를 시켰지만, 이제는 【205】가 판을 친다\"라며 공부를 열심히 하라고 일렀다. 출신 계급이나 【206】으로는 아들을 유학 보낼 처지가 아니었으나, 이인국은 요직에 있는 당 간부의 【207】을 받아 냈다."}, {"title": "전개 2 — 과거 회상 (소련군 주둔 시기) → 현재", "paras": [["아내는 \"여보, ", 208, "으로 삽시다.\"라며 반대했지만, 이인국은 \"", 209, "두 굴에 가야 잡는 법이오.\"라며 아들의 유학을 ", 210, "하였다. 이인국은 출세하려면 새로 들어온 사람들과 친해야 하니 아들을 유학 보내 그들의 ", 211, "을 얻어야 한다고 생각했고, 아내는 출세하려다 도리어 새로운 ", 212, "에 빠질 수도 있다고 걱정했다."], ["아들이 유학을 떠난 다음 해에 ", 213, "이 터졌고, 이인국은 ", 214, " 때 아내와 딸을 데리고 남쪽으로 내려왔으며, 아들은 생사조차 알 수 없게 되었다."], ["'이 자식은 무얼 꾸물꾸물하느라고 이런 축에도 끼지 못한담…….' 이인국은 전쟁 이후 우리나라에서 소련의 ", 215, "이 꺾였다는 것을 아들이 왜 모르는지 답답했다."]], "plain": "아내는 \"여보, 【208】으로 삽시다.\"라며 반대했지만, 이인국은 \"【209】두 굴에 가야 잡는 법이오.\"라며 아들의 유학을 【210】하였다. 이인국은 출세하려면 새로 들어온 사람들과 친해야 하니 아들을 유학 보내 그들의 【211】을 얻어야 한다고 생각했고, 아내는 출세하려다 도리어 새로운 【212】에 빠질 수도 있다고 걱정했다.\n아들이 유학을 떠난 다음 해에 【213】이 터졌고, 이인국은 【214】 때 아내와 딸을 데리고 남쪽으로 내려왔으며, 아들은 생사조차 알 수 없게 되었다.\n'이 자식은 무얼 꾸물꾸물하느라고 이런 축에도 끼지 못한담…….' 이인국은 전쟁 이후 우리나라에서 소련의 【215】이 꺾였다는 것을 아들이 왜 모르는지 답답했다."}, {"title": "전개 2 — 과거 회상 (8·15 광복 직후, 북쪽)", "paras": [["자위대가 ", 216, "로 바뀐 다음 날, 이인국은 친일을 한 죄로 그곳에 연행되어 시멘트 바닥에 무릎을 꿇고 ", 217, "를 당했다. 완장을 차고 그를 다그친 사람은 ", 218, "이었다."], ["이인국은 이렇게 될 줄 알았다면 진작 ", 219, "으로 도피했을 것이라며, 잘못을 반성하기보다 도망가지 못한 것을 후회하였다. 광복 직후 ", 220, "을 기준으로 북쪽에는 소련군이 들어와 있었다."], ["파란 중대가리의 소련 병사는 이인국에게서 ", 221, "를 빼앗아 갔다. 이인국은 두 손으로 양복 안주머니를 감싸 쥐며 끝까지 ", 222, ". 그것은 ", 223, "을 졸업하며 받은 상품으로, 이인국의 ", 224, "과 지난날의 영예를 상징하는 물건이었다."]], "plain": "자위대가 【216】로 바뀐 다음 날, 이인국은 친일을 한 죄로 그곳에 연행되어 시멘트 바닥에 무릎을 꿇고 【217】를 당했다. 완장을 차고 그를 다그친 사람은 【218】이었다.\n이인국은 이렇게 될 줄 알았다면 진작 【219】으로 도피했을 것이라며, 잘못을 반성하기보다 도망가지 못한 것을 후회하였다. 광복 직후 【220】을 기준으로 북쪽에는 소련군이 들어와 있었다.\n파란 중대가리의 소련 병사는 이인국에게서 【221】를 빼앗아 갔다. 이인국은 두 손으로 양복 안주머니를 감싸 쥐며 끝까지 【222】. 그것은 【223】을 졸업하며 받은 상품으로, 이인국의 【224】과 지난날의 영예를 상징하는 물건이었다."}, {"title": "전개 2 — 감방에서", "paras": [["뒷날 ", 225, "가 그 시계를 찾아 돌려주어 시계는 다시 이인국의 손에 들어온다."], ["감방 안에서 이인국은 자신의 ", 226, "을 폭로하기도 싫었고, 예전에 고등계 형사들에게서 얻어들은 대로 '", 227, "이 상책'이라 여겨 거의 말을 하지 않고 지냈다. 그러면서도 앞일에 대비하여 ", 228, " 회화책을 거의 암송하다시피 공부하였다."], ["그는 자신이 ", 229, " 백성으로서 어쩔 수 없었다고 하며, 반성 없이 자기 ", 230, "를 하였다. 이인국은 최종 취조에서 자신이 ", 231, "라는 말을 듣고 고개를 갸웃거리던 소좌의 표정에서 살아남을지도 모른다는 ", 232, "을 얻었다."]], "plain": "뒷날 【225】가 그 시계를 찾아 돌려주어 시계는 다시 이인국의 손에 들어온다.\n감방 안에서 이인국은 자신의 【226】을 폭로하기도 싫었고, 예전에 고등계 형사들에게서 얻어들은 대로 '【227】이 상책'이라 여겨 거의 말을 하지 않고 지냈다. 그러면서도 앞일에 대비하여 【228】 회화책을 거의 암송하다시피 공부하였다.\n그는 자신이 【229】 백성으로서 어쩔 수 없었다고 하며, 반성 없이 자기 【230】를 하였다. 이인국은 최종 취조에서 자신이 【231】라는 말을 듣고 고개를 갸웃거리던 소좌의 표정에서 살아남을지도 모른다는 【232】을 얻었다."}, {"title": "위기 → 절정", "paras": [["감방 안에 피똥을 누는 급성 전염병 ", 301, " 환자가 생겨 여러 감방으로 번졌다. 이 일을 계기로 의사였던 이인국은 임시로 ", 302, "에서 일하라는 명령을 받아 감방에서 벗어나게 되었다."], ["이인국은 '", 303, "이 무너져도 솟아날 구멍이 있다'라는 속담을 떠올렸으나, 소련군 앞에서는 ", 304, "을 드러내지 않으려고 이를 악물었다. 그리고 자신의 ", 305, "을 인정받아 스텐코프를 비롯한 소련군 ", 306, "들에게 잘 보이기 위해 있는 힘을 다해 환자를 돌보았다."], ["이인국은 스텐코프가 보기 흉한 ", 307, "을 달고도 높은 자리에 오른 것을 보고 그가 대단한 힘을 가졌다고 짐작하여, ", 308, "로 인사말을 주고받을 만큼 친해지려 노력하였다. 이인국은 예전에 일본인 ", 309, "을 수술했던 경험을 들어 자신 있게 수술을 자청하였고, 실패하면 ", 310, "에 처한다는 ", 311, "까지 쓰고 수술대에 섰다. 수술은 예상 이상의 ", 312, "에 끝났다."]], "plain": "감방 안에 피똥을 누는 급성 전염병 【301】 환자가 생겨 여러 감방으로 번졌다. 이 일을 계기로 의사였던 이인국은 임시로 【302】에서 일하라는 명령을 받아 감방에서 벗어나게 되었다.\n이인국은 '【303】이 무너져도 솟아날 구멍이 있다'라는 속담을 떠올렸으나, 소련군 앞에서는 【304】을 드러내지 않으려고 이를 악물었다. 그리고 자신의 【305】을 인정받아 스텐코프를 비롯한 소련군 【306】들에게 잘 보이기 위해 있는 힘을 다해 환자를 돌보았다.\n이인국은 스텐코프가 보기 흉한 【307】을 달고도 높은 자리에 오른 것을 보고 그가 대단한 힘을 가졌다고 짐작하여, 【308】로 인사말을 주고받을 만큼 친해지려 노력하였다. 이인국은 예전에 일본인 【309】을 수술했던 경험을 들어 자신 있게 수술을 자청하였고, 실패하면 【310】에 처한다는 【311】까지 쓰고 수술대에 섰다. 수술은 예상 이상의 【312】에 끝났다."}, {"title": "절정", "paras": [["완치되어 퇴원하는 날, 스텐코프는 이인국의 손을 부서져라 쥐면서 \"", 313, " 리, ", 314, ".\"라고 외쳤다. 이 말의 앞부분은 영어 ", 315, "에 해당하는 러시아어로, '우두머리·", 316, "'라는 뜻이다."], ["수술을 성공시킨 이인국은 감방에서 나와 집에서 ", 317, "할 수 있게 되었고, 빼앗겼던 ", 318, "도 되찾았다."]], "plain": "완치되어 퇴원하는 날, 스텐코프는 이인국의 손을 부서져라 쥐면서 \"【313】 리, 【314】.\"라고 외쳤다. 이 말의 앞부분은 영어 【315】에 해당하는 러시아어로, '우두머리·【316】'라는 뜻이다.\n수술을 성공시킨 이인국은 감방에서 나와 집에서 【317】할 수 있게 되었고, 빼앗겼던 【318】도 되찾았다."}, {"title": "결말 — 현재 (6·25 전쟁 이후, 서울)", "paras": [["이인국은 미국 ", 319, "의 브라운 씨 관사에 닿아, ", 320, "를 보면서 그날의 ", 321, "와 돌려받은 시계를 함께 떠올렸다."], ["브라운 씨 방 안에 《이조실록》, 《대동야승》 같은 한적과 고서, ", 322, "과 골동품이 가득한 것을 보고 이인국은 얼굴이 ", 323, "해졌다. 이인국은 상감 진사 ", 324, " 화병을 선물하면서, 나라의 보물을 ", 325, "로 내보낸다는 자책감보다 오히려 자기 선물이 너무 ", 326, "해 보이지 않을까를 걱정하였다."], ["이 장면을 통해 작가는 자기 이익을 위해서라면 민족의 ", 327, "까지 서슴없이 넘겨주는, 권력에 빌붙는 ", 328, "·기득권층의 태도를 비판한다."]], "plain": "이인국은 미국 【319】의 브라운 씨 관사에 닿아, 【320】를 보면서 그날의 【321】와 돌려받은 시계를 함께 떠올렸다.\n브라운 씨 방 안에 《이조실록》, 《대동야승》 같은 한적과 고서, 【322】과 골동품이 가득한 것을 보고 이인국은 얼굴이 【323】해졌다. 이인국은 상감 진사 【324】 화병을 선물하면서, 나라의 보물을 【325】로 내보낸다는 자책감보다 오히려 자기 선물이 너무 【326】해 보이지 않을까를 걱정하였다.\n이 장면을 통해 작가는 자기 이익을 위해서라면 민족의 【327】까지 서슴없이 넘겨주는, 권력에 빌붙는 【328】·기득권층의 태도를 비판한다."}, {"title": "결말", "paras": [["이인국은 미국에 갈 수 있도록 국무성의 ", 329, "를 받아 달라고 브라운 씨에게 부탁해 두었다. 이인국은 브라운 씨를 보며 ", 330, "를 겹쳐 떠올린다. 둘 다 그 시기에 가장 큰 힘을 지닌 나라의 인물이며, 이인국이 부와 권력을 얻기 위해 붙잡은 대상이다. 그래서 '스바씨보'와 '", 331, "'가 나란히 놓인다."], ["브라운 씨를 만나고 나오며 이인국은 혼자 되뇌었다. '흥, 그 사마귀 같은 ", 332, " 놈들 틈에서도 살았고, 닥싸귀 같은 ", 333, " 속에서도 살아났는데, ", 334, "라고 다를까……. 혁명이 일겠으면 일고, 나라가 바뀌겠으면 바뀌고, 아직 이 이인국의 살 ", 335, "은 막히지 않았다. 나보다 얼마든지 날뛰던 놈들도 있는데, 나쯤이야…….'"], ["소설은 맑은 가을 하늘이 이인국 박사에게 더욱 푸르고 드높게만 느껴졌다는 문장으로 끝난다. 반성 없이 또 한 번 ", 336, "을 거둔 이인국의 들뜬 마음을 밝은 풍경으로 보여 주어, 이런 사람이 계속 잘사는 현실을 더욱 씁쓸하게 느끼게 한다."]], "plain": "이인국은 미국에 갈 수 있도록 국무성의 【329】를 받아 달라고 브라운 씨에게 부탁해 두었다. 이인국은 브라운 씨를 보며 【330】를 겹쳐 떠올린다. 둘 다 그 시기에 가장 큰 힘을 지닌 나라의 인물이며, 이인국이 부와 권력을 얻기 위해 붙잡은 대상이다. 그래서 '스바씨보'와 '【331】'가 나란히 놓인다.\n브라운 씨를 만나고 나오며 이인국은 혼자 되뇌었다. '흥, 그 사마귀 같은 【332】 놈들 틈에서도 살았고, 닥싸귀 같은 【333】 속에서도 살아났는데, 【334】라고 다를까……. 혁명이 일겠으면 일고, 나라가 바뀌겠으면 바뀌고, 아직 이 이인국의 살 【335】은 막히지 않았다. 나보다 얼마든지 날뛰던 놈들도 있는데, 나쯤이야…….'\n소설은 맑은 가을 하늘이 이인국 박사에게 더욱 푸르고 드높게만 느껴졌다는 문장으로 끝난다. 반성 없이 또 한 번 【336】을 거둔 이인국의 들뜬 마음을 밝은 풍경으로 보여 주어, 이런 사람이 계속 잘사는 현실을 더욱 씁쓸하게 느끼게 한다."}], "order": [101, 102, 103, 104, 105, 106, 107, 108, 109, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 201, 202, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336]}, {"no": 2, "name": "작품 정리하기", "fileLabel": "2단계작품정리", "goal": "작품의 구성과 주제를 정리한다", "scenes": [{"title": "갈래와 구성", "paras": [["〈꺼삐딴 리〉의 갈래는 현대 ", 423, "이며, 시간적 배경은 ", 404, "에서 1950년대까지이다. 이야기는 현재와 과거를 오가며 전개되는 ", 401, " 구성을 취한다."], ["발단은 ", 402, " 직후를 배경으로 하고, 결말은 6·25 전쟁 이후 ", 403, "을 배경으로 한다."]], "plain": "〈꺼삐딴 리〉의 갈래는 현대 【423】이며, 시간적 배경은 【404】에서 1950년대까지이다. 이야기는 현재와 과거를 오가며 전개되는 【401】 구성을 취한다.\n발단은 【402】 직후를 배경으로 하고, 결말은 6·25 전쟁 이후 【403】을 배경으로 한다."}, {"title": "등장인물", "paras": [["나미는 6·25 전쟁이 끝난 뒤 미국으로 유학을 떠난 이인국의 ", 406, "이다."], ["춘석은 일제 강점기 말 이인국의 병원에 입원하려 하였으나 거부당한 ", 407, "으로, 광복 후 치안대에 끌려온 이인국을 ", 408, "한다."], ["스텐코프는 이인국이 치안대에 끌려갔을 때 만난 ", 409, " 장교로, 이인국이 자신의 혹을 제거하는 수술에 성공하자 그를 믿고 도와준다."], ["브라운은 ", 410, "에서 일하며 이인국의 미국행을 도와준다."]], "plain": "나미는 6·25 전쟁이 끝난 뒤 미국으로 유학을 떠난 이인국의 【406】이다.\n춘석은 일제 강점기 말 이인국의 병원에 입원하려 하였으나 거부당한 【407】으로, 광복 후 치안대에 끌려온 이인국을 【408】한다.\n스텐코프는 이인국이 치안대에 끌려갔을 때 만난 【409】 장교로, 이인국이 자신의 혹을 제거하는 수술에 성공하자 그를 믿고 도와준다.\n브라운은 【410】에서 일하며 이인국의 미국행을 도와준다."}, {"title": "시대에 따라 달라지는 이인국의 모습과 주제", "paras": [["이인국이 살아간 공간은 한반도의 남쪽과 ", 405, "이다."], ["이인국은 일제 강점기에 ", 411, "에 적극 협조하며 부와 권력을 누렸고, 8·15 광복 직후에는 친일 행적이 ", 412, "될까 봐 초조해하며 상황을 지켜보았다. 소련군 주둔 시기에는 소련에 ", 413, "적인 태도를 보이며 부와 권력을 다시 얻으려 노력했고, 6·25 전쟁 이후에는 ", 414, "에 기대어 부와 권력을 유지했다."], ["이처럼 이인국은 친일, ", 415, ", 친미 행적을 차례로 보인다. 6·25 전쟁이 끝난 뒤에는 ", 416, "를 공부하고 딸을 유학 보냈다. 그는 옳고 그름과는 상관없이 자신의 이익과 ", 417, "만을 위해 행동하며, 그때그때의 상황에 맞춰 살길을 찾는다."], ["〈꺼삐딴 리〉는 시대와 상황에 따라 빠르게 모습을 바꾸는 ", 418, "의 삶을 ", 419, "하는 작품이다. 이 작품에는 급변하는 시대에 ", 424, "하는 인물의 모습이 잘 나타나며, 작가는 그런 인물의 삶을 ", 420, "한다."]], "plain": "이인국이 살아간 공간은 한반도의 남쪽과 【405】이다.\n이인국은 일제 강점기에 【411】에 적극 협조하며 부와 권력을 누렸고, 8·15 광복 직후에는 친일 행적이 【412】될까 봐 초조해하며 상황을 지켜보았다. 소련군 주둔 시기에는 소련에 【413】적인 태도를 보이며 부와 권력을 다시 얻으려 노력했고, 6·25 전쟁 이후에는 【414】에 기대어 부와 권력을 유지했다.\n이처럼 이인국은 친일, 【415】, 친미 행적을 차례로 보인다. 6·25 전쟁이 끝난 뒤에는 【416】를 공부하고 딸을 유학 보냈다. 그는 옳고 그름과는 상관없이 자신의 이익과 【417】만을 위해 행동하며, 그때그때의 상황에 맞춰 살길을 찾는다.\n〈꺼삐딴 리〉는 시대와 상황에 따라 빠르게 모습을 바꾸는 【418】의 삶을 【419】하는 작품이다. 이 작품에는 급변하는 시대에 【424】하는 인물의 모습이 잘 나타나며, 작가는 그런 인물의 삶을 【420】한다."}, {"title": "제목과 감상", "paras": [["'꺼삐딴'은 영어 '캡틴(captain)'에 해당하는 러시아어로, 광복 직후 ", 422, "에서 '우두머리'나 '최고'라는 뜻으로 쓰였다. 제목 '꺼삐딴 리'는 ", 421, "의 기회주의적 행태를 드러내는 동시에 이를 풍자한다."], ["작품에 반영된 과거의 삶을 오늘날 우리의 삶과 ", 427, "지어 생각하며 감상하면, 과거의 삶을 통해 오늘날 우리의 삶을 돌아보는 ", 425, "의 기회가 되고, 작품을 자신의 상황에 비추어 ", 426, "으로 감상하는 능력을 기를 수 있다."]], "plain": "'꺼삐딴'은 영어 '캡틴(captain)'에 해당하는 러시아어로, 광복 직후 【422】에서 '우두머리'나 '최고'라는 뜻으로 쓰였다. 제목 '꺼삐딴 리'는 【421】의 기회주의적 행태를 드러내는 동시에 이를 풍자한다.\n작품에 반영된 과거의 삶을 오늘날 우리의 삶과 【427】지어 생각하며 감상하면, 과거의 삶을 통해 오늘날 우리의 삶을 돌아보는 【425】의 기회가 되고, 작품을 자신의 상황에 비추어 【426】으로 감상하는 능력을 기를 수 있다."}], "order": [423, 404, 401, 402, 403, 406, 407, 408, 409, 410, 405, 411, 412, 413, 414, 415, 416, 417, 418, 419, 424, 420, 422, 421, 427, 425, 426]}], "items": {"101": {"id": 101, "category": "plot", "answer": "제국 대학", "alts": ["제국대", "제국대학교"], "detail": "제국 대학 출신이라는 자부심은 뒤에 나오는 회중시계로 이어진다.", "section": "장면 1 · 지금까지의 이야기", "scene": 0, "text": "이인국 박사는 일제 강점기에 ___을 졸업한 뒤 수술 실력이 뛰어난 의사로 이름을 날렸다."}, "102": {"id": 102, "category": "character", "answer": "의사", "alts": ["외과 의사", "외과의", "의사 선생"], "detail": "의사라는 직업은 뒤에서 그가 위기를 벗어나는 열쇠가 된다.", "section": "장면 1 · 지금까지의 이야기", "scene": 0, "text": "이인국 박사는 일제 강점기에 제국 대학을 졸업한 뒤 수술 실력이 뛰어난 ___로 이름을 날렸다."}, "103": {"id": 103, "category": "motive", "answer": "처세술", "alts": ["처세", "처세법", "처세 방법"], "detail": "처세술은 이인국이라는 인물을 설명하는 핵심어다.", "section": "장면 1 · 지금까지의 이야기", "scene": 0, "text": "8·15 광복 이후 혼란의 소용돌이 속에서도 뛰어난 ___로 난국을 헤쳐 나왔고, 1·4 후퇴 때 청진기가 든 손가방 하나를 들고 남으로 내려와 서울에 병원을 차렸다."}, "104": {"id": 104, "category": "symbol", "answer": "청진기", "alts": [], "detail": "빈손으로 내려와도 의사라는 밑천만은 챙겼다.", "section": "장면 1 · 지금까지의 이야기", "scene": 0, "text": "8·15 광복 이후 혼란의 소용돌이 속에서도 뛰어난 처세술로 난국을 헤쳐 나왔고, 1·4 후퇴 때 ___가 든 손가방 하나를 들고 남으로 내려와 서울에 병원을 차렸다."}, "105": {"id": 105, "category": "setting", "answer": "서울", "alts": ["서울시"], "detail": "현재 이야기의 공간은 서울이다.", "section": "장면 1 · 지금까지의 이야기", "scene": 0, "text": "8·15 광복 이후 혼란의 소용돌이 속에서도 뛰어난 처세술로 난국을 헤쳐 나왔고, 1·4 후퇴 때 청진기가 든 손가방 하나를 들고 남으로 내려와 ___에 병원을 차렸다."}, "106": {"id": 106, "category": "character", "answer": "생사", "alts": ["생사 여부", "생존 여부", "소식", "행방"], "detail": "아들 원식의 소식은 6·25 전쟁 뒤 끊겼다.", "section": "장면 1 · 지금까지의 이야기", "scene": 0, "text": "그사이 소련으로 유학 간 아들은 ___를 모르게 되었고, 아내는 거제도 수용소에서 죽었다."}, "107": {"id": 107, "category": "character", "answer": "아내", "alts": ["부인", "처", "마누라", "와이프", "집사람", "전처"], "detail": "전쟁 중 아내를 잃었지만 이인국의 삶의 방식은 바뀌지 않는다.", "section": "장면 1 · 지금까지의 이야기", "scene": 0, "text": "그사이 소련으로 유학 간 아들은 생사를 모르게 되었고, ___는 거제도 수용소에서 죽었다."}, "108": {"id": 108, "category": "setting", "answer": "미국", "alts": ["아메리카", "미합중국"], "detail": "아들은 소련, 딸은 미국 — 시대의 권력에 맞춰 자식을 보냈다.", "section": "장면 1 · 지금까지의 이야기", "scene": 0, "text": "전쟁이 끝난 뒤 딸은 ___으로 유학을 가서 영문학을 공부했다."}, "109": {"id": 109, "category": "plot", "answer": "영문학", "alts": ["영어", "영어영문학", "영문과"], "detail": "딸이 영어권 학문을 택한 것도 친미 행적의 하나로 읽힌다.", "section": "장면 1 · 지금까지의 이야기", "scene": 0, "text": "전쟁이 끝난 뒤 딸은 미국으로 유학을 가서 ___을 공부했다."}, "111": {"id": 111, "category": "character", "answer": "나미", "alts": [], "detail": "미국행의 표면적 계기는 딸의 결혼이다.", "section": "장면 1 · 지금까지의 이야기", "scene": 0, "text": "딸 ___가 그곳의 지도 교수와 결혼하겠다고 하자, 이인국은 딸이 있는 나라에 가기 위해 미국 대사관의 브라운 씨를 만날 준비를 하고 있다."}, "112": {"id": 112, "category": "character", "answer": "브라운", "alts": [], "detail": "브라운은 결말에서 다시 등장한다.", "section": "장면 1 · 지금까지의 이야기", "scene": 0, "text": "딸 나미가 그곳의 지도 교수와 결혼하겠다고 하자, 이인국은 딸이 있는 나라에 가기 위해 미국 대사관의 ___ 씨를 만날 준비를 하고 있다."}, "113": {"id": 113, "category": "motive", "answer": "친일", "alts": ["친일파", "매국", "반민족"], "detail": "해방은 이인국에게 기쁨이 아니라 위기였다.", "section": "장면 2 · 발단 — 과거 회상 (8·15 광복 직후, 북쪽)", "scene": 1, "text": "해방이 되었지만 이인국은 자신의 ___ 행위 때문에 불안과 초조에 휘몰려 잠을 제대로 이루지 못했다."}, "114": {"id": 114, "category": "plot", "answer": "일본인", "alts": ["일본 사람", "일본"], "detail": "광복으로 그 환자들이 물러가거나 끌려갔다.", "section": "장면 2 · 발단 — 과거 회상 (8·15 광복 직후, 북쪽)", "scene": 1, "text": "그렇게 붐비던 병원이 텅 빈 것은, 주로 ___ 환자를 받던 곳이었는데 광복으로 그들이 물러가거나 끌려갔기 때문이다."}, "115": {"id": 115, "category": "symbol", "answer": "일본", "alts": ["일본인", "일본 사람", "일제", "왜", "일본식", "일본 방식", "일본 생활 방식"], "detail": "집안 모습과 옷차림이 인물의 친일 성향을 드러낸다.", "section": "장면 2 · 발단 — 과거 회상 (8·15 광복 직후, 북쪽)", "scene": 1, "text": "다다미방에서 훈도시와 유카타 바람으로 뒹구는 이인국은 생활 방식까지 ___을 그대로 따르고 있었다."}, "116": {"id": 116, "category": "symbol", "answer": "벽보", "alts": ["포스터", "전단", "전단지", "게시물", "대자보", "벽서"], "detail": "벽보는 해방 직후 거리의 분위기를 보여 주는 소재다.", "section": "장면 2 · 발단 — 과거 회상 (8·15 광복 직후, 북쪽)", "scene": 1, "text": "은행 철문에 붙은 ___에는 '친일파, 민족 반역자를 타도하자'라고 쓰여 있었다."}, "117": {"id": 117, "category": "setting", "answer": "친일파", "alts": ["친일", "친일 분자", "친일분자", "친일 세력"], "detail": "친일파를 처벌하려는 해방 직후의 사회 분위기다.", "section": "장면 2 · 발단 — 과거 회상 (8·15 광복 직후, 북쪽)", "scene": 1, "text": "은행 철문에 붙은 벽보에는 '___, 민족 반역자를 타도하자'라고 쓰여 있었다."}, "118": {"id": 118, "category": "character", "answer": "춘석", "alts": [], "detail": "춘석이 누구인지는 곧 이어지는 회상에서 밝혀진다.", "section": "장면 2 · 발단 — 과거 회상 (8·15 광복 직후, 북쪽)", "scene": 1, "text": "이인국은 그것을 보면서 어제저녁에 마주쳤던 ___의 비웃는 듯한 얼굴을 떠올리고 꺼림텁텁함을 느꼈다."}, "119": {"id": 119, "category": "plot", "answer": "병보석", "alts": ["보석"], "detail": "이 환자가 바로 춘석이다.", "section": "장면 3 · 전개 1 — 더 먼 과거 회상 (일제 강점기)", "scene": 2, "text": "형무소에서 ___으로 가출옥된 중환자가 병원에 업혀 왔다."}, "120": {"id": 120, "category": "motive", "answer": "병원비", "alts": ["치료비", "입원비", "진료비", "돈", "병원 비용"], "detail": "입원을 망설인 첫째 까닭 — 돈.", "section": "장면 3 · 전개 1 — 더 먼 과거 회상 (일제 강점기)", "scene": 2, "text": "환자의 몰골로 보아 ___를 받기 어려울 만큼 가난해 보였고, 일본인 간부급들이 제집처럼 들락날락하는 병원에 이런 사상범을 들이는 것이 떳떳하지 못했으며, 자타가 공인하는 모범적인 황국 신민의 공든 탑이 하루아침에 무너질 것 같았기 때문이다."}, "121": {"id": 121, "category": "motive", "answer": "사상범", "alts": ["정치범", "사상 범죄자"], "detail": "입원을 망설인 둘째 까닭 — 체면.", "section": "장면 3 · 전개 1 — 더 먼 과거 회상 (일제 강점기)", "scene": 2, "text": "환자의 몰골로 보아 병원비를 받기 어려울 만큼 가난해 보였고, 일본인 간부급들이 제집처럼 들락날락하는 병원에 이런 ___을 들이는 것이 떳떳하지 못했으며, 자타가 공인하는 모범적인 황국 신민의 공든 탑이 하루아침에 무너질 것 같았기 때문이다."}, "122": {"id": 122, "category": "motive", "answer": "황국 신민", "alts": ["모범적인 황국 신민", "신민", "일본 신민", "일본 국민"], "detail": "입원을 망설인 셋째 까닭 — 친일로 쌓은 지위.", "section": "장면 3 · 전개 1 — 더 먼 과거 회상 (일제 강점기)", "scene": 2, "text": "환자의 몰골로 보아 병원비를 받기 어려울 만큼 가난해 보였고, 일본인 간부급들이 제집처럼 들락날락하는 병원에 이런 사상범을 들이는 것이 떳떳하지 못했으며, 자타가 공인하는 모범적인 ___의 공든 탑이 하루아침에 무너질 것 같았기 때문이다."}, "123": {"id": 123, "category": "theme", "answer": "이익", "alts": ["이득", "잇속", "실리", "출세", "이해관계"], "detail": "의사로서의 책임보다 자기 안위와 이익이 앞선다.", "section": "장면 3 · 전개 1 — 더 먼 과거 회상 (일제 강점기)", "scene": 2, "text": "이인국은 환자의 목숨보다 자신의 안위와 ___을 더 중요하게 여긴 것이다."}, "124": {"id": 124, "category": "plot", "answer": "응급 치료", "alts": ["응급처치", "응급조치", "간단한 치료", "임시 치료"], "detail": "최소한의 치료만 하고 책임을 피했다.", "section": "장면 3 · 전개 1 — 더 먼 과거 회상 (일제 강점기)", "scene": 2, "text": "결국 이인국은 중환자에게 ___만 해 주고 입원실이 없다는 구실로 돌려보냈다."}, "125": {"id": 125, "category": "plot", "answer": "입원실", "alts": ["병실", "빈 병실", "병상", "빈방", "자리"], "detail": "거절의 진짜 이유를 감춘 핑계다.", "section": "장면 3 · 전개 1 — 더 먼 과거 회상 (일제 강점기)", "scene": 2, "text": "결국 이인국은 중환자에게 응급 치료만 해 주고 ___이 없다는 구실로 돌려보냈다."}, "126": {"id": 126, "category": "plot", "answer": "거절", "alts": ["거부", "퇴짜", "입원 거절"], "detail": "과거의 선택이 해방 뒤 위협으로 돌아왔다.", "section": "장면 4 · 전개 1 — 과거 회상 (8·15 광복 직후, 북쪽)", "scene": 3, "text": "해방 경축 시가행진에서 살기 어린 눈으로 이인국을 노려보던 젊은이는, 이인국이 입원을 ___했던 사상범 환자 춘석이었다."}, "127": {"id": 127, "category": "motive", "answer": "보복", "alts": ["복수", "앙갚음", "해코지"], "detail": "반성이 아니라 두려움이 먼저다.", "section": "장면 4 · 전개 1 — 과거 회상 (8·15 광복 직후, 북쪽)", "scene": 3, "text": "이인국은 ___이 두려워 되도록 거리에 나가지 않으려 했다."}, "128": {"id": 128, "category": "setting", "answer": "소련군", "alts": ["소련", "소련 군대", "소련 군인", "러시아군", "로스케"], "detail": "광복 직후 북쪽에는 소련군이 들어왔다.", "section": "장면 4 · 전개 1 — 과거 회상 (8·15 광복 직후, 북쪽)", "scene": 3, "text": "___이 시가로 들어오며 밖이 시끄러워지자, 이인국은 벽장문을 열고 '국어 상용의 가'라고 쓰인 액자의 모조지를 꺼내어 잘게 찢어 버렸다."}, "129": {"id": 129, "category": "symbol", "answer": "국어 상용의 가", "alts": ["국어 상용", "국어 상용 가", "국어 상용의 집", "國語常用의家"], "detail": "친일의 증거를 없애려는 행동이다.", "section": "장면 4 · 전개 1 — 과거 회상 (8·15 광복 직후, 북쪽)", "scene": 3, "text": "소련군이 시가로 들어오며 밖이 시끄러워지자, 이인국은 벽장문을 열고 '___'라고 쓰인 액자의 모조지를 꺼내어 잘게 찢어 버렸다."}, "130": {"id": 130, "category": "symbol", "answer": "일본 말", "alts": ["일본어", "일어", "일본 언어", "왜말"], "detail": "여기서 '국어'는 우리말이 아니라 일본어다.", "section": "장면 4 · 전개 1 — 과거 회상 (8·15 광복 직후, 북쪽)", "scene": 3, "text": "그 표창은 온 가족이 집 안에서도 ___만 쓰는 집에 주어지는 것으로, 이인국은 그것이 일본인과의 교제에서 떳떳한 구실이 된다고 여겨 영예롭게 생각하였다."}, "131": {"id": 131, "category": "motive", "answer": "영예", "alts": ["영광", "명예", "자랑", "영예스"], "detail": "친일을 부끄러움이 아니라 자랑으로 여겼다.", "section": "장면 4 · 전개 1 — 과거 회상 (8·15 광복 직후, 북쪽)", "scene": 3, "text": "그 표창은 온 가족이 집 안에서도 일본 말만 쓰는 집에 주어지는 것으로, 이인국은 그것이 일본인과의 교제에서 떳떳한 구실이 된다고 여겨 ___롭게 생각하였다."}, "132": {"id": 132, "category": "plot", "answer": "일본 학교", "alts": ["일본인 학교", "일본 소학교", "일본계 학교"], "detail": "일제에 적극 협조한 모습이다.", "section": "장면 4 · 전개 1 — 과거 회상 (8·15 광복 직후, 북쪽)", "scene": 3, "text": "이인국은 아이들을 소학교 때부터 ___에 보낼 만큼 일제에 적극 협조하였다."}, "133": {"id": 133, "category": "plot", "answer": "현금", "alts": ["돈", "현찰"], "detail": "무슨 일이 생겨도 챙길 수 있게 대비했다.", "section": "장면 4 · 전개 1 — 과거 회상 (8·15 광복 직후, 북쪽)", "scene": 3, "text": "이인국은 저금통장의 잔액을 깡그리 ___으로 바꾸어 안방 단스의 손금고에 넣어 두었다."}, "134": {"id": 134, "category": "plot", "answer": "라디오", "alts": ["radio"], "detail": "정보를 모아 시대 상황을 살피는 행동이다.", "section": "장면 4 · 전개 1 — 과거 회상 (8·15 광복 직후, 북쪽)", "scene": 3, "text": "그리고 ___ 다이얼을 돌려 서울 소식까지 살피며 시대 상황을 빠르게 파악하고 거기에 맞추어 대응하려 하였다."}, "135": {"id": 135, "category": "motive", "answer": "대응", "alts": ["대처", "적응", "순응", "처신", "대비", "행동"], "detail": "상황에 맞춰 변신하는 처세술의 출발점이다.", "section": "장면 4 · 전개 1 — 과거 회상 (8·15 광복 직후, 북쪽)", "scene": 3, "text": "그리고 라디오 다이얼을 돌려 서울 소식까지 살피며 시대 상황을 빠르게 파악하고 거기에 맞추어 ___하려 하였다."}, "136": {"id": 136, "category": "motive", "answer": "뉘우침", "alts": ["반성", "후회", "참회", "죄책감", "죄의식"], "detail": "이인국은 끝까지 반성하지 않는 인물이다.", "section": "장면 4 · 전개 1 — 과거 회상 (8·15 광복 직후, 북쪽)", "scene": 3, "text": "진군해 오는 군대를 보면서도 이인국은 앞으로 닥칠 자기 앞일만 걱정할 뿐, 지난 일에 대한 ___이나 가책 같은 것은 아예 없었다."}, "201": {"id": 201, "category": "symbol", "answer": "서독", "alts": ["독일", "서독일"], "detail": "이 기사가 과거 회상의 계기가 된다.", "section": "장면 5 · 전개 2 — 현재(서울) → 과거 회상 (소련군 주둔 시기, 북쪽)", "scene": 4, "text": "이인국은 석간신문의 '북한 소련 유학생 ___으로 탈출'이라는 기사를 보고 모스크바로 유학 보낸 아들 원식을 떠올렸다."}, "202": {"id": 202, "category": "character", "answer": "모스크바", "alts": ["소련", "러시아", "노서아"], "detail": "현재(서울)에서 과거(북쪽)로 넘어가는 장면이다.", "section": "장면 5 · 전개 2 — 현재(서울) → 과거 회상 (소련군 주둔 시기, 북쪽)", "scene": 4, "text": "이인국은 석간신문의 '북한 소련 유학생 서독으로 탈출'이라는 기사를 보고 ___로 유학 보낸 아들 원식을 떠올렸다."}, "204": {"id": 204, "category": "plot", "answer": "일본", "alts": ["일본어", "일어", "왜"], "detail": "시대마다 출세의 수단이 되는 말이 달라진다고 본다.", "section": "장면 5 · 전개 2 — 현재(서울) → 과거 회상 (소련군 주둔 시기, 북쪽)", "scene": 4, "text": "이인국은 아들에게 \"왜정 때는 ___ 말이 출세를 시켰지만, 이제는 노어가 판을 친다\"라며 공부를 열심히 하라고 일렀다."}, "205": {"id": 205, "category": "plot", "answer": "노어", "alts": ["러시아어", "러시아 말", "노서아 말", "노서아어", "노서아", "소련 말", "소련어", "로어"], "detail": "노어는 러시아어의 옛 이름이다.", "section": "장면 5 · 전개 2 — 현재(서울) → 과거 회상 (소련군 주둔 시기, 북쪽)", "scene": 4, "text": "이인국은 아들에게 \"왜정 때는 일본 말이 출세를 시켰지만, 이제는 ___가 판을 친다\"라며 공부를 열심히 하라고 일렀다."}, "206": {"id": 206, "category": "motive", "answer": "성분", "alts": ["출신 성분", "신분", "배경"], "detail": "친일파 집안이라 조건이 맞지 않았다.", "section": "장면 5 · 전개 2 — 현재(서울) → 과거 회상 (소련군 주둔 시기, 북쪽)", "scene": 4, "text": "출신 계급이나 ___으로는 아들을 유학 보낼 처지가 아니었으나, 이인국은 요직에 있는 당 간부의 추천을 받아 냈다."}, "207": {"id": 207, "category": "plot", "answer": "추천", "alts": ["추천서", "소개", "천거"], "detail": "스텐코프 소좌를 배경으로 한 연줄을 이용했다.", "section": "장면 5 · 전개 2 — 현재(서울) → 과거 회상 (소련군 주둔 시기, 북쪽)", "scene": 4, "text": "출신 계급이나 성분으로는 아들을 유학 보낼 처지가 아니었으나, 이인국은 요직에 있는 당 간부의 ___을 받아 냈다."}, "208": {"id": 208, "category": "plot", "answer": "보통", "alts": ["평범", "무난"], "detail": "표 나지 않게 사는 것이 편하다는 아내의 생각이다.", "section": "장면 6 · 전개 2 — 과거 회상 (소련군 주둔 시기) → 현재", "scene": 5, "text": "아내는 \"여보, ___으로 삽시다.\"라며 반대했지만, 이인국은 \"호랑이두 굴에 가야 잡는 법이오.\"라며 아들의 유학을 강행하였다."}, "209": {"id": 209, "category": "theme", "answer": "호랑이", "alts": ["범", "호랑이도"], "detail": "위험을 무릅써야 큰 것을 얻는다는 속담을 끌어왔다.", "section": "장면 6 · 전개 2 — 과거 회상 (소련군 주둔 시기) → 현재", "scene": 5, "text": "아내는 \"여보, 보통으로 삽시다.\"라며 반대했지만, 이인국은 \"___두 굴에 가야 잡는 법이오.\"라며 아들의 유학을 강행하였다."}, "210": {"id": 210, "category": "plot", "answer": "강행", "alts": ["관철", "추진", "결정", "실행", "밀어붙"], "detail": "가족의 걱정보다 출세 계산이 앞섰다.", "section": "장면 6 · 전개 2 — 과거 회상 (소련군 주둔 시기) → 현재", "scene": 5, "text": "아내는 \"여보, 보통으로 삽시다.\"라며 반대했지만, 이인국은 \"호랑이두 굴에 가야 잡는 법이오.\"라며 아들의 유학을 ___하였다."}, "211": {"id": 211, "category": "motive", "answer": "신임", "alts": ["신뢰", "믿음", "인정", "호감", "환심"], "detail": "아들의 유학도 처세의 수단이다.", "section": "장면 6 · 전개 2 — 과거 회상 (소련군 주둔 시기) → 현재", "scene": 5, "text": "이인국은 출세하려면 새로 들어온 사람들과 친해야 하니 아들을 유학 보내 그들의 ___을 얻어야 한다고 생각했고, 아내는 출세하려다 도리어 새로운 위험에 빠질 수도 있다고 걱정했다."}, "212": {"id": 212, "category": "motive", "answer": "위험", "alts": ["위기", "곤경", "화", "불행", "고생"], "detail": "아내는 아들의 안전을 걱정했다.", "section": "장면 6 · 전개 2 — 과거 회상 (소련군 주둔 시기) → 현재", "scene": 5, "text": "이인국은 출세하려면 새로 들어온 사람들과 친해야 하니 아들을 유학 보내 그들의 신임을 얻어야 한다고 생각했고, 아내는 출세하려다 도리어 새로운 ___에 빠질 수도 있다고 걱정했다."}, "213": {"id": 213, "category": "setting", "answer": "6·25 전쟁", "alts": ["6·25", "한국 전쟁", "육이오", "육이오 전쟁", "6·25 사변"], "detail": "이 전쟁으로 아들과 연락이 끊긴다.", "section": "장면 6 · 전개 2 — 과거 회상 (소련군 주둔 시기) → 현재", "scene": 5, "text": "아들이 유학을 떠난 다음 해에 ___이 터졌고, 이인국은 1·4 후퇴 때 아내와 딸을 데리고 남쪽으로 내려왔으며, 아들은 생사조차 알 수 없게 되었다."}, "214": {"id": 214, "category": "setting", "answer": "1·4 후퇴", "alts": ["1·4", "일사 후퇴", "일사후퇴"], "detail": "북쪽에서 남쪽으로 삶의 무대가 옮겨졌다.", "section": "장면 6 · 전개 2 — 과거 회상 (소련군 주둔 시기) → 현재", "scene": 5, "text": "아들이 유학을 떠난 다음 해에 6·25 전쟁이 터졌고, 이인국은 ___ 때 아내와 딸을 데리고 남쪽으로 내려왔으며, 아들은 생사조차 알 수 없게 되었다."}, "215": {"id": 215, "category": "motive", "answer": "힘", "alts": ["세력", "권력", "영향력", "기세"], "detail": "이인국은 소련의 힘이 꺾인 줄도 모르고 버티는 아들을 답답해한다. 권력의 흐름을 읽는 것이 그에게는 가장 중요하다.", "section": "장면 6 · 전개 2 — 과거 회상 (소련군 주둔 시기) → 현재", "scene": 5, "text": "이인국은 전쟁 이후 우리나라에서 소련의 ___이 꺾였다는 것을 아들이 왜 모르는지 답답했다."}, "216": {"id": 216, "category": "plot", "answer": "치안대", "alts": [], "detail": "다시 광복 직후 북쪽으로 회상이 돌아간다.", "section": "장면 7 · 전개 2 — 과거 회상 (8·15 광복 직후, 북쪽)", "scene": 6, "text": "자위대가 ___로 바뀐 다음 날, 이인국은 친일을 한 죄로 그곳에 연행되어 시멘트 바닥에 무릎을 꿇고 문초를 당했다."}, "217": {"id": 217, "category": "plot", "answer": "문초", "alts": ["취조", "심문", "조사", "신문"], "detail": "친일을 한 죄로 조사받는 장면이다.", "section": "장면 7 · 전개 2 — 과거 회상 (8·15 광복 직후, 북쪽)", "scene": 6, "text": "자위대가 치안대로 바뀐 다음 날, 이인국은 친일을 한 죄로 그곳에 연행되어 시멘트 바닥에 무릎을 꿇고 ___를 당했다."}, "218": {"id": 218, "category": "character", "answer": "춘석", "alts": [], "detail": "입원을 거절당했던 사상범이 이제 심판자가 되었다.", "section": "장면 7 · 전개 2 — 과거 회상 (8·15 광복 직후, 북쪽)", "scene": 6, "text": "완장을 차고 그를 다그친 사람은 ___이었다."}, "219": {"id": 219, "category": "motive", "answer": "남쪽", "alts": ["남한", "이남", "남", "삼팔선 이남", "서울"], "detail": "잘못이 아니라 도망치지 못한 것을 후회한다.", "section": "장면 7 · 전개 2 — 과거 회상 (8·15 광복 직후, 북쪽)", "scene": 6, "text": "이인국은 이렇게 될 줄 알았다면 진작 ___으로 도피했을 것이라며, 잘못을 반성하기보다 도망가지 못한 것을 후회하였다."}, "220": {"id": 220, "category": "setting", "answer": "삼팔선", "alts": ["38선", "38도선"], "detail": "삼팔선을 기준으로 북쪽에 소련군이 들어왔다.", "section": "장면 7 · 전개 2 — 과거 회상 (8·15 광복 직후, 북쪽)", "scene": 6, "text": "광복 직후 ___을 기준으로 북쪽에는 소련군이 들어와 있었다."}, "221": {"id": 221, "category": "symbol", "answer": "회중시계", "alts": ["시계", "주머니 시계", "금시계"], "detail": "이 시계는 뒤에 다시 이인국의 손에 돌아온다.", "section": "장면 7 · 전개 2 — 과거 회상 (8·15 광복 직후, 북쪽)", "scene": 6, "text": "파란 중대가리의 소련 병사는 이인국에게서 ___를 빼앗아 갔다."}, "222": {"id": 222, "category": "plot", "answer": "버텼다", "alts": ["저항했다", "버티었다", "저항하였다", "반항했다", "반항하였다", "맞섰다", "버팀", "저항", "반항"], "detail": "목숨이 걸린 자리에서도 시계에 집착한다.", "section": "장면 7 · 전개 2 — 과거 회상 (8·15 광복 직후, 북쪽)", "scene": 6, "text": "이인국은 두 손으로 양복 안주머니를 감싸 쥐며 끝까지 ___."}, "223": {"id": 223, "category": "symbol", "answer": "제국 대학", "alts": ["제국대", "제국대학교"], "detail": "시계에는 일제 강점기 엘리트로서의 자부심이 담겨 있다.", "section": "장면 7 · 전개 2 — 과거 회상 (8·15 광복 직후, 북쪽)", "scene": 6, "text": "그것은 ___을 졸업하며 받은 상품으로, 이인국의 성공과 지난날의 영예를 상징하는 물건이었다."}, "224": {"id": 224, "category": "symbol", "answer": "성공", "alts": ["출세", "명예", "업적", "자부심"], "detail": "시계를 빼앗기는 것은 그의 성공이 무너지는 것과 같다.", "section": "장면 7 · 전개 2 — 과거 회상 (8·15 광복 직후, 북쪽)", "scene": 6, "text": "그것은 제국 대학을 졸업하며 받은 상품으로, 이인국의 ___과 지난날의 영예를 상징하는 물건이었다."}, "225": {"id": 225, "category": "character", "answer": "스텐코프", "alts": ["스텐코프 소좌", "소련군 장교"], "detail": "시계는 권력자가 바뀌어도 이인국이 살아남는다는 표시가 된다.", "section": "장면 8 · 전개 2 — 감방에서", "scene": 7, "text": "뒷날 ___가 그 시계를 찾아 돌려주어 시계는 다시 이인국의 손에 들어온다."}, "226": {"id": 226, "category": "motive", "answer": "죄상", "alts": ["죄", "죄목", "죄행", "죄악", "잘못", "친일 행적", "과거"], "detail": "자기 죄가 드러나는 것만 걱정했다.", "section": "장면 8 · 전개 2 — 감방에서", "scene": 7, "text": "감방 안에서 이인국은 자신의 ___을 폭로하기도 싫었고, 예전에 고등계 형사들에게서 얻어들은 대로 '침묵이 상책'이라 여겨 거의 말을 하지 않고 지냈다."}, "227": {"id": 227, "category": "motive", "answer": "침묵", "alts": ["묵비", "묵비권", "무언"], "detail": "일제 경찰에게서 배운 요령을 그대로 썼다.", "section": "장면 8 · 전개 2 — 감방에서", "scene": 7, "text": "감방 안에서 이인국은 자신의 죄상을 폭로하기도 싫었고, 예전에 고등계 형사들에게서 얻어들은 대로 '___이 상책'이라 여겨 거의 말을 하지 않고 지냈다."}, "228": {"id": 228, "category": "plot", "answer": "노어", "alts": ["러시아어", "러시아 말", "노서아 말", "노서아어", "노서아", "소련 말", "소련어", "로어"], "detail": "갇힌 상황에서도 새 권력에 맞출 준비를 한다.", "section": "장면 8 · 전개 2 — 감방에서", "scene": 7, "text": "그러면서도 앞일에 대비하여 ___ 회화책을 거의 암송하다시피 공부하였다."}, "229": {"id": 229, "category": "motive", "answer": "식민지", "alts": ["식민", "피지배", "약소국"], "detail": "시대 탓으로 책임을 돌리는 변명이다.", "section": "장면 8 · 전개 2 — 감방에서", "scene": 7, "text": "그는 자신이 ___ 백성으로서 어쩔 수 없었다고 하며, 반성 없이 자기 합리화를 하였다."}, "230": {"id": 230, "category": "theme", "answer": "합리화", "alts": ["합리", "변명", "정당화", "핑계"], "detail": "변명을 하고 나면 가슴이 후련해지는 인물이다.", "section": "장면 8 · 전개 2 — 감방에서", "scene": 7, "text": "그는 자신이 식민지 백성으로서 어쩔 수 없었다고 하며, 반성 없이 자기 ___를 하였다."}, "231": {"id": 231, "category": "plot", "answer": "의사", "alts": ["독또오루", "닥터", "외과 의사", "의사 선생"], "detail": "이 반응이 뒤의 반전을 예고한다.", "section": "장면 8 · 전개 2 — 감방에서", "scene": 7, "text": "이인국은 최종 취조에서 자신이 ___라는 말을 듣고 고개를 갸웃거리던 소좌의 표정에서 살아남을지도 모른다는 희망을 얻었다."}, "232": {"id": 232, "category": "motive", "answer": "희망", "alts": ["기대", "가능성", "용기"], "detail": "절망 속에서도 살 구멍을 찾는 인물이다.", "section": "장면 8 · 전개 2 — 감방에서", "scene": 7, "text": "이인국은 최종 취조에서 자신이 의사라는 말을 듣고 고개를 갸웃거리던 소좌의 표정에서 살아남을지도 모른다는 ___을 얻었다."}, "301": {"id": 301, "category": "plot", "answer": "적리", "alts": ["이질", "세균성 이질", "설사병"], "detail": "적리는 이질을 가리키는 말이다.", "section": "장면 9 · 위기 → 절정", "scene": 8, "text": "감방 안에 피똥을 누는 급성 전염병 ___ 환자가 생겨 여러 감방으로 번졌다."}, "302": {"id": 302, "category": "plot", "answer": "응급 치료실", "alts": ["치료실", "응급실", "의무실"], "detail": "전염병이 오히려 이인국에게 기회가 되었다.", "section": "장면 9 · 위기 → 절정", "scene": 8, "text": "이 일을 계기로 의사였던 이인국은 임시로 ___에서 일하라는 명령을 받아 감방에서 벗어나게 되었다."}, "303": {"id": 303, "category": "theme", "answer": "하늘", "alts": [], "detail": "위기 속 기회를 붙잡은 기분을 드러낸다.", "section": "장면 9 · 위기 → 절정", "scene": 8, "text": "이인국은 '___이 무너져도 솟아날 구멍이 있다'라는 속담을 떠올렸으나, 소련군 앞에서는 기쁨을 드러내지 않으려고 이를 악물었다."}, "304": {"id": 304, "category": "motive", "answer": "기쁨", "alts": ["기쁜 마음", "기쁜 내색", "반가움", "웃음", "감정", "속마음"], "detail": "속마음을 감추는 계산된 태도다.", "section": "장면 9 · 위기 → 절정", "scene": 8, "text": "이인국은 '하늘이 무너져도 솟아날 구멍이 있다'라는 속담을 떠올렸으나, 소련군 앞에서는 ___을 드러내지 않으려고 이를 악물었다."}, "305": {"id": 305, "category": "motive", "answer": "의술", "alts": ["실력", "의료 실력", "의사 실력", "수술 실력", "능력", "솜씨"], "detail": "치료조차 살아남기 위한 수단이다.", "section": "장면 9 · 위기 → 절정", "scene": 8, "text": "그리고 자신의 ___을 인정받아 스텐코프를 비롯한 소련군 장교들에게 잘 보이기 위해 있는 힘을 다해 환자를 돌보았다."}, "306": {"id": 306, "category": "motive", "answer": "장교", "alts": ["간부", "군인", "고관", "상관"], "detail": "권력을 가진 사람에게 다가가는 방식이다.", "section": "장면 9 · 위기 → 절정", "scene": 8, "text": "그리고 자신의 의술을 인정받아 스텐코프를 비롯한 소련군 ___들에게 잘 보이기 위해 있는 힘을 다해 환자를 돌보았다."}, "307": {"id": 307, "category": "character", "answer": "혹", "alts": ["혹부리", "종기", "종양"], "detail": "이 혹이 이인국에게 기회가 된다.", "section": "장면 9 · 위기 → 절정", "scene": 8, "text": "이인국은 스텐코프가 보기 흉한 ___을 달고도 높은 자리에 오른 것을 보고 그가 대단한 힘을 가졌다고 짐작하여, 노어로 인사말을 주고받을 만큼 친해지려 노력하였다."}, "308": {"id": 308, "category": "motive", "answer": "노어", "alts": ["러시아어", "러시아 말", "노서아 말", "노서아어", "노서아", "소련 말", "소련어", "로어"], "detail": "감방에서 외운 노어가 여기서 쓰인다.", "section": "장면 9 · 위기 → 절정", "scene": 8, "text": "이인국은 스텐코프가 보기 흉한 혹을 달고도 높은 자리에 오른 것을 보고 그가 대단한 힘을 가졌다고 짐작하여, ___로 인사말을 주고받을 만큼 친해지려 노력하였다."}, "309": {"id": 309, "category": "plot", "answer": "시장", "alts": [], "detail": "친일 시절의 경력이 소련군 앞에서 밑천이 되었다.", "section": "장면 9 · 위기 → 절정", "scene": 8, "text": "이인국은 예전에 일본인 ___을 수술했던 경험을 들어 자신 있게 수술을 자청하였고, 실패하면 총살에 처한다는 각서까지 쓰고 수술대에 섰다."}, "310": {"id": 310, "category": "plot", "answer": "총살", "alts": ["사형", "처형", "총살형", "죽음"], "detail": "목숨을 건 도박이었다.", "section": "장면 9 · 위기 → 절정", "scene": 8, "text": "이인국은 예전에 일본인 시장을 수술했던 경험을 들어 자신 있게 수술을 자청하였고, 실패하면 ___에 처한다는 각서까지 쓰고 수술대에 섰다."}, "311": {"id": 311, "category": "plot", "answer": "각서", "alts": ["서약서", "계약서", "맹세", "서약"], "detail": "그만큼 자신의 실력과 기회에 확신이 있었다.", "section": "장면 9 · 위기 → 절정", "scene": 8, "text": "이인국은 예전에 일본인 시장을 수술했던 경험을 들어 자신 있게 수술을 자청하였고, 실패하면 총살에 처한다는 ___까지 쓰고 수술대에 섰다."}, "312": {"id": 312, "category": "plot", "answer": "단시간", "alts": ["짧은 시간", "빠른 시간", "단시일", "순식간"], "detail": "수술의 성공이 운명을 바꾼다.", "section": "장면 9 · 위기 → 절정", "scene": 8, "text": "수술은 예상 이상의 ___에 끝났다."}, "313": {"id": 313, "category": "theme", "answer": "꺼삐딴", "alts": ["꺼비딴", "까삐딴", "꺼삐단", "카피탄", "캡틴"], "detail": "제목이 등장하는 장면이다.", "section": "장면 10 · 절정", "scene": 9, "text": "완치되어 퇴원하는 날, 스텐코프는 이인국의 손을 부서져라 쥐면서 \"___ 리, 스바씨보.\"라고 외쳤다."}, "314": {"id": 314, "category": "theme", "answer": "스바씨보", "alts": ["스파시보", "스빠씨보", "고맙다", "고마워", "감사"], "detail": "'스바씨보'는 러시아어로 '고맙다'는 인사다.", "section": "장면 10 · 절정", "scene": 9, "text": "완치되어 퇴원하는 날, 스텐코프는 이인국의 손을 부서져라 쥐면서 \"꺼삐딴 리, ___.\"라고 외쳤다."}, "315": {"id": 315, "category": "theme", "answer": "캡틴", "alts": ["captain", "캪틴", "켑틴"], "detail": "캡틴처럼 우두머리를 가리킨다.", "section": "장면 10 · 절정", "scene": 9, "text": "이 말의 앞부분은 영어 ___에 해당하는 러시아어로, '우두머리·최고'라는 뜻이다."}, "316": {"id": 316, "category": "theme", "answer": "최고", "alts": ["일등", "제일", "으뜸", "첫째", "일인자", "넘버원"], "detail": "이인국을 추어올리는 말이 곧 풍자가 된다.", "section": "장면 10 · 절정", "scene": 9, "text": "이 말의 앞부분은 영어 캡틴에 해당하는 러시아어로, '우두머리·___'라는 뜻이다."}, "317": {"id": 317, "category": "plot", "answer": "통근", "alts": ["출퇴근", "출근", "왕래"], "detail": "수술로 얻은 첫째 — 자유.", "section": "장면 10 · 절정", "scene": 9, "text": "수술을 성공시킨 이인국은 감방에서 나와 집에서 ___할 수 있게 되었고, 빼앗겼던 회중시계도 되찾았다."}, "318": {"id": 318, "category": "symbol", "answer": "회중시계", "alts": ["시계", "주머니 시계", "금시계"], "detail": "수술로 얻은 둘째 — 영예의 상징.", "section": "장면 10 · 절정", "scene": 9, "text": "수술을 성공시킨 이인국은 감방에서 나와 집에서 통근할 수 있게 되었고, 빼앗겼던 ___도 되찾았다."}, "319": {"id": 319, "category": "character", "answer": "대사관", "alts": ["미국 대사관", "영사관", "대사관 직원"], "detail": "이야기가 다시 현재 서울로 돌아온다. 브라운은 미국 대사관에서 일한다.", "section": "장면 11 · 결말 — 현재 (6·25 전쟁 이후, 서울)", "scene": 10, "text": "이인국은 미국 ___의 브라운 씨 관사에 닿아, 성조기를 보면서 그날의 적기와 돌려받은 시계를 함께 떠올렸다."}, "320": {"id": 320, "category": "symbol", "answer": "성조기", "alts": ["미국 국기", "미국기", "미국 깃발", "국기"], "detail": "미국 국기와 소련의 붉은 깃발이 겹쳐진다.", "section": "장면 11 · 결말 — 현재 (6·25 전쟁 이후, 서울)", "scene": 10, "text": "이인국은 미국 대사관의 브라운 씨 관사에 닿아, ___를 보면서 그날의 적기와 돌려받은 시계를 함께 떠올렸다."}, "321": {"id": 321, "category": "symbol", "answer": "적기", "alts": ["붉은 깃발", "붉은 기", "빨간 깃발", "소련 국기", "소련 깃발", "赤旗"], "detail": "섬기는 대상만 바뀌었을 뿐 태도는 같다.", "section": "장면 11 · 결말 — 현재 (6·25 전쟁 이후, 서울)", "scene": 10, "text": "이인국은 미국 대사관의 브라운 씨 관사에 닿아, 성조기를 보면서 그날의 ___와 돌려받은 시계를 함께 떠올렸다."}, "322": {"id": 322, "category": "symbol", "answer": "금동 불상", "alts": ["불상", "금동불", "부처상"], "detail": "우리 문화재가 외국인의 방에 쌓여 있다.", "section": "장면 11 · 결말 — 현재 (6·25 전쟁 이후, 서울)", "scene": 10, "text": "브라운 씨 방 안에 《이조실록》, 《대동야승》 같은 한적과 고서, ___과 골동품이 가득한 것을 보고 이인국은 얼굴이 화끈해졌다."}, "323": {"id": 323, "category": "motive", "answer": "화끈", "alts": ["뜨끈", "후끈", "화끈화끈"], "detail": "저것들도 누군가 가져다준 것일까 하는 생각이 스쳤다.", "section": "장면 11 · 결말 — 현재 (6·25 전쟁 이후, 서울)", "scene": 10, "text": "브라운 씨 방 안에 《이조실록》, 《대동야승》 같은 한적과 고서, 금동 불상과 골동품이 가득한 것을 보고 이인국은 얼굴이 ___해졌다."}, "324": {"id": 324, "category": "symbol", "answer": "고려청자", "alts": ["청자", "상감청자", "고려 자기"], "detail": "나라의 보물을 뇌물처럼 내놓는다.", "section": "장면 11 · 결말 — 현재 (6·25 전쟁 이후, 서울)", "scene": 10, "text": "이인국은 상감 진사 ___ 화병을 선물하면서, 나라의 보물을 국외로 내보낸다는 자책감보다 오히려 자기 선물이 너무 약소해 보이지 않을까를 걱정하였다."}, "325": {"id": 325, "category": "motive", "answer": "국외", "alts": ["외국", "해외", "나라 밖", "남의 나라"], "detail": "문화재 유출에 대한 죄의식이 없다.", "section": "장면 11 · 결말 — 현재 (6·25 전쟁 이후, 서울)", "scene": 10, "text": "이인국은 상감 진사 고려청자 화병을 선물하면서, 나라의 보물을 ___로 내보낸다는 자책감보다 오히려 자기 선물이 너무 약소해 보이지 않을까를 걱정하였다."}, "326": {"id": 326, "category": "motive", "answer": "약소", "alts": ["초라", "하찮", "시시", "소박", "보잘것없"], "detail": "걱정의 방향이 뒤집혀 있다.", "section": "장면 11 · 결말 — 현재 (6·25 전쟁 이후, 서울)", "scene": 10, "text": "이인국은 상감 진사 고려청자 화병을 선물하면서, 나라의 보물을 국외로 내보낸다는 자책감보다 오히려 자기 선물이 너무 ___해 보이지 않을까를 걱정하였다."}, "327": {"id": 327, "category": "theme", "answer": "문화재", "alts": ["보물", "국보", "유물", "문화유산"], "detail": "청자 화병 장면의 비판 대상이다.", "section": "장면 11 · 결말 — 현재 (6·25 전쟁 이후, 서울)", "scene": 10, "text": "이 장면을 통해 작가는 자기 이익을 위해서라면 민족의 ___까지 서슴없이 넘겨주는, 권력에 빌붙는 지식인·기득권층의 태도를 비판한다."}, "328": {"id": 328, "category": "theme", "answer": "지식인", "alts": ["엘리트", "지식층", "인텔리", "지도층", "지배층"], "detail": "이인국은 배운 사람이면서도 민족을 저버렸다.", "section": "장면 11 · 결말 — 현재 (6·25 전쟁 이후, 서울)", "scene": 10, "text": "이 장면을 통해 작가는 자기 이익을 위해서라면 민족의 문화재까지 서슴없이 넘겨주는, 권력에 빌붙는 ___·기득권층의 태도를 비판한다."}, "329": {"id": 329, "category": "plot", "answer": "허가", "alts": ["허락", "승인", "인가", "허가서", "비자"], "detail": "미국행 수속을 위해 국무성 허가를 부탁했다.", "section": "장면 12 · 결말", "scene": 11, "text": "이인국은 미국에 갈 수 있도록 국무성의 ___를 받아 달라고 브라운 씨에게 부탁해 두었다."}, "330": {"id": 330, "category": "character", "answer": "스텐코프", "alts": ["스텐코프 소좌", "소련군 장교"], "detail": "둘 다 그 시기 가장 큰 힘을 지닌 나라의 인물이다.", "section": "장면 12 · 결말", "scene": 11, "text": "이인국은 브라운 씨를 보며 ___를 겹쳐 떠올린다."}, "331": {"id": 331, "category": "theme", "answer": "생큐", "alts": ["땡큐", "쌩큐", "thank you", "고맙다", "감사합니다"], "detail": "인사말만 바뀌었을 뿐 매달리는 방식은 같다.", "section": "장면 12 · 결말", "scene": 11, "text": "그래서 '스바씨보'와 '___'가 나란히 놓인다."}, "332": {"id": 332, "category": "character", "answer": "일본", "alts": ["왜", "일본인", "왜놈"], "detail": "일제 강점기를 가리킨다.", "section": "장면 12 · 결말", "scene": 11, "text": "'흥, 그 사마귀 같은 ___ 놈들 틈에서도 살았고, 닥싸귀 같은 로스케 속에서도 살아났는데, 양키라고 다를까……."}, "333": {"id": 333, "category": "character", "answer": "로스케", "alts": ["러시아인", "소련인", "노서아", "소련 놈"], "detail": "로스케는 러시아 사람을 낮잡아 이르는 말이다.", "section": "장면 12 · 결말", "scene": 11, "text": "'흥, 그 사마귀 같은 일본 놈들 틈에서도 살았고, 닥싸귀 같은 ___ 속에서도 살아났는데, 양키라고 다를까……."}, "334": {"id": 334, "category": "character", "answer": "양키", "alts": ["미국인", "미국 사람", "미국 놈", "양코배기"], "detail": "양키는 미국 사람을 낮잡아 이르는 말이다.", "section": "장면 12 · 결말", "scene": 11, "text": "'흥, 그 사마귀 같은 일본 놈들 틈에서도 살았고, 닥싸귀 같은 로스케 속에서도 살아났는데, ___라고 다를까……."}, "335": {"id": 335, "category": "theme", "answer": "구멍", "alts": ["길", "방도"], "detail": "어떤 권력 아래서도 살아남겠다는 자신감이다.", "section": "장면 12 · 결말", "scene": 11, "text": "혁명이 일겠으면 일고, 나라가 바뀌겠으면 바뀌고, 아직 이 이인국의 살 ___은 막히지 않았다."}, "336": {"id": 336, "category": "theme", "answer": "성공", "alts": ["출세", "승리"], "detail": "밝은 풍경이 오히려 씁쓸함을 키운다.", "section": "장면 12 · 결말", "scene": 11, "text": "반성 없이 또 한 번 ___을 거둔 이인국의 들뜬 마음을 밝은 풍경으로 보여 주어, 이런 사람이 계속 잘사는 현실을 더욱 씁쓸하게 느끼게 한다."}, "423": {"id": 423, "category": "theme", "answer": "소설", "alts": ["단편 소설", "단편소설"], "detail": "〈꺼삐딴 리〉는 현대 소설이다.", "section": "장면 1 · 갈래와 구성", "scene": 0, "text": "〈꺼삐딴 리〉의 갈래는 현대 ___이며, 시간적 배경은 일제 강점기에서 1950년대까지이다."}, "404": {"id": 404, "category": "setting", "answer": "일제 강점기", "alts": ["일제", "일제 시대", "일제시대", "식민지 시대", "일본 강점기", "왜정"], "detail": "세 번의 시대 변화가 담겨 있다.", "section": "장면 1 · 갈래와 구성", "scene": 0, "text": "〈꺼삐딴 리〉의 갈래는 현대 소설이며, 시간적 배경은 ___에서 1950년대까지이다."}, "401": {"id": 401, "category": "theme", "answer": "역순행적", "alts": ["역순행", "역행적", "역행", "역순"], "detail": "현재 서울 → 과거 북쪽 회상 → 현재로 돌아온다.", "section": "장면 1 · 갈래와 구성", "scene": 0, "text": "이야기는 현재와 과거를 오가며 전개되는 ___ 구성을 취한다."}, "402": {"id": 402, "category": "setting", "answer": "광복", "alts": ["해방", "8·15 광복", "8·15", "광복절"], "detail": "친일파 타도 분위기 속에서 이야기가 시작된다.", "section": "장면 1 · 갈래와 구성", "scene": 0, "text": "발단은 ___ 직후를 배경으로 하고, 결말은 6·25 전쟁 이후 남쪽을 배경으로 한다."}, "403": {"id": 403, "category": "setting", "answer": "남쪽", "alts": ["서울", "남한", "이남", "남"], "detail": "이인국은 남쪽에서도 새 권력에 기댄다.", "section": "장면 1 · 갈래와 구성", "scene": 0, "text": "발단은 광복 직후를 배경으로 하고, 결말은 6·25 전쟁 이후 ___을 배경으로 한다."}, "406": {"id": 406, "category": "character", "answer": "딸", "alts": ["외동딸", "따님"], "detail": "아들 원식은 소련, 딸 나미는 미국.", "section": "장면 2 · 등장인물", "scene": 1, "text": "나미는 6·25 전쟁이 끝난 뒤 미국으로 유학을 떠난 이인국의 ___이다."}, "407": {"id": 407, "category": "character", "answer": "사상범", "alts": ["정치범"], "detail": "광복 뒤 처지가 뒤바뀐다.", "section": "장면 2 · 등장인물", "scene": 1, "text": "춘석은 일제 강점기 말 이인국의 병원에 입원하려 하였으나 거부당한 ___으로, 광복 후 치안대에 끌려온 이인국을 문초한다."}, "408": {"id": 408, "category": "character", "answer": "문초", "alts": ["취조", "심문", "조사", "신문"], "detail": "피해자가 심판자가 된 관계다.", "section": "장면 2 · 등장인물", "scene": 1, "text": "춘석은 일제 강점기 말 이인국의 병원에 입원하려 하였으나 거부당한 사상범으로, 광복 후 치안대에 끌려온 이인국을 ___한다."}, "409": {"id": 409, "category": "character", "answer": "소련군", "alts": ["소련", "소련 군대", "러시아군"], "detail": "혹 제거 수술 뒤 이인국을 돕는다.", "section": "장면 2 · 등장인물", "scene": 1, "text": "스텐코프는 이인국이 치안대에 끌려갔을 때 만난 ___ 장교로, 이인국이 자신의 혹을 제거하는 수술에 성공하자 그를 믿고 도와준다."}, "410": {"id": 410, "category": "character", "answer": "미국 대사관", "alts": ["대사관", "미 대사관"], "detail": "스텐코프에 이어 이인국이 붙잡은 권력자다.", "section": "장면 2 · 등장인물", "scene": 1, "text": "브라운은 ___에서 일하며 이인국의 미국행을 도와준다."}, "405": {"id": 405, "category": "setting", "answer": "북쪽", "alts": ["북한", "이북", "북"], "detail": "삼팔선 이북과 이남을 모두 거친다.", "section": "장면 3 · 시대에 따라 달라지는 이인국의 모습과 주제", "scene": 2, "text": "이인국이 살아간 공간은 한반도의 남쪽과 ___이다."}, "411": {"id": 411, "category": "plot", "answer": "일본", "alts": ["일본인", "일본 제국"], "detail": "친일 시기.", "section": "장면 3 · 시대에 따라 달라지는 이인국의 모습과 주제", "scene": 2, "text": "이인국은 일제 강점기에 ___에 적극 협조하며 부와 권력을 누렸고, 8·15 광복 직후에는 친일 행적이 발각될까 봐 초조해하며 상황을 지켜보았다."}, "412": {"id": 412, "category": "plot", "answer": "발각", "alts": ["탄로", "들통", "폭로", "발견"], "detail": "해방이 위기로 다가온 시기.", "section": "장면 3 · 시대에 따라 달라지는 이인국의 모습과 주제", "scene": 2, "text": "이인국은 일제 강점기에 일본에 적극 협조하며 부와 권력을 누렸고, 8·15 광복 직후에는 친일 행적이 ___될까 봐 초조해하며 상황을 지켜보았다."}, "413": {"id": 413, "category": "plot", "answer": "우호", "alts": ["친화", "호의", "친소"], "detail": "친소 시기.", "section": "장면 3 · 시대에 따라 달라지는 이인국의 모습과 주제", "scene": 2, "text": "소련군 주둔 시기에는 소련에 ___적인 태도를 보이며 부와 권력을 다시 얻으려 노력했고, 6·25 전쟁 이후에는 미국에 기대어 부와 권력을 유지했다."}, "414": {"id": 414, "category": "plot", "answer": "미국", "alts": ["브라운", "미국인", "미국 대사관"], "detail": "친미 시기.", "section": "장면 3 · 시대에 따라 달라지는 이인국의 모습과 주제", "scene": 2, "text": "소련군 주둔 시기에는 소련에 우호적인 태도를 보이며 부와 권력을 다시 얻으려 노력했고, 6·25 전쟁 이후에는 ___에 기대어 부와 권력을 유지했다."}, "415": {"id": 415, "category": "plot", "answer": "친소", "alts": ["친소련", "친러", "친러시아"], "detail": "대상만 바뀌고 태도는 같다.", "section": "장면 3 · 시대에 따라 달라지는 이인국의 모습과 주제", "scene": 2, "text": "이처럼 이인국은 친일, ___, 친미 행적을 차례로 보인다."}, "416": {"id": 416, "category": "plot", "answer": "영어", "alts": ["영어 회화", "미국 말", "영문학"], "detail": "일본어 → 노어 → 영어, 권력의 언어를 따라간다.", "section": "장면 3 · 시대에 따라 달라지는 이인국의 모습과 주제", "scene": 2, "text": "6·25 전쟁이 끝난 뒤에는 ___를 공부하고 딸을 유학 보냈다."}, "417": {"id": 417, "category": "motive", "answer": "생존", "alts": ["안위", "살아남기", "안전", "출세", "목숨"], "detail": "이인국의 삶의 태도를 요약한 말이다.", "section": "장면 3 · 시대에 따라 달라지는 이인국의 모습과 주제", "scene": 2, "text": "그는 옳고 그름과는 상관없이 자신의 이익과 ___만을 위해 행동하며, 그때그때의 상황에 맞춰 살길을 찾는다."}, "418": {"id": 418, "category": "theme", "answer": "기회주의자", "alts": ["기회주의", "변절자", "카멜레온", "박쥐"], "detail": "작품의 핵심 인물형이다.", "section": "장면 3 · 시대에 따라 달라지는 이인국의 모습과 주제", "scene": 2, "text": "〈꺼삐딴 리〉는 시대와 상황에 따라 빠르게 모습을 바꾸는 ___의 삶을 비판하는 작품이다."}, "419": {"id": 419, "category": "theme", "answer": "비판", "alts": ["풍자", "고발", "비난", "비판한다", "비판함"], "detail": "작가는 이인국을 긍정하지 않는다.", "section": "장면 3 · 시대에 따라 달라지는 이인국의 모습과 주제", "scene": 2, "text": "〈꺼삐딴 리〉는 시대와 상황에 따라 빠르게 모습을 바꾸는 기회주의자의 삶을 ___하는 작품이다."}, "424": {"id": 424, "category": "theme", "answer": "대응", "alts": ["대처", "적응", "순응", "변신"], "detail": "시대 변화와 인물의 대응이 작품의 뼈대다.", "section": "장면 3 · 시대에 따라 달라지는 이인국의 모습과 주제", "scene": 2, "text": "이 작품에는 급변하는 시대에 ___하는 인물의 모습이 잘 나타나며, 작가는 그런 인물의 삶을 풍자한다."}, "420": {"id": 420, "category": "theme", "answer": "풍자", "alts": ["비판", "조롱", "고발", "비꼬기"], "detail": "우스꽝스럽게 드러내 비판하는 방식이다.", "section": "장면 3 · 시대에 따라 달라지는 이인국의 모습과 주제", "scene": 2, "text": "이 작품에는 급변하는 시대에 대응하는 인물의 모습이 잘 나타나며, 작가는 그런 인물의 삶을 ___한다."}, "422": {"id": 422, "category": "theme", "answer": "북한", "alts": ["북쪽", "이북"], "detail": "소련군 주둔 시기의 말이다.", "section": "장면 4 · 제목과 감상", "scene": 3, "text": "'꺼삐딴'은 영어 '캡틴(captain)'에 해당하는 러시아어로, 광복 직후 ___에서 '우두머리'나 '최고'라는 뜻으로 쓰였다."}, "421": {"id": 421, "category": "theme", "answer": "이인국", "alts": ["이인국 박사", "주인공"], "detail": "'리'는 이인국의 성이다.", "section": "장면 4 · 제목과 감상", "scene": 3, "text": "제목 '꺼삐딴 리'는 ___의 기회주의적 행태를 드러내는 동시에 이를 풍자한다."}, "427": {"id": 427, "category": "theme", "answer": "관련", "alts": ["연관", "연결", "관계"], "detail": "작품을 오늘의 삶에 비추어 감상하는 방법이다.", "section": "장면 4 · 제목과 감상", "scene": 3, "text": "작품에 반영된 과거의 삶을 오늘날 우리의 삶과 ___지어 생각하며 감상하면, 과거의 삶을 통해 오늘날 우리의 삶을 돌아보는 성찰의 기회가 되고, 작품을 자신의 상황에 비추어 주체적으로 감상하는 능력을 기를 수 있다."}, "425": {"id": 425, "category": "theme", "answer": "성찰", "alts": ["반성", "자기 성찰", "돌아봄", "되돌아봄"], "detail": "작품을 오늘의 삶에 비추어 감상하는 까닭이다.", "section": "장면 4 · 제목과 감상", "scene": 3, "text": "작품에 반영된 과거의 삶을 오늘날 우리의 삶과 관련지어 생각하며 감상하면, 과거의 삶을 통해 오늘날 우리의 삶을 돌아보는 ___의 기회가 되고, 작품을 자신의 상황에 비추어 주체적으로 감상하는 능력을 기를 수 있다."}, "426": {"id": 426, "category": "theme", "answer": "주체적", "alts": ["주체", "능동적", "적극적", "자기주도적"], "detail": "감상의 주인은 읽는 사람이다.", "section": "장면 4 · 제목과 감상", "scene": 3, "text": "작품에 반영된 과거의 삶을 오늘날 우리의 삶과 관련지어 생각하며 감상하면, 과거의 삶을 통해 오늘날 우리의 삶을 돌아보는 성찰의 기회가 되고, 작품을 자신의 상황에 비추어 ___으로 감상하는 능력을 기를 수 있다."}}};
+const STAGES = DATA.stages.map(st => ({ ...st, items: st.order.map(id => DATA.items[id]) }));
+const BASE = 10, RETRY = 5;
+function maxScore(n){ return n*BASE + (n>=5 ? 10 + 10*(n-4) : (n>=3 ? 5*(n-2) : 0)); }
+STAGES.forEach(s => s.max = maxScore(s.items.length));
+const STD_CODE = '(2015) [9국05-06]';
+const STD_TEXT = '작품에 반영된 사회·문화적 상황을 파악하며 작품을 감상한다.';
+const CREDIT1 = '제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com';
+const CREDIT2 = `제작일 ${MADE_DATE} · 최종 수정 ${MODIFIED}`;
+const PRIV_OFF = '본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다. 게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.';
+const PRIV_ON = '본 게임의 학습 결과(학번, 이름, 점수, 오답 정보, 학습 소감)는 담당 선생님의 학습 관리용 스프레드시트에 안전하게 전송·저장됩니다. 수집된 정보는 학습 지도 목적으로만 사용되며, 제3자에게 제공되지 않습니다.';
+
+/* ================= 유틸 ================= */
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const CHO = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+function choseong(s){
+  let out='';
+  for(const ch of s){
+    const c = ch.charCodeAt(0)-0xAC00;
+    out += (c>=0 && c<11172) ? CHO[Math.floor(c/588)] : ch;
+  }
+  return out;
+}
+function norm(s){
+  return (s||'').toString().normalize('NFC').toLowerCase()
+    .replace(/[\s.,·ㆍ・‧'"‘’“”()\[\]《》〈〉「」『』~\-!;:…]/g,'');
+}
+const JOSA = ['입니다','이에요','이다','으로','에서','을','를','이','가','은','는','의','로','과','와','도','만','에','요'];
+function isCorrect(q, raw){
+  const t = raw.trim();
+  if(!t || /[?？]$/.test(t)) return false;
+  const cands = [q.answer, ...q.alts].map(norm);
+  const n = norm(t);
+  if(cands.includes(n)) return true;
+  for(const j of JOSA){
+    if(n.length > j.length && n.endsWith(j) && cands.includes(n.slice(0,-j.length))) return true;
+  }
+  return false;
+}
+function pad(n){ return String(n).padStart(2,'0'); }
+function fmtTime(ms){ const s=Math.max(0,Math.round(ms/1000)); return `${Math.floor(s/60)}분 ${pad(s%60)}초`; }
+function stamp(d=new Date()){ return `${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`; }
+function fileStamp(d=new Date()){ return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}`; }
+function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on', s.id===id)); window.scrollTo(0,0); }
+function bonusFor(c){ return c>=5 ? 10 : (c>=3 ? 5 : 0); }
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ================= 사운드 ================= */
+let AC=null;
+function ac(){ if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(AC&&AC.state==='suspended') AC.resume(); return AC; }
+function tone(freq, t0, dur, type='sine', vol=.18){
+  const a=ac(); if(!a) return;
+  const o=a.createOscillator(), g=a.createGain();
+  o.type=type; o.frequency.value=freq;
+  g.gain.setValueAtTime(vol, a.currentTime+t0);
+  g.gain.exponentialRampToValueAtTime(.001, a.currentTime+t0+dur);
+  o.connect(g).connect(a.destination); o.start(a.currentTime+t0); o.stop(a.currentTime+t0+dur+.02);
+}
+function noise(t0, dur, vol=.12){
+  const a=ac(); if(!a) return;
+  const buf=a.createBuffer(1, a.sampleRate*dur, a.sampleRate), d=buf.getChannelData(0);
+  for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*(1-i/d.length);
+  const s=a.createBufferSource(), g=a.createGain(); s.buffer=buf; g.gain.value=vol;
+  s.connect(g).connect(a.destination); s.start(a.currentTime+t0);
+}
+const sOK = () => [523,659,784,1047].forEach((f,i)=>tone(f, i*.07, .12));
+const sNG = () => { tone(330,0,.14,'triangle',.16); tone(247,.12,.2,'triangle',.16); };
+const sC3 = () => [587,740,880].forEach((f,i)=>tone(f, i*.09, .16,'triangle'));
+const sC5 = () => { [523,659,784,1047,1319].forEach((f,i)=>tone(f, i*.1, .22,'square',.09)); noise(.05,.35); noise(.4,.35); };
+
+/* ================= 상태 ================= */
+let S = { stage:1, qs:[], map:{}, sc:0, cur:null, score:0, combo:0, best:0, t0:0, elapsed:0, lockUntil:0, ended:false, endPrompt:false, finishTimer:null };
+
+/* ================= 시작 화면 ================= */
+(function initStart(){
+  $('catChips').innerHTML = Object.values(CATEGORIES).map(c=>`<span class="chip">${c.icon} ${c.label}</span>`).join('');
+  STAGES.forEach(s => $('sd'+s.no).textContent = `${s.scenes.length}장면 · 빈칸 ${s.items.length}개 · ${s.max}점 만점`);
+})();
+
+let pendingStage = 1;
+if(IS_ONLINE){
+  document.getElementById('privacyOffline').style.display='none';
+  document.getElementById('privacyOnline').style.display='block';
+  const ep=document.getElementById('endPrivacy');
+  if(ep) ep.textContent='학습 결과는 담당 선생님의 학습 관리 시스템에 자동 전송됩니다. 이름과 소감은 리포트 이미지(JPG) 생성에도 사용됩니다.';
+}
+
+async function doLogin(){
+  const idVal=$('loginId').value.trim();
+  const nameVal=$('loginName').value.trim();
+  const msg=$('loginMsg');
+  if(!idVal||idVal.length!==5||!/^\d{5}$/.test(idVal)){msg.textContent='학번은 5자리 숫자여야 합니다.';return;}
+  if(!nameVal){msg.textContent='이름을 입력하세요.';return;}
+  msg.textContent='';$('loginBtn').style.display='none';$('loginSpinner').style.display='block';
+  const result=await verifyStudent(idVal,nameVal);
+  $('loginBtn').style.display='block';$('loginSpinner').style.display='none';
+  if(result.status==='ok'){
+    STUDENT={id:idVal,name:nameVal,className:result.className||'',verified:true};
+    $('loginOverlay').style.display='none';
+    notifyGameStart(STUDENT.id,STUDENT.name,STUDENT.className);
+    doStartStage(pendingStage);
+  } else { msg.textContent=result.message||'인증에 실패했습니다.'; }
+}
+
+function startStage(n){
+  if(IS_ONLINE&&!STUDENT.verified){pendingStage=n;$('loginOverlay').style.display='flex';$('loginId').focus();return;}
+  if(IS_ONLINE&&STUDENT.verified){notifyGameStart(STUDENT.id,STUDENT.name,STUDENT.className);}
+  doStartStage(n);
+}
+
+function doStartStage(n){
+  ac();
+  const st = STAGES[n-1];
+  clearTimeout(S.finishTimer); hideBanner();
+  const qs = st.items.map(q => ({...q, done:false, result:null, wrong:0, hint:false, seen:false, tries:[], lastNorm:'', pts:0, lastSubmit:0}));
+  const map = {}; qs.forEach(q => map[q.id] = q);
+  S = { stage:n, qs, map, sc:0, cur:null, score:0, combo:0, best:0, t0:Date.now(), elapsed:0, lockUntil:0, ended:false, endPrompt:false, finishTimer:null };
+  $('btnJump').textContent = `${n===1?2:1}단계로 ▸`;
+  $('comboN').textContent = '0';
+  show('play');
+  renderScene();
+}
+
+/* ================= 문제 화면 (장면 지문) ================= */
+const sceneItems = (i=S.sc) => S.qs.filter(q => q.scene===i);
+const sceneDone  = (i=S.sc) => sceneItems(i).every(q => q.done);
+const lastScene  = () => STAGES[S.stage-1].scenes.length-1;
+function blankHTML(q){
+  if(q.result==='revealed') return `<span class="bf rv" data-id="${q.id}" title="해설 보기">👀 ${esc(q.answer)}</span>`;
+  if(q.done) return `<span class="bf ok" data-id="${q.id}" title="해설 보기">✅ ${esc(q.answer)}</span>`;
+  const ph = q.hint ? esc(choseong(q.answer)) : '';
+  return `<input class="bl" data-id="${q.id}" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="빈칸" placeholder="${ph}">`;
+}
+function renderScene(){
+  const st = STAGES[S.stage-1], sc = st.scenes[S.sc];
+  S.endPrompt = false;
+  $('secTag').textContent = `장면 ${S.sc+1} / ${st.scenes.length}`;
+  $('goal').textContent = sc.title;
+  $('passage').innerHTML = sc.paras.map(p => '<p>' + p.map(x => typeof x==='number' ? blankHTML(S.map[x]) : esc(x)).join('') + '</p>').join('');
+  sceneItems().forEach(q => q.seen = true);
+  $('btnPrev').disabled = S.sc===0;
+  $('btnNext').textContent = S.sc===lastScene() ? '결과 보기 ▶' : '다음 장면 ▶';
+  $('btnHint').classList.remove('pulse');
+  const first = sceneItems().find(q => !q.done);
+  S.cur = first ? first.id : null;
+  if(first){ paintFb('idle'); focusBlank(first.id); }
+  else { paintFb('scene'); if(document.activeElement) document.activeElement.blur(); }
+  updateBand(); updateTools();
+}
+function inputOf(id){ return $('passage').querySelector(`input.bl[data-id="${id}"]`); }
+function focusBlank(id){
+  const el = inputOf(id); if(!el) return;
+  setCur(id);
+  setTimeout(() => { if(document.body.contains(el)) el.focus(); }, 20);
+}
+function setCur(id){
+  S.cur = id;
+  $('passage').querySelectorAll('input.bl').forEach(el => el.classList.toggle('cur', +el.dataset.id===id));
+  updateTools();
+}
+function updateTools(){
+  const q = S.cur!=null ? S.map[S.cur] : null;
+  const live = !!q && !q.done;
+  $('btnCheck').disabled = !live;
+  $('btnReveal').disabled = !live;
+  $('btnHint').disabled = !live || q.hint;
+  const items = sceneItems(), d = items.filter(x => x.done).length;
+  $('sceneLeft').textContent = `이 장면 ${d} / ${items.length} 채움`;
+}
+function updateBand(){
+  const n = S.qs.length, d = S.qs.filter(q => q.done).length;
+  $('bandR').textContent = `빈칸 ${d} / ${n} · ${S.score}점`;
+  $('progBar').style.width = (d/n*100) + '%';
+}
+function replaceBlank(q){
+  const el = $('passage').querySelector(`[data-id="${q.id}"]`); if(!el) return;
+  const tmp = document.createElement('span'); tmp.innerHTML = blankHTML(q);
+  const nw = tmp.firstChild; el.replaceWith(nw);
+  if(q.done && !reduceMotion) nw.classList.add('pop');
+}
+function nextUnsolved(afterId){
+  const items = sceneItems(), idx = items.findIndex(q => q.id===afterId);
+  for(let k=1; k<=items.length; k++){ const q = items[(idx+k) % items.length]; if(!q.done) return q; }
+  return null;
+}
+function paintFb(kind, q){
+  const fb = $('fb');
+  const ex = q ? `<span class="ex">${esc(q.detail)}</span>` : '';
+  if(kind==='idle'){ fb.className='fb info'; fb.innerHTML='노란 빈칸에 들어갈 말을 쓰고 Enter를 누르세요.<span class="ex">다른 빈칸은 클릭하거나 Tab으로 옮기고, 채운 빈칸을 누르면 해설을 다시 볼 수 있어요.</span>'; }
+  else if(kind==='wrong'){ fb.className='fb ng'; fb.innerHTML='❌ 아직 아니에요.<br>다시 써 보거나 초성 힌트를 눌러 보세요.'; }
+  else if(kind==='hint'){ fb.className='fb info'; fb.innerHTML=`💡 빈칸 안에 초성이 보여요 — <b>${esc(choseong(q.answer))}</b><br>그래도 모르면 정답 보기를 누르세요.`; }
+  else if(kind==='ok'){ fb.className='fb ok'; fb.innerHTML=`✅ ${q.result==='first'?'정답!':'다시 풀어 맞혔어요!'} <b>${esc(q.answer)}</b> +${q.pts}점${ex}`; }
+  else if(kind==='rv'){ fb.className='fb rv'; fb.innerHTML=`👀 정답은 <b>${esc(q.answer)}</b>이에요. 오답노트에 담아 둘게요.${ex}`; }
+  else if(kind==='detail'){
+    const mark = q.result==='first' ? '✅ 한 번에 맞힘' : q.result==='retry' ? '🔁 다시 풀어 맞힘' : '👀 정답 확인';
+    fb.className = q.result==='revealed' ? 'fb rv' : 'fb ok';
+    fb.innerHTML = `${mark} · <b>${esc(q.answer)}</b>${ex}`;
+  }
+  else if(kind==='scene'){
+    const nextTxt = S.sc===lastScene() ? '결과 보기' : '다음 장면으로';
+    fb.className='fb ok';
+    fb.innerHTML = `🎉 이 장면의 빈칸을 모두 채웠어요! <b>Enter · Space · →</b> ${nextTxt}` + (q ? `<span class="ex">방금 채운 빈칸 · ${esc(q.answer)} — ${esc(q.detail)}</span>` : '');
+  }
+}
+
+function submit(){
+  if(S.ended) return;
+  const q = S.cur!=null ? S.map[S.cur] : null; if(!q || q.done) return;
+  const el = inputOf(q.id); if(!el) return;
+  hideBanner();
+  const now = Date.now();
+  if(now - q.lastSubmit < 250) return;
+  const raw = el.value;
+  if(!raw.trim()){ const fb=$('fb'); fb.className='fb info'; fb.textContent='빈칸에 들어갈 말을 먼저 써 주세요.'; el.focus(); return; }
+  q.lastSubmit = now;
+  if(isCorrect(q, raw)){ solve(q, (q.wrong===0 && !q.hint) ? 'first' : 'retry'); return; }
+  el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake','bad');
+  const n = norm(raw);
+  if(n === q.lastNorm){ el.select(); return; }   // 같은 오답을 반복 제출하면 다시 세지 않음
+  q.lastNorm = n; q.wrong++; q.tries.push(raw.trim());
+  S.combo = 0; hud(false); sNG();
+  const hb = $('btnHint'); hb.classList.remove('pulse'); void hb.offsetWidth; if(!q.hint) hb.classList.add('pulse');
+  paintFb('wrong', q);
+  el.select();
+}
+function solve(q, result){
+  q.done = true; q.result = result;
+  let pts;
+  if(result==='first'){ S.combo++; S.best = Math.max(S.best, S.combo); pts = BASE + bonusFor(S.combo); }
+  else pts = RETRY;
+  q.pts = pts; S.score += pts;
+  replaceBlank(q); hud(result==='first'); updateBand();
+  afterBlank(q, true);
+}
+function useHint(){
+  const q = S.cur!=null ? S.map[S.cur] : null; if(!q || q.done || q.hint) return;
+  q.hint = true; S.combo = 0; hud(false);
+  const el = inputOf(q.id); if(el){ if(q.tries.length && norm(el.value)===q.lastNorm) el.value=''; el.classList.remove('bad'); el.placeholder = choseong(q.answer); el.focus(); }
+  $('btnHint').classList.remove('pulse');
+  paintFb('hint', q); updateTools();
+}
+function reveal(){
+  const q = S.cur!=null ? S.map[S.cur] : null; if(!q || q.done) return;
+  hideBanner();
+  q.done = true; q.result = 'revealed'; q.pts = 0;
+  S.combo = 0; hud(false);
+  replaceBlank(q); updateBand();
+  afterBlank(q, false);
+}
+function comboSpec(c, sub, pts){
+  if(c<=10) return {type:'c5', title:`${c}콤보!`, emo:'🎉🎊', sub, pts, dur:1500};
+  return {type:'cbig', title:`${c}연속!`, emo:'🌟', sub, pts, dur:1600};
+}
+function afterBlank(q, correct){
+  const c = S.combo;
+  const milestone = correct && q.result==='first' && c>=5 && c%5===0;   // 5·10·15… 콤보에만 배너
+  $('btnHint').classList.remove('pulse');
+  if(sceneDone()){
+    S.cur = null; updateTools();
+    if(document.activeElement) document.activeElement.blur();
+    S.lockUntil = Date.now() + 450;
+    const scenePts = sceneItems().reduce((a,x) => a + x.pts, 0);
+    paintFb('scene', q);
+    if(milestone) showBanner(comboSpec(c, `장면 완료 · 이 장면 +${scenePts}점`, q.pts));
+    else showBanner({type:'ok', title:'장면 완료!', emo:'', sub:`이 장면에서 얻은 점수`, pts:scenePts, dur:1100});
+    afterGraded();
+    return;
+  }
+  paintFb(correct ? 'ok' : 'rv', q);
+  if(milestone) showBanner(comboSpec(c, '정답! 연속으로 맞히고 있어요', q.pts));
+  else if(correct) sTick();
+  const nx = nextUnsolved(q.id);
+  if(nx) focusBlank(nx.id);
+}
+function afterGraded(){
+  if(S.qs.every(q => q.done) && S.sc===lastScene()){
+    clearTimeout(S.finishTimer);
+    S.finishTimer = setTimeout(() => { if(!S.ended) finish(); }, 1600);
+  }
+}
+function hud(up){
+  $('comboN').textContent = S.combo;
+  if(up){ const h=$('comboHud'); h.classList.remove('pop'); void h.offsetWidth; h.classList.add('pop'); }
+}
+function goNext(){
+  if(S.ended) return;
+  hideBanner();
+  if(S.sc < lastScene()){ S.sc++; renderScene(); return; }
+  const left = S.qs.filter(q => !q.done).length;
+  if(left===0 || S.endPrompt){ finish(); return; }
+  S.endPrompt = true;
+  const fl = S.qs.find(q => !q.done);
+  const fb = $('fb'); fb.className = 'fb info';
+  fb.innerHTML = `안 채운 빈칸이 <b>${left}개</b> 남았어요. 지금 끝내면 미응답으로 기록돼요.<div class="mini"><button class="btn sec" onclick="S.sc=${fl.scene};renderScene()">첫 미응답 장면으로</button><button class="btn" onclick="finish()">결과 보기</button></div>`;
+}
+function goPrev(){ if(S.ended || S.sc===0) return; hideBanner(); S.sc--; renderScene(); }
+function endGame(){
+  if(S.ended) return;
+  const left = S.qs.filter(q => !q.done).length;
+  if(left>0 && !confirm(`아직 빈칸 ${left}개가 남았어요. 게임을 끝낼까요?\n(안 채운 빈칸은 미응답으로 따로 기록돼요)`)) return;
+  finish();
+}
+function jumpStage(){
+  const other = S.stage===1 ? 2 : 1;
+  if(S.qs.some(q => q.done) && !confirm(`지금까지의 기록이 사라집니다. ${other}단계로 이동할까요?`)) return;
+  hideBanner(); startStage(other);
+}
+
+/* 입력 이벤트 — 한글 조합 중 Enter 처리 포함 */
+let composeEnter = false;
+(function bindPassage(){
+  const P = $('passage');
+  P.addEventListener('focusin', e => { const t=e.target; if(t.classList && t.classList.contains('bl')) setCur(+t.dataset.id); });
+  P.addEventListener('keydown', e => {
+    const t = e.target; if(!t.classList || !t.classList.contains('bl') || e.key!=='Enter') return;
+    e.preventDefault(); e.stopPropagation();
+    if(e.isComposing || e.keyCode===229){ composeEnter = true; return; }
+    setCur(+t.dataset.id); submit();
+  });
+  P.addEventListener('compositionend', e => {
+    if(!composeEnter) return;
+    composeEnter = false;
+    const id = +e.target.dataset.id;
+    setTimeout(() => { setCur(id); submit(); }, 0);
+  });
+  P.addEventListener('input', e => { if(e.target.classList) e.target.classList.remove('bad'); });
+  P.addEventListener('click', e => { const t = e.target.closest('.bf'); if(t) paintFb('detail', S.map[+t.dataset.id]); });
+})();
+['btnCheck','btnHint','btnReveal'].forEach(id => $(id).addEventListener('mousedown', e => e.preventDefault()));
+$('btnCheck').onclick = submit;
+$('btnHint').onclick = useHint;
+$('btnReveal').onclick = reveal;
+$('btnPrev').onclick = goPrev;
+$('btnNext').onclick = goNext;
+$('btnEnd').onclick = endGame;
+$('btnJump').onclick = jumpStage;
+
+document.addEventListener('keydown', e => {
+  if(e.key==='Escape'){ closeModals(); return; }
+  if(!$('play').classList.contains('on') || S.ended) return;
+  if(document.querySelector('.modal.on') || $('loginOverlay').style.display==='flex') return;
+  if(!['Enter',' ','ArrowRight'].includes(e.key)) return;
+  const t = e.target;
+  if(t && (t.tagName==='INPUT' || t.tagName==='TEXTAREA') && !t.disabled) return;
+  if(!sceneDone()){
+    if(e.key==='Enter' && S.cur!=null && !(t && t.tagName==='BUTTON')){ e.preventDefault(); focusBlank(S.cur); }
+    return;
+  }
+  if(Date.now() < S.lockUntil) return;
+  e.preventDefault();
+  goNext();
+});
+
+/* ================= 연출 ================= */
+let bannerTimer = null;
+const sTick = () => { tone(784,0,.08,'sine',.14); tone(1175,.06,.12,'sine',.14); };
+function showBanner(sp){
+  const b = $('banner'); b.className = 'on ' + (sp.type==='ok' ? '' : sp.type);
+  $('bnTitle').innerHTML = (sp.type==='cbig' ? esc(sp.emo)+' ' : '') + `<span class="g">${esc(sp.title)}</span>` + (sp.type!=='cbig' && sp.emo ? ' '+esc(sp.emo) : '');
+  $('bnSub').textContent = sp.sub || '';
+  const p = b.querySelector('.bn-panel'); p.style.animation='none'; void p.offsetWidth; p.style.animation='';
+  countUp($('bnPts'), sp.pts);
+  if(sp.type==='ok') sOK(); else if(sp.type==='c3') sC3(); else sC5();
+  if(!reduceMotion){
+    sparks(sp.type==='ok' ? 10 : 12);
+    if(sp.type==='ok') confetti([[.5,.45]], 50);
+    else if(sp.type==='c3'){ confetti([[.25,.6],[.75,.6]], 45); emojis(['🔥','✨'], 12); }
+    else {
+      const shots = sp.type==='cbig' ? Math.min(8, 4 + Math.floor((S.combo-10)/5)) : 4;
+      const pos = [[.15,.7],[.85,.7],[.35,.55],[.65,.55],[.5,.75],[.1,.4],[.9,.4],[.5,.4]].slice(0, shots);
+      confetti(pos, 45);
+      emojis(['🎉','🎊','⭐','✨'], sp.type==='cbig' ? 28 : 20);
+      document.body.classList.remove('glow'); void document.body.offsetWidth; document.body.classList.add('glow');
+    }
+  }
+  clearTimeout(bannerTimer);
+  bannerTimer = setTimeout(hideBanner, sp.dur);
+}
+function hideBanner(){ clearTimeout(bannerTimer); $('banner').className=''; }
+function countUp(el, n){
+  const t0=performance.now(), d=400;
+  (function step(t){ const k=Math.min(1,(t-t0)/d); el.textContent='+'+Math.round(n*k)+'점'; if(k<1) requestAnimationFrame(step); })(t0);
+}
+function sparks(n){
+  const box=$('bnSpark'); box.innerHTML='';
+  for(let i=0;i<n;i++){
+    const s=document.createElement('span'); s.className='spark'; s.textContent=['✨','⭐','💫'][i%3];
+    const a=Math.PI*2*i/n, r=150+Math.random()*80;
+    s.style.setProperty('--dx', Math.cos(a)*r+'px'); s.style.setProperty('--dy', Math.sin(a)*r*.7+'px');
+    s.style.left='-13px'; s.style.top='-13px';
+    box.appendChild(s);
+  }
+}
+function emojis(list, n){
+  for(let i=0;i<n;i++){
+    const e=document.createElement('span'); e.className='emo'; e.textContent=list[i%list.length];
+    e.style.left=Math.random()*96+'vw'; e.style.animationDelay=(Math.random()*.5)+'s';
+    e.style.animationDuration=(1.2+Math.random()*.8)+'s';
+    document.body.appendChild(e); setTimeout(()=>e.remove(), 2600);
+  }
+}
+const FX = { parts:[], raf:null };
+function confetti(origins, per){
+  const cv=$('fx'); cv.width=innerWidth; cv.height=innerHeight;
+  const colors=['#f7c531','#2E9B79','#ff6b6b','#4dabf7','#b36bff','#ff9a3c'];
+  origins.forEach(([ox,oy])=>{
+    for(let i=0;i<per;i++){
+      const a=-Math.PI/2 + (Math.random()-.5)*Math.PI*1.1, v=6+Math.random()*8;
+      FX.parts.push({x:ox*cv.width,y:oy*cv.height,vx:Math.cos(a)*v,vy:Math.sin(a)*v,r:Math.random()*6,rv:(Math.random()-.5)*.3,w:6+Math.random()*6,h:4+Math.random()*4,c:colors[i%colors.length],life:0});
+    }
+  });
+  if(!FX.raf) FX.raf=requestAnimationFrame(fxStep);
+}
+function fxStep(){
+  const cv=$('fx'), ctx=cv.getContext('2d');
+  ctx.clearRect(0,0,cv.width,cv.height);
+  FX.parts = FX.parts.filter(p=>p.life<75);
+  FX.parts.forEach(p=>{
+    p.life++; p.vy+=.32; p.vx*=.99; p.x+=p.vx; p.y+=p.vy; p.r+=p.rv;
+    ctx.save(); ctx.globalAlpha=Math.max(0,1-p.life/75); ctx.translate(p.x,p.y); ctx.rotate(p.r);
+    ctx.fillStyle=p.c; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h); ctx.restore();
+  });
+  if(FX.parts.length) FX.raf=requestAnimationFrame(fxStep);
+  else { FX.raf=null; ctx.clearRect(0,0,cv.width,cv.height); }
+}
+
+/* ================= 결과 계산 ================= */
+function stats(){
+  const qs=S.qs, n=qs.length;
+  const answered=qs.filter(q=>q.done);
+  const first=answered.filter(q=>q.result==='first').length;
+  const retry=answered.filter(q=>q.result==='retry').length;
+  const revealed=answered.filter(q=>q.result==='revealed').length;
+  const skipped=n-answered.length;
+  const acc = answered.length ? first/answered.length : 0;
+  const cats={};
+  answered.forEach(q=>{ const c=cats[q.category]||(cats[q.category]={n:0,ok:0}); c.n++; if(q.result==='first') c.ok++; });
+  const rated = Object.entries(cats).filter(([,v])=>v.n>=2);
+  const good = rated.filter(([,v])=>v.ok===v.n);
+  const weak = rated.filter(([,v])=>v.ok/v.n<.5);
+  const allWeak = rated.length>0 && rated.every(([,v])=>v.ok/v.n<.5);
+  const wrongTotal = answered.length-first;
+  let focus=null;
+  if(wrongTotal>0 && rated.length){
+    focus = rated.slice().sort((a,b)=>{
+      const wa=a[1].n-a[1].ok, wb=b[1].n-b[1].ok;
+      if(wb!==wa) return wb-wa;
+      const ra=a[1].ok/a[1].n, rb=b[1].ok/b[1].n;
+      if(ra!==rb) return ra-rb;
+      return b[1].n-a[1].n;
+    })[0];
+    if(focus && focus[1].n-focus[1].ok===0) focus=null;
+  }
+  return {n, answered:answered.length, first, retry, revealed, skipped, acc, good, weak, allWeak, wrongTotal, focus};
+}
+function verdict(st){
+  const p=st.acc*100;
+  let v = p>=95?['🌳','완벽해요!']:p>=85?['🌲','아주 잘했어요']:p>=70?['🌿','잘하고 있어요']:p>=50?['🌱','기본은 잡혔어요']:['🌰','다시 한 번 도전해요'];
+  if(st.answered===0) v=['🌰','아직 푼 문항이 없어요'];
+  const pre = st.skipped>0 ? `끝까지 풀지 않았어요 (${st.skipped}문항 남음) · ` : '';
+  return {emoji:v[0], text:pre+v[1]};
+}
+function catLine([k,v]){ const c=CATEGORIES[k]; return `${c.icon} ${c.label} ${v.ok}/${v.n}`; }
+function focusText(st){
+  if(st.answered===0) return {title:'', tip:'문제를 풀면 여기에 학습 조언이 나와요.'};
+  if(st.wrongTotal===0) return {title:'', tip:'약점이 보이지 않아요. 다음 단계에 도전해 보세요.'};
+  if(st.allWeak) return {title:'', tip:'유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.'};
+  if(!st.focus) return {title:'', tip:'틀린 문항은 오답노트에서 정답과 해설을 다시 확인해 보세요.'};
+  const c=CATEGORIES[st.focus[0]];
+  return {title:`${c.icon} ${c.label}`, tip:c.tip};
+}
+
+/* ================= 종료 ================= */
+function finish(){
+  clearTimeout(S.finishTimer);
+  hideBanner();
+  if(!S.ended){ S.elapsed = Date.now()-S.t0; S.endStamp = new Date(); }
+  S.ended = true;
+  const st = stats(), stage = STAGES[S.stage-1];
+  const total = st.n, right = st.first;
+  $('endBand').textContent = `${S.stage}단계 · ${stage.name}`;
+  $('endTitle').textContent = `${S.stage}단계 ${stage.name} 결과`;
+  $('endScore').textContent = `${S.score}점`;
+  $('endMax').textContent = `${stage.max}점 만점`;
+  $('endStats').innerHTML = [
+    ['정답률', Math.round(st.acc*100)+'%'],
+    ['첫 시도 정답', st.first],
+    ['다시 풀어 맞힘', st.retry],
+    ['정답 확인', st.revealed],
+    ['미응답', st.skipped],
+    ['최고 콤보', S.best],
+    ['소요 시간', fmtTime(S.elapsed)],
+    ['채점된 문항', `${st.answered} / ${st.n}`]
+  ].map(([a,b])=>`<div class="stat"><small>${a}</small><b>${b}</b></div>`).join('');
+  const v = verdict(st);
+  $('endVerdict').textContent = `${v.emoji} ${v.text}`;
+  $('endGood').innerHTML = st.good.length ? st.good.map(catLine).join('<br>') : '<span style="color:#94a3b8">아직 없어요</span>';
+  $('endWeak').innerHTML = st.allWeak ? '<span style="color:#94a3b8">아래 조언을 먼저 봐 주세요</span>' : (st.weak.length ? st.weak.map(catLine).join('<br>') : '<span style="color:#94a3b8">없어요</span>');
+  const f = focusText(st);
+  $('endFocus').innerHTML = `<b>🎯 가장 먼저 공부할 것${f.title?' — '+esc(f.title):''}</b><br>${esc(f.tip)}`;
+
+  const hasNext = S.stage < STAGES.length;
+  const bn = $('btnNextStage');
+  bn.style.display = hasNext ? '' : 'none';
+  bn.onclick = () => startStage(S.stage + 1);
+  const br = $('btnRetry');
+  br.className = hasNext ? 'btn sec' : 'btn';
+  br.onclick = () => startStage(S.stage);
+  $('warn').classList.remove('on');
+  if(IS_ONLINE){ $('endNote').textContent = '학습 결과(학번, 이름, 점수, 오답 정보)는 담당 선생님의 학습 관리용 스프레드시트로 전송됩니다.'; }
+
+  // ── 연동 모드: 결과 전송 ──
+  if(IS_ONLINE&&STUDENT.verified){
+    const nameInput=$('inName');nameInput.value=STUDENT.name;nameInput.readOnly=true;nameInput.style.background='#f0ede5';
+    const wrongItems=S.qs.filter(q=>q.done&&q.result!=='first').map(q=>q.id).join(',');
+    submitResult({
+      studentId:STUDENT.id,
+      studentName:STUDENT.name,
+      className:STUDENT.className,
+      totalQuestions:total,
+      correctCount:right,
+      score:S.score,
+      elapsedSeconds:Math.round(S.elapsed/1000),
+      wrongItems:wrongItems,
+      answeredCount:st.answered,
+      skippedCount:st.skipped,
+      stage:S.stage,
+      reflection:''
+    }).then(res=>{
+      document.querySelectorAll('.sendMsg').forEach(x=>x.remove());
+      const el=document.createElement('div');
+      el.className='sendMsg';
+      el.style.cssText='margin-top:8px;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:600;text-align:center;';
+      if(res.status==='ok'){
+        el.style.background='#e8f5e9';el.style.color='#2e7d32';
+        el.textContent='✅ 결과가 선생님께 전송되었습니다.';
+      } else {
+        el.style.background='#ffebee';el.style.color='#c62828';
+        el.innerHTML='❌ 전송 실패 <button onclick="this.parentElement.remove();finish();" style="margin-left:8px;padding:4px 12px;border:1px solid #c62828;border-radius:6px;background:#fff;color:#c62828;cursor:pointer;font-size:12px;">재전송</button>';
+      }
+      const p=document.getElementById('endPrivacy');if(p)p.before(el);
+    });
+  }
+
+  show('end');
+}
+function goHome(){ hideBanner(); show('start'); }
+
+/* ================= 학생용 복습 목록 ================= */
+function openReview(){
+  const list = S.qs.filter(q=>q.seen);
+  $('reviewBody').innerHTML = list.length ? list.map(q=>{
+    const mark = !q.done ? '⏸️ 미응답' : q.result==='first' ? '✅ 한 번에 맞힘' : q.result==='retry' ? '🔁 다시 풀어 맞힘' : '👀 정답 확인';
+    const c = CATEGORIES[q.category];
+    return `<div class="ritem"><div class="rs">${esc(q.section)} · ${c.icon} ${c.label} · ${mark}</div>
+      <div>${esc(q.text.replace('___','( ____ )'))}</div>
+      <div>정답 <span class="ra">${esc(q.answer)}</span></div>
+      <div class="rd">${esc(q.detail)}</div></div>`;
+  }).join('') : '<p>이번 판에 나온 문제가 없어요.</p>';
+  $('reviewModal').classList.add('on');
+}
+function closeModals(){ document.querySelectorAll('.modal.on').forEach(m=>m.classList.remove('on')); }
+
+/* ================= 캔버스 이미지 ================= */
+const CF = "'Malgun Gothic','맑은 고딕','Apple SD Gothic Neo','Noto Sans KR',sans-serif";
+const F = (size, w='normal') => `${w} ${size}px ${CF}`;
+function wrapText(ctx, text, maxW){
+  const out=[];
+  String(text).split('\n').forEach(para=>{
+    const words = para.split(' ');
+    let line='';
+    words.forEach(w=>{
+      const test = line ? line+' '+w : w;
+      if(ctx.measureText(test).width <= maxW){ line=test; return; }
+      if(line) out.push(line);
+      if(ctx.measureText(w).width <= maxW){ line=w; return; }
+      let chunk='';
+      for(const ch of w){ if(ctx.measureText(chunk+ch).width>maxW){ out.push(chunk); chunk=ch; } else chunk+=ch; }
+      line=chunk;
+    });
+    out.push(line);
+    const L = out.length;
+    if(L>=2 && out[L-1].length<=5 && out[L-2].includes(' ')){
+      const cut = out[L-2].lastIndexOf(' ');
+      const moved = out[L-2].slice(cut+1) + ' ' + out[L-1];
+      if(ctx.measureText(moved).width <= maxW){ out[L-1] = moved; out[L-2] = out[L-2].slice(0,cut); }
+    }
+  });
+  return out;
+}
+// 두 번 그린다: 1회차는 높이 측정, 2회차는 실제 그리기
+function paint(W, drawFn){
+  const m=document.createElement('canvas').getContext('2d');
+  const H = drawFn(m, false);
+  const cv=document.createElement('canvas'); cv.width=W; cv.height=Math.ceil(H);
+  const ctx=cv.getContext('2d');
+  drawFn(ctx, true);
+  return cv;
+}
+function mkPen(ctx, draw){
+  return {
+    text(str,x,y,font,color,align='left'){ ctx.font=font; if(draw){ ctx.fillStyle=color; ctx.textAlign=align; ctx.textBaseline='top'; ctx.fillText(str,x,y); } },
+    rect(x,y,w,h,color){ if(draw){ ctx.fillStyle=color; ctx.fillRect(x,y,w,h); } },
+    round(x,y,w,h,r,fill,stroke){ if(!draw) return; ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); if(fill){ctx.fillStyle=fill;ctx.fill();} if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=1.5;ctx.stroke();} },
+    lines(str,x,y,maxW,font,color,lh){ ctx.font=font; const ls=wrapText(ctx,str,maxW); ls.forEach((l,i)=>this.text(l,x,y+i*lh,font,color)); return ls.length*lh; },
+    measure(str,maxW,font,lh){ ctx.font=font; return wrapText(ctx,str,maxW).length*lh; }
+  };
+}
+function capHeader(p, W, title, sub){
+  p.rect(0,0,W,110,'#2E9B79');
+  p.rect(0,110,W,6,'#0F6E56');
+  p.text(title, 44, 26, F(30,'bold'), '#ffffff');
+  p.text(sub, 44, 72, F(17), '#DDF2E9');
+  return 146;
+}
+function capFooter(p, W, y, withStd){
+  const X=44, MW=W-88;
+  p.rect(X,y,MW,1,'#DDF2E9'); y+=18;
+  if(withStd){
+    y += p.lines(`성취기준 ${STD_CODE} ${STD_TEXT}`, X, y, MW, F(14,'bold'), '#0F6E56', 22) + 8;
+  }
+  y += p.lines('🔒 개인정보 보호 안내 · ' + (IS_ONLINE?PRIV_ON:PRIV_OFF), X, y, MW, F(13), '#64748b', 20) + 8;
+  y += p.lines(CREDIT1, X, y, MW, F(13), '#64748b', 20);
+  y += p.lines(CREDIT2, X, y, MW, F(13), '#64748b', 20);
+  return y + 36;
+}
+function userInfo(){
+  const name = $('inName').value.trim();
+  if(!name){ $('warn').classList.add('on'); $('inName').focus(); return null; }
+  $('warn').classList.remove('on');
+  return { name, memo: $('inMemo').value.trim() };
+}
+function downloadCanvas(cv, fname){
+  const url = cv.toDataURL('image/jpeg', .92);
+  const bin = atob(url.split(',')[1]); const buf = new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) buf[i]=bin.charCodeAt(i);
+  const href = URL.createObjectURL(new Blob([buf],{type:'image/jpeg'}));
+  const a=document.createElement('a'); a.href=href; a.download=fname;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(href), 4000);
+}
+function resultLabel(q){ return q.result==='retry' ? '다시 풀어 맞힘' : '정답 확인'; }
+
+function makeWrongNote(){
+  const u=userInfo(); if(!u) return;
+  const W=900, X=44, MW=W-88, stage=STAGES[S.stage-1];
+  const items = S.qs.filter(q=>q.done && q.result!=='first');
+  const when = stamp(S.endStamp);
+  const cv = paint(W, (ctx, draw)=>{
+    const p=mkPen(ctx, draw);
+    p.rect(0,0,W,100000,'#F2FBF7');
+    let y = capHeader(p, W, `꺼삐딴 리 빈칸 채우기 · 오답노트`, `${S.stage}단계 ${stage.name} · ${u.name} · ${when}`);
+    if(!items.length){
+      const h=110; p.round(X,y,MW,h,16,'#ffffff','#DDF2E9');
+      p.text('🎉 다시 볼 문항이 없어요!', W/2, y+28, F(26,'bold'), '#0F6E56','center');
+      p.text('모든 문항을 힌트 없이 한 번에 맞혔어요.', W/2, y+68, F(17), '#475569','center');
+      y+=h+24;
+    } else {
+      p.text(`다시 볼 문항 ${items.length}개 — 유형 · 문제 · 정답 · 해설`, X, y, F(18,'bold'), '#0F6E56'); y+=38;
+      items.forEach(q=>{
+        const c=CATEGORIES[q.category], IW=MW-40;
+        const qStr = q.text.replace('___','(          )');
+        const tryStr = q.tries.length ? '내가 쓴 답: ' + q.tries.join(' / ') : '';
+        let h = 20 + 26 + p.measure(qStr, IW, F(18), 28) + 10 + 30 + p.measure('해설 · '+q.detail, IW, F(14), 22) + (tryStr? p.measure(tryStr, IW, F(14), 22)+4:0) + 20;
+        p.round(X,y,MW,h,14,'#ffffff','#DDF2E9');
+        let yy=y+20;
+        p.text(`${c.icon} ${c.label}  ·  ${q.section}  ·  ${resultLabel(q)}`, X+20, yy, F(14,'bold'), '#2E9B79'); yy+=26;
+        yy += p.lines(qStr, X+20, yy, IW, F(18), '#222222', 28) + 10;
+        p.text('정답  ' + q.answer, X+20, yy, F(20,'bold'), '#1f9d63'); yy+=30;
+        if(tryStr){ yy += p.lines(tryStr, X+20, yy, IW, F(14), '#b45309', 22) + 4; }
+        yy += p.lines('해설 · '+q.detail, X+20, yy, IW, F(14), '#64748b', 22);
+        y += h + 14;
+      });
+      y += 10;
+    }
+    return capFooter(p, W, y, false);
+  });
+  downloadCanvas(cv, `${u.name}_오답노트_${stage.fileLabel}_${fileStamp(S.endStamp)}.jpg`);
+}
+
+function makeReport(){
+  const u=userInfo(); if(!u) return;
+  const W=900, X=44, MW=W-88, stage=STAGES[S.stage-1];
+  const st=stats(), v=verdict(st), f=focusText(st);
+  const when = stamp(S.endStamp);
+  const cv = paint(W, (ctx, draw)=>{
+    const p=mkPen(ctx, draw);
+    p.rect(0,0,W,100000,'#F2FBF7');
+    let y = capHeader(p, W, '꺼삐딴 리 빈칸 채우기 · 학습 결과 분석 리포트', `${S.stage}단계 ${stage.name} · ${u.name} · ${when}`);
+    // 점수
+    p.round(X,y,MW,112,16,'#ffffff','#DDF2E9');
+    p.text(`${S.score}점`, X+28, y+22, F(46,'bold'), '#0F6E56');
+    ctx.font=F(46,'bold'); const sw = ctx.measureText(`${S.score}점`).width;
+    p.text(`/ ${stage.max}점 만점`, X+40+sw, y+44, F(20), '#64748b');
+    p.text(`정답률 ${Math.round(st.acc*100)}%`, X+MW-28, y+26, F(30,'bold'), '#2E9B79','right');
+    p.text(`채점된 문항 ${st.answered} / ${st.n}`, X+MW-28, y+70, F(15), '#64748b','right');
+    y+=128;
+    // 요약 수치
+    const cells=[['첫 시도 정답',st.first],['다시 풀어 맞힘',st.retry],['정답 확인',st.revealed],['미응답',st.skipped],['최고 콤보',S.best],['소요 시간',fmtTime(S.elapsed)]];
+    const cw=(MW-50)/6;
+    cells.forEach(([a,b],i)=>{
+      const cx=X+i*(cw+10);
+      p.round(cx,y,cw,72,12,'#ffffff','#DDF2E9');
+      p.text(a, cx+cw/2, y+12, F(13), '#64748b','center');
+      p.text(String(b), cx+cw/2, y+34, F(i===5?17:22,'bold'), '#222222','center');
+    });
+    y+=90;
+    p.text('※ 정답률은 힌트 없이 한 번에 맞힌 문항 ÷ 채점된 문항으로 계산해요. 미응답은 빼고 셉니다.', X, y, F(13), '#64748b'); y+=34;
+    // 총평
+    y += p.lines(`${v.emoji} ${v.text}`, X, y, MW, F(24,'bold'), '#0F6E56', 34) + 14;
+    // 잘함 / 보완
+    const colW=(MW-16)/2;
+    const goodT = st.good.length ? st.good.map(catLine).join('\n') : '아직 없어요';
+    const weakT = st.allWeak ? '아래 조언을 먼저 봐 주세요' : (st.weak.length ? st.weak.map(catLine).join('\n') : '없어요');
+    const bh = 54 + Math.max(p.measure(goodT,colW-40,F(17),28), p.measure(weakT,colW-40,F(17),28)) + 16;
+    p.round(X,y,colW,bh,14,'#ffffff','#DDF2E9');
+    p.round(X+colW+16,y,colW,bh,14,'#ffffff','#DDF2E9');
+    p.text('👍 잘하는 유형', X+20, y+16, F(17,'bold'), '#0F6E56');
+    p.text('🛠️ 보완이 필요한 유형', X+colW+36, y+16, F(17,'bold'), '#9b2c2c');
+    p.lines(goodT, X+20, y+50, colW-40, F(17), '#222222', 28);
+    p.lines(weakT, X+colW+36, y+50, colW-40, F(17), '#222222', 28);
+    y += bh + 16;
+    // 먼저 공부할 것
+    const fTitle = '🎯 가장 먼저 공부할 것' + (f.title ? ' — '+f.title : '');
+    const fh = 52 + p.measure(f.tip, MW-40, F(17), 28) + 16;
+    p.round(X,y,MW,fh,14,'#fffaf0','#f5c26b');
+    p.text(fTitle, X+20, y+16, F(18,'bold'), '#9a5b00');
+    p.lines(f.tip, X+20, y+50, MW-40, F(17), '#3f3f46', 28);
+    y += fh + 16;
+    // 소감
+    if(u.memo){
+      const mh = 50 + p.measure(u.memo, MW-40, F(16), 26) + 16;
+      p.round(X,y,MW,mh,14,'#ffffff','#DDF2E9');
+      p.text('✍️ 학습 소감', X+20, y+16, F(17,'bold'), '#0F6E56');
+      p.lines(u.memo, X+20, y+48, MW-40, F(16), '#333333', 26);
+      y += mh + 16;
+    }
+    return capFooter(p, W, y+6, true);
+  });
+  downloadCanvas(cv, `${u.name}_학습리포트_${stage.fileLabel}_${fileStamp(S.endStamp)}.jpg`);
+}
+
+/* ================= 교사용 학습 데이터 목록 (엑셀) ================= */
+function xmlEsc(s){ return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function xRow(cells, style){ return '<Row>'+cells.map(c=>`<Cell${style?` ss:StyleID="${style}"`:' ss:StyleID="w"'}><Data ss:Type="${typeof c==='number'?'Number':'String'}">${xmlEsc(c)}</Data></Cell>`).join('')+'</Row>'; }
+function tail(){
+  return [
+    [], ['성취기준', `${STD_CODE} ${STD_TEXT}`],
+    ['배점 규칙', '빈칸마다 힌트 없이 첫 입력 정답 10점 + 콤보 보너스(3~4연속 +5, 5연속 이상 +10) · 오답 후 또는 초성 힌트 후 정답 5점 · 정답 보기 0점 · 오답 감점 없음'],
+    ['총문항 수', STAGES.map(s=>`${s.no}단계 ${s.scenes.length}장면 빈칸 ${s.items.length}개(${s.max}점 만점)`).join(' · ')],
+    ['크레딧', `${CREDIT1} · ${CREDIT2}`]
+  ];
+}
+function downloadTeacherXls(){
+  const cols = '<Column ss:Width="48"/><Column ss:Width="190"/><Column ss:Width="80"/><Column ss:Width="380"/><Column ss:Width="100"/><Column ss:Width="200"/><Column ss:Width="300"/>';
+  const sheets = STAGES.map(s=>{
+    let rows = xRow(['원본 id','장면','유형','문제(빈칸이 든 문장)','정답','허용 답','해설'],'h');
+    s.items.forEach(q=> rows += xRow([q.id, q.section, CATEGORIES[q.category].label, q.text.replace('___','(    )'), q.answer, q.alts.join(', '), q.detail]));
+    tail().forEach(r=> rows += xRow(r));
+    return `<Worksheet ss:Name="${s.no}단계_${s.name.replace(/\s/g,'')}"><Table>${cols}${rows}</Table></Worksheet>`;
+  });
+  STAGES.forEach(s=>{
+    let rows = xRow(['장면','지문 (【번호】 = 빈칸 원본 id)'],'h');
+    s.scenes.forEach((sc,i)=> rows += xRow([`장면 ${i+1} · ${sc.title}`, sc.plain]));
+    sheets.push(`<Worksheet ss:Name="${s.no}단계_지문"><Table><Column ss:Width="220"/><Column ss:Width="700"/>${rows}</Table></Worksheet>`);
+  });
+  let sum = xRow(['단계','유형','문항 수','설명','학습 조언(tip)'],'h');
+  STAGES.forEach(s=>{
+    Object.entries(CATEGORIES).forEach(([k,c])=>{
+      const n = s.items.filter(q=>q.category===k).length;
+      if(n) sum += xRow([`${s.no}단계`, c.label, n, c.desc, c.tip]);
+    });
+  });
+  tail().forEach(r=> sum += xRow(r));
+  sheets.push(`<Worksheet ss:Name="유형별요약"><Table><Column ss:Width="60"/><Column ss:Width="90"/><Column ss:Width="60"/><Column ss:Width="220"/><Column ss:Width="420"/>${sum}</Table></Worksheet>`);
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<?mso-application progid="Excel.Sheet"?>\n<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Styles><Style ss:ID="h"><Font ss:Bold="1"/><Interior ss:Color="#DDF2E9" ss:Pattern="Solid"/></Style><Style ss:ID="w"><Alignment ss:Vertical="Top" ss:WrapText="1"/></Style></Styles>${sheets.join('')}</Workbook>`;
+  const d=new Date();
+  const href = URL.createObjectURL(new Blob([xml], {type:'application/vnd.ms-excel;charset=utf-8'}));
+  const a=document.createElement('a'); a.href=href;
+  a.download = `${GAME_CONFIG.gameCode}_꺼삐딴리빈칸채우기_학습데이터목록_${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}.xls`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(href), 4000);
+}
+function showTeacherConfirm(){ $('teacherModal').classList.add('on'); }
+(function mascotPress(){
+  let pressTimer = null;
+  const mascot = document.getElementById('mascot');
+  const start = e => { e.preventDefault();
+    pressTimer = setTimeout(() => { pressTimer = null; showTeacherConfirm(); }, 2000); };
+  const cancel = () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } };
+  mascot.addEventListener('pointerdown', start);
+  ['pointerup','pointerleave','pointercancel'].forEach(ev => mascot.addEventListener(ev, cancel));
+  mascot.addEventListener('contextmenu', e => e.preventDefault());
+  mascot.addEventListener('dragstart', e => e.preventDefault());
+})();
+</script>
+</body>
+</html>

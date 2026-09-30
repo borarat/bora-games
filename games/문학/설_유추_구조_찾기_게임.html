@@ -4,540 +4,1261 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>설(說) 유추 구조 찾기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@400;600;700&display=swap');
+html{color-scheme:light}
+:root{
+ --bg:#F3F8FD;--acc:#3B86C9;--acc2:#5AA0DC;--ink:#185FA5;--line:#E3EFFA;--card:#FFFFFF;
+ --txt:#333;--ink2:#6b7a8c;--ng:#C0392B;
+ --exp:#2E9B79;--expBg:#E6F5EF;--expLn:#A8DCC8;
+ --ext:#7C5CBF;--extBg:#EFE9FA;--extLn:#C5B3E6;
+ --les:#D4614E;--lesBg:#FBEAE6;--lesLn:#EFB3A6;
+ --con:#B8860B;--conBg:#FCF3E0;--conLn:#E8C86A;
+}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Noto Sans KR',sans-serif;background:#f0eaf8;color:#2e2440;min-height:100vh}
-.screen{display:none!important;min-height:100vh}
-.screen.active{display:flex!important;flex-direction:column}
-#gameScreen.active{display:block!important}
-.overlay{display:none;position:fixed;inset:0;background:rgba(30,20,50,.55);z-index:300;align-items:center;justify-content:center;padding:20px}
+body{font-family:'Noto Sans KR','Malgun Gothic','맑은 고딕',sans-serif;background:var(--bg);color:#22303d;min-height:100vh}
+.screen{display:none!important}
+.screen.active{display:block!important}
+#gameScreen.active,#quizScreen.active,#resultScreen.active,#conceptScreen.active,#conceptSeolScreen.active{display:flex!important;align-items:center;justify-content:center;min-height:100vh;padding:14px 12px}
+#gameScreen.active>.shell,#quizScreen.active>.shell,#resultScreen.active>.shell,#conceptScreen.active>.shell,#conceptSeolScreen.active>.shell{width:100%}
+.overlay{display:none;position:fixed;inset:0;background:rgba(16,40,66,.5);z-index:300;align-items:center;justify-content:center;padding:20px}
 .overlay.show{display:flex}
+input,textarea,button{font-family:inherit;color-scheme:light}
 
-/* 시작 */
-#startScreen{align-items:center;justify-content:flex-start;padding:0 20px 28px}
-.start-title{font-family:'Noto Serif KR',serif;font-size:40px;font-weight:700;color:#4a2d8a;margin-bottom:4px}
-.start-subtitle{font-size:16px;color:#7a6d90;margin-bottom:22px}
-.info-box{background:#fff;border:2px solid #d4c8e8;border-radius:14px;padding:20px 24px;max-width:720px;width:100%;margin-bottom:16px}
-.info-box h3{font-size:15px;color:#7c5cbf;margin-bottom:8px;border-bottom:1px solid #e8dff5;padding-bottom:7px}
-.info-box p,.info-box li{font-size:13.5px;line-height:1.8;color:#4a3f5c}
-.info-box ul{padding-left:18px}.info-box li{margin-bottom:2px}
-.category-tags{display:flex;gap:10px;margin:10px 0 4px;flex-wrap:wrap}
-.cat-tag{padding:5px 14px;border-radius:20px;font-size:12.5px;font-weight:600}
-.cat-tag.exp{background:#e0f5ea;color:#1e6b45;border:1.5px solid #8bc4a0}
-.cat-tag.ext{background:#e0edf8;color:#1e4d8a;border:1.5px solid #7ea8d8}
-.cat-tag.les{background:#fce8e8;color:#9a2d2d;border:1.5px solid #d88888}
-.score-info{background:#f5f0fa;border:1.5px solid #d4c8e8;border-radius:8px;padding:10px 14px;margin-top:8px;font-size:13px;color:#6b5c80;line-height:1.7}
-.btn-start{background:linear-gradient(135deg,#7c5cbf,#9b7be0);color:#fff;font-size:17px;font-weight:700;padding:13px 44px;border:none;border-radius:12px;cursor:pointer;margin-top:8px;transition:all .2s;box-shadow:0 6px 20px rgba(124,92,191,.35)}
-.btn-start:hover{transform:translateY(-2px)}
-.credit-box{margin-top:16px;background:#fff;border:1.5px solid #d4c8e8;border-radius:10px;padding:12px 18px;text-align:center;font-size:11.5px;color:#8a7d9e;line-height:1.7;max-width:720px}
+/* ── 영역 헤더 띠 ── */
+.band{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--acc);color:#fff;height:38px;padding:0 16px;border-radius:12px 12px 0 0}
+.band-left{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.band-right{font-size:12.5px;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:10px}
+.badge{background:rgba(255,255,255,.22);border-radius:20px;padding:3px 11px;font-size:11.5px;font-weight:600}
+@media(max-width:600px){.band-goal{display:none}}
 
-/* 개념 */
-#conceptScreen{align-items:center;justify-content:center;padding:30px 20px}
-.concept-card{background:#fff;border:2px solid #d4c8e8;border-radius:18px;padding:28px 30px;max-width:760px;width:100%;box-shadow:0 8px 30px rgba(100,70,160,.12)}
-.concept-card h2{font-family:'Noto Serif KR',serif;font-size:26px;color:#4a2d8a;text-align:center;margin-bottom:6px}
-.concept-card .sub{text-align:center;font-size:14px;color:#7a6d90;margin-bottom:20px}
-.concept-what{background:#f5f0fa;border:1.5px solid #d4c8e8;border-radius:12px;padding:16px 20px;margin-bottom:18px;font-size:14px;line-height:2;color:#3e2a60}
-.concept-what b{color:#7c5cbf}
-.concept-step{display:flex;align-items:flex-start;gap:12px;margin-bottom:4px}
-.concept-step .step-badge{flex-shrink:0;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;margin-top:2px}
-.sb-exp{background:#2d8a5e}.sb-ext{background:#2a5d9a}.sb-les{background:#c04848}
-.concept-step .step-text{font-size:14px;line-height:1.7;color:#3e2a60;padding:6px 0}
-.concept-step .step-text b{font-weight:700}
-.concept-arrow{text-align:center;font-size:18px;color:#9b7be0;margin:2px 0;padding-left:44px}
-.concept-example{background:#faf7ff;border:1.5px dashed #c9b8e8;border-radius:10px;padding:14px 18px;margin-bottom:18px}
-.concept-example .ex-title{font-size:13px;font-weight:600;color:#7c5cbf;margin-bottom:6px}
-.concept-example .ex-body{font-size:13px;line-height:1.8;color:#4a3f5c}
-.btn-concept{display:block;margin:0 auto;background:linear-gradient(135deg,#7c5cbf,#9b7be0);color:#fff;font-size:16px;font-weight:700;padding:13px 40px;border:none;border-radius:12px;cursor:pointer;transition:all .2s;box-shadow:0 6px 20px rgba(124,92,191,.35)}
-.btn-concept:hover{transform:translateY(-2px)}
+/* ── 시작 화면 ── */
+.shell{max-width:1060px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 6px 26px rgba(24,95,165,.07)}
+#startScreen .inner{padding:48px 34px 60px}
+.title-row{display:flex;align-items:center;gap:18px;justify-content:center;margin-bottom:6px}
+.start-title{font-family:'Noto Serif KR','Malgun Gothic',serif;font-size:clamp(28px,4vw,40px);font-weight:700;color:var(--ink)}
+.start-sub{text-align:center;font-size:15px;color:var(--ink2);margin-bottom:16px}
+.info-box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 20px;margin-bottom:14px;box-shadow:0 2px 10px rgba(24,95,165,.04)}
+.info-box h3{font-size:14.5px;color:var(--ink);margin-bottom:8px;border-bottom:1px solid var(--line);padding-bottom:7px}
+.info-box p,.info-box li{font-size:13.5px;line-height:1.85;color:#45525f}
+.info-box ul{padding-left:18px}
+.std-line{font-size:13px;line-height:1.8;color:#2c4a68}
+.std-line b{color:var(--ink)}
+.cols{display:flex;gap:14px;flex-wrap:wrap}
+.cols>div{flex:1;min-width:290px;margin-bottom:0}
+.cat-tags{display:flex;gap:8px;margin:10px 0 4px;flex-wrap:wrap}
+.cat-tag{padding:5px 13px;border-radius:20px;font-size:12.5px;font-weight:600}
+.cat-tag.exp{background:var(--expBg);color:var(--exp);border:1.5px solid var(--expLn)}
+.cat-tag.ext{background:var(--extBg);color:var(--ext);border:1.5px solid var(--extLn)}
+.cat-tag.les{background:var(--lesBg);color:var(--les);border:1.5px solid var(--lesLn)}
+.score-info{background:#F7FBFF;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-top:8px;font-size:13px;color:#45525f;line-height:1.85}
+.btn{background:var(--acc);color:#fff;font-size:16px;font-weight:700;padding:13px 40px;border:none;border-radius:12px;cursor:pointer;transition:.15s;box-shadow:0 5px 16px rgba(59,134,201,.28)}
+.btn:hover{background:var(--ink)}
+.btn.sec{background:#fff;color:var(--ink);border:1.5px solid var(--line);box-shadow:none}
+.btn.sec:hover{background:#F0F7FE}
+.credit-box{margin-top:14px;background:#F7FBFF;border:1px solid var(--line);border-radius:10px;padding:11px 18px;text-align:center;font-size:12px;color:#6b7a8c;line-height:1.85}
+.privacy{margin-top:10px;font-size:11.5px;color:#7d8b99;line-height:1.75;text-align:center;background:#F7FBFF;border:1px solid var(--line);border-radius:10px;padding:10px 16px}
 
-/* 게임 */
-.game-header{background:#4a2d8a;color:#f0eaf8;padding:11px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
-.game-header .hdr-left{font-family:'Noto Serif KR',serif;font-size:15px;font-weight:600}
-.game-header .hdr-right{display:flex;gap:14px;align-items:center;font-size:13px}
-.progress-bar{width:180px;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden}
-.progress-fill{height:100%;background:linear-gradient(90deg,#c9b8e8,#e0b0ff);border-radius:3px;transition:width .4s}
-.game-body{display:flex;max-width:1200px;margin:0 auto;padding:18px;gap:18px}
-.text-panel{flex:1.2;background:#fff;border-radius:14px;padding:24px;border:1.5px solid #d4c8e8;max-height:calc(100vh - 90px);overflow-y:auto}
-.text-panel::-webkit-scrollbar{width:5px}
-.text-panel::-webkit-scrollbar-track{background:#f0eaf8;border-radius:3px}
-.text-panel::-webkit-scrollbar-thumb{background:#c9b8e8;border-radius:3px}
-.work-title-bar{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
-.work-title{font-family:'Noto Serif KR',serif;font-size:20px;font-weight:700;color:#4a2d8a}
-.work-author{font-size:13px;color:#8a7d9e}
-.work-meaning{font-size:13px;color:#9b8ab0;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #e8dff5}
-.text-content{font-size:14.5px;line-height:2.0;color:#3a2e50}
-.text-content p{margin-bottom:10px;text-indent:1em}
-.sentence-mark{cursor:pointer;border-radius:4px;padding:1px 3px;transition:all .2s}
-.sentence-mark:hover{filter:brightness(.92)}
-.sentence-mark.unmarked{background:#f0e6ff;border-bottom:2px dashed #9b7be0}
-.sentence-mark.selected{outline:2.5px solid #5a3d96;outline-offset:1px}
-.sentence-mark.done-exp{background:#d4edda;border-bottom:2px solid #2d8a5e}
-.sentence-mark.done-ext{background:#cfe2f3;border-bottom:2px solid #2a5d9a}
-.sentence-mark.done-les{background:#f5c6c6;border-bottom:2px solid #c04848}
-.sentence-mark.wrong{animation:wrongShake .4s}
-@keyframes wrongShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-4px)}40%{transform:translateX(4px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+/* ── 개념 화면 ── */
+.concept-wrap{padding:26px 30px 34px}
+.concept-wrap h2{font-family:'Noto Serif KR','Malgun Gothic',serif;font-size:24px;color:var(--ink);text-align:center;margin-bottom:6px}
+.concept-wrap .sub{text-align:center;font-size:13.5px;color:var(--ink2);margin-bottom:18px;line-height:1.8}
+.cbox{flex:1;min-width:270px;background:#F7FBFF;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.cbox-ttl{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:8px}
+.cbox-body{font-size:12.8px;line-height:1.85;color:#3a4856}
+.pill{display:inline-block;padding:1px 9px;border-radius:10px;font-size:11.5px;font-weight:600}
+.step-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:6px}
+.step-badge{width:24px;height:24px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.sb-exp{background:var(--exp)}.sb-ext{background:var(--ext)}.sb-les{background:var(--les)}
+.step-text{font-size:12.8px;line-height:1.7;color:#3a4856}
+.c-arrow{text-align:left;padding-left:8px;font-size:14px;color:var(--acc)}
 
-.side-panel{flex:0 0 310px;display:flex;flex-direction:column;gap:12px;position:sticky;top:75px;align-self:flex-start}
-.classify-box{background:#fff;border-radius:14px;padding:18px;border:1.5px solid #d4c8e8}
-.classify-box h3{font-size:14px;font-weight:600;color:#5a3d96;margin-bottom:12px;text-align:center}
-.classify-btn{width:100%;padding:12px 14px;margin-bottom:8px;border-radius:10px;border:2px solid;font-size:13.5px;font-weight:600;cursor:pointer;transition:all .15s;text-align:left;display:flex;align-items:center;gap:10px;background:#fff}
-.classify-btn .btn-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
-.classify-btn.exp-btn{border-color:#8bc4a0;color:#1e6b45}.classify-btn.exp-btn .btn-num{background:#2d8a5e;color:#fff}.classify-btn.exp-btn:hover:not(:disabled){background:#e0f5ea}
-.classify-btn.ext-btn{border-color:#7ea8d8;color:#1e4d8a}.classify-btn.ext-btn .btn-num{background:#2a5d9a;color:#fff}.classify-btn.ext-btn:hover:not(:disabled){background:#e0edf8}
-.classify-btn.les-btn{border-color:#d88888;color:#9a2d2d}.classify-btn.les-btn .btn-num{background:#c04848;color:#fff}.classify-btn.les-btn:hover:not(:disabled){background:#fce8e8}
-.classify-btn:disabled{opacity:.35;cursor:default}
-
-.hint-box{display:none;background:#fffbf0;border:1.5px solid #e8c86a;border-radius:10px;padding:12px 14px;font-size:12.5px;color:#7a6420;line-height:1.7}
+/* ── 문제 화면 ── */
+#gameScreen .shell,#quizScreen .shell{max-width:1180px}
+.game-body{display:flex;gap:16px;padding:16px}
+.text-panel{flex:1.25;background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px 22px;max-height:calc(100vh - 150px);overflow-y:auto}
+.text-panel::-webkit-scrollbar{width:6px}
+.text-panel::-webkit-scrollbar-thumb{background:#c9dcef;border-radius:3px}
+.work-title-bar{display:flex;align-items:baseline;gap:10px;margin-bottom:3px}
+.work-title{font-family:'Noto Serif KR','Malgun Gothic',serif;font-size:19px;font-weight:700;color:var(--ink)}
+.work-author{font-size:12.5px;color:var(--ink2)}
+.work-meaning{font-size:12.5px;color:#8a97a4;margin-bottom:12px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+.text-content{font-size:14.5px;line-height:2.05;color:#33414f}
+.text-content p{margin-bottom:9px;text-indent:1em}
+.sentence-mark{cursor:pointer;border-radius:4px;padding:1px 3px;transition:.15s}
+.sentence-mark:hover{filter:brightness(.95)}
+.sentence-mark.unmarked{background:#E8F1FA;border-bottom:2px dashed var(--acc)}
+.sentence-mark.selected{outline:2.5px solid var(--ink);outline-offset:1px}
+.sentence-mark.done-exp{background:var(--expBg);border-bottom:2px solid var(--exp)}
+.sentence-mark.done-ext{background:var(--extBg);border-bottom:2px solid var(--ext)}
+.sentence-mark.done-les{background:var(--lesBg);border-bottom:2px solid var(--les)}
+.sentence-mark.wrong,.quiz-card.wrong{animation:shake .4s}
+.blank{display:inline-block;min-width:78px;border-bottom:2px solid var(--acc);margin:0 4px;vertical-align:baseline}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-4px)}40%{transform:translateX(4px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+.side-panel{flex:0 0 300px;display:flex;flex-direction:column;gap:10px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px}
+.panel h3{font-size:13.5px;font-weight:600;color:var(--ink);margin-bottom:11px;text-align:center}
+.cbtn{width:100%;padding:11px 13px;margin-bottom:8px;border-radius:10px;border:2px solid;font-size:13.5px;font-weight:600;cursor:pointer;transition:.15s;text-align:left;display:flex;align-items:center;gap:10px;background:#fff;min-height:46px}
+.cbtn .n{width:25px;height:25px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;color:#fff}
+.cbtn.exp-btn{border-color:var(--expLn);color:var(--exp)}.cbtn.exp-btn .n{background:var(--exp)}.cbtn.exp-btn:hover:not(:disabled){background:var(--expBg)}
+.cbtn.ext-btn{border-color:var(--extLn);color:var(--ext)}.cbtn.ext-btn .n{background:var(--ext)}.cbtn.ext-btn:hover:not(:disabled){background:var(--extBg)}
+.cbtn.les-btn{border-color:var(--lesLn);color:var(--les)}.cbtn.les-btn .n{background:var(--les)}.cbtn.les-btn:hover:not(:disabled){background:var(--lesBg)}
+.cbtn:disabled{opacity:.35;cursor:default}
+.hint-box{display:none;background:var(--conBg);border:1.5px solid var(--conLn);border-radius:10px;padding:11px 13px;font-size:12.5px;color:#7a5f10;line-height:1.7}
 .hint-box.visible{display:block}
-.hint-title{font-weight:600;margin-bottom:3px;color:#8b6914}
-.explain-box{display:none;background:#f0f8f0;border:1.5px solid #8bc4a0;border-radius:10px;padding:12px 14px;font-size:12.5px;color:#2d5a2d;line-height:1.8;animation:fadeSlide .3s ease}
+.hint-title{font-weight:700;margin-bottom:3px}
+.explain-box{display:none;background:var(--expBg);border:1.5px solid var(--expLn);border-radius:10px;padding:11px 13px;font-size:12.5px;color:#1d6b52;line-height:1.75}
 .explain-box.visible{display:block}
-.explain-ttl{font-weight:700;margin-bottom:5px;color:#2d8a5e;font-size:13px}
-.explain-cat{display:inline-block;padding:2px 10px;border-radius:14px;font-size:11.5px;font-weight:600;margin-bottom:6px}
-.explain-cat.exp{background:#d4edda;color:#1e5631}.explain-cat.ext{background:#cfe2f3;color:#1e3a6e}.explain-cat.les{background:#f5c6c6;color:#7a1e1e}
-@keyframes fadeSlide{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.explain-ttl{font-weight:700;margin-bottom:5px;font-size:12.5px}
+.ecat{display:inline-block;padding:2px 10px;border-radius:14px;font-size:11.5px;font-weight:600;margin-bottom:5px;color:#fff}
+.status-row{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px;color:var(--ink2)}
+.status-row .val{font-weight:600;color:#22303d}
+.navbar{display:flex;flex-direction:column;gap:7px}
+.nav-btn{padding:10px;border-radius:10px;font-size:13.5px;font-weight:600;cursor:pointer;border:1.5px solid var(--line);background:#fff;color:var(--ink);transition:.15s}
+.nav-btn:hover{background:#F0F7FE}
+.nav-btn.primary{background:var(--acc);color:#fff;border-color:transparent}
+.nav-btn.primary:hover{background:var(--ink)}
+.nav-btn.end{color:var(--ng);border-color:#f0cfca}
+.select-prompt{text-align:center;font-size:12.5px;color:#8a97a4;margin-top:4px}
+.in-game-credit{position:fixed;bottom:6px;right:12px;font-size:10.5px;color:#a9b7c4;z-index:50}
 
-.status-box{background:#fff;border-radius:14px;padding:14px 18px;border:1.5px solid #d4c8e8}
-.status-row{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px;color:#6b5c80}
-.status-row .val{font-weight:600;color:#2e2440}
-.nav-btns{display:flex;gap:8px}
-.nav-btn{flex:1;padding:11px;border-radius:10px;font-size:13.5px;font-weight:600;cursor:pointer;border:2px solid #d4c8e8;background:#fff;color:#5a3d96;transition:all .15s}
-.nav-btn:hover:not(:disabled){background:#f0eaf8}
-.nav-btn:disabled{opacity:.3;cursor:default}
-.nav-btn.primary{background:linear-gradient(135deg,#7c5cbf,#9b7be0);color:#fff;border-color:transparent}
-.nav-btn.primary:hover:not(:disabled){opacity:.9}
-.select-prompt{text-align:center;font-size:12.5px;color:#9b8ab0;margin-top:6px}
+/* ── 퀴즈 ── */
+.quiz-wrap{padding:22px 26px 28px;max-width:760px;margin:0 auto}
+.quiz-header{text-align:center;margin-bottom:18px}
+.quiz-header h2{font-family:'Noto Serif KR','Malgun Gothic',serif;font-size:22px;color:var(--ink);margin-bottom:4px}
+.quiz-header .qh-sub{font-size:13.5px;color:var(--ink2)}
+.quiz-card{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:14px}
+.quiz-card.done-correct{border-color:var(--expLn)}
+.quiz-card.done-wrong{border-color:var(--lesLn)}
+.quiz-q{font-size:15px;font-weight:600;color:#22303d;line-height:1.85;margin-bottom:11px}
+.quiz-input-row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.quiz-input{flex:1;min-width:160px;font-size:15px;padding:10px 13px;border:1.5px solid var(--line);border-radius:10px;color:#22303d;background:#F9FCFF}
+.quiz-input:focus{outline:none;border-color:var(--acc)}
+.quiz-submit{padding:10px 20px;border:none;border-radius:10px;background:var(--acc);color:#fff;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;min-height:44px}
+.quiz-submit:hover:not(:disabled){background:var(--ink)}
+.quiz-submit:disabled,.quiz-hint-btn:disabled{opacity:.4;cursor:default}
+.quiz-hint-btn{padding:10px 13px;border:1.5px solid var(--conLn);border-radius:10px;background:var(--conBg);color:#7a5f10;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;min-height:44px}
+.quiz-hint-reveal{margin-top:8px;padding:8px 13px;background:var(--conBg);border:1.5px solid var(--conLn);border-radius:8px;font-size:14px;font-weight:700;color:#7a5f10;letter-spacing:2px}
+.quiz-fb{margin-top:9px;padding:9px 13px;border-radius:8px;font-size:13px;line-height:1.75;display:none}
+.quiz-fb.show{display:block}
+.qf-correct{background:var(--expBg);border:1px solid var(--expLn);color:#1d6b52}
+.qf-wrong{background:var(--lesBg);border:1px solid var(--lesLn);color:#9a3524}
+.qf-explain{background:#F7FBFF;border:1px solid var(--line);color:#3a4856}
 
-/* 피드백 */
-.feedback-toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:#fff;padding:18px 28px;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,.18);z-index:200;text-align:center;transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
-.feedback-toast.show{transform:translate(-50%,-50%) scale(1)}
-.feedback-toast.correct{border:3px solid #2d8a5e}
-.feedback-toast.incorrect{border:3px solid #c04848}
-.feedback-toast .fb-icon{font-size:32px;margin-bottom:4px}
-.feedback-toast .fb-text{font-size:14px;font-weight:600;line-height:1.6;white-space:pre-line}
+/* ── 배너 ── */
+.wb-content{background:#fff;border-radius:18px;padding:24px 28px;max-width:560px;width:100%;box-shadow:0 12px 40px rgba(16,40,66,.25);animation:bIn .35s ease;max-height:90vh;overflow-y:auto}
+@keyframes bIn{from{opacity:0;transform:scale(.92) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.wb-header{text-align:center;margin-bottom:14px}
+.wb-header h3{font-family:'Noto Serif KR','Malgun Gothic',serif;font-size:19px;color:var(--ink);margin-bottom:3px}
+.wb-header .wb-sub{font-size:12.5px;color:var(--ink2)}
+.wb-step{display:flex;gap:11px;align-items:flex-start;padding:9px 13px;border-radius:10px}
+.wb-step.s-exp{background:var(--expBg)}.wb-step.s-ext{background:var(--extBg)}.wb-step.s-les{background:var(--lesBg)}
+.ws-badge{flex-shrink:0;font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:14px;margin-top:2px;color:#fff}
+.b-exp{background:var(--exp)}.b-ext{background:var(--ext)}.b-les{background:var(--les)}
+.ws-text{font-size:13px;line-height:1.7;color:#33414f}
+.wb-arrow{text-align:center;font-size:15px;color:var(--acc);padding:2px 0}
+.wb-connector{background:#F7FBFF;border:1.5px dashed #c9dcef;border-radius:10px;padding:10px 15px;text-align:center;font-size:12.5px;color:var(--ink);line-height:1.65;margin:12px 0}
 
-/* 작품 배너 */
-.work-banner-content{background:#fff;border-radius:20px;padding:28px 32px;max-width:560px;width:100%;box-shadow:0 12px 40px rgba(50,20,100,.25);animation:bannerIn .4s ease}
-@keyframes bannerIn{from{opacity:0;transform:scale(.9) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
-.wb-header{text-align:center;margin-bottom:16px}
-.wb-header h3{font-family:'Noto Serif KR',serif;font-size:20px;color:#4a2d8a;margin-bottom:4px}
-.wb-header .wb-sub{font-size:13px;color:#7a6d90}
-.wb-flow{display:flex;flex-direction:column;gap:0;margin-bottom:16px}
-.wb-step{display:flex;gap:12px;align-items:flex-start;padding:10px 14px;border-radius:10px}
-.wb-step.s-exp{background:#f0f9f3}.wb-step.s-ext{background:#eef4fb}.wb-step.s-les{background:#fdf2f2}
-.wb-step .ws-badge{flex-shrink:0;font-size:12px;font-weight:700;padding:3px 10px;border-radius:14px;margin-top:2px;color:#fff}
-.ws-badge.b-exp{background:#2d8a5e}.ws-badge.b-ext{background:#2a5d9a}.ws-badge.b-les{background:#c04848}
-.wb-step .ws-text{font-size:13.5px;line-height:1.7;color:#2e2440}
-.wb-arrow{text-align:center;font-size:16px;color:#9b7be0;padding:2px 0}
-.wb-connector{background:#f5f0fa;border:1.5px dashed #c9b8e8;border-radius:10px;padding:10px 16px;text-align:center;font-size:12.5px;color:#5a3d96;line-height:1.6;margin-bottom:14px}
-.wb-connector b{color:#7c5cbf}
-.btn-banner-ok{display:block;margin:0 auto;background:linear-gradient(135deg,#7c5cbf,#9b7be0);color:#fff;font-size:15px;font-weight:700;padding:11px 36px;border:none;border-radius:10px;cursor:pointer;transition:all .15s}
-.btn-banner-ok:hover{transform:translateY(-1px)}
+/* 정답/콤보 배너 */
+#fxCanvas{position:fixed;inset:0;z-index:410;pointer-events:none;display:none}
+#dim{position:fixed;inset:0;background:radial-gradient(circle,rgba(0,0,0,.14),rgba(0,0,0,.30));z-index:400;display:none}
+#pop{position:fixed;left:50%;top:44%;transform:translate(-50%,-50%) scale(.3);z-index:420;display:none;text-align:center;pointer-events:none;padding:56px 90px;background:radial-gradient(ellipse at center,rgba(8,22,40,.80) 0%,rgba(8,22,40,.58) 42%,rgba(8,22,40,0) 72%)}
+#pop.show{animation:popIn .35s cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes popIn{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}60%{transform:translate(-50%,-50%) scale(1.15);opacity:1}100%{transform:translate(-50%,-50%) scale(1);opacity:1}}
+#pop .ptxt{font-family:'Noto Serif KR','Malgun Gothic',serif;font-size:clamp(38px,7vw,64px);font-weight:700;background:linear-gradient(180deg,#FFF3C4,#F2B705 60%,#E09400);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 26px rgba(255,214,102,.75);filter:drop-shadow(0 3px 6px rgba(0,0,0,.25))}
+#pop .ppts{font-size:clamp(22px,4vw,34px);font-weight:700;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.45);margin-top:2px}
+#pop .rays{position:absolute;left:50%;top:50%;width:520px;height:520px;margin:-260px 0 0 -260px;border-radius:50%;background:conic-gradient(rgba(255,225,140,.42) 0 8deg,transparent 8deg 24deg);animation:spin 7s linear infinite;z-index:-1}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){#pop .rays{display:none}#pop.show{animation:none;transform:translate(-50%,-50%) scale(1)}}
 
-/* 퀴즈 */
-#quizScreen{padding:0}
-.quiz-wrap{max-width:700px;margin:0 auto;padding:40px 20px}
-.quiz-header{text-align:center;margin-bottom:24px}
-.quiz-header h2{font-family:'Noto Serif KR',serif;font-size:24px;color:#4a2d8a;margin-bottom:4px}
-.quiz-header .qh-sub{font-size:14px;color:#7a6d90}
-.quiz-card{background:#fff;border:2px solid #d4c8e8;border-radius:16px;padding:22px 24px;margin-bottom:16px;transition:border-color .3s}
-.quiz-card.done-correct{border-color:#8bc4a0}
-.quiz-card.done-wrong{border-color:#e8a0a0}
-.quiz-q{font-size:15px;font-weight:600;color:#2e2440;line-height:1.8;margin-bottom:12px}
-.quiz-input-row{display:flex;gap:10px;align-items:center}
-.quiz-input{flex:1;font-family:inherit;font-size:15px;padding:10px 14px;border:2px solid #d4c8e8;border-radius:10px;color:#2e2440;background:#faf7ff;transition:border-color .2s}
-.quiz-input:focus{outline:none;border-color:#9b7be0}
-.quiz-input:disabled{background:#f0eaf8;color:#7a6d90}
-.quiz-submit{padding:10px 20px;border:none;border-radius:10px;background:#7c5cbf;color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap}
-.quiz-submit:hover:not(:disabled){background:#5a3d96}
-.quiz-submit:disabled{opacity:.4;cursor:default}
-.quiz-hint-btn{padding:10px 14px;border:1.5px solid #e8c86a;border-radius:10px;background:#fffbf0;color:#8b6914;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
-.quiz-hint-btn:hover:not(:disabled){background:#fff3d0}
-.quiz-hint-btn:disabled{opacity:.4;cursor:default}
-.quiz-hint-reveal{margin-top:8px;padding:8px 14px;background:#fffbf0;border:1.5px solid #e8c86a;border-radius:8px;font-size:14px;font-weight:700;color:#8b6914;letter-spacing:2px}
-.quiz-feedback{margin-top:10px;padding:10px 14px;border-radius:8px;font-size:13px;line-height:1.7;display:none}
-.quiz-feedback.show{display:block}
-.quiz-feedback.qf-correct{background:#e0f5ea;border:1px solid #8bc4a0;color:#1e5631}
-.quiz-feedback.qf-wrong{background:#fce8e8;border:1px solid #d88888;color:#7a2020}
-.quiz-feedback.qf-explain{background:#f5f0fa;border:1px solid #d4c8e8;color:#3e2a60}
-.btn-quiz-next{display:block;margin:10px auto 0;background:linear-gradient(135deg,#7c5cbf,#9b7be0);color:#fff;font-size:15px;font-weight:700;padding:12px 36px;border:none;border-radius:12px;cursor:pointer;transition:all .15s}
-.btn-quiz-next:hover{transform:translateY(-1px)}
-
-/* 결과 */
-#resultScreen{padding:36px 20px}
-.result-container{max-width:800px;margin:0 auto}
-.result-header{text-align:center;margin-bottom:26px}
-.result-header h2{font-family:'Noto Serif KR',serif;font-size:30px;color:#4a2d8a;margin-bottom:6px}
-.result-score{font-size:44px;font-weight:700;color:#7c5cbf}
-.result-score span{font-size:18px;color:#8a7d9e}
-.result-stats{display:flex;gap:14px;justify-content:center;margin:14px 0 26px;flex-wrap:wrap}
-.stat-card{background:#fff;border-radius:12px;padding:12px 20px;border:1.5px solid #d4c8e8;text-align:center;min-width:120px}
-.stat-card .stat-num{font-size:26px;font-weight:700;color:#5a3d96}
-.stat-card .stat-label{font-size:12px;color:#8a7d9e;margin-top:2px}
-.wrong-section{margin-top:26px}
-.wrong-section h3{font-family:'Noto Serif KR',serif;font-size:18px;color:#4a2d8a;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid #e8dff5}
-.wrong-card{background:#fff;border-radius:12px;padding:16px 20px;border:1.5px solid #d4c8e8;margin-bottom:12px}
-.wrong-card .wc-work{font-size:13px;color:#7c5cbf;font-weight:600;margin-bottom:5px}
-.wrong-card .wc-sentence{font-size:13.5px;line-height:1.7;color:#3a2e50;margin-bottom:8px;padding:8px 12px;background:#faf7ff;border-radius:8px;border-left:3px solid #9b7be0}
-.wrong-card .wc-row{display:flex;gap:14px;font-size:12.5px}
-.wrong-card .wc-mine{color:#c04848}
-.wrong-card .wc-answer{color:#2d8a5e;font-weight:600}
-.result-btns{display:flex;gap:10px;justify-content:center;margin-top:26px}
-.result-btn{padding:12px 28px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;border:2px solid;transition:all .15s}
-.result-btn.retry{background:linear-gradient(135deg,#7c5cbf,#9b7be0);color:#fff;border-color:transparent}
-.result-btn.download{background:#fff;color:#5a3d96;border-color:#d4c8e8}
-.result-btn.download:hover{background:#f0eaf8}
-.in-game-credit{position:fixed;bottom:7px;right:12px;font-size:10.5px;color:#b0a4c4;z-index:50}
-#noteCanvas{display:none}
+/* ── 결과 ── */
+.result-wrap{padding:26px 28px 34px;max-width:880px;margin:0 auto}
+.result-head{text-align:center;margin-bottom:18px}
+.result-head h2{font-family:'Noto Serif KR','Malgun Gothic',serif;font-size:27px;color:var(--ink);margin-bottom:4px}
+.result-score{font-size:42px;font-weight:700;color:var(--acc)}
+.result-score span{font-size:17px;color:var(--ink2)}
+.verdict{font-size:15px;font-weight:600;color:var(--ink);margin-top:6px}
+.stats{display:flex;gap:11px;justify-content:center;margin:14px 0 8px;flex-wrap:wrap}
+.stat{background:#fff;border-radius:12px;padding:11px 14px;border:1px solid var(--line);text-align:center;min-width:98px}
+.stat .num{font-size:24px;font-weight:700;color:var(--ink)}
+.stat .lab{font-size:12px;color:var(--ink2);margin-top:2px}
+.sect{margin-top:22px}
+.sect h3{font-family:'Noto Serif KR','Malgun Gothic',serif;font-size:17px;color:var(--ink);margin-bottom:12px;padding-bottom:7px;border-bottom:2px solid var(--line)}
+.wrong-card{background:#fff;border-radius:12px;padding:14px 18px;border:1px solid var(--line);margin-bottom:11px}
+.wc-cat{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 10px;border-radius:12px;color:#fff;margin-bottom:6px}
+.wc-sentence{font-size:13.5px;line-height:1.75;color:#33414f;margin-bottom:8px;padding:8px 12px;background:#F7FBFF;border-radius:8px;border-left:3px solid var(--acc)}
+.wc-row{display:flex;gap:14px;font-size:12.5px;flex-wrap:wrap}
+.wc-mine{color:var(--ng)}
+.wc-answer{color:var(--exp);font-weight:600}
+.wc-detail{font-size:12.5px;color:#7d8b99;margin-top:6px;line-height:1.7}
+.in-sect{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-top:22px}
+.in-sect h3{font-size:14.5px;color:var(--ink);margin-bottom:11px}
+.in-label{font-size:12.5px;color:var(--ink2);display:block;margin-bottom:4px}
+.in-field{width:100%;font-size:14px;padding:9px 12px;border:1.5px solid var(--line);border-radius:10px;background:#F9FCFF;color:#22303d;line-height:1.6}
+.in-field:focus{outline:none;border-color:var(--acc)}
+.result-btns{display:flex;gap:9px;justify-content:center;margin-top:22px;flex-wrap:wrap}
+.rbtn{padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;border:1.5px solid transparent;background:var(--acc);color:#fff;min-height:46px}
+.rbtn:hover{background:var(--ink)}
+.rbtn.sec{background:#fff;color:var(--ink);border-color:var(--line)}
+.rbtn.sec:hover{background:#F0F7FE}
+#noteCanvas,#reportCanvas{display:none}
+.rv-item{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 15px;margin-bottom:9px}
+.rv-q{font-size:13.5px;line-height:1.75;color:#33414f;margin-bottom:5px}
+.rv-a{font-size:12.5px;color:var(--exp);font-weight:600}
+.rv-d{font-size:12.5px;color:#7d8b99;margin-top:4px;line-height:1.7}
+@media(max-width:900px){
+ .game-body{flex-direction:column}
+ .side-panel{flex:1 1 auto}
+ .text-panel{max-height:46vh}
+ #startScreen .inner{padding:36px 18px 44px}
+}
 </style>
 </head>
 <body>
 
+<!-- ══════════ 시작 화면 ══════════ -->
 <div id="startScreen" class="screen active">
-  <div style="padding-top:85px"></div>
-  <div style="display:flex;align-items:center;gap:16px;justify-content:center;margin-bottom:4px">
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAI8AAAC0CAMAAACaAI/PAAABgFBMVEXTm2evn448MS1lT0Cmf2HAZh3An4D7+vpMNSXZ1s7Gxsa4urzo6OfhupPcto7NxbbalVmMqcKptsKTp7jQiEzTmmfXpXTkwZxGLBvipW3i2snLeDWcscPUrIR8osLFvbKoq6vnx6NqSDBNMR7b0b2telCvpJaHm6jk4dmth2eMZ0qLeGnhmlu+wL3gnWG2g1ipmoySlpVtWEjGfULTgTxaRDSVhXa2lHWdsL50Ujm8wcJELiDFbCd4mraGWDd4ZVaXc1Z8oL46JhhiPSWTjIaDXELwsnh6bWK8dTuSYzwIBQUbFRNuOBZ3Qh3groDi0rsqHRecoJve3+B1nsKzajLawZ7f4N/Av8Dd4eIxIyF7c2l+lJ2BTSe2WBG8YhyjbUUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPmQJeAAAAYHRSTlP///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////9ebwvOAAAdVklEQVR42r1cB3viSNL2fQmkRmoUAQlZIoONDTjbY3vybE53ezn9/3/xVVV3Kws8u/ucdkdgUr9UvRW7xJGu661Wq3rWdL1Te2YMzh31iNbROnVv/2VnTT/ijP4snFnpLDDUngFP5e2/7CyWO9I0rdPpfO65o+4vl7/k7c3no71o5bnTLKKOrkmB/zYiOoxH+8/i+TUSVje/ocqOfo2yxDl9o6bn3169/yI+/0o8S8KjccbjZPthG/9y9f0q+8rOrdaSb08v2ukxvjid65kB/ub2tV9Z+s1Fe9JvF49+e3zDQX02fQj/T9mX3tFPr/uv2vXH9WnymSqzBR4lKz13zj+i6blHxH3xRPK63W/vOy4YkrzuY1tFNeEjIh4dNdMvM41a4ein7YNH/2L7UuGo+LWf8Bppv84N7g7IRh2nnWYMvHwf8EjpZRJ72fmLl6FptyfXvCM/XC7UkueWlj3eAsXhI/vtS29Q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" alt="보라라샘" style="height:90px;border-radius:12px">
+ <div class="shell" style="margin-top:0">
+  <div class="band"><span class="band-left">읽기</span><span class="band-right"><span class="badge">💻 노트북 권장</span></span></div>
+  <div class="inner">
+   <div class="title-row">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAACxCAMAAAAyLeWLAAAB/lBMVEUAAABMNSXZ1s7hupPcto7alVnNxba4uryMqcKptsLQiEyTp7jTmmfXpXTkwZxGLBvipW3i2snLeDWcscPUrIR8osLnx6NqSDBNMR7FvbLb0b2telCoq6vGxsb7+vqth2eHm6ivpJaMZ0rhmlvgnWGLeGm2g1ipmozGfUJtWEjTgTySlpVaRDS2lHXo6OeVhXbk4dl0UjmdsL6+wL1ELiDFbCd4mraGWDe8wcLGxsaXc1Z4ZVZ8oL77+vo6JhhiPSWoq6uTjIa4urzZ1s6DXELwsnh6bWK8dTuSYzwIBQUbFRNuOBZ3Qh3groDi0rsqHRdMNSWcoJuvpJbFvbLi2sl1nsKSlpWzajKptsLawZ7Nxbbo6OdtWEiLeGmpmowxIyF7c2l+lJ2BTSeTjIa2WBG8YhyjbUXd4eLk4dk8MS1ELiBlT0B4ZVaVhXaTp7imf2GvpJbAZh3An4De3+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADGtm7NAAAAgHRSTlMA///////////////////////////////////////////////////////////////////////////c////3P//3P/c3P///////////////9z/3Nzc/9z/3P/c3Nzc3P/////c/////9z/3P/c3Nz/oP///wAAAAAAAAAAAAAAAKaTQcIAABeqSURBVHja7VwHd+JItl4kUUpVKCAjhMjYYINxTh2me3q6e3vyvNnZ3dmcw8vx/5/z7r1VEghjLLfp3XPeebVjaANWffrud0PdKvYHP/j/sa3xC5Ml7cmrSdLRnvxdAPwjm+wdVPIRH+wN/sZAnhwfVJpepTi8SnzMPvqbQdg79C4q68fhr/8mED5+VvEqm8bBJx8cw68r9w7v4DcfFMJP72EhG3u//GAQXv+wHIRKpXn4iw+E4buDshhwfCBFxg/BUPnnD4Hhk8oD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" alt="보라라샘" draggable="false" style="height:90px;border-radius:12px;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;pointer-events:none">
     <div class="start-title">설(說) 유추 구조 찾기</div>
-  </div>
-  <div class="start-subtitle">고전 수필 속 추론의 뼈대를 찾아라</div>
-  <div class="info-box" style="max-width:820px"><h3>📌 성취기준</h3><p style="font-size:13px;line-height:1.7;color:#5a3d96">[9국05-08] 한국 문학의 전통과 특질을 이해하고, 작품을 감상한다.</p></div>
-  <div style="display:flex;gap:14px;max-width:820px;width:100%">
-    <div class="info-box" style="flex:1;margin-bottom:0">
-      <h3>🎯 게임 방법</h3>
-      <p>여섯 편의 고전 '설'을 읽고, <b>보라색으로 표시된 문장</b>이 유추 구조의 어느 단계에 해당하는지 분류하세요.</p>
-      <div class="category-tags"><span class="cat-tag exp">① 구체적 경험</span><span class="cat-tag ext">② 대상 확장</span><span class="cat-tag les">③ 교훈·깨달음</span></div>
-      <ul style="margin-top:10px">
-        <li>왼쪽에서 보라색 문장을 클릭 → 오른쪽에서 분류 버튼을 누르세요.</li>
-        <li>한 작품의 분류가 끝나면 유추 구조 정리 배너가 나옵니다.</li>
-        <li>2작품마다 유추 개념 확인 퀴즈가 출제됩니다.</li>
-        <li>정답 후 Enter · Space · → 키로 다음 문장/작품으로 이동합니다.</li>
-      </ul>
+   </div>
+   <div class="start-sub">고전 수필 여섯 편에서 추론의 뼈대를 찾아라</div>
+
+   <div class="info-box">
+    <h3>📌 성취기준</h3>
+    <div class="std-line"><b>[9국02-05]</b> 글에 사용된 다양한 설명 방법과 논증 방법을 파악하고, 그 타당성을 평가하며 읽는다.</div>
+    <div class="std-line" style="margin-top:4px"><b>[9국02-06]</b> 동일한 화제를 다룬 여러 글이나 자료를 주제 통합적으로 읽는다.</div>
+   </div>
+
+   <div class="cols">
+    <div class="info-box">
+     <h3>🎯 게임 방법</h3>
+     <p>고전 수필 '설(說)' 여섯 편을 읽습니다.</p>
+     <p><b>파란 점선으로 표시된 문장</b>이 유추 구조의 어느 단계인지 분류하세요.</p>
+     <div class="cat-tags"><span class="cat-tag exp">① 구체적 경험</span><span class="cat-tag ext">② 대상 확장</span><span class="cat-tag les">③ 교훈·깨달음</span></div>
+     <ul style="margin-top:9px">
+      <li>왼쪽 문장을 클릭한 뒤 오른쪽 버튼을 누르세요.</li>
+      <li>한 작품이 끝나면 유추 구조 정리 화면이 나옵니다.</li>
+      <li>두 작품마다 유추 개념 확인 문제가 나옵니다.</li>
+      <li>Enter · Space · → 키로 다음으로 넘어갑니다.</li>
+     </ul>
     </div>
-    <div class="info-box" style="flex:0.7;margin-bottom:0">
-      <h3>📊 점수 안내</h3>
-      <div class="score-info">첫 시도 정답 <b>+10점</b><br>재도전 정답 <b>+5점</b><br>오답 <b>-2점</b> (최저 0점)<br>연속 정답 콤보 <b>+3점</b><br>개념 퀴즈 정답 <b>+8점</b></div>
+    <div class="info-box">
+     <h3>📊 점수 안내</h3>
+     <div class="score-info">
+      첫 시도 정답 <b>+10점</b><br>
+      다시 풀어 맞히면 <b>+5점</b><br>
+      오답 <b>−2점</b> (최저 0점)<br>
+      3~4연속 정답 <b>+5점</b> · 5연속부터 <b>+10점</b><br>
+      전체 <b>28문항 · 530점 만점</b>
+     </div>
+     <p style="margin-top:9px;font-size:12.5px;color:#7d8b99;line-height:1.75">두 번 틀리면 정답과 해설이 공개됩니다.<br>끝까지 풀지 않아도 푼 문항만으로 채점합니다.</p>
     </div>
+   </div>
+
+   <div style="text-align:center"><button class="btn" onclick="startGame()" style="margin-top:16px">게임 시작</button></div>
+
+   <div class="credit-box">
+    제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
+    제작일 2026.07.15 · <span id="lastMod">최종 수정 2026.09.19 00:40</span>
+   </div>
+
+   <div class="privacy" id="privacyOffline">
+    <b>🔒 개인정보 보호 안내</b><br>
+    본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다.<br>
+    게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.
+   </div>
+   <div class="privacy" id="privacyOnline" style="display:none">
+    <b>🔒 개인정보 보호 안내</b><br>
+    본 게임의 학습 결과(학번, 이름, 점수, 오답 정보, 학습 소감)는 담당 선생님의 학습 관리용 스프레드시트에 안전하게 전송·저장됩니다.<br>
+    수집된 정보는 학습 지도 목적으로만 사용되며, 제3자에게 제공되지 않습니다.
+   </div>
   </div>
-  <button class="btn-start" onclick="showConcept()" style="margin-top:16px">게임 시작</button>
-  <div class="credit-box" style="max-width:820px">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>만든 날짜 2026. 7. 15. · Made with Claude</div>
-  <div style="max-width:820px;width:100%;margin-top:10px;text-align:center;font-size:11px;color:#9b8ab0;line-height:1.7">🔒 개인정보 보호 안내 — 본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다. 게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.</div>
+ </div>
 </div>
 
+<div id="loginOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;justify-content:center;align-items:center">
+ <div style="background:#fff;border-radius:20px;padding:32px;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center">
+  <div style="font-size:36px;margin-bottom:8px">🔑</div>
+  <h2 style="font-size:20px;margin-bottom:4px;color:var(--ink)">학생 인증</h2>
+  <p style="font-size:13px;color:var(--ink2);margin-bottom:20px">학번과 이름을 입력하면 게임을 시작할 수 있어요.</p>
+  <div style="text-align:left;margin-bottom:12px">
+   <label style="font-size:13px;font-weight:700;color:var(--ink)">학번 (5자리)</label>
+   <input id="loginId" type="text" maxlength="5" inputmode="numeric" placeholder="예: 30101" style="width:100%;padding:10px 14px;border:2px solid var(--line);border-radius:10px;font-size:16px;margin-top:4px;box-sizing:border-box">
+  </div>
+  <div style="text-align:left;margin-bottom:16px">
+   <label style="font-size:13px;font-weight:700;color:var(--ink)">이름</label>
+   <input id="loginName" type="text" maxlength="10" placeholder="예: 김민준" style="width:100%;padding:10px 14px;border:2px solid var(--line);border-radius:10px;font-size:16px;margin-top:4px;box-sizing:border-box">
+  </div>
+  <div id="loginMsg" style="font-size:13px;color:var(--ng);min-height:20px;margin-bottom:12px"></div>
+  <button id="loginBtn" onclick="doLogin()" style="width:100%;padding:12px;background:var(--ink);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer">확인</button>
+  <div id="loginSpinner" style="display:none;margin-top:12px"><div style="width:28px;height:28px;border:3px solid var(--line);border-top-color:var(--ink);border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto"></div></div>
+ </div>
+</div>
+
+<!-- ══════════ 개념 1 ══════════ -->
 <div id="conceptScreen" class="screen">
-  <div class="concept-card">
-    <h2>📖 유추(類推)란?</h2>
-    <div class="sub">게임을 시작하기 전에, 유추의 기본 개념을 알아봅시다.</div>
-    <div class="concept-what"><b>유추</b>란, <b>이미 알고 있는 구체적인 것</b>에서 <b>아직 모르는 일반적인 것</b>으로,<br>두 대상 사이의 <b>공통점(유사성)</b>을 바탕으로 추론하는 사고 방법입니다.<br><br>고전 수필 <b>설(說)</b>에서 글쓴이는 자신의 <b>일상적 경험</b>을 출발점으로 삼아,<br>점점 넓은 범위로 생각을 확장하면서 <b>삶의 교훈</b>을 이끌어 냅니다.</div>
-    <div class="concept-structure" style="margin-bottom:18px">
-      <div class="concept-step"><div class="step-badge sb-exp">①</div><div class="step-text"><b>구체적 경험</b> — 글쓴이가 직접 겪거나 관찰한 일상의 사건</div></div>
-      <div class="concept-arrow">↕ 공통점(유사성)을 발견</div>
-      <div class="concept-step"><div class="step-badge sb-ext">②</div><div class="step-text"><b>대상 확장</b> — 경험에서 더 넓은 대상·상황으로 생각을 넓힘</div></div>
-      <div class="concept-arrow">↕ 깨달음을 도출</div>
-      <div class="concept-step"><div class="step-badge sb-les">③</div><div class="step-text"><b>교훈·깨달음</b> — 삶 전반에 적용되는 보편적 교훈</div></div>
+ <div class="shell" style="max-width:920px">
+  <div class="band"><span class="band-left">읽기 <span class="band-goal">· 유추의 개념과 논리 구조를 이해한다</span></span><span class="band-right">개념 학습 1 / 2</span></div>
+  <div class="concept-wrap">
+   <h2>📖 유추(類推)란?</h2>
+   <div class="sub">게임을 시작하기 전에 유추의 기본 개념을 알아봅시다.</div>
+   <div style="font-size:13.5px;line-height:1.95;color:#3a4856;margin-bottom:14px"><b>유추</b>란 두 대상이 여러 면에서 비슷하다는 점을 근거로, 한 대상이 가진 또 다른 특성을 다른 대상도 가지고 있으리라고 추론하는 <b>논증 방식</b>입니다. 익숙한 대상을 빌려 낯선 개념을 설명하고 설득할 때 효과적으로 쓰입니다.</div>
+   <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px">
+    <div class="cbox">
+     <div class="cbox-ttl">유추의 기본 논리 구조</div>
+     <div class="cbox-body">
+      <span class="pill" style="background:var(--extBg);color:var(--ext)">전제 1</span> 대상 A와 B는 속성 1·2·3을 <b>공통</b>으로 갖는다.<br>
+      <span class="pill" style="background:var(--extBg);color:var(--ext)">전제 2</span> 대상 A는 속성 4를 <b>추가로</b> 가지고 있다.<br>
+      <span class="pill" style="background:var(--expBg);color:var(--exp)">결론</span> 그러므로 대상 B도 속성 4를 가지고 있을 <b>것이다</b>.
+     </div>
     </div>
-    <div class="concept-example">
-      <div class="ex-title">💡 예시: 차마설(借馬說)</div>
-      <div class="ex-body">이곡은 <b>말을 빌려 타는 경험</b>에서 출발하여, "세상 모든 소유는 빌린 것"이라는 <b>확장</b>을 거쳐, "<b>소유에 집착하지 말라</b>"는 교훈을 이끌어 냅니다.<br>말을 빌리는 것과 권력·재산을 빌리는 것 사이의 <b>유사성</b>이 핵심입니다.</div>
+    <div class="cbox">
+     <div class="cbox-ttl">유추의 장점과 한계</div>
+     <div class="cbox-body">
+      <b style="color:var(--exp)">✅ 장점</b><br>익숙한 개념을 빌려오므로 직관적이고 이해하기 쉽다. 추상적인 이치를 친숙하게 전달하는 데 탁월하다.<br>
+      <b style="color:var(--les)">⚠️ 한계</b><br>개연성에 기대는 추론이므로 결론이 반드시 참이 되지는 않는다. 두 대상의 차이를 간과하면 오류가 된다.
+     </div>
     </div>
-    <button class="btn-concept" onclick="startGame()">학습 시작하기 →</button>
+   </div>
+   <div style="background:#F7FBFF;border:1.5px dashed #c9dcef;border-radius:10px;padding:13px 17px;margin-bottom:16px">
+    <div style="font-size:13.5px;font-weight:700;color:var(--ink);margin-bottom:6px">🔑 좋은 유추 논증의 조건</div>
+    <div style="font-size:12.5px;line-height:1.85;color:#3a4856">
+     <b style="color:var(--acc)">① 본질적 유사성</b> — 닮은 점이 표면적 장식이 아니라 논제의 핵심과 직결되는 속성이어야 합니다.<br>
+     <b style="color:var(--acc)">② 결정적 차이점 배제</b> — 결론을 뒤집을 만한 본질적 차이가 없어야 논리가 성립합니다.<br>
+     <span style="font-size:11.5px;color:#8a97a4;margin-left:14px">예: "사람과 인형은 생김새가 비슷하니 인형도 고통을 느낀다"는 '생명'이라는 본질적 차이를 간과한 <b>잘못된 유추</b>입니다.</span>
+    </div>
+   </div>
+   <div style="text-align:center"><button class="btn" onclick="showScreen('conceptSeolScreen')">다음: 설(說)이란? →</button></div>
   </div>
+ </div>
 </div>
 
+<!-- ══════════ 개념 2 ══════════ -->
+<div id="conceptSeolScreen" class="screen">
+ <div class="shell" style="max-width:920px">
+  <div class="band"><span class="band-left">읽기 <span class="band-goal">· 설(說)의 갈래 특징과 3단계 구조를 이해한다</span></span><span class="band-right">개념 학습 2 / 2</span></div>
+  <div class="concept-wrap">
+   <h2>📖 고전 수필 갈래 : 설(說)</h2>
+   <div class="sub">글쓴이가 겪은 구체적 경험(A)을 바탕으로<br>이와 유사한 삶의 이치나 교훈(B)을 전달하는 한문 수필입니다.</div>
+   <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px">
+    <div class="cbox">
+     <div class="cbox-ttl">설(說)의 네 가지 특징</div>
+     <div class="cbox-body">
+      <b style="color:var(--acc)">① 명확한 2단 구성</b> (사실 + 의견)<br>
+      전반부는 일상의 경험·관찰, 후반부는 깨달음과 교훈입니다.<br><br>
+      <b style="color:var(--acc)">② 유추를 통한 생각의 확장</b><br>
+      구체적 사건(A)에서<br>구조가 유사한 삶이나 사회(B)로 논리를 넓힙니다.<br><br>
+      <b style="color:var(--acc)">③ 우의적 표현</b><br>
+      사물이나 사건에 뜻을 빗대어 메시지를 우회적으로 전합니다.<br><br>
+      <b style="color:var(--acc)">④ 통념 비판과 설득</b><br>
+      당연하게 여기던 생각을 깨뜨리고 독자를 설득합니다.
+     </div>
+    </div>
+    <div class="cbox">
+     <div class="cbox-ttl">설(說)의 3단계 전개 구조</div>
+     <div style="border:1.5px solid var(--expLn);border-radius:10px;padding:8px 10px;background:var(--expBg);margin-top:6px">
+      <div style="font-size:11px;font-weight:700;color:var(--exp);margin-bottom:4px">▍전반부 — 사실</div>
+      <div class="step-row" style="margin-bottom:0"><div class="step-badge sb-exp">①</div><div class="step-text"><b>구체적 경험</b><br>글쓴이가 직접 겪거나 관찰한 일상의 사건</div></div>
+     </div>
+     <div class="c-arrow">↕ 유추</div>
+     <div style="border:1.5px solid var(--extLn);border-radius:10px;padding:8px 10px;background:#FAF8FE">
+      <div style="font-size:11px;font-weight:700;color:var(--ext);margin-bottom:4px">▍후반부 — 의견</div>
+      <div class="step-row"><div class="step-badge sb-ext">②</div><div class="step-text"><b>대상 확장</b><br>경험과 성격이 유사한 인간 사회·인생으로 확장</div></div>
+      <div class="c-arrow" style="font-size:13px">↕ 깨달음</div>
+      <div class="step-row" style="margin-bottom:0"><div class="step-badge sb-les">③</div><div class="step-text"><b>교훈·깨달음</b><br>삶 전반에 적용되는 보편적 이치와 경계의 메시지</div></div>
+     </div>
+    </div>
+   </div>
+   <div style="background:#F7FBFF;border:1.5px dashed #c9dcef;border-radius:10px;padding:12px 16px;margin-bottom:16px">
+    <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:5px">💡 예시 — 차마설(借馬說), 이곡</div>
+    <div style="font-size:12.5px;line-height:1.85;color:#3a4856">① <b>경험</b> 빌린 말에 따라 태도가 달라지는 경험 → ② <b>확장</b> 세상 모든 소유는 빌린 것 → ③ <b>교훈</b> 소유에 집착하지 말라<br>말을 빌리는 것(A)과 권력·재산을 빌리는 것(B) 사이의 <b>유사성</b>이 유추의 핵심입니다.</div>
+   </div>
+   <div style="text-align:center"><button class="btn" onclick="startPlay()">학습 시작하기 →</button></div>
+  </div>
+ </div>
+</div>
+
+<!-- ══════════ 문제 화면 ══════════ -->
 <div id="gameScreen" class="screen">
-  <div class="game-header">
-    <div class="hdr-left" id="hdrTitle"></div>
-    <div class="hdr-right"><span id="hdrScore">점수: 0</span><span id="hdrCombo"></span><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div><span id="hdrProgress"></span></div>
-  </div>
+ <div class="shell">
+  <div class="band"><span class="band-left">읽기 <span class="band-goal">· 설(說)에 쓰인 유추의 전개 단계를 파악한다</span></span><span class="band-right"><span id="hdrWork"></span><span id="hdrProgress"></span></span></div>
   <div class="game-body">
-    <div class="text-panel" id="textPanel"></div>
-    <div class="side-panel">
-      <div class="classify-box">
-        <h3>이 문장은 어느 단계일까요?</h3>
-        <button class="classify-btn exp-btn" onclick="classify('경험')" id="btnExp" disabled><span class="btn-num">①</span> 구체적 경험</button>
-        <button class="classify-btn ext-btn" onclick="classify('확장')" id="btnExt" disabled><span class="btn-num">②</span> 대상 확장</button>
-        <button class="classify-btn les-btn" onclick="classify('교훈')" id="btnLes" disabled><span class="btn-num">③</span> 교훈 · 깨달음</button>
-        <p class="select-prompt" id="selectPrompt">← 왼쪽에서 보라색 문장을 클릭하세요</p>
-      </div>
-      <div class="hint-box" id="hintBox"><div class="hint-title">💡 힌트</div><div id="hintText"></div></div>
-      <div class="explain-box" id="explainBox"><div class="explain-ttl">📖 해설</div><div id="explainCategory"></div><div id="explainText"></div></div>
-      <div class="status-box" id="statusBox"></div>
-      <div class="nav-btns"><button class="nav-btn" id="btnPrev" onclick="goPrev()" disabled>← 이전</button><button class="nav-btn primary" id="btnNext" onclick="goNext()">다음 →</button></div>
+   <div class="text-panel" id="textPanel"></div>
+   <div class="side-panel">
+    <div class="panel">
+     <h3>이 문장은 어느 단계일까요?</h3>
+     <button class="cbtn exp-btn" onclick="classify('exp')" id="btnExp" disabled><span class="n">①</span> 구체적 경험</button>
+     <button class="cbtn ext-btn" onclick="classify('ext')" id="btnExt" disabled><span class="n">②</span> 대상 확장</button>
+     <button class="cbtn les-btn" onclick="classify('les')" id="btnLes" disabled><span class="n">③</span> 교훈 · 깨달음</button>
+     <p class="select-prompt" id="selectPrompt">파란 점선으로 표시된 문장을 먼저 클릭하세요</p>
     </div>
+    <div class="hint-box" id="hintBox"><div class="hint-title">💡 힌트</div><div id="hintText"></div></div>
+    <div class="explain-box" id="explainBox"><div class="explain-ttl">📖 해설</div><div id="explainCategory"></div><div id="explainText"></div></div>
+    <div class="panel" id="statusBox"></div>
+    <div class="navbar">
+     <button class="nav-btn" id="btnPrev" onclick="goPrev()">← 이전</button>
+     <button class="nav-btn primary" id="btnNext" onclick="goNext()">다음 →</button>
+     <button class="nav-btn end" onclick="confirmEnd()">■ 게임 끝내기</button>
+    </div>
+   </div>
   </div>
-  <div class="in-game-credit">제작 · 보라라샘 / 2026.07.15</div>
+ </div>
+ <div class="in-game-credit">제작 · 보라라샘 / 2026.07.15</div>
 </div>
 
-<div id="quizScreen" class="screen"><div class="quiz-wrap" id="quizWrap"></div></div>
+<!-- ══════════ 퀴즈 화면 ══════════ -->
+<div id="quizScreen" class="screen">
+ <div class="shell">
+  <div class="band"><span class="band-left">읽기 <span class="band-goal">· 유추의 개념을 정리하여 확인한다</span></span><span class="band-right"><span id="hdrProgress2"></span></span></div>
+  <div class="quiz-wrap" id="quizWrap"></div>
+  <div style="display:flex;gap:9px;justify-content:center;padding:0 20px 24px;flex-wrap:wrap">
+   <button class="nav-btn" onclick="goPrev()">← 이전</button>
+   <button class="nav-btn primary" onclick="goNext()" id="btnQuizNext">다음 →</button>
+   <button class="nav-btn end" onclick="confirmEnd()">■ 게임 끝내기</button>
+  </div>
+ </div>
+ <div class="in-game-credit">제작 · 보라라샘 / 2026.07.15</div>
+</div>
 
+<!-- ══════════ 결과 화면 ══════════ -->
 <div id="resultScreen" class="screen">
-  <div class="result-container">
-    <div class="result-header"><h2>학습 결과</h2><div class="result-score" id="finalScore"></div><div class="result-stats" id="resultStats"></div></div>
-    <div class="wrong-section" id="wrongSection"></div>
-    <div class="nickname-section" style="margin-top:24px;background:#fff;border:1.5px solid #d4c8e8;border-radius:14px;padding:20px 24px">
-      <h3 style="font-size:15px;color:#7c5cbf;margin-bottom:12px">📝 오답노트 저장을 위해 입력해 주세요</h3>
-      <div style="display:flex;gap:12px;margin-bottom:10px;flex-wrap:wrap">
-        <div style="flex:1;min-width:200px"><label style="font-size:12.5px;color:#6b5c80;display:block;margin-bottom:4px">이름</label><input type="text" id="inputNickname" placeholder="이름을 입력하세요" style="width:100%;font-family:inherit;font-size:14px;padding:9px 12px;border:2px solid #d4c8e8;border-radius:10px;background:#faf7ff;color:#2e2440"></div>
-      </div>
-      <div><label style="font-size:12.5px;color:#6b5c80;display:block;margin-bottom:4px">학습 소감</label><textarea id="inputReflection" rows="2" placeholder="유추에 대해 새로 알게 된 점이나 느낀 점을 적어 보세요." style="width:100%;font-family:inherit;font-size:14px;padding:9px 12px;border:2px solid #d4c8e8;border-radius:10px;background:#faf7ff;color:#2e2440;resize:vertical;line-height:1.6"></textarea></div>
-      <div style="margin-top:10px;font-size:11px;color:#9b8ab0;line-height:1.6">🔒 입력하신 이름과 소감은 서버에 저장되지 않으며, 리포트 이미지(JPG) 생성용으로만 쓰입니다.</div>
+ <div class="shell">
+  <div class="band"><span class="band-left">읽기 <span class="band-goal">· 학습 결과</span></span><span class="band-right"><span id="hdrResult"></span></span></div>
+  <div class="result-wrap">
+   <div class="result-head">
+    <h2>학습 결과</h2>
+    <div class="result-score" id="finalScore"></div>
+    <div class="verdict" id="verdict"></div>
+   </div>
+   <div class="stats" id="resultStats"></div>
+   <div id="analysisSection"></div>
+   <div class="sect" id="wrongSection"></div>
+
+   <div class="in-sect">
+    <h3>📝 이름과 소감을 남겨 주세요</h3>
+    <div style="margin-bottom:10px">
+     <label class="in-label" for="inName">이름 <span style="color:var(--ng)">*필수</span></label>
+     <input type="text" id="inName" class="in-field" placeholder="이름을 입력하세요" maxlength="12">
     </div>
-    <div class="result-btns"><button class="result-btn download" onclick="downloadNote()">📋 오답노트 저장</button><button class="result-btn retry" onclick="location.reload()">🔄 다시 하기</button></div>
+    <div>
+     <label class="in-label" for="inReflection">학습 소감 <span style="color:#8a97a4">(선택)</span></label>
+     <textarea id="inReflection" rows="2" class="in-field" placeholder="유추에 대해 새로 알게 된 점이나 느낀 점을 적어 보세요."></textarea>
+    </div>
+    <div class="privacy" style="margin-top:10px;text-align:left" id="endPrivacy">🔒 입력하신 이름과 소감은 서버에 저장되지 않으며, 리포트 이미지(JPG) 생성용으로만 쓰입니다.</div>
+   </div>
+
+   <div class="result-btns">
+    <button class="rbtn" onclick="downloadNote()">📋 오답노트 저장</button>
+    <button class="rbtn" onclick="downloadReport()">📊 학습 리포트 저장</button>
+    <button class="rbtn sec" onclick="openReview()">📖 오늘 나온 문제 모두 보기</button>
+    <button class="rbtn" onclick="location.reload()">🔄 다시 하기</button>
+   </div>
   </div>
+ </div>
 </div>
 
-<div class="feedback-toast" id="feedbackToast"><div class="fb-icon" id="fbIcon"></div><div class="fb-text" id="fbText"></div></div>
-<div class="overlay" id="workBannerOverlay"><div class="work-banner-content" id="workBannerContent"></div></div>
+<div class="overlay" id="workBannerOverlay"><div class="wb-content" id="workBannerContent"></div></div>
+<div class="overlay" id="reviewOverlay"><div class="wb-content" id="reviewContent" style="max-width:720px"></div></div>
+<div id="dim"></div>
+<canvas id="fxCanvas"></canvas>
+<div id="pop"><div class="rays"></div><div class="ptxt" id="popTxt"></div><div class="ppts" id="popPts"></div></div>
 <canvas id="noteCanvas"></canvas>
+<canvas id="reportCanvas"></canvas>
 
 <script>
+const MADE_DATE='2026.07.15', LAST_MOD='2026.09.19 00:40';
+
+// ═══════════════════════════════════════════
+// ★ Apps Script 연동 설정
+// ═══════════════════════════════════════════
+const GAME_CONFIG = {
+  gameCode: "R301",
+  gameName: "설(說) 유추 구조 찾기",
+  webAppUrl: "https://script.google.com/macros/s/AKfycbzgq9yT5svpFzeFwW5p2pWOpL-lKpj5_RldoJejFT1EOk1Osjcf6hDx85jGQzvr5rU0ww/exec"
+};
+const params = new URLSearchParams(location.search);
+const TEACHER_KEY = params.get("key");
+const IS_ONLINE = !!TEACHER_KEY;
+let STUDENT = { id: "", name: "", className: "", verified: false };
+
+async function verifyStudent(studentId, studentName) {
+  if (!IS_ONLINE) return { status: "ok" };
+  try {
+    const res = await fetch(GAME_CONFIG.webAppUrl, {
+      method: "POST", headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ action: "verify", teacherKey: TEACHER_KEY, studentId, studentName })
+    });
+    return await res.json();
+  } catch (e) { return { status: "error", message: "서버에 연결할 수 없습니다. 인터넷 연결을 확인해주세요." }; }
+}
+function notifyGameStart(studentId, studentName, className) {
+  if (!IS_ONLINE) return;
+  fetch(GAME_CONFIG.webAppUrl, {
+    method: "POST", headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify({ action: "start", teacherKey: TEACHER_KEY, gameCode: GAME_CONFIG.gameCode, studentId, studentName, className })
+  }).catch(() => {});
+}
+async function submitResult(resultData) {
+  if (!IS_ONLINE) return { status: "ok" };
+  try {
+    const res = await fetch(GAME_CONFIG.webAppUrl, {
+      method: "POST", headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ action: "submit", teacherKey: TEACHER_KEY, gameCode: GAME_CONFIG.gameCode, gameName: GAME_CONFIG.gameName, ...resultData })
+    });
+    return await res.json();
+  } catch (e) { return { status: "error", message: "결과 전송에 실패했습니다." }; }
+}
+
+const $=id=>document.getElementById(id);
+
+// ═══════════ 유형 마스터 ═══════════
+const CATEGORIES={
+ exp:{label:'구체적 경험',mark:'①',color:'var(--exp)',hex:'#2E9B79',
+   desc:'글쓴이가 직접 겪거나 관찰한 일상의 사건',
+   tip:'"이 문장이 글쓴이 눈앞에서 실제로 벌어진 일인가?"를 먼저 따져 보세요. 사람·사물·시간이 구체적으로 드러나면 경험 단계입니다.'},
+ ext:{label:'대상 확장',mark:'②',color:'var(--ext)',hex:'#7C5CBF',
+   desc:'경험과 성격이 유사한 인간 사회·인생으로 넓히는 단계',
+   tip:'"주어가 눈앞의 그 일에서 사람 일반·세상으로 바뀌었는가?"를 보세요. \'하물며\', \'마찬가지다\', \'무릇\' 같은 말이 확장의 신호입니다.'},
+ les:{label:'교훈·깨달음',mark:'③',color:'var(--les)',hex:'#D4614E',
+   desc:'삶 전반에 적용되는 보편적 이치와 경계의 메시지',
+   tip:'"독자에게 어떻게 살라고 말하고 있는가?"를 찾아보세요. 비판·당부·반어적 물음(어찌 ~하지 않겠는가)으로 끝나면 교훈입니다.'},
+ con:{label:'유추 개념',mark:'🧩',color:'var(--con)',hex:'#B8860B',
+   desc:'유추라는 논증 방법 자체에 대한 이해',
+   tip:'유추는 \'경험 → 유사성 → 확장 → 교훈\'의 차례로 흐릅니다. 각 단계의 이름을 말로 설명해 보면 개념이 정리됩니다.'}
+};
+const CATN=c=>CATEGORIES[c].mark+' '+CATEGORIES[c].label;
+
+const BASE_PT=10, RETRY_PT=5, PENALTY=2;
+
+// ═══════════ 작품 데이터 ═══════════
 const works=[
 {id:'c',title:'차마설(借馬說)',author:'이곡(고려)',meaning:'말을 빌려 탄 이야기',paragraphs:[
 {text:'나는 집이 가난해서 말이 없기 때문에 종종 남의 말을 빌려 타곤 한다.',marks:[]},
-{text:'빌린 말이 여위고 느려서 제대로 걷지도 못하는 놈이면, 아무리 급한 일이 있어도 채찍질을 못 하고 조심조심 타다가, 개울이나 구덩이를 만나면 아예 내려서 걸어간다. 후회가 밀려온다.',marks:[{id:'c1',range:'빌린 말이 여위고 느려서 제대로 걷지도 못하는 놈이면, 아무리 급한 일이 있어도 채찍질을 못 하고 조심조심 타다가, 개울이나 구덩이를 만나면 아예 내려서 걸어간다.',answer:'경험',hint:'글쓴이가 나쁜 말을 빌려 탔을 때 조심조심 탔던 구체적 체험입니다. 유추의 출발점이에요.'}]},
+{text:'빌린 말이 여위고 느려서 제대로 걷지도 못하는 놈이면, 아무리 급한 일이 있어도 채찍질을 못 하고 조심조심 타다가, 개울이나 구덩이를 만나면 아예 내려서 걸어간다. 후회가 밀려온다.',marks:[{id:1,key:'c1',cat:'exp',range:'빌린 말이 여위고 느려서 제대로 걷지도 못하는 놈이면, 아무리 급한 일이 있어도 채찍질을 못 하고 조심조심 타다가, 개울이나 구덩이를 만나면 아예 내려서 걸어간다.',detail:'글쓴이가 나쁜 말을 빌려 탔을 때 조심조심 탔던 구체적 체험입니다. 유추의 출발점이에요.'}]},
 {text:'그런데 발이 높고 귀가 쫑긋한 멋진 준마를 빌려 타면 완전히 달라진다. 의기양양하게 마음대로 채찍질하고, 고삐를 확 놓아 버리면 언덕이든 골짜기든 평지처럼 느껴져서 정말 통쾌하다.',marks:[]},
-{text:'아, 사람의 마음이 이렇게 쉽게 바뀌는 것일까? 남의 물건을 잠깐 빌린 것만으로도 이 정도인데, 하물며 진짜 자기 것이라면 얼마나 더 심하겠는가.',marks:[{id:'c2',range:'남의 물건을 잠깐 빌린 것만으로도 이 정도인데, 하물며 진짜 자기 것이라면 얼마나 더 심하겠는가.',answer:'확장',hint:'말 빌리기에서 소유 일반의 문제로 넓히고 있습니다. "하물며"가 확장의 단서예요.'}]},
-{text:'그런데 가만히 생각해 보면, 사람이 가진 것 가운데 빌리지 않은 것이 하나도 없다. 임금은 백성의 힘을 빌려서 높은 자리에 앉은 것이고, 신하는 임금의 권세를 빌려서 귀한 대접을 받는 것이다.',marks:[{id:'c3',range:'사람이 가진 것 가운데 빌리지 않은 것이 하나도 없다. 임금은 백성의 힘을 빌려서 높은 자리에 앉은 것이고, 신하는 임금의 권세를 빌려서 귀한 대접을 받는 것이다.',answer:'확장',hint:'임금·신하의 예를 들어 "모든 소유는 빌린 것"으로 대상을 확대합니다.'}]},
-{text:'빌린 것이 너무 오래되고 깊다 보니, 대부분 자기 것인 줄 착각하고 돌아볼 줄을 모른다. 어찌 어리석은 일이 아니겠는가?',marks:[{id:'c4',range:'빌린 것이 너무 오래되고 깊다 보니, 대부분 자기 것인 줄 착각하고 돌아볼 줄을 모른다.',answer:'교훈',hint:'소유에 대한 집착을 비판하는 깨달음입니다. "어찌 어리석은 일이 아니겠는가?"가 교훈의 단서예요.'}]}
+{text:'아, 사람의 마음이 이렇게 쉽게 바뀌는 것일까? 남의 물건을 잠깐 빌린 것만으로도 이 정도인데, 하물며 진짜 자기 것이라면 얼마나 더 심하겠는가.',marks:[{id:2,key:'c2',cat:'ext',range:'남의 물건을 잠깐 빌린 것만으로도 이 정도인데, 하물며 진짜 자기 것이라면 얼마나 더 심하겠는가.',detail:'말 빌리기에서 소유 일반의 문제로 넓히고 있습니다. "하물며"가 확장의 단서예요.'}]},
+{text:'그런데 가만히 생각해 보면, 사람이 가진 것 가운데 빌리지 않은 것이 하나도 없다. 임금은 백성의 힘을 빌려서 높은 자리에 앉은 것이고, 신하는 임금의 권세를 빌려서 귀한 대접을 받는 것이다.',marks:[{id:3,key:'c3',cat:'ext',range:'사람이 가진 것 가운데 빌리지 않은 것이 하나도 없다. 임금은 백성의 힘을 빌려서 높은 자리에 앉은 것이고, 신하는 임금의 권세를 빌려서 귀한 대접을 받는 것이다.',detail:'임금·신하의 예를 들어 "모든 소유는 빌린 것"으로 대상을 확대합니다.'}]},
+{text:'빌린 것이 너무 오래되고 깊다 보니, 대부분 자기 것인 줄 착각하고 돌아볼 줄을 모른다. 어찌 어리석은 일이 아니겠는가?',marks:[{id:4,key:'c4',cat:'les',range:'빌린 것이 너무 오래되고 깊다 보니, 대부분 자기 것인 줄 착각하고 돌아볼 줄을 모른다.',detail:'소유에 대한 집착을 비판하는 깨달음입니다. "어찌 어리석은 일이 아니겠는가?"가 교훈의 단서예요.'}]}
 ]},
 {id:'g',title:'괴토실설(壞土室說)',author:'이규보(고려)',meaning:'토실(움집)을 허문 이야기',paragraphs:[
-{text:'10월 초하룻날, 내가 외출했다가 돌아오니 아이들이 마당에서 땅을 파고 움막을 만들고 있었다. 그 모양이 꼭 무덤처럼 생겼다.',marks:[{id:'g1',range:'아이들이 마당에서 땅을 파고 움막을 만들고 있었다. 그 모양이 꼭 무덤처럼 생겼다.',answer:'경험',hint:'글쓴이가 직접 목격한 구체적 장면입니다.'}]},
+{text:'10월 초하룻날, 내가 외출했다가 돌아오니 아이들이 마당에서 땅을 파고 움막을 만들고 있었다. 그 모양이 꼭 무덤처럼 생겼다.',marks:[{id:5,key:'g1',cat:'exp',range:'아이들이 마당에서 땅을 파고 움막을 만들고 있었다. 그 모양이 꼭 무덤처럼 생겼다.',detail:'글쓴이가 직접 목격한 구체적 장면입니다.'}]},
 {text:'나는 짐짓 모르는 척하며 물었다. "웬일이냐, 집 안에 무덤을 짓고 있느냐?" 아이들이 대답했다. "아닙니다, 움집입니다. 겨울에 화초를 갈무리하고, 길쌈하는 여인들이 손이 얼지 않으니 편리합니다."',marks:[]},
-{text:'나는 더욱 화가 나서 말했다. "여름에 덥고 겨울에 추운 것은 자연의 한결같은 이치이다. 만약 이에 반하면 괴이한 일이 된다. 옛 성인이 만든 법도는 추우면 가죽옷, 더우면 베옷이니 그것으로 충분하다."',marks:[{id:'g2',range:'여름에 덥고 겨울에 추운 것은 자연의 한결같은 이치이다. 만약 이에 반하면 괴이한 일이 된다.',answer:'확장',hint:'움집에서 "자연의 이치" 전반으로 대상을 넓힙니다.'}]},
-{text:'"움집을 지어 겨울의 추위를 더위로 바꾸다니, 이것은 하늘의 질서를 거스르는 일이다. 봄에 꽃이 피고 겨울에 시드는 것은 초목의 본래 성질인데, 철을 어긴 물건을 길러서 때에 맞지 않게 즐긴다면 이것은 하늘의 권한을 빼앗는 짓이다."',marks:[{id:'g3',range:'철을 어긴 물건을 길러서 때에 맞지 않게 즐긴다면 이것은 하늘의 권한을 빼앗는 짓이다.',answer:'교훈',hint:'자연의 질서를 거스르지 말라는 교훈을 도출합니다.'}]},
+{text:'나는 더욱 화가 나서 말했다. "여름에 덥고 겨울에 추운 것은 자연의 한결같은 이치이다. 만약 이에 반하면 괴이한 일이 된다. 옛 성인이 만든 법도는 추우면 가죽옷, 더우면 베옷이니 그것으로 충분하다."',marks:[{id:6,key:'g2',cat:'ext',range:'여름에 덥고 겨울에 추운 것은 자연의 한결같은 이치이다. 만약 이에 반하면 괴이한 일이 된다.',detail:'움집에서 "자연의 이치" 전반으로 대상을 넓힙니다.'}]},
+{text:'"움집을 지어 겨울의 추위를 더위로 바꾸다니, 이것은 하늘의 질서를 거스르는 일이다. 봄에 꽃이 피고 겨울에 시드는 것은 초목의 본래 성질인데, 철을 어긴 물건을 길러서 때에 맞지 않게 즐긴다면 이것은 하늘의 권한을 빼앗는 짓이다."',marks:[{id:7,key:'g3',cat:'les',range:'철을 어긴 물건을 길러서 때에 맞지 않게 즐긴다면 이것은 하늘의 권한을 빼앗는 짓이다.',detail:'자연의 질서를 거스르지 말라는 교훈을 도출합니다.'}]},
 {text:'"이것은 모두 내 뜻에 맞지 않는다. 당장 헐어 버리지 않으면 가만두지 않겠다!" 아이들은 겁에 질려 얼른 움집을 허물었다. 그 나무와 재목을 땔감으로 쓰고 나서야, 나는 비로소 마음이 편안해졌다.',marks:[]}
 ]},
 {id:'j',title:'주옹설(舟翁說)',author:'권근(조선 초)',meaning:'배 위의 노인 이야기',paragraphs:[
 {text:'어떤 손님이 배 위에서 사는 주옹(늙은 뱃사람)에게 물었다. "그대는 배에서 사는데, 낚시도 없고 밑천도 없고, 뭍으로 나가지도 않으시잖소? 바람이 미치게 불고 파도가 무섭게 밀려오면 목숨이 경각에 달릴 텐데, 대체 무슨 재미가 있는 겁니까?"',marks:[]},
-{text:'주옹이 대답했다. "사람의 마음이란, 평탄한 땅을 밟으면 느긋해지고, 험한 처지에 놓이면 긴장하게 되지요. 두려워서 긴장하면 조심해서 든든하게 살지만, 느긋하면 반드시 흐트러져서 위태롭게 됩니다."',marks:[{id:'j1',range:'평탄한 땅을 밟으면 느긋해지고, 험한 처지에 놓이면 긴장하게 되지요. 두려워서 긴장하면 조심해서 든든하게 살지만, 느긋하면 반드시 흐트러져서 위태롭게 됩니다.',answer:'경험',hint:'배 위 생활에서 직접 체득한 관찰입니다. 편안함과 긴장의 차이를 몸으로 느낀 경험이에요.'}]},
-{text:'"내 배는 정해진 모양 없이 물 위에 떠 있는 것이라, 무게가 한쪽으로 치우치면 기울어지게 되오. 내가 배 한가운데서 균형을 잡아야만 기울지도 뒤집히지도 않아 배가 편안해지는 것이지요."',marks:[{id:'j2',range:'내가 배 한가운데서 균형을 잡아야만 기울지도 뒤집히지도 않아 배가 편안해지는 것이지요.',answer:'경험',hint:'배 위에서 균형을 잡아야 안전하다는 구체적 경험입니다. 아직 세상 이야기로 넘어가지 않았어요.'}]},
-{text:'"무릇 인간 세상이라는 것이야말로 하나의 거대한 물결이고, 사람들의 마음은 한바탕 큰 바람이 아니겠소?"',marks:[{id:'j3',range:'인간 세상이라는 것이야말로 하나의 거대한 물결이고, 사람들의 마음은 한바탕 큰 바람이 아니겠소?',answer:'확장',hint:'"세상=물결, 마음=바람"이라는 비유로 배에서 세상 전체로 대상을 확장합니다.'}]},
-{text:'"안전할 때는 뒷날의 걱정을 생각하지 않고, 욕심을 부리느라 나중을 돌보지 않다가, 결국 빠지고 뒤집혀 죽는 사람들이 얼마나 많은지 모릅니다. 손님은 어째서 그것을 두려워하지 않고, 도리어 나를 위험하다 하시오?"',marks:[{id:'j4',range:'안전할 때는 뒷날의 걱정을 생각하지 않고, 욕심을 부리느라 나중을 돌보지 않다가, 결국 빠지고 뒤집혀 죽는 사람들이 얼마나 많은지 모릅니다.',answer:'교훈',hint:'편안함에 안주하면 위험하다는 교훈입니다. 중심을 잡으라는 메시지예요.'}]}
+{text:'주옹이 대답했다. "사람의 마음이란, 평탄한 땅을 밟으면 느긋해지고, 험한 처지에 놓이면 긴장하게 되지요. 두려워서 긴장하면 조심해서 든든하게 살지만, 느긋하면 반드시 흐트러져서 위태롭게 됩니다."',marks:[{id:8,key:'j1',cat:'exp',range:'평탄한 땅을 밟으면 느긋해지고, 험한 처지에 놓이면 긴장하게 되지요. 두려워서 긴장하면 조심해서 든든하게 살지만, 느긋하면 반드시 흐트러져서 위태롭게 됩니다.',detail:'배 위 생활에서 직접 체득한 관찰입니다. 편안함과 긴장의 차이를 몸으로 느낀 경험이에요.'}]},
+{text:'"내 배는 정해진 모양 없이 물 위에 떠 있는 것이라, 무게가 한쪽으로 치우치면 기울어지게 되오. 내가 배 한가운데서 균형을 잡아야만 기울지도 뒤집히지도 않아 배가 편안해지는 것이지요."',marks:[{id:9,key:'j2',cat:'exp',range:'내가 배 한가운데서 균형을 잡아야만 기울지도 뒤집히지도 않아 배가 편안해지는 것이지요.',detail:'배 위에서 균형을 잡아야 안전하다는 구체적 경험입니다. 아직 세상 이야기로 넘어가지 않았어요.'}]},
+{text:'"무릇 인간 세상이라는 것이야말로 하나의 거대한 물결이고, 사람들의 마음은 한바탕 큰 바람이 아니겠소?"',marks:[{id:10,key:'j3',cat:'ext',range:'인간 세상이라는 것이야말로 하나의 거대한 물결이고, 사람들의 마음은 한바탕 큰 바람이 아니겠소?',detail:'"세상=물결, 마음=바람"이라는 비유로 배에서 세상 전체로 대상을 확장합니다.'}]},
+{text:'"안전할 때는 뒷날의 걱정을 생각하지 않고, 욕심을 부리느라 나중을 돌보지 않다가, 결국 빠지고 뒤집혀 죽는 사람들이 얼마나 많은지 모릅니다. 손님은 어째서 그것을 두려워하지 않고, 도리어 나를 위험하다 하시오?"',marks:[{id:11,key:'j4',cat:'les',range:'안전할 때는 뒷날의 걱정을 생각하지 않고, 욕심을 부리느라 나중을 돌보지 않다가, 결국 빠지고 뒤집혀 죽는 사람들이 얼마나 많은지 모릅니다.',detail:'편안함에 안주하면 위험하다는 교훈입니다. 중심을 잡으라는 메시지예요.'}]}
 ]},
 {id:'k',title:'경설(鏡說)',author:'이규보(고려)',meaning:'거울 이야기',paragraphs:[
-{text:'거사(居士)가 거울 하나를 갖고 있었는데, 먼지가 끼어서 흐릿한 것이 마치 구름에 가린 달빛 같았다. 그런데도 거사는 아침저녁으로 이 거울을 들여다보며 얼굴을 가다듬곤 했다.',marks:[{id:'k1',range:'거사(居士)가 거울 하나를 갖고 있었는데, 먼지가 끼어서 흐릿한 것이 마치 구름에 가린 달빛 같았다. 그런데도 거사는 아침저녁으로 이 거울을 들여다보며 얼굴을 가다듬곤 했다.',answer:'경험',hint:'거사가 먼지 낀 거울을 쓰는 구체적 상황입니다. 유추의 출발점이에요.'}]},
+{text:'거사(居士)가 거울 하나를 갖고 있었는데, 먼지가 끼어서 흐릿한 것이 마치 구름에 가린 달빛 같았다. 그런데도 거사는 아침저녁으로 이 거울을 들여다보며 얼굴을 가다듬곤 했다.',marks:[{id:12,key:'k1',cat:'exp',range:'거사(居士)가 거울 하나를 갖고 있었는데, 먼지가 끼어서 흐릿한 것이 마치 구름에 가린 달빛 같았다. 그런데도 거사는 아침저녁으로 이 거울을 들여다보며 얼굴을 가다듬곤 했다.',detail:'거사가 먼지 낀 거울을 쓰는 구체적 상황입니다. 유추의 출발점이에요.'}]},
 {text:'한 나그네가 거사를 보고 물었다. "거울이란 얼굴을 비추어 보는 물건이거나, 군자가 그 맑은 것을 본받기 위한 것인데, 지금 당신의 거울은 안개 낀 것처럼 흐려서 얼굴을 비출 수도 없고 맑은 것을 취할 수도 없습니다. 그런데 왜 계속 들여다보시는 겁니까?"',marks:[]},
-{text:'거사가 대답했다. "거울이 맑으면, 잘생긴 사람은 좋아하겠지만, 못생긴 사람은 오히려 싫어할 것이오. 그런데 잘생긴 사람은 적고, 못생긴 사람은 많습니다. 한번 보기만 하면 반드시 깨뜨려 버릴 테니, 차라리 먼지에 흐려진 그대로 두는 것이 낫습니다."',marks:[{id:'k2',range:'잘생긴 사람은 적고, 못생긴 사람은 많습니다. 한번 보기만 하면 반드시 깨뜨려 버릴 테니, 차라리 먼지에 흐려진 그대로 두는 것이 낫습니다.',answer:'확장',hint:'거울에서 "완벽한 사람은 적으니 결점을 감싸야 한다"는 세상 이야기로 확장합니다.'}]},
-{text:'"먼지로 흐려진 것은 겉뿐이지, 거울의 맑은 바탕은 속에 그대로 남아 있습니다. 잘생기고 예쁜 사람을 만난 뒤에 닦고 갈아도 늦지 않습니다."',marks:[{id:'k3',range:'먼지로 흐려진 것은 겉뿐이지, 거울의 맑은 바탕은 속에 그대로 남아 있습니다.',answer:'교훈',hint:'겉은 흐려져도 본질은 변하지 않는다는 교훈입니다. 본질을 보라는 깨달음이에요.'}]},
+{text:'거사가 대답했다. "거울이 맑으면, 잘생긴 사람은 좋아하겠지만, 못생긴 사람은 오히려 싫어할 것이오. 그런데 잘생긴 사람은 적고, 못생긴 사람은 많습니다. 한번 보기만 하면 반드시 깨뜨려 버릴 테니, 차라리 먼지에 흐려진 그대로 두는 것이 낫습니다."',marks:[{id:13,key:'k2',cat:'ext',range:'잘생긴 사람은 적고, 못생긴 사람은 많습니다. 한번 보기만 하면 반드시 깨뜨려 버릴 테니, 차라리 먼지에 흐려진 그대로 두는 것이 낫습니다.',detail:'거울에서 "완벽한 사람은 적으니 결점을 감싸야 한다"는 세상 이야기로 확장합니다.'}]},
+{text:'"먼지로 흐려진 것은 겉뿐이지, 거울의 맑은 바탕은 속에 그대로 남아 있습니다. 잘생기고 예쁜 사람을 만난 뒤에 닦고 갈아도 늦지 않습니다."',marks:[{id:14,key:'k3',cat:'les',range:'먼지로 흐려진 것은 겉뿐이지, 거울의 맑은 바탕은 속에 그대로 남아 있습니다.',detail:'겉은 흐려져도 본질은 변하지 않는다는 교훈입니다. 본질을 보라는 깨달음이에요.'}]},
 {text:'"아! 옛 사람은 거울의 맑음을 본받으려 했지만, 나는 흐린 거울을 보며 세상을 비추어 봅니다. 어찌 이상하게 생각하십니까?"',marks:[]}
 ]},
 {id:'s',title:'슬견설(蝨犬說)',author:'이규보(고려)',meaning:'이(虱)와 개 이야기',paragraphs:[
-{text:'어떤 손님이 나에게 말했다. "어젯밤 어떤 불량배가 큰 몽둥이로 돌아다니는 개를 때려 죽이는 것을 보았는데, 그 꼴이 너무 비참해서 가슴이 아팠소. 그래서 이제부터 맹세코 개고기나 돼지고기를 먹지 않겠소."',marks:[{id:'s1',range:'어젯밤 어떤 불량배가 큰 몽둥이로 돌아다니는 개를 때려 죽이는 것을 보았는데, 그 꼴이 너무 비참해서 가슴이 아팠소.',answer:'경험',hint:'손님이 직접 목격한 구체적 장면입니다. 유추의 출발점이에요.'}]},
+{text:'어떤 손님이 나에게 말했다. "어젯밤 어떤 불량배가 큰 몽둥이로 돌아다니는 개를 때려 죽이는 것을 보았는데, 그 꼴이 너무 비참해서 가슴이 아팠소. 그래서 이제부터 맹세코 개고기나 돼지고기를 먹지 않겠소."',marks:[{id:15,key:'s1',cat:'exp',range:'어젯밤 어떤 불량배가 큰 몽둥이로 돌아다니는 개를 때려 죽이는 것을 보았는데, 그 꼴이 너무 비참해서 가슴이 아팠소.',detail:'손님이 직접 목격한 구체적 장면입니다. 유추의 출발점이에요.'}]},
 {text:'내가 대꾸했다. "나도 어제 어떤 사람이 불이 이글이글한 화로를 끼고 앉아 이(虱)를 잡아 태워 죽이는 것을 보고 마음이 아파서, 나는 이제부터 이를 잡지 않겠다고 맹세했소."',marks:[]},
 {text:'손님이 어이없어하며 말했다. "이는 미물이잖소! 나는 큰 짐승이 죽는 것이 가엾어서 한 말인데, 당신은 이따위로 대꾸하다니 나를 놀리는 겁니까?"',marks:[]},
-{text:'내가 말했다. "무릇 피가 있는 생물이라면 사람에서부터 소, 말, 돼지, 벌레, 개미에 이르기까지, 살고 싶어 하고 죽기 싫어하는 마음은 한결같소. 어찌 큰 놈만 죽기 싫어하고 작은 놈은 그렇지 않겠소?"',marks:[{id:'s2',range:'피가 있는 생물이라면 사람에서부터 소, 말, 돼지, 벌레, 개미에 이르기까지, 살고 싶어 하고 죽기 싫어하는 마음은 한결같소.',answer:'확장',hint:'개와 이의 비교에서 "모든 생물"로 대상을 확장합니다.'}]},
-{text:'"그러니 개가 죽는 것이나 이가 죽는 것이나 마찬가지요. 당신의 열 손가락을 한번 깨물어 보시오. 엄지만 아프고 나머지는 안 아프겠소? 한 몸에서 크든 작든 살과 피가 있으니 아픔은 똑같소."',marks:[{id:'s3',range:'당신의 열 손가락을 한번 깨물어 보시오. 엄지만 아프고 나머지는 안 아프겠소?',answer:'확장',hint:'손가락 비유로 크기와 무관한 고통의 동등함을 한 번 더 확장합니다.'}]},
-{text:'"당신은 물러가서 마음을 고요히 하고, 달팽이 뿔을 소뿔처럼 보고, 메추라기를 대붕(큰 새)과 같이 볼 수 있게 된 뒤에야, 나와 함께 도(道)를 이야기할 수 있을 것이오."',marks:[{id:'s4',range:'달팽이 뿔을 소뿔처럼 보고, 메추라기를 대붕(큰 새)과 같이 볼 수 있게 된 뒤에야, 나와 함께 도(道)를 이야기할 수 있을 것이오.',answer:'교훈',hint:'크고 작음의 차별 없이 생명을 바라보라는 교훈입니다.'}]}
+{text:'내가 말했다. "무릇 피가 있는 생물이라면 사람에서부터 소, 말, 돼지, 벌레, 개미에 이르기까지, 살고 싶어 하고 죽기 싫어하는 마음은 한결같소. 어찌 큰 놈만 죽기 싫어하고 작은 놈은 그렇지 않겠소?"',marks:[{id:16,key:'s2',cat:'ext',range:'피가 있는 생물이라면 사람에서부터 소, 말, 돼지, 벌레, 개미에 이르기까지, 살고 싶어 하고 죽기 싫어하는 마음은 한결같소.',detail:'개와 이의 비교에서 "모든 생물"로 대상을 확장합니다.'}]},
+{text:'"그러니 개가 죽는 것이나 이가 죽는 것이나 마찬가지요. 당신의 열 손가락을 한번 깨물어 보시오. 엄지만 아프고 나머지는 안 아프겠소? 한 몸에서 크든 작든 살과 피가 있으니 아픔은 똑같소."',marks:[{id:17,key:'s3',cat:'ext',range:'당신의 열 손가락을 한번 깨물어 보시오. 엄지만 아프고 나머지는 안 아프겠소?',detail:'손가락 비유로 크기와 무관한 고통의 동등함을 한 번 더 확장합니다.'}]},
+{text:'"당신은 물러가서 마음을 고요히 하고, 달팽이 뿔을 소뿔처럼 보고, 메추라기를 대붕(큰 새)과 같이 볼 수 있게 된 뒤에야, 나와 함께 도(道)를 이야기할 수 있을 것이오."',marks:[{id:18,key:'s4',cat:'les',range:'달팽이 뿔을 소뿔처럼 보고, 메추라기를 대붕(큰 새)과 같이 볼 수 있게 된 뒤에야, 나와 함께 도(道)를 이야기할 수 있을 것이오.',detail:'크고 작음의 차별 없이 생명을 바라보라는 교훈입니다.'}]}
 ]},
 {id:'i',title:'이옥설(理屋說)',author:'이규보(고려)',meaning:'집을 수리한 이야기',paragraphs:[
 {text:'집에 퇴락한 행랑채가 버티지 못하게 된 것이 세 칸이었다. 나는 마지못해 이것을 모두 수리했다.',marks:[]},
-{text:'그중 두 칸은 장마비에 샌 지 오래되었는데, 나는 알면서도 어물어물 미루다가 손을 대지 못했다. 나머지 한 칸은 비를 한 번 맞고 새어서 서둘러 기와를 갈게 했다.',marks:[{id:'i1',range:'두 칸은 장마비에 샌 지 오래되었는데, 나는 알면서도 어물어물 미루다가 손을 대지 못했다. 나머지 한 칸은 비를 한 번 맞고 새어서 서둘러 기와를 갈게 했다.',answer:'경험',hint:'글쓴이가 직접 행랑채를 수리한 구체적 경험입니다.'}]},
-{text:'수리해 보니, 오래 새었던 두 칸은 서까래와 들보가 모두 썩어서 쓸 수 없었기에 비용이 많이 들었다. 비를 한 번만 맞은 한 칸은 재목이 멀쩡해서 다시 쓸 수 있었기에 비용이 적게 들었다.',marks:[{id:'i2',range:'오래 새었던 두 칸은 서까래와 들보가 모두 썩어서 쓸 수 없었기에 비용이 많이 들었다. 비를 한 번만 맞은 한 칸은 재목이 멀쩡해서 다시 쓸 수 있었기에 비용이 적게 들었다.',answer:'경험',hint:'수리 결과를 비교한 구체적 경험입니다. 아직 사람이나 나라 이야기로 넘어가지 않았어요.'}]},
-{text:'나는 여기서 깨달았다. "사람의 몸도 마찬가지다. 잘못을 알면서도 곧바로 고치지 않으면 나무가 썩어 못 쓰게 되는 것이나 다름없고, 잘못이 있으면 고치기를 꺼리지 않는다면 멀쩡한 재목을 다시 쓸 수 있는 것과 같다."',marks:[{id:'i3',range:'잘못을 알면서도 곧바로 고치지 않으면 나무가 썩어 못 쓰게 되는 것이나 다름없고, 잘못이 있으면 고치기를 꺼리지 않는다면 멀쩡한 재목을 다시 쓸 수 있는 것과 같다.',answer:'확장',hint:'집 수리에서 사람의 잘못 고치기로 1차 확장합니다. "마찬가지다"가 단서예요.'}]},
-{text:'"이것뿐이 아니다. 나라의 정치도 마찬가지이다. 백성을 좀먹는 일이 있는데도 그때그때 고치지 않고 참고 넘기다가, 백성이 쓰러지고 나라가 위태로워진 뒤에야 급히 고치려 하면, 바로 세우기가 어려울 것이니 어찌 조심하지 않겠는가?"',marks:[{id:'i4',range:'나라의 정치도 마찬가지이다. 백성을 좀먹는 일이 있는데도 그때그때 고치지 않고 참고 넘기다가, 백성이 쓰러지고 나라가 위태로워진 뒤에야 급히 고치려 하면, 바로 세우기가 어려울 것이니 어찌 조심하지 않겠는가?',answer:'교훈',hint:'개인에서 나라로 2차 확장한 교훈입니다. 문제를 미루지 말고 즉시 고쳐라는 메시지예요.'}]}
+{text:'그중 두 칸은 장마비에 샌 지 오래되었는데, 나는 알면서도 어물어물 미루다가 손을 대지 못했다. 나머지 한 칸은 비를 한 번 맞고 새어서 서둘러 기와를 갈게 했다.',marks:[{id:19,key:'i1',cat:'exp',range:'두 칸은 장마비에 샌 지 오래되었는데, 나는 알면서도 어물어물 미루다가 손을 대지 못했다. 나머지 한 칸은 비를 한 번 맞고 새어서 서둘러 기와를 갈게 했다.',detail:'글쓴이가 직접 행랑채를 수리한 구체적 경험입니다.'}]},
+{text:'수리해 보니, 오래 새었던 두 칸은 서까래와 들보가 모두 썩어서 쓸 수 없었기에 비용이 많이 들었다. 비를 한 번만 맞은 한 칸은 재목이 멀쩡해서 다시 쓸 수 있었기에 비용이 적게 들었다.',marks:[{id:20,key:'i2',cat:'exp',range:'오래 새었던 두 칸은 서까래와 들보가 모두 썩어서 쓸 수 없었기에 비용이 많이 들었다. 비를 한 번만 맞은 한 칸은 재목이 멀쩡해서 다시 쓸 수 있었기에 비용이 적게 들었다.',detail:'수리 결과를 비교한 구체적 경험입니다. 아직 사람이나 나라 이야기로 넘어가지 않았어요.'}]},
+{text:'나는 여기서 깨달았다. "사람의 몸도 마찬가지다. 잘못을 알면서도 곧바로 고치지 않으면 나무가 썩어 못 쓰게 되는 것이나 다름없고, 잘못이 있으면 고치기를 꺼리지 않는다면 멀쩡한 재목을 다시 쓸 수 있는 것과 같다."',marks:[{id:21,key:'i3',cat:'ext',range:'잘못을 알면서도 곧바로 고치지 않으면 나무가 썩어 못 쓰게 되는 것이나 다름없고, 잘못이 있으면 고치기를 꺼리지 않는다면 멀쩡한 재목을 다시 쓸 수 있는 것과 같다.',detail:'집 수리에서 사람의 잘못 고치기로 1차 확장합니다. "마찬가지다"가 단서예요.'}]},
+{text:'"이것뿐이 아니다. 나라의 정치도 마찬가지이다. 백성을 좀먹는 일이 있는데도 그때그때 고치지 않고 참고 넘기다가, 백성이 쓰러지고 나라가 위태로워진 뒤에야 급히 고치려 하면, 바로 세우기가 어려울 것이니 어찌 조심하지 않겠는가?"',marks:[{id:22,key:'i4',cat:'les',range:'나라의 정치도 마찬가지이다. 백성을 좀먹는 일이 있는데도 그때그때 고치지 않고 참고 넘기다가, 백성이 쓰러지고 나라가 위태로워진 뒤에야 급히 고치려 하면, 바로 세우기가 어려울 것이니 어찌 조심하지 않겠는가?',detail:'개인에서 나라로 2차 확장한 교훈입니다. 문제를 미루지 말고 즉시 고쳐라는 메시지예요.'}]}
 ]}
 ];
 
 const SUMMARIES=[
-{title:'차마설',author:'이곡',steps:[{c:'경험',t:'빌린 말에 따라 조심하거나 마음대로 하는 경험'},{c:'확장',t:'"세상 모든 소유는 빌린 것이다" — 임금의 권력도, 신하의 지위도'},{c:'교훈',t:'오래 빌리면 자기 것인 줄 착각한다 → 소유에 집착하지 말라'}],link:'"빌린 말"에 대한 태도 ≈ "빌린 소유(권력·재산)"에 대한 태도'},
-{title:'괴토실설',author:'이규보',steps:[{c:'경험',t:'아이들이 마당에 움집을 짓는 것을 목격'},{c:'확장',t:'"자연의 이치를 인위로 거스르는 일" 전반으로 확대'},{c:'교훈',t:'자연의 질서를 거스르지 말고 따라야 한다'}],link:'"움집으로 겨울을 여름처럼 바꾸기" ≈ "자연의 이치를 인위로 거스르는 모든 행위"'},
-{title:'주옹설',author:'권근',steps:[{c:'경험',t:'배 위에서 균형을 잡으며 사는 뱃사람의 삶'},{c:'확장',t:'"세상살이 = 거대한 물결, 마음 = 바람"으로 비유 확장'},{c:'교훈',t:'편안함에 안주하면 위태로워진다 → 늘 중심을 잡아라'}],link:'"흔들리는 배 위에서 균형 잡기" ≈ "불안한 세상에서 중심 잡기"'},
-{title:'경설',author:'이규보',steps:[{c:'경험',t:'먼지 낀 흐린 거울을 일부러 닦지 않고 쓰는 거사'},{c:'확장',t:'맑은 거울은 못생긴 사람이 깨뜨린다 → 완벽한 사람은 드물다'},{c:'교훈',t:'겉은 흐려도 본질은 변하지 않는다 → 본질을 보라'}],link:'"흐린 거울의 맑은 바탕" ≈ "부족해 보여도 변하지 않는 사람의 본성"'},
-{title:'슬견설',author:'이규보',steps:[{c:'경험',t:'개의 죽음엔 가슴 아파하면서 이의 죽음은 대수롭지 않게 여김'},{c:'확장',t:'모든 생물의 "살고 싶은 마음"은 크기와 무관하게 동등'},{c:'교훈',t:'달팽이 뿔 = 소뿔, 메추라기 = 대붕 → 크고 작음의 선입견을 버려라'}],link:'"개의 죽음" ≈ "이의 죽음" — 크기가 다를 뿐 생명의 가치는 같다'},
-{title:'이옥설',author:'이규보',steps:[{c:'경험',t:'오래 미룬 수리 = 비용 큼 vs 즉시 수리 = 비용 적음'},{c:'확장',t:'1차: 사람의 잘못도 빨리 고쳐야 / 2차: 나라의 정치도 마찬가지'},{c:'교훈',t:'문제를 미루지 말고 즉시 고쳐라 (이중 확장 구조)'}],link:'"행랑채 썩음" ≈ "사람의 잘못 깊어짐" ≈ "나라의 병폐 커짐"'}
+{title:'차마설',author:'이곡',steps:[{c:'exp',t:'빌린 말에 따라 조심하거나 마음대로 하는 경험'},{c:'ext',t:'"세상 모든 소유는 빌린 것이다" — 임금의 권력도, 신하의 지위도'},{c:'les',t:'오래 빌리면 자기 것인 줄 착각한다 → 소유에 집착하지 말라'}],link:'"빌린 말"에 대한 태도 ≈ "빌린 소유(권력·재산)"에 대한 태도'},
+{title:'괴토실설',author:'이규보',steps:[{c:'exp',t:'아이들이 마당에 움집을 짓는 것을 목격'},{c:'ext',t:'"자연의 이치를 인위로 거스르는 일" 전반으로 확대'},{c:'les',t:'자연의 질서를 거스르지 말고 따라야 한다'}],link:'"움집으로 겨울을 여름처럼 바꾸기" ≈ "자연의 이치를 인위로 거스르는 모든 행위"'},
+{title:'주옹설',author:'권근',steps:[{c:'exp',t:'배 위에서 균형을 잡으며 사는 뱃사람의 삶'},{c:'ext',t:'"세상살이 = 거대한 물결, 마음 = 바람"으로 비유 확장'},{c:'les',t:'편안함에 안주하면 위태로워진다 → 늘 중심을 잡아라'}],link:'"흔들리는 배 위에서 균형 잡기" ≈ "불안한 세상에서 중심 잡기"'},
+{title:'경설',author:'이규보',steps:[{c:'exp',t:'먼지 낀 흐린 거울을 일부러 닦지 않고 쓰는 거사'},{c:'ext',t:'맑은 거울은 못생긴 사람이 깨뜨린다 → 완벽한 사람은 드물다'},{c:'les',t:'겉은 흐려도 본질은 변하지 않는다 → 본질을 보라'}],link:'"흐린 거울의 맑은 바탕" ≈ "부족해 보여도 변하지 않는 사람의 본성"'},
+{title:'슬견설',author:'이규보',steps:[{c:'exp',t:'개의 죽음엔 가슴 아파하면서 이의 죽음은 대수롭지 않게 여김'},{c:'ext',t:'모든 생물의 "살고 싶은 마음"은 크기와 무관하게 동등'},{c:'les',t:'달팽이 뿔 = 소뿔, 메추라기 = 대붕 → 크고 작음의 선입견을 버려라'}],link:'"개의 죽음" ≈ "이의 죽음" — 크기가 다를 뿐 생명의 가치는 같다'},
+{title:'이옥설',author:'이규보',steps:[{c:'exp',t:'오래 미룬 수리 = 비용 큼 vs 즉시 수리 = 비용 적음'},{c:'ext',t:'1차: 사람의 잘못도 빨리 고쳐야 / 2차: 나라의 정치도 마찬가지'},{c:'les',t:'문제를 미루지 말고 즉시 고쳐라 (이중 확장 구조)'}],link:'"행랑채 썩음" ≈ "사람의 잘못 깊어짐" ≈ "나라의 병폐 커짐"'}
 ];
 
 const QUIZZES=[
 {title:'유추 개념 확인 ①',sub:'이옥설과 슬견설을 풀어본 뒤, 유추의 기본을 점검해 봅시다.',questions:[
-{q:'유추에서 글쓴이가 출발점으로 삼는 것은 자신의 구체적인 (        )이다.',ph:'두 글자',accepts:['경험'],chosung:'ㄱㅎ',explain:'유추는 글쓴이의 구체적인 "경험"에서 출발합니다. 이옥설은 "행랑채를 수리한 경험", 슬견설은 "개가 죽는 것을 본 경험"이 출발점이었어요.'},
-{q:'유추는 구체적인 것에서 (        )적인 것으로 추론하는 방법이다.',ph:'두 글자',accepts:['일반','보편'],chosung:'ㅇㅂ / ㅂㅍ',explain:'유추는 구체적이고 개별적인 경험에서 일반적(보편적)인 교훈이나 원리를 이끌어 냅니다.'}
+{id:23,cat:'con',q:'유추에서 글쓴이가 출발점으로 삼는 것은 자신의 구체적인 (        )이다.',ph:'두 글자',accepts:['경험'],chosung:'ㄱㅎ',detail:'유추는 글쓴이의 구체적인 "경험"에서 출발합니다. 이옥설은 "행랑채를 수리한 경험", 슬견설은 "개가 죽는 것을 본 경험"이 출발점이었어요.'},
+{id:24,cat:'con',q:'유추는 구체적인 경험에서 이와 (        )한 삶의 이치를 추론하는 방법이다.',ph:'두 글자',accepts:['유사','비슷'],chosung:'ㅇㅅ / ㅂㅅ',detail:'유추는 구체적인 경험(A)을 바탕으로 이와 성격이 유사한 다른 상황이나 삶(B)의 이치를 끌어내는 추론 방식입니다.'}
 ]},
 {title:'유추 개념 확인 ②',sub:'괴토실설과 경설을 풀어본 뒤, 유추의 구조를 좀 더 깊이 이해해 봅시다.',questions:[
-{q:'유추에서 구체적 경험과 교훈 사이를 이어 주는 중간 단계를 (          )(이)라고 한다.',ph:'네 글자',accepts:['대상확장','대상 확장'],chosung:'ㄷㅅ ㅎㅈ',explain:'"대상 확장"은 구체적 경험의 의미를 더 넓은 범위로 확대하는 단계입니다. 괴토실설에서 "움집 짓기"를 "자연의 이치를 거스르는 일"로 넓히는 것이 대상 확장이에요.'},
-{q:'유추가 설득력을 가지려면, 구체적 경험과 교훈 사이에 논리적 (          )이 있어야 한다.',ph:'세 글자',accepts:['유사성','공통점','연관성','관련성'],chosung:'ㅇㅅㅅ / ㄱㅌㅈ',explain:'유추는 두 대상 사이의 유사성(공통점)을 근거로 추론합니다. 경설에서 "흐린 거울"과 "세상의 결점" 사이에 "겉은 흐려도 본질은 남아 있다"는 공통점이 유추를 가능하게 해요.'}
+{id:25,cat:'con',q:'유추에서 구체적 경험과 교훈 사이를 이어 주는 중간 단계를 (          )(이)라고 한다.',ph:'네 글자',accepts:['대상확장','대상 확장'],chosung:'ㄷㅅ ㅎㅈ',detail:'"대상 확장"은 구체적 경험의 의미를 더 넓은 범위로 확대하는 단계입니다. 괴토실설에서 "움집 짓기"를 "자연의 이치를 거스르는 일"로 넓히는 것이 대상 확장이에요.'},
+{id:26,cat:'con',q:'유추가 설득력을 가지려면, 구체적 경험과 교훈 사이에 논리적 (          )이 있어야 한다.',ph:'세 글자',accepts:['유사성','공통점','연관성','관련성'],chosung:'ㅇㅅㅅ / ㄱㅌㅈ',detail:'유추는 두 대상 사이의 유사성(공통점)을 근거로 추론합니다. 경설에서 "흐린 거울"과 "세상의 결점" 사이에 "겉은 흐려도 본질은 남아 있다"는 공통점이 유추를 가능하게 해요.'}
 ]},
 {title:'유추 개념 확인 ③',sub:'차마설과 주옹설을 풀어본 뒤, 유추의 효과를 정리해 봅시다.',questions:[
-{q:'이옥설처럼 유추를 여러 단계로 확장하면 글의 (          )이 커진다.',ph:'세 글자',accepts:['설득력'],chosung:'ㅅㄷㄹ',explain:'이옥설은 "집 수리 → 사람의 수양 → 나라의 정치"로 유추를 이중 확장합니다. 차마설도 "말 빌리기 → 소유 전반"으로 확장하여 교훈의 설득력을 높였어요.'},
-{q:'설(說)에서 유추를 사용하는 궁극적 목적은 독자에게 삶의 (          )을 전달하기 위해서이다.',ph:'두 글자',accepts:['교훈','깨달음','진리','가르침'],chosung:'ㄱㅎ / ㄲㄷㅇ',explain:'설(說)은 글쓴이가 경험을 통해 깨달은 교훈을 독자에게 전달하는 갈래입니다. 유추는 그 교훈을 설득력 있게 전달하기 위한 핵심 방법이에요.'}
+{id:27,cat:'con',q:'이옥설처럼 유추를 여러 단계로 확장하면 글의 (          )이 커진다.',ph:'세 글자',accepts:['설득력'],chosung:'ㅅㄷㄹ',detail:'이옥설은 "집 수리 → 사람의 수양 → 나라의 정치"로 유추를 이중 확장합니다. 차마설도 "말 빌리기 → 소유 전반"으로 확장하여 교훈의 설득력을 높였어요.'},
+{id:28,cat:'con',q:'설(說)에서 유추를 사용하는 궁극적 목적은 독자에게 삶의 (          )을 전달하기 위해서이다.',ph:'두 글자',accepts:['교훈','깨달음','지혜','진리','가르침'],chosung:'ㄱㅎ / ㄲㄷㅇ',detail:'설(說)은 글쓴이가 경험을 통해 깨달은 교훈을 독자에게 전달하는 갈래입니다. 유추는 그 교훈을 설득력 있게 전달하기 위한 핵심 방법이에요.'}
 ]}
 ];
 
 const FLOW=[{t:'w',i:5},{t:'w',i:4},{t:'q',i:0},{t:'w',i:1},{t:'w',i:3},{t:'q',i:1},{t:'w',i:0},{t:'w',i:2},{t:'q',i:2}];
-function getWorkSeqNum(){let n=0;for(let i=0;i<=flowPos;i++)if(FLOW[i].t==='w')n++;return n}
 
-let flowPos=0,score=0,combo=0,selectedMarkId=null,markStates={},totalMarks=0,correctFirst=0,correctRetry=0,wrongCount=0,wrongAnswers=[],quizWrongAnswers=[],quizStates=[],bannerShown={};
+// ═══════════ 상태 ═══════════
+const ALL_MARKS=works.flatMap(w=>w.paragraphs.flatMap(p=>p.marks));
+const ALL_QUIZ=QUIZZES.flatMap(q=>q.questions);
+const TOTAL_Q=ALL_MARKS.length+ALL_QUIZ.length;
+const MAX_SCORE=(TOTAL_Q*BASE_PT)+10+10*(TOTAL_Q-4);
 
+let flowPos=0,score=0,combo=0,maxCombo=0,selectedKey=null,S={},startTime=0,elapsed=0,bannerShown={},finished=false;
 let audioCtx=null;
+
 function initAudio(){if(!audioCtx)try{audioCtx=new(window.AudioContext||window.webkitAudioContext)}catch(e){}}
-function playSound(type){if(!audioCtx)return;if(audioCtx.state==='suspended')audioCtx.resume();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);if(type==='correct'){o.frequency.value=880;o.type='sine';g.gain.value=.15;o.start();o.stop(audioCtx.currentTime+.12)}else if(type==='wrong'){o.frequency.value=220;o.type='square';g.gain.value=.08;o.start();o.stop(audioCtx.currentTime+.2)}else if(type==='combo'){o.frequency.value=1200;o.type='sine';g.gain.value=.12;o.start();g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.3);o.stop(audioCtx.currentTime+.3)}else if(type==='quiz'){[660,880,1100].forEach((f,i)=>{const oo=audioCtx.createOscillator(),gg=audioCtx.createGain();oo.connect(gg);gg.connect(audioCtx.destination);oo.type='sine';oo.frequency.value=f;gg.gain.setValueAtTime(.12,audioCtx.currentTime+i*.1);gg.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+i*.1+.2);oo.start(audioCtx.currentTime+i*.1);oo.stop(audioCtx.currentTime+i*.1+.2)})}}
+function tone(f,t0,dur,type,vol){if(!audioCtx)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.type=type||'sine';o.frequency.value=f;g.gain.setValueAtTime(vol||.12,audioCtx.currentTime+t0);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+t0+dur);o.start(audioCtx.currentTime+t0);o.stop(audioCtx.currentTime+t0+dur)}
+function noise(t0,dur){if(!audioCtx)return;const n=audioCtx.sampleRate*dur,b=audioCtx.createBuffer(1,n,audioCtx.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*(1-i/n);const s=audioCtx.createBufferSource(),g=audioCtx.createGain();s.buffer=b;s.connect(g);g.connect(audioCtx.destination);g.gain.value=.08;s.start(audioCtx.currentTime+t0)}
+function playSound(type){
+ if(!audioCtx)return;if(audioCtx.state==='suspended')audioCtx.resume();
+ if(type==='correct'){[523,659,784,1046].forEach((f,i)=>tone(f,i*.07,.18,'sine',.13))}
+ else if(type==='wrong'){tone(330,0,.14,'square',.08);tone(220,.12,.22,'square',.08)}
+ else if(type==='combo3'){[660,880,1100].forEach((f,i)=>tone(f,i*.09,.22,'sine',.13))}
+ else if(type==='combo5'){[523,659,784,1046,1318].forEach((f,i)=>tone(f,i*.08,.3,'triangle',.14));noise(.1,.5);noise(.3,.5)}
+}
 
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
-function showConcept(){showScreen('conceptScreen')}
-function startGame(){initAudio();totalMarks=works.reduce((s,w)=>s+w.paragraphs.reduce((s2,p)=>s2+p.marks.length,0),0);works.forEach(w=>w.paragraphs.forEach(p=>p.marks.forEach(m=>{markStates[m.id]={answered:false,firstTry:true,myAnswer:null}})));quizStates=QUIZZES.map(q=>q.questions.map(()=>({answered:false,correct:false})));bannerShown={};flowPos=0;score=0;combo=0;correctFirst=0;correctRetry=0;wrongCount=0;renderFlow()}
+// ═══════════ 화면 ═══════════
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');window.scrollTo(0,0)}
 
-// 키보드: 정답 후 Enter/Space/→로 다음 문장 선택 또는 다음 작품 이동
-document.addEventListener('keydown',function(e){
-  if(e.key==='Enter'||e.key===' '||e.key==='ArrowRight'){
-    // 퀴즈 입력 중이면 무시
-    if(document.activeElement&&(document.activeElement.tagName==='INPUT'||document.activeElement.tagName==='TEXTAREA'))return;
-    // 배너 열려 있으면 닫기
-    if(document.getElementById('workBannerOverlay').classList.contains('show')){closeBanner();e.preventDefault();return}
-    // 게임 화면일 때
-    const step=FLOW[flowPos];
-    if(step&&step.t==='w'&&document.getElementById('gameScreen').classList.contains('active')){
-      e.preventDefault();
-      const w=works[step.i];const marks=w.paragraphs.flatMap(p=>p.marks);
-      const nextUnanswered=marks.find(m=>!markStates[m.id].answered);
-      if(nextUnanswered){selectMark(nextUnanswered.id)}
-      else{goNext()}
-    }
-  }
-});
+if(IS_ONLINE){
+  $('privacyOffline').style.display='none';
+  $('privacyOnline').style.display='block';
+  const ep=$('endPrivacy');
+  if(ep) ep.textContent='🔒 학습 결과는 담당 선생님의 학습 관리 시스템에 자동 전송됩니다. 이름과 소감은 리포트 이미지(JPG) 생성에도 사용됩니다.';
+}
 
+async function doLogin(){
+  const idVal=$('loginId').value.trim();
+  const nameVal=$('loginName').value.trim();
+  const msg=$('loginMsg');
+  if(!idVal||idVal.length!==5||!/^\d{5}$/.test(idVal)){msg.textContent='학번은 5자리 숫자여야 합니다.';return;}
+  if(!nameVal){msg.textContent='이름을 입력하세요.';return;}
+  msg.textContent='';$('loginBtn').style.display='none';$('loginSpinner').style.display='block';
+  const result=await verifyStudent(idVal,nameVal);
+  $('loginBtn').style.display='block';$('loginSpinner').style.display='none';
+  if(result.status==='ok'){
+    STUDENT={id:idVal,name:nameVal,className:result.className||'',verified:true};
+    $('loginOverlay').style.display='none';
+    notifyGameStart(STUDENT.id,STUDENT.name,STUDENT.className);
+    doStartGame();
+  } else { msg.textContent=result.message||'인증에 실패했습니다.'; }
+}
+
+function startGame(){
+  initAudio();
+  if(IS_ONLINE&&!STUDENT.verified){$('loginOverlay').style.display='flex';$('loginId').focus();return;}
+  if(IS_ONLINE&&STUDENT.verified){notifyGameStart(STUDENT.id,STUDENT.name,STUDENT.className);}
+  doStartGame();
+}
+function doStartGame(){showScreen('conceptScreen')}
+
+function startPlay(){
+ initAudio();
+ S={};
+ ALL_MARKS.forEach(m=>{S[m.key]={answered:false,firstTry:true,tries:0,my:null,gotFirst:false}});
+ ALL_QUIZ.forEach(q=>{S['q'+q.id]={answered:false,firstTry:true,tries:0,my:null,gotFirst:false}});
+ flowPos=0;score=0;combo=0;maxCombo=0;bannerShown={};finished=false;startTime=Date.now();
+ renderFlow();
+}
+
+function answeredCount(){return Object.values(S).filter(s=>s.answered).length}
 function renderFlow(){const s=FLOW[flowPos];if(s.t==='w')renderWork(s.i);else renderQuiz(s.i)}
 
 function renderWork(wIdx){
-  showScreen('gameScreen');const w=works[wIdx];
-  document.getElementById('hdrTitle').textContent=`${getWorkSeqNum()}/6 · ${w.title}`;
-  let html=`<div class="work-title-bar"><span class="work-title">${w.title}</span><span class="work-author">${w.author}</span></div><div class="work-meaning">${w.meaning}</div><div class="text-content">`;
-  w.paragraphs.forEach(p=>{let t=p.text;p.marks.forEach(m=>{const st=markStates[m.id];let cls='sentence-mark '+(st.answered?(m.answer==='경험'?'done-exp':m.answer==='확장'?'done-ext':'done-les'):'unmarked');t=t.replace(m.range,`<span class="${cls}" data-id="${m.id}" onclick="selectMark('${m.id}')">${m.range}</span>`)});html+=`<p>${t}</p>`});
-  html+='</div>';document.getElementById('textPanel').innerHTML=html;
-  updateStatus(wIdx);updateHeader();updateNav();selectedMarkId=null;
-  document.getElementById('selectPrompt').style.display='block';
-  document.getElementById('hintBox').classList.remove('visible');
-  document.getElementById('explainBox').classList.remove('visible');
-  setClassifyEnabled(false);
+ showScreen('gameScreen');const w=works[wIdx];
+ let seq=0;for(let i=0;i<=flowPos;i++)if(FLOW[i].t==='w')seq++;
+ $('hdrWork').textContent=`${w.title} (${seq}/6)`;
+ let html=`<div class="work-title-bar"><span class="work-title">${w.title}</span><span class="work-author">${w.author}</span></div><div class="work-meaning">${w.meaning}</div><div class="text-content">`;
+ w.paragraphs.forEach(p=>{let t=p.text;p.marks.forEach(m=>{const st=S[m.key];const cls='sentence-mark '+(st.answered?'done-'+m.cat:'unmarked');t=t.replace(m.range,`<span class="${cls}" data-key="${m.key}" onclick="selectMark('${m.key}')">${m.range}</span>`)});html+=`<p>${t}</p>`});
+ html+='</div>';$('textPanel').innerHTML=html;
+ updateStatus(wIdx);updateHeader();updateNav();selectedKey=null;
+ $('selectPrompt').style.display='block';
+ $('hintBox').classList.remove('visible');$('explainBox').classList.remove('visible');
+ setClassifyEnabled(false);$('textPanel').scrollTop=0;
 }
+function selectMark(key){
+ const st=S[key];if(st.answered)return;selectedKey=key;
+ document.querySelectorAll('.sentence-mark').forEach(el=>el.classList.remove('selected'));
+ const el=document.querySelector(`[data-key="${key}"]`);if(el)el.classList.add('selected');
+ $('selectPrompt').style.display='none';$('explainBox').classList.remove('visible');setClassifyEnabled(true);
+}
+function setClassifyEnabled(on){$('btnExp').disabled=!on;$('btnExt').disabled=!on;$('btnLes').disabled=!on}
+function findMark(key){return ALL_MARKS.find(m=>m.key===key)}
 
-function selectMark(id){if(markStates[id].answered)return;selectedMarkId=id;document.querySelectorAll('.sentence-mark').forEach(el=>el.classList.remove('selected'));const el=document.querySelector(`[data-id="${id}"]`);if(el)el.classList.add('selected');document.getElementById('selectPrompt').style.display='none';document.getElementById('explainBox').classList.remove('visible');setClassifyEnabled(true)}
-function setClassifyEnabled(on){document.getElementById('btnExp').disabled=!on;document.getElementById('btnExt').disabled=!on;document.getElementById('btnLes').disabled=!on}
+function comboBonus(c){return c>=5?10:(c>=3?5:0)}
 
 function classify(answer){
-  if(!selectedMarkId)return;const mark=findMark(selectedMarkId);if(!mark)return;const st=markStates[selectedMarkId];
-  const catN={'경험':'① 구체적 경험','확장':'② 대상 확장','교훈':'③ 교훈·깨달음'};
-  const catC={'경험':'exp','확장':'ext','교훈':'les'};
-  if(answer===mark.answer){
-    if(st.firstTry){combo++;let pts=10;if(combo>=2)pts+=3;score+=pts;correctFirst++;if(combo>=2){playSound('combo');showFeedback(true,`정답! 🔥 ${combo}콤보 (+${pts}점)`)}else{playSound('correct');showFeedback(true,'정답! (+10점)')}}
-    else{combo=0;score+=5;correctRetry++;playSound('correct');showFeedback(true,'재도전 정답! (+5점)')}
-    st.answered=true;st.myAnswer=answer;
-    const el=document.querySelector(`[data-id="${selectedMarkId}"]`);if(el){el.classList.remove('unmarked','selected');el.classList.add(mark.answer==='경험'?'done-exp':mark.answer==='확장'?'done-ext':'done-les');el.onclick=null;el.style.cursor='default'}
-    document.getElementById('explainCategory').innerHTML=`<span class="explain-cat ${catC[mark.answer]}">${catN[mark.answer]}</span>`;
-    document.getElementById('explainText').textContent=mark.hint;
-    document.getElementById('explainBox').classList.add('visible');
-    document.getElementById('hintBox').classList.remove('visible');
-    selectedMarkId=null;setClassifyEnabled(false);document.getElementById('selectPrompt').style.display='block';
-    const step=FLOW[flowPos];if(step.t==='w'){const w=works[step.i];const ms=w.paragraphs.flatMap(p=>p.marks);if(ms.every(m=>markStates[m.id].answered)&&!bannerShown[step.i]){bannerShown[step.i]=true;setTimeout(()=>showWorkBanner(step.i),900)}}
+ if(!selectedKey)return;const mark=findMark(selectedKey);if(!mark)return;const st=S[selectedKey];
+ if(answer===mark.cat){
+  let pts;
+  if(st.firstTry){combo++;if(combo>maxCombo)maxCombo=combo;pts=BASE_PT+comboBonus(combo);score+=pts;st.gotFirst=true;}
+  else{combo=0;pts=RETRY_PT;score+=pts;}
+  st.answered=true;if(st.my===null)st.my=answer;
+  paintMark(selectedKey,mark.cat);
+  showExplain(mark.cat,mark.detail);
+  celebrate(pts,st.gotFirst?combo:0,st.gotFirst);
+  afterAnswer();
+ } else {
+  combo=0;score=Math.max(0,score-PENALTY);st.firstTry=false;st.tries++;if(!st.my)st.my=answer;
+  playSound('wrong');
+  const el=document.querySelector(`[data-key="${selectedKey}"]`);if(el){el.classList.add('wrong');setTimeout(()=>el.classList.remove('wrong'),400)}
+  if(st.tries>=2){
+   st.answered=true;
+   paintMark(selectedKey,mark.cat);
+   $('hintBox').classList.remove('visible');
+   showExplain(mark.cat,'정답은 '+CATN(mark.cat)+'입니다. '+mark.detail);
+   afterAnswer();
   } else {
-    combo=0;score=Math.max(0,score-2);wrongCount++;st.firstTry=false;if(!st.myAnswer)st.myAnswer=answer;
-    playSound('wrong');const el=document.querySelector(`[data-id="${selectedMarkId}"]`);if(el){el.classList.add('wrong');setTimeout(()=>el.classList.remove('wrong'),400)}
-    document.getElementById('hintBox').classList.add('visible');document.getElementById('hintText').textContent=mark.hint;
-    document.getElementById('explainBox').classList.remove('visible');
-    showFeedback(false,`오답! (-2점)\n'${catN[answer]}'이(가) 아닙니다.`);
+   $('hintBox').classList.add('visible');$('hintText').textContent=mark.detail;
+   $('explainBox').classList.remove('visible');
   }
-  const step=FLOW[flowPos];if(step.t==='w')updateStatus(step.i);updateHeader();updateNav();
+ }
+ const step=FLOW[flowPos];if(step.t==='w')updateStatus(step.i);updateHeader();updateNav();
+}
+function paintMark(key,cat){
+ const el=document.querySelector(`[data-key="${key}"]`);
+ if(el){el.classList.remove('unmarked','selected');el.classList.add('done-'+cat);el.onclick=null;el.style.cursor='default'}
+}
+function showExplain(cat,text){
+ $('explainCategory').innerHTML=`<span class="ecat" style="background:${CATEGORIES[cat].color}">${CATN(cat)}</span>`;
+ $('explainText').textContent=text;$('explainBox').classList.add('visible');
+}
+function afterAnswer(){
+ selectedKey=null;setClassifyEnabled(false);$('selectPrompt').style.display='block';
+ const step=FLOW[flowPos];
+ if(step.t==='w'){
+  const w=works[step.i];const ms=w.paragraphs.flatMap(p=>p.marks);
+  if(ms.every(m=>S[m.key].answered)&&!bannerShown[step.i]){bannerShown[step.i]=true;setTimeout(()=>showWorkBanner(step.i),1100)}
+ }
 }
 
-function findMark(id){for(const w of works)for(const p of w.paragraphs)for(const m of p.marks)if(m.id===id)return m;return null}
+function updateNav(){$('btnPrev').style.visibility=(flowPos===0)?'hidden':'visible';$('btnNext').textContent=(flowPos===FLOW.length-1)?'결과 보기 →':'다음 →'}
+function goPrev(){if(flowPos>0){flowPos--;renderFlow()}}
+function goNext(){if(flowPos<FLOW.length-1){flowPos++;renderFlow()}else finish()}
+function confirmEnd(){if(confirm('지금 게임을 끝낼까요?\n아직 풀지 않은 문항은 오답이 아니라 미응답으로 따로 표시됩니다.'))finish()}
+function updateHeader(){
+ const a=answeredCount();const txt=`문항 ${a}/${TOTAL_Q} · ${score}점`;
+ $('hdrProgress').textContent=txt;$('hdrProgress2').textContent=txt;
+}
+function updateStatus(wIdx){
+ const w=works[wIdx];const ms=w.paragraphs.flatMap(p=>p.marks);
+ const d=ms.filter(m=>S[m.key].answered).length;
+ $('statusBox').innerHTML=`<div class="status-row"><span>이 작품</span><span class="val">${d}/${ms.length}</span></div><div class="status-row"><span>현재 점수</span><span class="val">${score} / ${MAX_SCORE}점</span></div><div class="status-row"><span>연속 정답</span><span class="val">${combo>=2?'🔥 '+combo:'—'}</span></div>`;
+}
 
+// ═══════════ 작품 정리 배너 ═══════════
 function showWorkBanner(wIdx){
-  const s=SUMMARIES[wIdx];const catL={경험:'구체적 경험',확장:'대상 확장',교훈:'교훈·깨달음'};const catB={경험:'b-exp',확장:'b-ext',교훈:'b-les'};const catS={경험:'s-exp',확장:'s-ext',교훈:'s-les'};
-  let h=`<div class="wb-header"><h3>📖 ${s.title}의 유추 구조</h3><div class="wb-sub">${s.author}</div></div><div class="wb-flow">`;
-  s.steps.forEach((st,i)=>{if(i>0)h+=`<div class="wb-arrow">↕</div>`;h+=`<div class="wb-step ${catS[st.c]}"><span class="ws-badge ${catB[st.c]}">${catL[st.c]}</span><div class="ws-text">${st.t}</div></div>`});
-  h+=`</div><div class="wb-connector"><b>🔗 유추의 연결고리:</b><br>${s.link}</div><button class="btn-banner-ok" onclick="closeBanner()">확인</button>`;
-  document.getElementById('workBannerContent').innerHTML=h;document.getElementById('workBannerOverlay').classList.add('show');
+ const s=SUMMARIES[wIdx];
+ let h=`<div class="wb-header"><h3>📖 ${s.title}의 유추 구조</h3><div class="wb-sub">${s.author}</div></div>`;
+ s.steps.forEach((st,i)=>{if(i>0)h+=`<div class="wb-arrow">↕</div>`;h+=`<div class="wb-step s-${st.c}"><span class="ws-badge b-${st.c}">${CATEGORIES[st.c].label}</span><div class="ws-text">${st.t}</div></div>`});
+ h+=`<div class="wb-connector"><b>🔗 유추의 연결고리</b><br>${s.link}</div><div style="text-align:center"><button class="btn" onclick="closeBanner()">확인</button></div>`;
+ $('workBannerContent').innerHTML=h;$('workBannerOverlay').classList.add('show');
 }
-function closeBanner(){document.getElementById('workBannerOverlay').classList.remove('show')}
+function closeBanner(){$('workBannerOverlay').classList.remove('show')}
 
-function updateNav(){document.getElementById('btnPrev').disabled=(flowPos===0);document.getElementById('btnNext').textContent=(flowPos===FLOW.length-1)?'결과 보기 →':'다음 →'}
-function goPrev(){if(flowPos>0){flowPos--;renderFlow();if(FLOW[flowPos].t==='w')document.getElementById('textPanel').scrollTop=0}}
-function goNext(){if(flowPos<FLOW.length-1){flowPos++;renderFlow();if(FLOW[flowPos].t==='w')document.getElementById('textPanel').scrollTop=0}else showResult()}
-function showFeedback(ok,text){const t=document.getElementById('feedbackToast');t.className='feedback-toast '+(ok?'correct':'incorrect')+' show';document.getElementById('fbIcon').textContent=ok?'✅':'❌';document.getElementById('fbText').textContent=text;setTimeout(()=>t.classList.remove('show'),1400)}
-function updateHeader(){document.getElementById('hdrScore').textContent=`점수: ${score}`;document.getElementById('hdrCombo').textContent=combo>=2?`🔥${combo}콤보`:'';const a=Object.values(markStates).filter(s=>s.answered).length;document.getElementById('hdrProgress').textContent=`${a}/${totalMarks}`;document.getElementById('progressFill').style.width=`${(a/totalMarks)*100}%`}
-function updateStatus(wIdx){const w=works[wIdx];const ms=w.paragraphs.flatMap(p=>p.marks);const d=ms.filter(m=>markStates[m.id].answered).length;document.getElementById('statusBox').innerHTML=`<div class="status-row"><span>이 작품</span><span class="val">${d}/${ms.length}</span></div><div class="status-row"><span>현재 점수</span><span class="val">${score}점</span></div>`}
+// ═══════════ 정답 · 콤보 연출 ═══════════
+const reduceMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let fxParticles=[],fxRunning=false;
+function celebrate(pts,comboVal,isFirst){
+ const isComboBanner=isFirst&&(comboVal===3||comboVal===5||(comboVal>=10&&comboVal%5===0));
+ if(isComboBanner){
+  playSound(comboVal>=5?'combo5':'combo3');
+  const label=comboVal===3?'3콤보! 🔥':(comboVal>=15?`🌟 ${comboVal}연속! 최고예요`:`${comboVal}콤보! 🎉🎊`);
+  popBanner(label,`+${pts}점`,comboVal>=5?70:40);
+ } else {
+  playSound('correct');
+  popBanner('정답!',`+${pts}점`,comboVal>=5?50:34);
+ }
+}
+function popBanner(txt,pts,confettiN){
+ $('dim').style.display='block';
+ const p=$('pop');$('popTxt').textContent=txt;
+ const target=parseInt(pts.replace(/[^0-9]/g,''),10)||0;
+ $('popPts').textContent='+0점';
+ p.style.display='block';p.classList.remove('show');void p.offsetWidth;p.classList.add('show');
+ let n=0;const steps=14;const tick=setInterval(()=>{n++;$('popPts').textContent='+'+Math.round(target*n/steps)+'점';if(n>=steps)clearInterval(tick)},22);
+ if(!reduceMotion)confetti(confettiN);
+ clearTimeout(popBanner._t);
+ popBanner._t=setTimeout(closePop,900);
+}
+function closePop(){$('pop').style.display='none';$('dim').style.display='none'}
+function confetti(n){
+ const c=$('fxCanvas');c.width=innerWidth;c.height=innerHeight;c.style.display='block';
+ const colors=['#F2B705','#3B86C9','#2E9B79','#D4614E','#7C5CBF','#FFD966'];
+ for(let i=0;i<n;i++)fxParticles.push({x:innerWidth/2+(Math.random()-.5)*160,y:innerHeight*0.44,vx:(Math.random()-.5)*11,vy:-6-Math.random()*8,g:.32,r:Math.random()*Math.PI,vr:(Math.random()-.5)*.3,w:5+Math.random()*6,h:8+Math.random()*7,col:colors[i%colors.length],life:75});
+ if(!fxRunning){fxRunning=true;requestAnimationFrame(fxLoop)}
+}
+function fxLoop(){
+ const c=$('fxCanvas'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);
+ fxParticles=fxParticles.filter(p=>p.life>0);
+ fxParticles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=p.g;p.r+=p.vr;p.life--;
+  ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.fillStyle=p.col;ctx.globalAlpha=Math.min(1,p.life/25);ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore()});
+ if(fxParticles.length>0)requestAnimationFrame(fxLoop);
+ else{fxRunning=false;ctx.clearRect(0,0,c.width,c.height);c.style.display='none'}
+}
 
+// ═══════════ 키보드 ═══════════
+document.addEventListener('keydown',function(e){
+ if(e.key!=='Enter'&&e.key!==' '&&e.key!=='ArrowRight')return;
+ const ae=document.activeElement;
+ if(ae&&(ae.tagName==='INPUT'||ae.tagName==='TEXTAREA'))return;
+ if($('pop').style.display==='block'){closePop();e.preventDefault();return}
+ if($('workBannerOverlay').classList.contains('show')){closeBanner();e.preventDefault();return}
+ if($('reviewOverlay').classList.contains('show')){closeReview();e.preventDefault();return}
+ const step=FLOW[flowPos];
+ if(step&&step.t==='w'&&$('gameScreen').classList.contains('active')){
+  e.preventDefault();
+  const marks=works[step.i].paragraphs.flatMap(p=>p.marks);
+  const next=marks.find(m=>!S[m.key].answered);
+  if(next)selectMark(next.key);else goNext();
+ } else if(step&&step.t==='q'&&$('quizScreen').classList.contains('active')){
+  e.preventDefault();
+  const qs=QUIZZES[step.i].questions;
+  const next=qs.find(q=>!S['q'+q.id].answered);
+  if(next){const el=$('qi-'+next.id);if(el)el.focus()}else goNext();
+ }
+});
+
+// ═══════════ 퀴즈 ═══════════
 function renderQuiz(qIdx){
-  showScreen('quizScreen');const quiz=QUIZZES[qIdx];const states=quizStates[qIdx];
-  let h=`<div class="quiz-header"><h2>🧩 ${quiz.title}</h2><div class="qh-sub">${quiz.sub}</div></div>`;
-  quiz.questions.forEach((q,i)=>{const st=states[i];const cc=st.answered?(st.correct?'done-correct':'done-wrong'):'';
-    h+=`<div class="quiz-card ${cc}" id="qc-${qIdx}-${i}"><div class="quiz-q">${q.q}</div><div class="quiz-input-row"><input class="quiz-input" id="qi-${qIdx}-${i}" placeholder="${q.ph}" ${st.answered?'disabled':''} onkeydown="if(event.key==='Enter')submitQ(${qIdx},${i})"><button class="quiz-submit" id="qb-${qIdx}-${i}" onclick="submitQ(${qIdx},${i})" ${st.answered?'disabled':''}>확인</button><button class="quiz-hint-btn" id="qh-${qIdx}-${i}" onclick="showQHint(${qIdx},${i})" ${st.answered?'disabled':''}>💡 초성</button></div><div class="quiz-hint-reveal" id="qhr-${qIdx}-${i}" style="display:none"></div><div class="quiz-feedback ${st.answered?(st.correct?'qf-correct show':'qf-wrong show'):''}" id="qf-${qIdx}-${i}">${st.answered?(st.correct?'✅ 정답! (+8점)':`❌ 오답! 정답: ${q.accepts[0]}`):''}
-</div><div class="quiz-feedback ${st.answered?'qf-explain show':''}" id="qe-${qIdx}-${i}">${st.answered?'💡 '+q.explain:''}</div></div>`});
-  h+=`<button class="btn-quiz-next" onclick="goNext()">다음으로 →</button>`;
-  document.getElementById('quizWrap').innerHTML=h;
+ showScreen('quizScreen');const quiz=QUIZZES[qIdx];
+ let h=`<div class="quiz-header"><h2>🧩 ${quiz.title}</h2><div class="qh-sub">${quiz.sub}</div></div>`;
+ quiz.questions.forEach(q=>{
+  const st=S['q'+q.id];const cc=st.answered?(st.gotFirst?'done-correct':'done-wrong'):'';
+  h+=`<div class="quiz-card ${cc}" id="qc-${q.id}"><div class="quiz-q">${qHtml(q.q)}</div>
+  <div class="quiz-input-row">
+   <input class="quiz-input" id="qi-${q.id}" placeholder="${q.ph}" ${st.answered?'disabled':''} onkeydown="if(event.key==='Enter'){event.preventDefault();submitQ(${q.id})}">
+   <button class="quiz-submit" id="qb-${q.id}" onclick="submitQ(${q.id})" ${st.answered?'disabled':''}>확인</button>
+   <button class="quiz-hint-btn" id="qh-${q.id}" onclick="showQHint(${q.id})" ${st.answered?'disabled':''}>💡 초성</button>
+  </div>
+  <div class="quiz-hint-reveal" id="qhr-${q.id}" style="display:none"></div>
+  <div class="quiz-fb ${st.answered?(st.gotFirst?'qf-correct show':'qf-wrong show'):''}" id="qf-${q.id}">${st.answered?(st.gotFirst?'✅ 정답!':'❌ 정답: '+q.accepts[0]):''}</div>
+  <div class="quiz-fb ${st.answered?'qf-explain show':''}" id="qe-${q.id}">${st.answered?'💡 '+q.detail:''}</div></div>`;
+ });
+ $('quizWrap').innerHTML=h;
+ updateHeader();
+ $('btnQuizNext').textContent=(flowPos===FLOW.length-1)?'결과 보기 →':'다음 →';
 }
-function showQHint(qIdx,qNum){
-  const q=QUIZZES[qIdx].questions[qNum];
-  const el=document.getElementById(`qhr-${qIdx}-${qNum}`);
-  el.style.display='block';el.textContent='초성 힌트: '+q.chosung;
-  document.getElementById(`qh-${qIdx}-${qNum}`).disabled=true;
-}
-function submitQ(qIdx,qNum){
-  const q=QUIZZES[qIdx].questions[qNum];const st=quizStates[qIdx][qNum];if(st.answered)return;
-  const val=document.getElementById(`qi-${qIdx}-${qNum}`).value.trim().replace(/\s/g,'');if(!val)return;
-  const ok=q.accepts.some(a=>val===a||val.includes(a));st.answered=true;st.correct=ok;
-  if(ok){score+=8;playSound('quiz')}else playSound('wrong');
-  document.getElementById(`qc-${qIdx}-${qNum}`).classList.add(ok?'done-correct':'done-wrong');
-  document.getElementById(`qi-${qIdx}-${qNum}`).disabled=true;
-  document.getElementById(`qb-${qIdx}-${qNum}`).disabled=true;
-  const fb=document.getElementById(`qf-${qIdx}-${qNum}`);fb.className='quiz-feedback show '+(ok?'qf-correct':'qf-wrong');fb.textContent=ok?'✅ 정답! (+8점)':`❌ 오답! 정답: ${q.accepts[0]}`;
-  const ex=document.getElementById(`qe-${qIdx}-${qNum}`);ex.className='quiz-feedback qf-explain show';ex.textContent='💡 '+q.explain;
-  updateHeader();
-}
-
-function showResult(){
-  showScreen('resultScreen');
-  const qc=quizStates.flat().filter(s=>s.correct).length,qt=quizStates.flat().length;
-  document.getElementById('finalScore').innerHTML=`${score}<span> 점</span>`;
-  document.getElementById('resultStats').innerHTML=`<div class="stat-card"><div class="stat-num">${correctFirst}</div><div class="stat-label">첫 시도 정답</div></div><div class="stat-card"><div class="stat-num">${correctRetry}</div><div class="stat-label">재도전 정답</div></div><div class="stat-card"><div class="stat-num">${wrongCount}</div><div class="stat-label">총 오답</div></div><div class="stat-card"><div class="stat-num">${qc}/${qt}</div><div class="stat-label">개념 퀴즈</div></div>`;
-  wrongAnswers=[];quizWrongAnswers=[];
-  const catN={'경험':'① 구체적 경험','확장':'② 대상 확장','교훈':'③ 교훈·깨달음'};
-  for(const w of works)for(const p of w.paragraphs)for(const m of p.marks){const st=markStates[m.id];if(!st.firstTry)wrongAnswers.push({work:w.title,sentence:m.range,myAnswer:st.myAnswer,correct:m.answer,hint:m.hint})}
-  QUIZZES.forEach((quiz,qi)=>{quiz.questions.forEach((q,qn)=>{const st=quizStates[qi][qn];if(st.answered&&!st.correct)quizWrongAnswers.push({title:quiz.title,question:q.q,correct:q.accepts[0],explain:q.explain})})});
-  let wh='';
-  if(wrongAnswers.length>0){wh+=`<h3>📝 분류 오답노트 (${wrongAnswers.length}문항)</h3>`;wrongAnswers.forEach(wa=>{wh+=`<div class="wrong-card"><div class="wc-work">${wa.work}</div><div class="wc-sentence">${wa.sentence}</div><div class="wc-row"><span class="wc-mine">내 답: ${catN[wa.myAnswer]||'—'}</span><span class="wc-answer">정답: ${catN[wa.correct]}</span></div><div style="font-size:12px;color:#8a7d9e;margin-top:5px">💡 ${wa.hint}</div></div>`})}
-  if(quizWrongAnswers.length>0){wh+=`<h3 style="margin-top:22px">📝 개념 퀴즈 오답노트 (${quizWrongAnswers.length}문항)</h3>`;quizWrongAnswers.forEach(qa=>{wh+=`<div class="wrong-card"><div class="wc-work">${qa.title}</div><div class="wc-sentence">${qa.question}</div><div class="wc-row"><span class="wc-answer">정답: ${qa.correct}</span></div><div style="font-size:12px;color:#8a7d9e;margin-top:5px">💡 ${qa.explain}</div></div>`})}
-  if(wrongAnswers.length===0&&quizWrongAnswers.length===0) wh='<h3 style="text-align:center;color:#2d8a5e;margin-top:20px">🎉 모두 맞혔습니다! 완벽해요!</h3>';
-  document.getElementById('wrongSection').innerHTML=wh;
-}
-
-function downloadNote(){
-  const nickname=document.getElementById('inputNickname').value.trim();
-  const reflection=document.getElementById('inputReflection').value.trim();
-  if(!nickname){alert('이름을 입력해 주세요.');document.getElementById('inputNickname').focus();return}
-  if(!reflection){alert('학습 소감을 입력해 주세요.');document.getElementById('inputReflection').focus();return}
-  const canvas=document.getElementById('noteCanvas'),ctx=canvas.getContext('2d'),W=900,pad=40,lineH=24;
-  const catN={'경험':'① 구체적 경험','확장':'② 대상 확장','교훈':'③ 교훈·깨달음'};
-  const allWrong=[...wrongAnswers];const allQuizWrong=[...quizWrongAnswers];
-  let lines=8;
-  lines+=Math.ceil(reflection.length/40)+2;
-  if(allWrong.length===0&&allQuizWrong.length===0)lines+=3;
-  else{allWrong.forEach(wa=>{lines+=2;lines+=Math.ceil(wa.sentence.length/38)+3});allQuizWrong.forEach(qa=>{lines+=2;lines+=Math.ceil(qa.question.length/40)+3})}
-  lines+=4;
-  const H=pad*2+lines*lineH;canvas.width=W;canvas.height=H;
-  ctx.fillStyle='#f0eaf8';ctx.fillRect(0,0,W,H);let y=pad;
-  const now=new Date();
-  const dateStr=`${now.getFullYear()}. ${now.getMonth()+1}. ${now.getDate()}. ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-  ctx.fillStyle='#4a2d8a';ctx.font='bold 22px "Noto Sans KR",sans-serif';
-  ctx.fillText('설(說) 유추 구조 찾기 — 오답노트',pad,y+=28);
-  ctx.fillStyle='#5a3d96';ctx.font='bold 15px "Noto Sans KR",sans-serif';
-  ctx.fillText(`${nickname}`,pad,y+=26);
-  ctx.fillStyle='#8a7d9e';ctx.font='14px "Noto Sans KR",sans-serif';
-  ctx.fillText(`${dateStr}   점수: ${score}점`,pad,y+=22);
-  y+=6;ctx.fillStyle='#6b5c80';ctx.font='13px "Noto Sans KR",sans-serif';
-  ctx.fillText('학습 소감:',pad,y+=20);
-  ctx.fillStyle='#3a2e50';
-  for(let ci=0;ci<reflection.length;ci+=40)ctx.fillText(reflection.substring(ci,ci+40),pad+10,y+=20);
-  y+=10;ctx.strokeStyle='#d4c8e8';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(W-pad,y);ctx.stroke();y+=16;
-  if(allWrong.length===0&&allQuizWrong.length===0){ctx.fillStyle='#2d8a5e';ctx.font='bold 18px "Noto Sans KR",sans-serif';ctx.fillText('🎉 모두 맞혔습니다! 완벽해요!',pad,y+=30)}
-  else{
-    if(allWrong.length>0){ctx.fillStyle='#4a2d8a';ctx.font='bold 16px "Noto Sans KR",sans-serif';ctx.fillText(`분류 오답 (${allWrong.length}문항)`,pad,y+=22);
-    allWrong.forEach((wa,i)=>{ctx.fillStyle='#7c5cbf';ctx.font='bold 14px "Noto Sans KR",sans-serif';ctx.fillText(`${i+1}. ${wa.work}`,pad,y+=22);ctx.fillStyle='#3a2e50';ctx.font='13px "Noto Sans KR",sans-serif';for(let ci=0;ci<wa.sentence.length;ci+=38)ctx.fillText(wa.sentence.substring(ci,ci+38),pad+10,y+=20);ctx.fillStyle='#c04848';ctx.font='13px "Noto Sans KR",sans-serif';ctx.fillText(`내 답: ${catN[wa.myAnswer]||'—'}`,pad+10,y+=22);ctx.fillStyle='#2d8a5e';ctx.font='bold 13px "Noto Sans KR",sans-serif';ctx.fillText(`정답: ${catN[wa.correct]}`,pad+250,y);y+=12})}
-    if(allQuizWrong.length>0){y+=8;ctx.fillStyle='#4a2d8a';ctx.font='bold 16px "Noto Sans KR",sans-serif';ctx.fillText(`개념 퀴즈 오답 (${allQuizWrong.length}문항)`,pad,y+=22);
-    allQuizWrong.forEach((qa,i)=>{ctx.fillStyle='#7c5cbf';ctx.font='bold 14px "Noto Sans KR",sans-serif';ctx.fillText(`${i+1}. ${qa.title}`,pad,y+=22);ctx.fillStyle='#3a2e50';ctx.font='13px "Noto Sans KR",sans-serif';for(let ci=0;ci<qa.question.length;ci+=40)ctx.fillText(qa.question.substring(ci,ci+40),pad+10,y+=20);ctx.fillStyle='#2d8a5e';ctx.font='bold 13px "Noto Sans KR",sans-serif';ctx.fillText(`정답: ${qa.correct}`,pad+10,y+=22);y+=12})}
+function qHtml(t){return String(t).replace(/\(\s{2,}\)/g,m=>`<span class="blank" style="min-width:${Math.max(70,(m.length-2)*7)}px"></span>`)}
+function findQ(id){return ALL_QUIZ.find(q=>q.id===id)}
+function showQHint(id){const q=findQ(id);const el=$('qhr-'+id);el.style.display='block';el.textContent='초성 힌트: '+q.chosung;$('qh-'+id).disabled=true}
+function submitQ(id){
+ const q=findQ(id),st=S['q'+id];if(st.answered)return;
+ const raw=$('qi-'+id).value.trim();if(!raw)return;
+ const val=raw.replace(/\s/g,'');
+ const ok=q.accepts.some(a=>val===a.replace(/\s/g,''));
+ if(st.my===null)st.my=raw;
+ if(ok){
+  let pts;
+  if(st.firstTry){combo++;if(combo>maxCombo)maxCombo=combo;pts=BASE_PT+comboBonus(combo);score+=pts;st.gotFirst=true}
+  else{combo=0;pts=RETRY_PT;score+=pts}
+  st.answered=true;
+  lockQ(id,true,'✅ 정답! (+'+pts+'점)',q.detail);
+  celebrate(pts,st.gotFirst?combo:0,st.gotFirst);
+ } else {
+  combo=0;score=Math.max(0,score-PENALTY);st.firstTry=false;st.tries++;
+  playSound('wrong');
+  const card=$('qc-'+id);card.classList.add('wrong');setTimeout(()=>card.classList.remove('wrong'),400);
+  if(st.tries>=2){
+   st.answered=true;
+   lockQ(id,false,'❌ 정답: '+q.accepts[0],q.detail);
+  } else {
+   const fb=$('qf-'+id);fb.className='quiz-fb show qf-wrong';fb.textContent='❌ 다시 한 번 생각해 보세요. (−'+PENALTY+'점) 한 번 더 틀리면 정답이 공개됩니다.';
+   $('qi-'+id).select();
   }
-  y+=16;ctx.strokeStyle='#d4c8e8';ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(W-pad,y);ctx.stroke();
-  ctx.fillStyle='#b0a4c4';ctx.font='11px "Noto Sans KR",sans-serif';ctx.fillText('제작 보라라샘 / 전주서신중학교 교사 / siaawase@gmail.com',pad,y+=20);
-  const link=document.createElement('a');link.download=`설_유추_오답노트_${nickname}_${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}.jpg`;link.href=canvas.toDataURL('image/jpeg',.92);link.click();
+ }
+ updateHeader();
 }
+function lockQ(id,ok,msg,detail){
+ $('qc-'+id).classList.add(ok?'done-correct':'done-wrong');
+ $('qi-'+id).disabled=true;$('qb-'+id).disabled=true;$('qh-'+id).disabled=true;
+ const fb=$('qf-'+id);fb.className='quiz-fb show '+(ok?'qf-correct':'qf-wrong');fb.textContent=msg;
+ const ex=$('qe-'+id);ex.className='quiz-fb qf-explain show';ex.textContent='💡 '+detail;
+}
+
+// ═══════════ 집계 ═══════════
+function allItems(){
+ const a=ALL_MARKS.map(m=>({id:m.id,cat:m.cat,text:m.range,answer:CATEGORIES[m.cat].label,detail:m.detail,st:S[m.key],kind:'분류',work:workTitleOf(m.key)}));
+ const b=ALL_QUIZ.map(q=>({id:q.id,cat:q.cat,text:q.q,answer:q.accepts[0],detail:q.detail,st:S['q'+q.id],kind:'개념',work:'유추 개념 확인'}));
+ return a.concat(b).sort((x,y)=>x.id-y.id);
+}
+function workTitleOf(key){const w=works.find(w=>w.paragraphs.some(p=>p.marks.some(m=>m.key===key)));return w?w.title:''}
+function stats(){
+ const items=allItems();
+ const answered=items.filter(i=>i.st.answered);
+ const first=answered.filter(i=>i.st.gotFirst);
+ const retryOk=answered.filter(i=>!i.st.gotFirst&&i.st.tries<2);
+ const miss=answered.filter(i=>!i.st.gotFirst&&i.st.tries>=2);
+ const skipped=items.filter(i=>!i.st.answered);
+ const rate=answered.length?Math.round(first.length/answered.length*100):0;
+ return {items,answered,first,retryOk,miss,skipped,rate};
+}
+function verdictOf(rate){
+ if(rate>=95)return '완벽해요!';
+ if(rate>=85)return '아주 잘했어요';
+ if(rate>=70)return '잘하고 있어요';
+ if(rate>=50)return '기본은 잡혔어요';
+ return '다시 한 번 도전해요';
+}
+function catStats(){
+ const st=stats();const out={};
+ Object.keys(CATEGORIES).forEach(c=>out[c]={n:0,ok:0});
+ st.answered.forEach(i=>{out[i.cat].n++;if(i.st.gotFirst)out[i.cat].ok++});
+ return out;
+}
+function analysis(){
+ const cs=catStats(),st=stats();
+ const good=[],weak=[];
+ Object.keys(cs).forEach(c=>{const o=cs[c];if(o.n<2)return;const r=o.ok/o.n;if(r===1)good.push({c,o});else if(r<0.5)weak.push({c,o})});
+ let focus=null;
+ const wrongByCat=Object.keys(cs).map(c=>({c,o:cs[c],wrong:cs[c].n-cs[c].ok})).filter(x=>x.o.n>=2&&x.wrong>0);
+ if(wrongByCat.length){
+  wrongByCat.sort((a,b)=>b.wrong-a.wrong||(a.o.ok/a.o.n)-(b.o.ok/b.o.n)||b.o.n-a.o.n);
+  focus=wrongByCat[0];
+ }
+ const allLow=Object.keys(cs).filter(c=>cs[c].n>=2).every(c=>cs[c].ok/cs[c].n<0.5);
+ return {good,weak,focus,allLow,st};
+}
+
+// ═══════════ 종료 ═══════════
+function finish(){
+ if(finished)return;finished=true;
+ elapsed=Date.now()-startTime;
+ fxParticles=[];closePop();
+ const a=analysis(),st=a.st;
+ showScreen('resultScreen');
+ $('hdrResult').textContent=`${GAME_CONFIG.gameName}`;
+ $('finalScore').innerHTML=`${score}<span> / ${MAX_SCORE}점</span>`;
+ let vtxt=verdictOf(st.rate);
+ if(st.skipped.length)vtxt=`끝까지 풀지 않았어요 (${st.skipped.length}문항 남음) · `+vtxt;
+ $('verdict').textContent=vtxt;
+ $('resultStats').innerHTML=
+  `<div class="stat"><div class="num">${st.rate}%</div><div class="lab">정답률</div></div>`+
+  `<div class="stat"><div class="num">${st.first.length}</div><div class="lab">첫 시도 정답</div></div>`+
+  `<div class="stat"><div class="num">${st.retryOk.length}</div><div class="lab">다시 풀어 맞힘</div></div>`+
+  `<div class="stat"><div class="num">${st.miss.length}</div><div class="lab">못 맞힘</div></div>`+
+  `<div class="stat"><div class="num">${st.skipped.length}</div><div class="lab">미응답</div></div>`+
+  `<div class="stat"><div class="num">🔥 ${maxCombo}</div><div class="lab">최고 콤보</div></div>`+
+  `<div class="stat"><div class="num">${fmtTime(elapsed)}</div><div class="lab">소요 시간</div></div>`;
+
+ let ah='<div class="sect"><h3>🔎 유형별 학습 분석</h3>';
+ if(a.allLow&&st.answered.length>0){
+  ah+='<div class="wrong-card">유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.</div>';
+ } else {
+  ah+='<div class="wrong-card"><b style="color:var(--exp)">✅ 잘하는 유형</b><br>'+(a.good.length?a.good.map(g=>`<span class="wc-cat" style="background:${CATEGORIES[g.c].color};margin:4px 6px 0 0">${CATEGORIES[g.c].label} ${g.o.ok}/${g.o.n}</span>`).join(''):'<span style="font-size:13px;color:#7d8b99">아직 완벽한 유형이 없어요.</span>')+'</div>';
+  ah+='<div class="wrong-card"><b style="color:var(--les)">⚠️ 보완이 필요한 유형</b><br>'+(a.weak.length?a.weak.map(g=>`<span class="wc-cat" style="background:${CATEGORIES[g.c].color};margin:4px 6px 0 0">${CATEGORIES[g.c].label} ${g.o.ok}/${g.o.n}</span>`).join(''):'<span style="font-size:13px;color:#7d8b99">크게 부족한 유형은 없어요.</span>')+'</div>';
+ }
+ if(a.focus){
+  ah+=`<div class="wrong-card" style="border-color:var(--conLn);background:var(--conBg)"><b>🎯 가장 먼저 공부할 것 — ${CATEGORIES[a.focus.c].label} (${a.focus.o.ok}/${a.focus.o.n})</b><div class="wc-detail" style="color:#7a5f10">${CATEGORIES[a.focus.c].tip}</div></div>`;
+ } else {
+  ah+='<div class="wrong-card" style="border-color:var(--expLn);background:var(--expBg)"><b>🎯 약점이 보이지 않아요. 다음 작품에도 도전해 보세요.</b></div>';
+ }
+ ah+='</div>';
+ $('analysisSection').innerHTML=ah;
+
+ const wrongs=st.items.filter(i=>i.st.answered&&!i.st.gotFirst);
+ let wh='';
+ if(wrongs.length){
+  wh=`<h3>📝 오답노트 (${wrongs.length}문항)</h3>`;
+  wrongs.forEach(w=>{
+   const mine=w.kind==='분류'?(w.st.my?CATN(w.st.my):'—'):(w.st.my||'—');
+   wh+=`<div class="wrong-card"><span class="wc-cat" style="background:${CATEGORIES[w.cat].color}">${CATEGORIES[w.cat].mark} ${CATEGORIES[w.cat].label}</span>
+   <div class="wc-sentence">${w.kind==='개념'?qHtml(w.text):w.text}</div>
+   <div class="wc-row"><span class="wc-mine">내 답: ${mine}</span><span class="wc-answer">정답: ${w.answer}</span></div>
+   <div class="wc-detail">💡 ${w.detail}</div></div>`;
+  });
+ } else if(st.answered.length){
+  wh='<h3 style="text-align:center;color:var(--exp);border:none">🎉 첫 시도에 모두 맞혔습니다!</h3>';
+ }
+ $('wrongSection').innerHTML=wh;
+
+ // ── 연동 모드: 결과 전송 ──
+ if(IS_ONLINE&&STUDENT.verified){
+  const nameInput=$('inName');nameInput.value=STUDENT.name;nameInput.readOnly=true;nameInput.style.background='#eef3f8';
+  const wrongItems=st.items.filter(i=>i.st.answered&&!i.st.gotFirst).map(i=>i.id).join(',');
+  submitResult({
+   studentId:STUDENT.id,
+   studentName:STUDENT.name,
+   className:STUDENT.className,
+   totalQuestions:TOTAL_Q,
+   correctCount:st.first.length,
+   answeredCount:st.answered.length,
+   skippedCount:st.skipped.length,
+   score:score,
+   maxScore:MAX_SCORE,
+   accuracy:st.rate,
+   maxCombo:maxCombo,
+   elapsedSeconds:Math.round(elapsed/1000),
+   wrongItems:wrongItems,
+   reflection:''
+  }).then(res=>{
+   const el=document.createElement('div');
+   el.style.cssText='margin-top:8px;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:600;text-align:center;';
+   if(res.status==='ok'){el.style.background='#e8f5e9';el.style.color='#2e7d32';el.textContent='✅ 결과가 선생님께 전송되었습니다.'}
+   else{el.style.background='#ffebee';el.style.color='#c62828';el.textContent='❌ 결과 전송에 실패했습니다. 선생님께 알려 주세요.'}
+   const p=$('endPrivacy');if(p)p.before(el);
+  });
+ }
+}
+function fmtTime(ms){const s=Math.round(ms/1000);return `${Math.floor(s/60)}분 ${String(s%60).padStart(2,'0')}초`}
+
+// ═══════════ 학생용 복습 모달 ═══════════
+function openReview(){
+ const items=allItems().filter(i=>i.st.answered);
+ let h='<div class="wb-header"><h3>📖 오늘 나온 문제</h3><div class="wb-sub">이번 판에서 실제로 푼 '+items.length+'문항입니다</div></div>';
+ if(!items.length)h+='<div class="rv-item">아직 푼 문항이 없어요.</div>';
+ items.forEach(i=>{
+  h+=`<div class="rv-item"><span class="wc-cat" style="background:${CATEGORIES[i.cat].color}">${CATEGORIES[i.cat].mark} ${CATEGORIES[i.cat].label}</span>
+  <div class="rv-q">${i.kind==='개념'?qHtml(i.text):i.text}</div><div class="rv-a">정답: ${i.answer}</div><div class="rv-d">${i.detail}</div></div>`;
+ });
+ h+='<div style="text-align:center;margin-top:12px"><button class="btn" onclick="closeReview()">닫기</button></div>';
+ $('reviewContent').innerHTML=h;$('reviewOverlay').classList.add('show');
+}
+function closeReview(){$('reviewOverlay').classList.remove('show')}
+
+// ═══════════ Canvas 공통 ═══════════
+const SYSFONT='"Malgun Gothic","맑은 고딕","Apple SD Gothic Neo",sans-serif';
+function roundBox(ctx,x,y,w,h,r){
+ ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+ ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);
+ ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+}
+function wrapLines(ctx,text,maxW,font){
+ ctx.font=font;const out=[];let line='';
+ for(const ch of String(text)){
+  if(ch==='\n'){out.push(line);line='';continue}
+  if(ctx.measureText(line+ch).width>maxW){out.push(line);line=ch}else line+=ch;
+ }
+ if(line)out.push(line);
+ return out.length?out:[''];
+}
+function nowParts(){
+ const d=new Date();const p=n=>String(n).padStart(2,'0');
+ return {disp:`${d.getFullYear()}. ${p(d.getMonth()+1)}. ${p(d.getDate())}. ${p(d.getHours())}:${p(d.getMinutes())}`,
+         file:`${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}`};
+}
+function needName(){
+ const n=$('inName').value.trim();
+ if(!n){alert('이름을 먼저 입력해 주세요.');$('inName').focus();return null}
+ return n;
+}
+function cropTo(cv,h){const out=document.createElement('canvas');out.width=cv.width;out.height=Math.max(80,Math.round(h));const c=out.getContext('2d');c.fillStyle='#F3F8FD';c.fillRect(0,0,out.width,out.height);c.drawImage(cv,0,0);return out}
+function saveCanvas(canvas,filename){
+ const link=document.createElement('a');link.download=filename;link.href=canvas.toDataURL('image/jpeg',.92);link.click();
+}
+const STAGE_LABEL='전체과정';
+const PRIVACY_IMG='본 게임은 입력한 이름과 소감을 서버에 저장하지 않으며, 이 이미지 생성용으로만 사용합니다.';
+const PRIVACY_IMG_ON='학습 결과는 담당 선생님의 학습 관리 시스템에 전송되며, 이름과 소감은 이 이미지 생성에도 사용됩니다.';
+const STD_LINE1='[9국02-05] 글에 사용된 다양한 설명 방법과 논증 방법을 파악하고, 그 타당성을 평가하며 읽는다.';
+const STD_LINE2='[9국02-06] 동일한 화제를 다룬 여러 글이나 자료를 주제 통합적으로 읽는다.';
+
+// ═══════════ 오답노트 JPG ═══════════
+function downloadNote(){
+ const name=needName();if(!name)return;
+ const t=nowParts(),st=stats();
+ const wrongs=st.items.filter(i=>i.st.answered&&!i.st.gotFirst);
+ const cv=$('noteCanvas'),ctx=cv.getContext('2d');
+ const W=980,pad=44,innerW=W-pad*2-28;
+ const fQ='15px '+SYSFONT,fD='13px '+SYSFONT;
+ const blocks=wrongs.map(w=>{
+  const q=wrapLines(ctx,w.text,innerW,fQ);
+  const d=wrapLines(ctx,w.detail,innerW,fD);
+  return {w,q,d,h:26+q.length*24+26+8+d.length*21+18};
+ });
+ let H=pad+120+ (blocks.length?blocks.reduce((s,b)=>s+b.h+14,0):90) + 140;
+ cv.width=W;cv.height=H;
+ ctx.fillStyle='#F3F8FD';ctx.fillRect(0,0,W,H);
+ ctx.fillStyle='#3B86C9';ctx.fillRect(0,0,W,8);
+ let y=pad+10;
+ ctx.fillStyle='#185FA5';ctx.font='bold 24px '+SYSFONT;
+ ctx.fillText('설(說) 유추 구조 찾기 — 오답노트',pad,y);y+=30;
+ ctx.fillStyle='#45525f';ctx.font='15px '+SYSFONT;
+ ctx.fillText(`${name} · ${STAGE_LABEL} · ${t.disp}`,pad,y);y+=24;
+ ctx.fillStyle='#6b7a8c';ctx.font='13px '+SYSFONT;
+ ctx.fillText(`점수 ${score} / ${MAX_SCORE}점 · 정답률 ${st.rate}% · 소요 ${fmtTime(elapsed)}`,pad,y);y+=22;
+ ctx.strokeStyle='#cfe0f0';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(W-pad,y);ctx.stroke();y+=20;
+
+ if(!blocks.length){
+  ctx.fillStyle='#2E9B79';ctx.font='bold 19px '+SYSFONT;
+  ctx.fillText('🎉 첫 시도에 모두 맞혔습니다. 다시 볼 오답이 없어요!',pad,y+28);y+=60;
+ } else {
+  blocks.forEach(b=>{
+   ctx.fillStyle='#FFFFFF';roundBox(ctx,pad,y,W-pad*2,b.h,12);ctx.fill();
+   ctx.strokeStyle='#E3EFFA';ctx.stroke();
+   let yy=y+24;const x=pad+14;
+   const col=CATEGORIES[b.w.cat].hex;
+   const lbl=CATEGORIES[b.w.cat].mark+' '+CATEGORIES[b.w.cat].label;
+   ctx.font='bold 12px '+SYSFONT;
+   ctx.fillStyle=col;roundBox(ctx,x,yy-14,ctx.measureText(lbl).width+22,22,11);ctx.fill();
+   ctx.fillStyle='#fff';ctx.fillText(lbl,x+11,yy+2);
+   yy+=24;
+   ctx.fillStyle='#33414f';ctx.font=fQ;
+   b.q.forEach(l=>{ctx.fillText(l,x,yy);yy+=24});
+   yy+=6;
+   const mine=b.w.kind==='분류'?(b.w.st.my?CATEGORIES[b.w.st.my].label:'—'):(b.w.st.my||'—');
+   ctx.fillStyle='#C0392B';ctx.font='13px '+SYSFONT;ctx.fillText('내 답: '+mine,x,yy);
+   ctx.fillStyle='#2E9B79';ctx.font='bold 14px '+SYSFONT;ctx.fillText('정답: '+b.w.answer,x+250,yy);
+   yy+=22;
+   ctx.fillStyle='#64748b';ctx.font=fD;
+   b.d.forEach(l=>{ctx.fillText(l,x,yy);yy+=21});
+   y+=b.h+14;
+  });
+ }
+ y+=6;ctx.strokeStyle='#cfe0f0';ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(W-pad,y);ctx.stroke();y+=20;
+ ctx.fillStyle='#7d8b99';ctx.font='11.5px '+SYSFONT;
+ ctx.fillText('🔒 '+(IS_ONLINE?PRIVACY_IMG_ON:PRIVACY_IMG),pad,y);y+=18;
+ ctx.fillText('제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com',pad,y);
+ saveCanvas(cropTo(cv,y+26),`${name}_오답노트_${STAGE_LABEL}_${t.file}.jpg`);
+}
+
+// ═══════════ 학습 리포트 JPG ═══════════
+function downloadReport(){
+ const name=needName();if(!name)return;
+ const refl=$('inReflection').value.trim();
+ const t=nowParts(),a=analysis(),st=a.st;
+ const cv=$('reportCanvas'),ctx=cv.getContext('2d');
+ const W=940,pad=44,innerW=W-pad*2-28;
+ const fB='14px '+SYSFONT;
+ const reflLines=refl?wrapLines(ctx,refl,innerW,fB):[];
+ const tipLines=a.focus?wrapLines(ctx,CATEGORIES[a.focus.c].tip,innerW,'13px '+SYSFONT):[];
+ let H=pad+130+140+90
+  +(a.allLow?90:150)
+  +(a.focus?(80+tipLines.length*21):80)
+  +(refl?(60+reflLines.length*22):0)
+  +160;
+ cv.width=W;cv.height=H;
+ ctx.fillStyle='#F3F8FD';ctx.fillRect(0,0,W,H);
+ ctx.fillStyle='#3B86C9';ctx.fillRect(0,0,W,8);
+ let y=pad+10;
+ ctx.fillStyle='#185FA5';ctx.font='bold 24px '+SYSFONT;
+ ctx.fillText('설(說) 유추 구조 찾기 — 학습 결과 리포트',pad,y);y+=30;
+ ctx.fillStyle='#45525f';ctx.font='15px '+SYSFONT;
+ ctx.fillText(`${name} · ${STAGE_LABEL} · ${t.disp}`,pad,y);y+=26;
+
+ // 요약 카드
+ const cards=[['점수',`${score}/${MAX_SCORE}`],['정답률',`${st.rate}%`],['첫 시도 정답',`${st.first.length}`],['다시 풀어 맞힘',`${st.retryOk.length}`],['못 맞힘',`${st.miss.length}`],['미응답',`${st.skipped.length}`],['최고 콤보',`${maxCombo}`],['소요 시간',fmtTime(elapsed)]];
+ const cw=(W-pad*2-7*8)/8;
+ cards.forEach((c,i)=>{
+  const x=pad+i*(cw+8);
+  ctx.fillStyle='#fff';roundBox(ctx,x,y,cw,62,10);ctx.fill();ctx.strokeStyle='#E3EFFA';ctx.stroke();
+  ctx.fillStyle='#185FA5';ctx.font='bold 17px '+SYSFONT;ctx.textAlign='center';
+  ctx.fillText(c[1],x+cw/2,y+30);
+  ctx.fillStyle='#6b7a8c';ctx.font='11px '+SYSFONT;ctx.fillText(c[0],x+cw/2,y+48);
+  ctx.textAlign='left';
+ });
+ y+=82;
+
+ // 총평
+ let vtxt=verdictOf(st.rate);
+ if(st.skipped.length)vtxt=`끝까지 풀지 않았어요 (${st.skipped.length}문항 남음) · `+vtxt;
+ ctx.fillStyle='#fff';roundBox(ctx,pad,y,W-pad*2,46,10);ctx.fill();ctx.strokeStyle='#E3EFFA';ctx.stroke();
+ ctx.fillStyle='#185FA5';ctx.font='bold 16px '+SYSFONT;ctx.fillText('총평  '+vtxt,pad+16,y+29);
+ y+=64;
+
+ if(a.allLow&&st.answered.length>0){
+  ctx.fillStyle='#fff';roundBox(ctx,pad,y,W-pad*2,52,10);ctx.fill();ctx.strokeStyle='#E3EFFA';ctx.stroke();
+  ctx.fillStyle='#33414f';ctx.font='14px '+SYSFONT;
+  ctx.fillText('유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.',pad+16,y+31);
+  y+=70;
+ } else {
+  const drawList=(title,arr,color,empty)=>{
+   ctx.fillStyle='#fff';roundBox(ctx,pad,y,W-pad*2,54,10);ctx.fill();ctx.strokeStyle='#E3EFFA';ctx.stroke();
+   ctx.fillStyle=color;ctx.font='bold 14px '+SYSFONT;ctx.fillText(title,pad+16,y+22);
+   ctx.fillStyle='#33414f';ctx.font='13.5px '+SYSFONT;
+   ctx.fillText(arr.length?arr.map(g=>`${CATEGORIES[g.c].label} ${g.o.ok}/${g.o.n}`).join('   ·   '):empty,pad+16,y+42);
+   y+=64;
+  };
+  drawList('✅ 잘하는 유형',a.good,'#2E9B79','아직 완벽한 유형이 없어요.');
+  drawList('⚠️ 보완이 필요한 유형',a.weak,'#D4614E','크게 부족한 유형은 없어요.');
+ }
+
+ // 가장 먼저 공부할 것
+ if(a.focus){
+  const bh=44+tipLines.length*21;
+  ctx.fillStyle='#FCF3E0';roundBox(ctx,pad,y,W-pad*2,bh,10);ctx.fill();ctx.strokeStyle='#E8C86A';ctx.stroke();
+  ctx.fillStyle='#8a6410';ctx.font='bold 14px '+SYSFONT;
+  ctx.fillText(`🎯 가장 먼저 공부할 것 — ${CATEGORIES[a.focus.c].label} (${a.focus.o.ok}/${a.focus.o.n})`,pad+16,y+24);
+  ctx.fillStyle='#7a5f10';ctx.font='13px '+SYSFONT;
+  let yy=y+44;tipLines.forEach(l=>{ctx.fillText(l,pad+16,yy);yy+=21});
+  y+=bh+16;
+ } else {
+  ctx.fillStyle='#E6F5EF';roundBox(ctx,pad,y,W-pad*2,44,10);ctx.fill();ctx.strokeStyle='#A8DCC8';ctx.stroke();
+  ctx.fillStyle='#1d6b52';ctx.font='bold 14px '+SYSFONT;
+  ctx.fillText('🎯 약점이 보이지 않아요. 다음 작품에도 도전해 보세요.',pad+16,y+27);
+  y+=56;
+ }
+
+ // 소감
+ if(refl){
+  const bh=32+reflLines.length*22;
+  ctx.fillStyle='#fff';roundBox(ctx,pad,y,W-pad*2,bh,10);ctx.fill();ctx.strokeStyle='#E3EFFA';ctx.stroke();
+  ctx.fillStyle='#185FA5';ctx.font='bold 13px '+SYSFONT;ctx.fillText('✏️ 학습 소감',pad+16,y+20);
+  ctx.fillStyle='#33414f';ctx.font=fB;
+  let yy=y+42;reflLines.forEach(l=>{ctx.fillText(l,pad+16,yy);yy+=22});
+  y+=bh+12;
+ }
+
+ y+=6;ctx.strokeStyle='#cfe0f0';ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(W-pad,y);ctx.stroke();y+=20;
+ ctx.fillStyle='#6b7a8c';ctx.font='11.5px '+SYSFONT;
+ ctx.fillText(STD_LINE1,pad,y);y+=17;
+ ctx.fillText(STD_LINE2,pad,y);y+=19;
+ ctx.fillStyle='#7d8b99';
+ ctx.fillText('🔒 '+(IS_ONLINE?PRIVACY_IMG_ON:PRIVACY_IMG),pad,y);y+=17;
+ ctx.fillText('제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com',pad,y);
+ saveCanvas(cropTo(cv,y+26),`${name}_학습리포트_${STAGE_LABEL}_${t.file}.jpg`);
+}
+
+// ═══════════ 교사용 학습 데이터 엑셀 ═══════════
+function downloadTeacherXls(){
+ const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+ const items=allItems();
+ let s1='<table border="1"><tr><th>원본 id</th><th>구분</th><th>작품</th><th>유형</th><th>문제(예문)</th><th>정답</th><th>해설</th></tr>';
+ items.forEach(i=>{s1+=`<tr><td>${i.id}</td><td>${i.kind}</td><td>${esc(i.work)}</td><td>${esc(CATEGORIES[i.cat].label)}</td><td>${esc(i.text)}</td><td>${esc(i.answer)}</td><td>${esc(i.detail)}</td></tr>`});
+ s1+=`<tr><td colspan="7"></td></tr>`;
+ s1+=`<tr><td colspan="7">성취기준: ${esc(STD_LINE1)}</td></tr>`;
+ s1+=`<tr><td colspan="7">성취기준: ${esc(STD_LINE2)}</td></tr>`;
+ s1+=`<tr><td colspan="7">배점 규칙: 첫 시도 정답 ${BASE_PT}점 / 재시도 정답 ${RETRY_PT}점 / 오답 −${PENALTY}점(하한 0) / 3~4연속 +5 · 5연속부터 +10</td></tr>`;
+ s1+=`<tr><td colspan="7">총문항 ${TOTAL_Q}문항 (분류 ${ALL_MARKS.length} + 개념 ${ALL_QUIZ.length}) · 만점 ${MAX_SCORE}점</td></tr>`;
+ s1+=`<tr><td colspan="7">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com · 제작일 ${MADE_DATE} · 최종 수정 ${LAST_MOD}</td></tr>`;
+ s1+='</table>';
+
+ const cs={};items.forEach(i=>{cs[i.cat]=cs[i.cat]||{n:0};cs[i.cat].n++});
+ let s2='<table border="1"><tr><th>유형 코드</th><th>유형명</th><th>설명</th><th>출제 수</th><th>학습 조언(tip)</th></tr>';
+ Object.keys(CATEGORIES).forEach(c=>{s2+=`<tr><td>${c}</td><td>${esc(CATEGORIES[c].label)}</td><td>${esc(CATEGORIES[c].desc)}</td><td>${cs[c]?cs[c].n:0}</td><td>${esc(CATEGORIES[c].tip)}</td></tr>`});
+ s2+='</table>';
+
+ const html='<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8">'+
+  '<xml><x:ExcelWorkbook><x:ExcelWorksheets>'+
+  '<x:ExcelWorksheet><x:Name>문항 전체</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>'+
+  '<x:ExcelWorksheet><x:Name>유형별 요약</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>'+
+  '</x:ExcelWorksheets></x:ExcelWorkbook></xml></head><body>'+s1+s2+'</body></html>';
+ const blob=new Blob(['\ufeff'+html],{type:'application/vnd.ms-excel'});
+ const d=new Date(),p=n=>String(n).padStart(2,'0');
+ const link=document.createElement('a');
+ link.href=URL.createObjectURL(blob);
+ link.download=`${GAME_CONFIG.gameCode}_설유추구조찾기_학습데이터목록_${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}.xls`;
+ link.click();
+ setTimeout(()=>URL.revokeObjectURL(link.href),1500);
+}
+(function(){
+ const trigger=$('lastMod');
+ trigger.style.cursor='default';
+ trigger.addEventListener('click',downloadTeacherXls);
+})();
+
+document.addEventListener('click',initAudio,{once:true});
 </script>
 </body>
 </html>
