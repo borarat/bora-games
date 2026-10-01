@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <!-- 리모델링 기록
-     2026.10.02 00:30 10차 — 양식→糧食·상호→商號로 뜻 통일, 3단계 구실 가짜 뜻풀이 교체, 뜻 비슷한 낱말 오답 보기 짝 제외, 답하기 전 Enter·Space·→ 건너뜀 막음, 채점 0문항 문구, 총평 반올림 기준, wrongItems=첫 시도에 못 맞힌 문항, 연동 모드 JPG 개인정보 문구, 4단계 '게임 설정(원작에 없음)' 표시·결말 문구, 1단계 힌트 첫 글자만, 콤보 단계마다 새로 시작(전체 만점 2300) -->
+     2026.10.02 00:30 10차 — 양식→糧食·상호→商號로 뜻 통일, 3단계 구실 가짜 뜻풀이 교체(01:00 반대 뜻으로), 뜻 비슷한 낱말 오답 보기 짝 제외, 답하기 전 Enter·Space·→ 건너뜀 막음, 채점 0문항 문구, 총평 반올림 기준, wrongItems=첫 시도에 못 맞힌 문항, 연동 모드 JPG 개인정보 문구, 4단계 '게임 설정(원작에 없음)' 표시·결말 문구, 1단계 힌트 첫 글자만, 콤보 단계마다 새로 시작(전체 만점 2300) -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -376,7 +376,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
    <span style="white-space:nowrap"><b>전주서신중학교 교사</b></span>
    <span style="white-space:nowrap"><b>siaawase@gmail.com</b></span>
    <span style="white-space:nowrap">제작일 <b>2026.08.25</b></span>
-   <span style="white-space:nowrap" id="lastMod">최종 수정 2026.10.02 00:30</span>
+   <span style="white-space:nowrap" id="lastMod">최종 수정 2026.10.02 01:00</span>
    <span style="white-space:nowrap">Made with Claude</span>
   </div>
 
@@ -534,7 +534,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
    비상교육 중학 국어 2 (박현숙) 1단원 「함께 살아가는 즐거움」
    01. 사회를 비추는 문학 — 양귀자 「일용할 양식」 어휘 학습지
    제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com
-   제작일 2026.08.25 · 최종 수정 2026.10.02 00:30
+   제작일 2026.08.25 · 최종 수정 2026.10.02 01:00
    ========================================================= */
 const MADE_DATE = '2026.08.25';
 const LAST_MOD  = '2026.10.02 00:30';
@@ -754,8 +754,8 @@ const IMPOSTER = [
  {items:[{w:'묘책',m:'매우 교묘한 꾀.'},
          {w:'방침',m:'앞으로 일을 치러 나갈 방향과 계획.'},
          {w:'기득권',m:'정당한 절차를 밟아 이미 차지한 권리.'},
-         {w:'구실',m:'남의 일을 대신 맡아 해 주는 사람.'}], bad:3,
-  fix:'이 단원에서 ‘구실’은 자기가 마땅히 해야 할 맡은 바 책임을 뜻합니다. 사람을 가리키는 말이 아니라 맡은 일 그 자체를 가리키며, ‘제구실을 하다’처럼 쓰입니다. 핑계라는 뜻의 ‘구실’도 있지만 이와는 다른 낱말입니다.'},
+         {w:'구실',m:'자기가 맡은 일을 남에게 미루어 떠넘김.'}], bad:3,
+  fix:'이 단원에서 ‘구실’은 자기가 마땅히 해야 할 맡은 바 책임을 뜻합니다. 맡은 일을 남에게 떠넘기는 것이 아니라 맡은 일을 해내는 쪽의 뜻이며, ‘제구실을 하다’처럼 쓰입니다. 핑계라는 뜻의 ‘구실’도 있지만 이와는 다른 낱말입니다.'},
  {items:[{w:'변소',m:'대소변을 보도록 만들어 놓은 곳.'},
          {w:'망태기',m:'물건을 담아 들거나 어깨에 메고 다닐 수 있도록 만든 그릇.'},
          {w:'석발기',m:'정미한 쌀에 섞인 돌을 골라내는 기계.'},

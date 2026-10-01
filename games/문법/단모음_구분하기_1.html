@@ -4,7 +4,8 @@
      내용: ㅚ·ㅟ 이중 모음 발음 허용 안내 한 줄(체계표 아래·3단계 ㅚ·ㅟ 힌트), 해설 30개를 모음별 비교 해설로
      채점: 미응답 따로 세고 정답률 분모에서 뺌, 결과·리포트·오답노트·전송이 한 함수(calcResult) 사용
      화면: 오답 번호를 화면 번호로, 오답노트·리포트 버튼은 이름만 있으면 켜짐, 입력 리스너 한 번만
-     성취기준 (2022) [9국04-01] / (2015) [9국04-02], 앱스크립트 연동(gameCode G206). 문항 순서는 섞지 않음(교사 보류) -->
+     성취기준 (2022) [9국04-01] / (2015) [9국04-02], 앱스크립트 연동(gameCode G206)
+     2026.10.02 00:50 교사 결정: 단계 안 문항 순서를 시작·다시하기마다 섞음(문항별 형식·원래 id 유지, 화면·오답 번호는 이번 판 순서) -->
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
@@ -282,7 +283,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
   </div>
 
   <div class="start-footer">
-    <div class="credit-line">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com · 제작일 2026.08.13 · 최종 수정 2026.10.01 21:00 · 게임 코드 G206 · Made with Claude</div>
+    <div class="credit-line">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com · 제작일 2026.08.13 · 최종 수정 2026.10.02 00:50 · 게임 코드 G206 · Made with Claude</div>
     <div class="privacy-box" id="privacyOffline">
       <strong>🔒 개인정보 보호 안내</strong><br>
       본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다. 게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.
@@ -590,10 +591,12 @@ function startGame(si) {
   doStartGame(si);
 }
 
+function shuffle(arr) { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
 function doStartGame(si) {
   clearTimeout(completeTimer); completeTimer = null; completed = false;
   currentStage = si;
-  questions = makeStageQuestions(si);
+  questions = shuffle(makeStageQuestions(si));   // 교사 결정(2026.10.02): 단계 안에서 문항 순서를 매번 섞음. 문항별 객관식/단답형과 원래 id는 그대로
   current = 0; score = 0; combo = 0; maxCombo = 0; correctCount = 0; wrongCount = 0;
   answered = new Array(10).fill(null);
   usedRetry = new Array(10).fill(false);
