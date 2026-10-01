@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>발표 자료 정비소 — 자료 재구성하기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  html{color-scheme:light;}
+  :root{
+    --bg:#FFFBEC; --accent:#F58A2E; --accent-dark:#D9741C; --ink:#1B3A5C;
+    --line:#FBE9B8; --card:#FFFFFF; --body:#333A45; --muted:#6E7B8A;
+    --ok:#2F9E57; --ok-soft:#E7F6ED; --ng:#D2483F; --ng-soft:#FCE9E7;
+    --tip:#8A6D1F; --tip-soft:#FFF4D6;
+    --shadow:0 10px 30px rgba(27,58,92,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Noto Sans KR','Malgun Gothic','맑은 고딕',sans-serif;
+    color:var(--body); background:var(--bg); -webkit-font-smoothing:antialiased;
+    word-break:keep-all; overflow-wrap:break-word;
+    min-height:100vh;
+  }
+  .wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:0 14px;}
+  .screen{display:none;width:100%;}
+  .screen.active{display:block;margin:auto 0;}
+  .shell{max-width:1120px;margin:0 auto;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;box-shadow:var(--shadow);overflow:hidden;}
+  /* ── 영역 헤더 띠 ── */
+  .band{background:var(--accent);color:#fff;height:38px;display:flex;align-items:center;
+    justify-content:space-between;padding:0 16px;font-size:13.5px;font-weight:700;gap:10px;}
+  .band .goal{font-weight:500;opacity:.95;}
+  .band .right{font-weight:700;font-size:13px;white-space:nowrap;}
+  .badge-m{background:rgba(255,255,255,.22);border-radius:999px;padding:4px 11px;font-size:12.5px;font-weight:700;white-space:nowrap;}
+  @media(max-width:600px){ .band .goal{display:none;} }
+
+  /* ── 시작 화면 ── */
+  .start-inner{padding:48px 34px 60px;}
+  .title-row{display:flex;align-items:center;gap:18px;}
+  .title-row img{height:90px;border-radius:12px;flex-shrink:0;}
+  h1{font-size:clamp(26px,3.4vw,38px);font-weight:800;color:var(--ink);letter-spacing:-.02em;line-height:1.15;}
+  h1 .mark{color:var(--accent);}
+  .subtitle{font-size:clamp(14px,1.5vw,16px);color:var(--muted);margin-top:7px;}
+  .std{margin-top:22px;background:#FFF9E8;border:1px solid var(--line);border-left:5px solid var(--accent);
+    border-radius:10px;padding:13px 16px;}
+  .std .code{font-size:13px;font-weight:700;color:var(--accent-dark);}
+  .std .txt{font-size:14.5px;color:var(--ink);margin-top:4px;line-height:1.55;font-weight:500;}
+  .start-grid{display:grid;grid-template-columns:1.12fr .88fr;gap:16px;margin-top:16px;}
+  @media(max-width:820px){ .start-grid{grid-template-columns:1fr;} }
+  .panel{background:#FFFDF6;border:1px solid var(--line);border-radius:12px;padding:16px 18px;}
+  .panel h3{font-size:14.5px;font-weight:700;color:var(--ink);margin-bottom:9px;}
+  .panel ul{list-style:none;}
+  .panel li{font-size:14px;line-height:1.55;padding-left:17px;position:relative;color:var(--body);margin:5px 0;}
+  .panel li::before{content:"";position:absolute;left:2px;top:9px;width:6px;height:6px;border-radius:50%;background:var(--accent);}
+  .score-row{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 11px;color:var(--body);}
+  .chip b{color:var(--accent-dark);}
+  .types{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+  @media(max-width:520px){ .types{grid-template-columns:1fr;} }
+  .type-it{display:flex;gap:8px;align-items:flex-start;background:#fff;border:1px solid var(--line);
+    border-radius:9px;padding:8px 10px;font-size:12.5px;line-height:1.45;}
+  .type-it b{color:var(--ink);font-size:13px;}
+  .maker{margin-top:14px;font-size:12.5px;line-height:1.75;color:var(--muted);background:#FFFDF6;
+    border:1px dashed var(--line);border-radius:10px;padding:11px 14px;text-align:center;}
+  .maker b{color:var(--ink);}
+  .pick-label{font-size:13.5px;color:var(--ink);font-weight:700;margin:18px 0 8px;}
+  .stage-btns,.lvl-btns{display:flex;gap:10px;flex-wrap:wrap;}
+  .stage{flex:1;min-width:210px;cursor:pointer;transition:.15s;border:1.5px solid var(--line);background:#fff;
+    border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;font-family:inherit;}
+  .stage:hover{border-color:var(--accent);}
+  .stage.sel{border-color:var(--accent);background:#FFF3E2;}
+  .stage .ico{font-size:28px;}
+  .stage .nm{font-size:16px;font-weight:700;color:var(--ink);}
+  .lvl{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:10px 16px;font-size:14px;
+    font-weight:600;cursor:pointer;color:var(--body);transition:.15s;font-family:inherit;}
+  .lvl.sel{border-color:var(--accent);background:#FFF3E2;color:var(--accent-dark);}
+  .start-go{margin-top:18px;width:100%;border:0;border-radius:12px;padding:15px;font-size:16px;font-weight:700;
+    font-family:inherit;cursor:pointer;background:var(--accent);color:#fff;transition:.15s;}
+  .start-go:hover:not(:disabled){background:var(--accent-dark);}
+  .start-go:disabled{opacity:.4;cursor:not-allowed;}
+  .privacy{margin-top:14px;background:#FFFDF6;border:1px solid var(--line);border-radius:10px;
+    padding:11px 14px;font-size:12px;line-height:1.65;color:var(--muted);}
+  .privacy b{color:var(--ink);}
+
+  /* ── 발표 상황 화면 ── */
+  .brief-inner{padding:38px 34px 46px;text-align:center;}
+  .brief-eyebrow{font-size:14px;font-weight:700;color:var(--accent-dark);background:#FFF3E2;
+    display:inline-block;padding:7px 18px;border-radius:999px;}
+  .brief-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0 20px;}
+  @media(max-width:620px){ .brief-grid{grid-template-columns:1fr;} }
+  .bcell{background:#FFFDF6;border:1px solid var(--line);border-radius:12px;padding:18px 20px;text-align:left;}
+  .bk{font-size:13px;font-weight:700;color:var(--accent-dark);margin-bottom:6px;}
+  .bv{font-size:clamp(17px,2vw,22px);font-weight:800;color:var(--ink);line-height:1.3;}
+  .brief-note{font-size:15.5px;color:var(--body);line-height:1.55;margin-bottom:22px;}
+  .brief-note b{color:var(--accent-dark);}
+  .briefGo{border:0;border-radius:12px;padding:14px 38px;font-size:16px;font-weight:700;font-family:inherit;
+    cursor:pointer;background:var(--accent);color:#fff;transition:.15s;}
+  .briefGo:hover{background:var(--accent-dark);}
+
+  /* ── 문제 화면 ── */
+  #gameScreen .shell{max-width:1180px;}
+  .gbody{display:flex;align-items:stretch;}
+  @media(max-width:760px){ .gbody{flex-direction:column;} }
+  .side{width:196px;flex-shrink:0;background:#FFF6E4;border-right:1px solid var(--line);
+    display:flex;flex-direction:column;padding:14px 13px;}
+  @media(max-width:760px){ .side{width:100%;border-right:0;border-bottom:1px solid var(--line);} }
+  .side-ico{font-size:24px;line-height:1;}
+  .side .st-name{font-size:14.5px;font-weight:700;color:var(--ink);margin-top:2px;}
+  .side .st-sub{font-size:11.5px;color:var(--muted);margin-top:2px;}
+  .pbar{height:7px;background:#F6E3C2;border-radius:99px;overflow:hidden;margin-top:12px;}
+  .pfill{height:100%;width:0;background:var(--accent);border-radius:99px;transition:width .35s;}
+  .pnum{font-size:11.5px;color:var(--muted);margin-top:5px;}
+  .brief-mini{margin-top:12px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 11px;}
+  .brief-t{font-size:11.5px;font-weight:700;color:var(--accent-dark);margin-bottom:6px;}
+  .brief-row{display:flex;gap:6px;font-size:11.5px;margin:4px 0;align-items:baseline;line-height:1.35;color:var(--body);}
+  .brief-row span{color:var(--muted);flex-shrink:0;width:26px;}
+  .brief-row b{word-break:keep-all;}
+  .brief-row b{font-weight:600;color:var(--ink);}
+  .nav{margin-top:auto;display:flex;flex-direction:column;gap:8px;padding-top:12px;}
+  @media(max-width:760px){ .nav{flex-direction:row;} .nav button{flex:1;} }
+  .nav button{border:1px solid var(--line);border-radius:9px;padding:10px;font-size:13.5px;font-weight:700;
+    cursor:pointer;font-family:inherit;transition:.15s;background:#fff;color:var(--ink);}
+  .nav button:hover{background:#FFF3E2;border-color:var(--accent);}
+  .nav .quit{color:var(--ng);}
+  .main{flex:1;padding:14px 20px 12px;min-width:0;display:flex;flex-direction:column;}
+  .topline{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px;}
+  .kind-badge{font-size:12px;font-weight:700;border-radius:999px;padding:5px 12px;}
+  .k-intro{background:#EDEFF4;color:#44506A;} .k-look{background:#FFF4D6;color:#8A6D1F;}
+  .k-build{background:#E7F6ED;color:#1F6E3E;} .k-term{background:#EFE9FA;color:#4E3E8C;}
+  .k-fill{background:#FFF3E2;color:var(--accent-dark);}
+  .meters{display:flex;gap:7px;align-items:center;}
+  .meter{font-size:12.5px;background:#FFFDF6;border:1px solid var(--line);border-radius:999px;padding:5px 11px;color:var(--body);}
+  .meter b{color:var(--ink);}
+  .meter.combo-on{background:#FFF3E2;border-color:var(--accent);color:var(--accent-dark);}
+  .mute{border:1px solid var(--line);background:#fff;border-radius:999px;width:29px;height:29px;cursor:pointer;font-size:13px;}
+  .card-src{display:flex;gap:14px;background:#FFFDF6;border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-bottom:10px;}
+  .card-main{flex:1;min-width:0;}
+  .card-head{display:flex;align-items:center;gap:9px;margin-bottom:6px;flex-wrap:wrap;}
+  .card-title{font-size:14.5px;font-weight:700;color:var(--ink);}
+  .card-type{font-size:11.5px;font-weight:700;background:#FFF3E2;color:var(--accent-dark);border-radius:999px;padding:3px 10px;}
+  .card-src .body{font-size:13.5px;line-height:1.62;color:var(--body);}
+  .card-src .src{font-size:11.5px;color:var(--muted);margin-top:6px;}
+  .card-thumb{width:150px;flex-shrink:0;}
+  @media(max-width:620px){ .card-thumb{display:none!important;} }
+  .term-visual{background:#FFFDF6;border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:10px;}
+  .tvl{font-size:11.5px;font-weight:700;color:var(--accent-dark);margin-bottom:4px;}
+  .q{font-size:clamp(15px,1.7vw,17px);font-weight:700;color:var(--ink);line-height:1.5;margin-bottom:10px;}
+  .opts{display:flex;flex-direction:column;gap:7px;}
+  .opt{display:flex;gap:10px;align-items:flex-start;text-align:left;border:1.5px solid var(--line);background:#fff;
+    border-radius:10px;padding:11px 13px;font-size:14px;line-height:1.5;cursor:pointer;font-family:inherit;
+    color:var(--body);transition:.12s;min-height:44px;}
+  .opt:hover:not(.locked){border-color:var(--accent);background:#FFFBF3;}
+  .opt .lt{flex-shrink:0;width:21px;height:21px;border-radius:6px;background:#FFF3E2;color:var(--accent-dark);
+    font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+  .opt.correct{border-color:var(--ok);background:var(--ok-soft);}
+  .opt.correct .lt{background:var(--ok);color:#fff;}
+  .opt.wrong{border-color:var(--ng);background:var(--ng-soft);animation:shake .4s;}
+  .opt.locked{cursor:default;}
+  .opt.dim{opacity:.45;}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+  .shake{animation:shake .4s;}
+  .fill-wrap{display:none;}
+  .fill-sentence{font-size:15.5px;line-height:1.7;color:var(--ink);background:#FFFDF6;border:1px solid var(--line);
+    border-radius:10px;padding:14px 16px;font-weight:500;}
+  .fill-blank{display:inline-block;min-width:76px;border-bottom:2.5px solid var(--accent);text-align:center;
+    font-weight:700;color:var(--accent-dark);margin:0 3px;}
+  .chosung-hint{margin-top:9px;font-size:13px;background:var(--tip-soft);color:var(--tip);border-radius:8px;padding:6px 12px;display:inline-block;}
+  .fill-input-row{display:flex;gap:8px;margin-top:10px;}
+  .fill-input{flex:1;border:1.5px solid var(--line);border-radius:10px;padding:11px 14px;font-size:15px;
+    font-family:inherit;color:var(--body);background:#fff;}
+  .fill-input:focus{outline:none;border-color:var(--accent);}
+  .fill-submit{border:0;border-radius:10px;padding:11px 22px;font-size:14.5px;font-weight:700;font-family:inherit;
+    cursor:pointer;background:var(--accent);color:#fff;}
+  .hint-btn{margin-top:9px;border:1px solid var(--line);background:var(--tip-soft);color:var(--tip);border-radius:9px;
+    padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;align-self:flex-start;}
+  .hint-box{display:none;margin-top:9px;background:var(--tip-soft);border:1px solid #F0DCA8;border-left:4px solid #E8B43C;
+    border-radius:9px;padding:10px 13px;font-size:13.5px;line-height:1.55;color:var(--tip);}
+  .feedback{display:none;margin-top:10px;}
+  .fb-ok{background:var(--ok-soft);border:1px solid #C6E6D2;border-left:4px solid var(--ok);border-radius:10px;
+    padding:11px 14px;font-size:13.5px;line-height:1.6;color:#1F6E3E;}
+  .fb-hint{background:var(--ng-soft);border:1px solid #F3CFCB;border-left:4px solid var(--ng);border-radius:10px;
+    padding:11px 14px;font-size:13.5px;line-height:1.6;color:#9C332B;}
+  .fb-reveal{background:#FFF4D6;border:1px solid #F0DCA8;border-left:4px solid #E8B43C;border-radius:10px;
+    padding:11px 14px;font-size:13.5px;line-height:1.6;color:var(--tip);}
+  .ex-visual{margin-top:8px;background:#fff;border:1px solid var(--line);border-radius:9px;padding:8px;}
+  .after{display:none;margin-top:10px;background:#FFFDF6;border:1px solid var(--line);border-radius:12px;padding:10px 14px;}
+  .after-label{font-size:12px;font-weight:700;color:var(--ok);}
+  .after-stage,#termVisualBody,.ex-visual{max-width:540px;margin:0 auto;}
+  .after-stage svg,#termVisualBody svg,.ex-visual svg{display:block;}
+  .credit{margin-top:auto;padding-top:10px;text-align:right;font-size:10.5px;color:#B9A98B;}
+
+  /* ── 배너 ── */
+  .banner-dim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:900;
+    align-items:center;justify-content:center;pointer-events:none;}
+  .banner-dim.on{display:flex;}
+  .banner{position:relative;text-align:center;padding:22px 46px;}
+  .banner .bt{font-size:clamp(38px,7vw,64px);font-weight:800;letter-spacing:-.02em;
+    background:linear-gradient(180deg,#FFE9A8 0%,#F5A623 55%,#D9741C 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 3px 10px rgba(0,0,0,.35));}
+  .banner .bs{font-size:clamp(20px,3vw,30px);font-weight:800;color:#fff;margin-top:6px;
+    text-shadow:0 2px 10px rgba(0,0,0,.45);}
+  .banner.pop{animation:pop .36s cubic-bezier(.2,1.5,.4,1);}
+  @keyframes pop{0%{transform:scale(.3);opacity:0}60%{transform:scale(1.15);opacity:1}100%{transform:scale(1)}}
+  .rays{position:absolute;inset:-60px;border-radius:50%;z-index:-1;opacity:.5;
+    background:conic-gradient(from 0deg,rgba(255,220,150,.9) 0deg,transparent 22deg,rgba(255,220,150,.9) 44deg,
+    transparent 66deg,rgba(255,220,150,.9) 88deg,transparent 110deg,rgba(255,220,150,.9) 132deg,transparent 154deg,
+    rgba(255,220,150,.9) 176deg,transparent 198deg,rgba(255,220,150,.9) 220deg,transparent 242deg,
+    rgba(255,220,150,.9) 264deg,transparent 286deg,rgba(255,220,150,.9) 308deg,transparent 330deg,rgba(255,220,150,.9) 352deg);
+    animation:spin 7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  #confetti{position:fixed;inset:0;z-index:899;pointer-events:none;display:none;}
+  @media(prefers-reduced-motion:reduce){ .banner.pop{animation:none} .rays{display:none} }
+
+  /* ── 종료 화면 ── */
+  .end-inner{padding:28px 32px 40px;}
+  .end-title{font-size:clamp(20px,2.6vw,26px);font-weight:800;color:var(--ink);}
+  .end-sum{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px;}
+  @media(max-width:700px){ .end-sum{grid-template-columns:repeat(2,1fr);} }
+  .sbox{background:#FFFDF6;border:1px solid var(--line);border-radius:12px;padding:13px;text-align:center;}
+  .sbox .n{font-size:clamp(20px,2.6vw,26px);font-weight:800;color:var(--accent-dark);}
+  .sbox .l{font-size:11.5px;color:var(--muted);margin-top:3px;}
+  .verdict{margin-top:12px;background:#FFF3E2;border:1px solid var(--line);border-radius:12px;
+    padding:12px 16px;font-size:15px;font-weight:700;color:var(--ink);line-height:1.5;}
+  .verdict .sub{font-size:13px;font-weight:500;color:var(--muted);margin-top:4px;}
+  .diag{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+  @media(max-width:700px){ .diag{grid-template-columns:1fr;} }
+  .dbox{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 15px;}
+  .dbox h4{font-size:13px;font-weight:700;margin-bottom:7px;color:var(--ink);}
+  .dbox .row{font-size:13px;line-height:1.6;color:var(--body);}
+  .advice{margin-top:10px;background:var(--tip-soft);border:1px solid #F0DCA8;border-left:4px solid #E8B43C;
+    border-radius:10px;padding:12px 15px;font-size:13.5px;line-height:1.6;color:var(--tip);}
+  .advice b{color:#6E5410;}
+  .fields{display:grid;grid-template-columns:200px 1fr;gap:10px;margin-top:14px;}
+  @media(max-width:620px){ .fields{grid-template-columns:1fr;} }
+  .field label{display:block;font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+  .field input,.field textarea{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:10px 13px;
+    font-size:14px;font-family:inherit;color:var(--body);background:#fff;}
+  .field textarea{resize:vertical;min-height:46px;}
+  .field input:focus,.field textarea:focus{outline:none;border-color:var(--accent);}
+  .end-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px;}
+  .btn{border:0;border-radius:11px;padding:12px 20px;font-size:14.5px;font-weight:700;font-family:inherit;
+    cursor:pointer;background:var(--accent);color:#fff;transition:.15s;}
+  .btn:hover{background:var(--accent-dark);}
+  .btn.sec{background:#fff;color:var(--ink);border:1.5px solid var(--line);}
+  .btn.sec:hover{background:#FFF3E2;border-color:var(--accent);}
+  .sendmsg{margin-top:10px;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:600;text-align:center;}
+  /* 복습 모달 */
+  .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;
+    align-items:center;justify-content:center;padding:18px;}
+  .modal.on{display:flex;}
+  .modal-in{background:#fff;border-radius:16px;max-width:900px;width:100%;max-height:86vh;overflow:auto;padding:22px 26px;}
+  .modal-in h3{font-size:18px;font-weight:800;color:var(--ink);margin-bottom:4px;}
+  .modal-in .sub{font-size:12.5px;color:var(--muted);margin-bottom:14px;}
+  .rv{border:1px solid var(--line);border-radius:11px;padding:12px 14px;margin-bottom:9px;background:#FFFDF6;}
+  .rv .tag{font-size:11px;font-weight:700;border-radius:999px;padding:3px 9px;display:inline-block;margin-bottom:6px;}
+  .rv .rq{font-size:14px;font-weight:700;color:var(--ink);line-height:1.5;}
+  .rv .ra{font-size:13.5px;color:#1F6E3E;margin-top:5px;line-height:1.5;}
+  .rv .re{font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.55;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ══ 시작 화면 ══ -->
+  <section id="startScreen" class="screen active">
+    <div class="shell">
+      <div class="band">
+        <span>말하기·듣기</span>
+        <span class="badge-m">💻 노트북 권장</span>
+      </div>
+      <div class="start-inner">
+        <div class="title-row">
+          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAACxCAMAAAAyLeWLAAAB/lBMVEUAAABMNSXZ1s7hupPcto7alVnNxba4uryMqcKptsLQiEyTp7jTmmfXpXTkwZxGLBvipW3i2snLeDWcscPUrIR8osLnx6NqSDBNMR7FvbLb0b2telCoq6vGxsb7+vqth2eHm6ivpJaMZ0rhmlvgnWGLeGm2g1ipmozGfUJtWEjTgTySlpVaRDS2lHXo6OeVhXbk4dl0UjmdsL6+wL1ELiDFbCd4mraGWDe8wcLGxsaXc1Z4ZVZ8oL77+vo6JhhiPSWoq6uTjIa4urzZ1s6DXELwsnh6bWK8dTuSYzwIBQUbFRNuOBZ3Qh3groDi0rsqHRdMNSWcoJuvpJbFvbLi2sl1nsKSlpWzajKptsLawZ7Nxbbo6OdtWEiLeGmpmowxIyF7c2l+lJ2BTSeTjIa2WBG8YhyjbUXd4eLk4dk8MS1ELiBlT0B4ZVaVhXaTp7imf2GvpJbAZh3An4De3+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADGtm7NAAAAgHRSTlMA///////////////////////////////////////////////////////////////////////////c////3P//3P/c3P///////////////9z/3Nzc/9z/3P/c3Nzc3P/////c/////9z/3P/c3Nz/oP///wAAAAAAAAAAAAAAAKaTQcIAABeqSURBVHja7VwHd+JItl4kUUpVKCAjhMjYYINxTh2me3q6e3vyvNnZ3dmcw8vx/5/z7r1VEghjLLfp3XPeebVjaANWffrud0PdKvYHP/j/sa3xC5Ml7cmrSdLRnvxdAPwjm+wdVPIRH+wN/sZAnhwfVJpepTi8SnzMPvqbQdg79C4q68fhr/8mED5+VvEqm8bBJx8cw68r9w7v4DcfFMJP72EhG3u//GAQXv+wHIRKpXn4iw+E4buDshhwfCBFxg/BUPnnD4Hhk8oD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" alt="보라라샘">
+          <div>
+            <h1>발표 자료 <span class="mark">정비소</span></h1>
+            <p class="subtitle">정해진 발표 상황에 맞게, 수집한 자료를 살펴보고 청중을 위해 재구성해요.</p>
+          </div>
+        </div>
+
+        <div class="std">
+          <div class="code">성취기준 [9국01-06]</div>
+          <div class="txt">다양한 자료를 재구성하여 내용을 체계적으로 조직하고 청중이 이해하기 쉽게 발표한다.</div>
+        </div>
+
+        <div class="start-grid">
+          <div class="panel">
+            <h3>🔧 게임 방법</h3>
+            <ul>
+              <li>먼저 발표 상황(주제·목적·청중·장소)을 확인합니다.</li>
+              <li>자료를 하나씩 받아 두 단계로 정비합니다.</li>
+              <li>1단계 살펴보기 — 이 자료를 그대로 보여 주면 어떤 점이 아쉬운지 찾습니다.</li>
+              <li>2단계 재구성 — 청중을 위해 어떻게 바꾸면 좋을지 고릅니다.</li>
+              <li>정답을 맞히면 재구성한 모습이 화면에 나타납니다.</li>
+              <li>Enter · Space · → 를 누르면 다음 문제로 넘어갑니다.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>⭐ 점수 규칙</h3>
+            <div class="score-row">
+              <span class="chip">첫 시도 정답 <b>+10</b></span>
+              <span class="chip">다시 맞히면 <b>+5</b></span>
+              <span class="chip">오답 <b>−3</b></span>
+              <span class="chip">3~4콤보 <b>+5</b></span>
+              <span class="chip">5콤보부터 <b>+10</b></span>
+            </div>
+            <div style="font-size:12.5px;color:#6E7B8A;margin-top:9px;line-height:1.6;">
+              만점은 🪴 반려 식물 <b style="color:#1B3A5C">250점</b>, 😷 미세 먼지 <b style="color:#1B3A5C">230점</b>입니다.<br>
+              두 번 연속 틀리면 정답과 해설을 보여 줍니다.
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:14px;">
+          <h3>🧭 이 게임에서 익히는 네 가지</h3>
+          <div class="types">
+            <div class="type-it"><span>🙋</span><span><b>청중 수준 고려</b><br>어려운 용어를 청중에 맞게 풀어 쓰기</span></div>
+            <div class="type-it"><span>🖼️</span><span><b>시각 자료 활용</b><br>도표·그림·자막·영상으로 바꾸어 보여 주기</span></div>
+            <div class="type-it"><span>🔎</span><span><b>신뢰성 보강</b><br>출처·전문가 인터뷰로 뒷받침하기</span></div>
+            <div class="type-it"><span>📚</span><span><b>시각 자료 용어</b><br>도표·그래프·픽토그램·인포그래픽 구분하기</span></div>
+          </div>
+        </div>
+
+        <div class="pick-label">① 사례를 고르세요.</div>
+        <div class="stage-btns">
+          <button class="stage" data-stage="plant"><span class="ico">🪴</span><span class="nm">반려 식물 기르기</span></button>
+          <button class="stage" data-stage="dust"><span class="ico">😷</span><span class="nm">미세 먼지</span></button>
+        </div>
+        <div class="pick-label">② 난이도를 고르세요. (쉬움은 선택지가 적고 힌트를 볼 수 있어요)</div>
+        <div class="lvl-btns">
+          <button class="lvl sel" data-lvl="easy">쉬움 · 선택지 3개 · 힌트 O</button>
+          <button class="lvl" data-lvl="hard">어려움 · 선택지 4개 · 힌트 X</button>
+        </div>
+        <button class="start-go" id="startGo" disabled>발표 상황 확인하기 ▶</button>
+
+        <div class="maker">
+          제작 · <b>보라라샘</b> · 전주서신중학교 교사 · siaawase@gmail.com<br>
+          제작일 2026.06.11 · <span id="lastMod">최종 수정 2026.09.19 00:42</span>
+        </div>
+
+        <div class="privacy" id="privacyOffline">
+          <b>🔒 개인정보 보호 안내</b><br>
+          본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다.<br>
+          게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.
+        </div>
+        <div class="privacy" id="privacyOnline" style="display:none">
+          <b>🔒 개인정보 보호 안내</b><br>
+          본 게임의 학습 결과(학번, 이름, 점수, 오답 정보, 학습 소감)는 담당 선생님의 학습 관리용 스프레드시트에 안전하게 전송·저장됩니다.<br>
+          수집된 정보는 학습 지도 목적으로만 사용되며, 제3자에게 제공되지 않습니다.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="loginOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;justify-content:center;align-items:center">
+   <div style="background:#fff;border-radius:20px;padding:32px;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center">
+    <div style="font-size:36px;margin-bottom:8px">🔑</div>
+    <h2 style="font-size:20px;margin-bottom:4px;color:var(--ink)">학생 인증</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:20px">학번과 이름을 입력하면 게임을 시작할 수 있어요.</p>
+    <div style="text-align:left;margin-bottom:12px">
+     <label style="font-size:13px;font-weight:700;color:var(--ink)">학번 (5자리)</label>
+     <input id="loginId" type="text" maxlength="5" inputmode="numeric" placeholder="예: 20101" style="width:100%;padding:10px 14px;border:2px solid var(--line);border-radius:10px;font-size:16px;margin-top:4px;box-sizing:border-box;font-family:inherit">
+    </div>
+    <div style="text-align:left;margin-bottom:16px">
+     <label style="font-size:13px;font-weight:700;color:var(--ink)">이름</label>
+     <input id="loginName" type="text" maxlength="10" placeholder="예: 김민준" style="width:100%;padding:10px 14px;border:2px solid var(--line);border-radius:10px;font-size:16px;margin-top:4px;box-sizing:border-box;font-family:inherit">
+    </div>
+    <div id="loginMsg" style="font-size:13px;color:var(--ng);min-height:20px;margin-bottom:12px"></div>
+    <button id="loginBtn" onclick="doLogin()" style="width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit">확인</button>
+    <div id="loginSpinner" style="display:none;margin-top:12px"><div style="width:28px;height:28px;border:3px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto"></div></div>
+   </div>
+  </div>
+
+  <!-- ══ 발표 상황 화면 ══ -->
+  <section id="briefScreen" class="screen">
+    <div class="shell">
+      <div class="band"><span>말하기·듣기 · 수집한 자료를 청중에게 맞게 재구성한다</span><span class="right" id="briefRight">발표 상황</span></div>
+      <div class="brief-inner">
+        <div class="brief-eyebrow">📋 발표 상황을 확인하세요</div>
+        <div class="brief-grid">
+          <div class="bcell"><div class="bk">발표 주제</div><div class="bv" id="brTopic"></div></div>
+          <div class="bcell"><div class="bk">발표 목적</div><div class="bv" id="brPurpose"></div></div>
+          <div class="bcell"><div class="bk">예상 청중</div><div class="bv" id="brAud"></div></div>
+          <div class="bcell"><div class="bk">발표 장소</div><div class="bv" id="brPlace"></div></div>
+        </div>
+        <div class="brief-note">이 발표 상황을 머릿속에 두고, <b>청중에게 맞게</b> 자료를 재구성해 보세요.</div>
+        <button class="briefGo" id="briefGo">자료 정비 시작 ▶</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 문제 화면 ══ -->
+  <section id="gameScreen" class="screen">
+    <div class="shell">
+      <div class="band">
+        <span>말하기·듣기 <span class="goal">· 수집한 자료를 청중에게 맞게 재구성한다</span></span>
+        <span class="right" id="bandRight">1 / 14 · 0점</span>
+      </div>
+      <div class="gbody">
+        <aside class="side">
+          <div class="side-ico" id="sideIco">🪴</div>
+          <div class="st-name" id="sideName">반려 식물</div>
+          <div class="st-sub">자료 재구성하기</div>
+          <div class="pbar"><div class="pfill" id="pfill"></div></div>
+          <div class="pnum" id="pnum">1 / 14</div>
+          <div class="brief-mini">
+            <div class="brief-t">🎯 발표 상황</div>
+            <div class="brief-row"><span>주제</span><b id="bTopic"></b></div>
+            <div class="brief-row"><span>청중</span><b id="bAud"></b></div>
+            <div class="brief-row"><span>장소</span><b id="bPlace"></b></div>
+          </div>
+          <div class="nav">
+            <button class="prev" id="btnPrev">◀ 이전</button>
+            <button class="next" id="btnNext">다음 ▶</button>
+            <button class="quit" id="btnQuit">게임 끝내기</button>
+          </div>
+        </aside>
+        <div class="main">
+          <div class="topline">
+            <span class="kind-badge" id="kindBadge">살펴보기</span>
+            <div class="meters">
+              <span class="meter" id="scoreMeter">점수 <b>0</b></span>
+              <span class="meter" id="comboMeter">🔥 콤보 <b>0</b></span>
+              <button class="mute" id="muteBtn" title="소리 켜기/끄기">🔊</button>
+            </div>
+          </div>
+          <div class="card-src" id="cardSrc" style="display:none;">
+            <div class="card-main">
+              <div class="card-head">
+                <div class="card-title" id="cardTitle"></div>
+                <span class="card-type" id="cardType"></span>
+              </div>
+              <div class="body" id="cardBody"></div>
+              <div class="src" id="cardSrcName"></div>
+            </div>
+            <div class="card-thumb" id="cardThumb" style="display:none;"></div>
+          </div>
+          <div class="term-visual" id="termVisual" style="display:none;">
+            <div class="tvl">앞에서 이렇게 재구성했어요</div>
+            <div id="termVisualBody"></div>
+          </div>
+          <div class="q" id="qText"></div>
+          <div class="opts" id="opts"></div>
+          <div class="fill-wrap" id="fillWrap">
+            <div class="fill-sentence" id="fillSentence"></div>
+            <div class="chosung-hint" id="chosungHint" style="display:none;"></div>
+            <div class="fill-input-row">
+              <input class="fill-input" id="fillInput" placeholder="빈칸에 들어갈 말을 입력하세요" autocomplete="off">
+              <button class="fill-submit" id="fillSubmit">제출</button>
+            </div>
+          </div>
+          <button class="hint-btn" id="hintBtn" style="display:none;">💡 힌트 보기</button>
+          <div class="hint-box" id="hintBox"></div>
+          <div class="feedback" id="feedback"></div>
+          <div class="after" id="afterWrap">
+            <span class="after-label">✅ 이렇게 재구성하면 좋아요</span>
+            <div class="after-stage" id="afterStage"></div>
+          </div>
+          <div class="credit">제작 · 보라라샘 / 2026.06.11</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 종료 화면 ══ -->
+  <section id="endScreen" class="screen">
+    <div class="shell">
+      <div class="band"><span>말하기·듣기 · 학습 결과</span><span class="right" id="endRight"></span></div>
+      <div class="end-inner">
+        <div class="end-title" id="endTitle">🪴 반려 식물 — 정비 완료!</div>
+        <div class="end-sum">
+          <div class="sbox"><div class="n" id="finalScore">0</div><div class="l">점수 (만점 <span id="maxScore">250</span>)</div></div>
+          <div class="sbox"><div class="n" id="finalAcc">0%</div><div class="l">첫 시도 정답률</div></div>
+          <div class="sbox"><div class="n" id="finalCombo">0</div><div class="l">최고 콤보</div></div>
+          <div class="sbox"><div class="n" id="finalTime">0분</div><div class="l">소요 시간</div></div>
+        </div>
+        <div class="verdict" id="verdict"></div>
+        <div class="diag">
+          <div class="dbox"><h4>👍 잘하는 유형</h4><div class="row" id="goodTypes"></div></div>
+          <div class="dbox"><h4>🔧 보완이 필요한 유형</h4><div class="row" id="badTypes"></div></div>
+        </div>
+        <div class="advice" id="advice"></div>
+
+        <div class="fields">
+          <div class="field"><label>이름 <span style="color:#D2483F">*필수</span></label><input id="noteName" placeholder="이름을 적어요" maxlength="10"></div>
+          <div class="field"><label>학습 소감 (선택)</label><textarea id="noteRef" rows="1" placeholder="오늘 배운 것, 느낀 점을 자유롭게 적어요"></textarea></div>
+        </div>
+        <div class="end-actions">
+          <button class="btn" id="downloadBtn">🖼️ 오답노트 JPG 저장</button>
+          <button class="btn" id="reportBtn">📊 학습 리포트 JPG 저장</button>
+          <button class="btn sec" id="reviewBtn">📖 오늘 나온 문제 모두 보기</button>
+        </div>
+        <div class="end-actions">
+          <button class="btn" id="retryBtn">이 사례 다시 하기</button>
+          <button class="btn sec" id="homeBtn">시작화면으로</button>
+        </div>
+        <div class="privacy" style="margin-top:12px;text-align:left" id="endPrivacy">
+          입력하신 이름과 소감은 서버에 저장되지 않으며, 리포트 이미지(JPG) 생성용으로만 쓰입니다.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="modal" id="reviewModal">
+    <div class="modal-in">
+      <h3>📖 오늘 나온 문제 모두 보기</h3>
+      <div class="sub" id="reviewSub"></div>
+      <div id="reviewList"></div>
+      <button class="btn sec" id="reviewClose" style="width:100%;margin-top:6px;">닫기</button>
+    </div>
+  </div>
+
+  <div class="banner-dim" id="bannerDim"><div class="banner" id="banner"></div></div>
+  <canvas id="confetti"></canvas>
+</div>
+<script>
+const MADE_DATE = "2026.06.11";
+const LAST_MOD  = "2026.09.19 00:42";
+
+// ═══════════════════════════════════════════
+// ★ Apps Script 연동 설정
+// ═══════════════════════════════════════════
+const GAME_CONFIG = {
+  gameCode: "S203",
+  gameName: "발표 자료 정비소",
+  webAppUrl: "https://script.google.com/macros/s/AKfycbzgq9yT5svpFzeFwW5p2pWOpL-lKpj5_RldoJejFT1EOk1Osjcf6hDx85jGQzvr5rU0ww/exec"
+};
+const params = new URLSearchParams(location.search);
+const TEACHER_KEY = params.get("key");
+const IS_ONLINE = !!TEACHER_KEY;
+let STUDENT = { id: "", name: "", className: "", verified: false };
+
+async function verifyStudent(studentId, studentName) {
+  if (!IS_ONLINE) return { status: "ok" };
+  try {
+    const res = await fetch(GAME_CONFIG.webAppUrl, {
+      method: "POST", headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ action: "verify", teacherKey: TEACHER_KEY, studentId, studentName })
+    });
+    return await res.json();
+  } catch (e) { return { status: "error", message: "서버에 연결할 수 없습니다. 인터넷 연결을 확인해주세요." }; }
+}
+function notifyGameStart(studentId, studentName, className) {
+  if (!IS_ONLINE) return;
+  fetch(GAME_CONFIG.webAppUrl, {
+    method: "POST", headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify({ action: "start", teacherKey: TEACHER_KEY, gameCode: GAME_CONFIG.gameCode, studentId, studentName, className })
+  }).catch(() => {});
+}
+async function submitResult(resultData) {
+  if (!IS_ONLINE) return { status: "ok" };
+  try {
+    const res = await fetch(GAME_CONFIG.webAppUrl, {
+      method: "POST", headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ action: "submit", teacherKey: TEACHER_KEY, gameCode: GAME_CONFIG.gameCode, gameName: GAME_CONFIG.gameName, ...resultData })
+    });
+    return await res.json();
+  } catch (e) { return { status: "error", message: "결과 전송에 실패했습니다." }; }
+}
+
+// ═══════════════════════════════════════════
+// 성취기준 · 유형 마스터
+// ═══════════════════════════════════════════
+const ACH_CODE = "[9국01-06]";
+const ACH_TEXT = "다양한 자료를 재구성하여 내용을 체계적으로 조직하고 청중이 이해하기 쉽게 발표한다.";
+
+const CATEGORIES = {
+  audience: {
+    label: "청중 수준 고려", ico: "🙋",
+    desc: "어려운 용어를 청중이 알아들을 수 있는 말로 바꾸기",
+    tip: "자료를 볼 때 \"이 말을 우리 반 친구가 바로 알아들을까?\"를 먼저 물어보세요. 한 번에 뜻이 안 잡히는 낱말이 있으면 그 낱말부터 쉬운 말로 바꿉니다."
+  },
+  visual: {
+    label: "시각 자료 활용", ico: "🖼️",
+    desc: "글로만 된 내용을 도표·그림·자막·영상으로 바꾸기",
+    tip: "\"이 내용은 수치인가, 과정인가, 동작인가?\"로 나눠 보세요. 수치는 도표, 과정은 그림, 동작은 영상이 맞습니다. 글을 더 길게 쓰는 것은 답이 아닙니다."
+  },
+  credibility: {
+    label: "신뢰성 보강", ico: "🔎",
+    desc: "출처와 전문가의 말로 내용을 뒷받침하기",
+    tip: "\"이 말을 누가 했고, 무엇으로 증명하는가?\"를 따져 보세요. 믿음을 더하는 방법은 자극적인 표현이 아니라 출처와 전문가의 말을 덧붙이는 것입니다."
+  },
+  term: {
+    label: "시각 자료 용어", ico: "📚",
+    desc: "도표·그래프·픽토그램·인포그래픽 구분하기",
+    tip: "\"하나의 뜻인가, 여러 정보인가?\"로 갈라 보세요. 단순한 기호 하나는 픽토그램, 정보를 묶어 보여 주면 인포그래픽, 수치를 정리하면 도표, 변화를 막대·선으로 그리면 그래프입니다."
+  }
+};
+
+const BASE_PT = 10, RETRY_PT = 5, PENALTY = 3;
+function comboBonus(c){ return c >= 5 ? 10 : (c >= 3 ? 5 : 0); }
+function maxScoreOf(n){ return n < 5 ? n * BASE_PT : (n * BASE_PT) + 10 + 10 * (n - 4); }
+
+const STAGES = {
+  plant:{
+    name:"반려 식물 기르기", short:"반려 식물", ico:"🪴",
+    brief:{topic:"반려 식물 기르기", purpose:"나의 취미 생활 소개", audience:"같은 반 친구들", place:"발표 자료를 쓸 수 있는 교실"},
+    lead:[
+      {id:1, cat:"audience", kind:"intro",
+        q:"이 발표를 준비할 때, 수집한 자료를 재구성하는 가장 중요한 기준은 무엇일까요?",
+        opts:["청중인 '같은 반 친구들'이 이해하기 쉬운지를 가장 먼저 생각한다.","자료가 전문적이고 어려운 내용을 담고 있는지를 본다.","자료의 분량이 길고 정보가 빼곡한지를 따진다.","발표자 자신이 가장 좋아하는 내용인지를 살핀다."],
+        hint:"발표는 듣는 사람을 위한 말하기예요.",
+        explain:"자료 재구성의 기준은 늘 청중입니다. 같은 반 친구들이 이해하기 쉽도록 자료를 고쳐야 합니다."}
+    ],
+    groups:[
+      [
+        {id:2, cat:"audience", kind:"diagnose",
+          card:{type:"누리집", ttl:"식물의 공기 정화 원리", src:"농촌진흥청 국립원예특작과학원 누리집",
+            body:"식물의 실내 공기 정화 원리는 크게 두 가지이다. 첫째는 흡수의 원리로, 식물은 잎 표면의 왁스층이나 잎 뒷면의 공기 구멍으로 오염 물질을 흡수한다. 둘째는 방출의 원리로, 오염 물질은 양이온으로 대전되어 공기 중에 떠다니다가 식물이 방출하는 음이온과 결합해 무거워진다. 무거워진 오염 물질은 전자를 얻고 안정화되어 땅으로 떨어지면서 제거된다."},
+          q:"이 누리집 자료를 청중에게 그대로 보여 주면, 어떤 점이 아쉬울까요?",
+          opts:["출처는 믿을 만하지만, 중학생 청중이 이해하기 어려운 전문 용어가 많다.","내용은 정확하지만 분량이 너무 많아 핵심을 추리기 어렵다.","흥미를 끌 만한 사진이나 그림이 함께 들어 있지 않다.","발표 주제와 동떨어진 엉뚱한 내용을 담고 있다."],
+          hint:"농촌진흥청은 믿을 만한 출처예요. 아쉬운 점은 '용어'에 있어요.",
+          explain:"신뢰할 만한 출처지만 '왁스층·양이온·음이온' 같은 전문 용어가 많아 중학생이 이해하기 어렵습니다."},
+        {id:3, cat:"audience", kind:"prescribe",
+          card:{type:"누리집", ttl:"식물의 공기 정화 원리", src:"농촌진흥청 국립원예특작과학원 누리집",
+            body:"식물의 실내 공기 정화 원리는 크게 두 가지이다. 첫째는 흡수의 원리로, 식물은 잎 표면의 왁스층이나 잎 뒷면의 공기 구멍으로 오염 물질을 흡수한다. 둘째는 방출의 원리로, 오염 물질은 양이온으로 대전되어 떠다니다가 식물이 방출하는 음이온과 결합해 무거워져 땅으로 떨어진다."},
+          q:"청중을 위해 이 자료를 어떻게 재구성하면 좋을까요?",
+          opts:["어려운 용어를 쉽게 풀어 쓰고, 공기 정화 과정은 그림으로 보여 준다.","더 어려운 전문 용어를 덧붙여 자료의 전문성을 높인다.","원래 내용을 줄이지 않고 그대로 천천히 읽어 준다.","정화 과정은 빼고 결론만 한 문장으로 짧게 말한다."],
+          hint:"어려운 말은 쉽게, 복잡한 과정은 눈에 보이게요.",
+          explain:"어려운 용어와 내용은 청중이 이해하기 쉽게 수정하고, 공기 정화 과정은 그림으로 보여 주면 좋습니다.",
+          after:"air"}
+      ],
+      [
+        {id:4, cat:"visual", kind:"diagnose",
+          card:{type:"영상", thumb:"video", ttl:"식물의 분갈이 방법", src:"MBC 뉴스 · 2019. 5. 15.",
+            body:"원래 화분에서 식물을 뿌리째 살살 뽑아내는 것부터 시작해, 새 화분에 흙을 채우고 옮겨 심는 과정을 순서대로 보여 준다. 진행자가 각 단계를 말로 설명하며 직접 시연한다. 분갈이 과정을 차례대로 담고 있어 따라 하기 좋다. 다만 영상에 자막은 들어가 있지 않다."},
+          q:"이 영상 자료에서 아쉬운 점은 무엇일까요?",
+          opts:["과정은 잘 보여 주지만 자막이 없어, 소리가 안 들리는 교실에서는 전달이 어렵다.","분갈이 과정의 일부 단계가 빠져 있어 따라 하기 어렵다.","영상이 너무 길어서 발표 시간을 많이 차지한다.","영상의 화질이 낮아 식물의 모습이 잘 보이지 않는다."],
+          hint:"교실에서 영상 소리가 잘 안 들릴 때를 떠올려 보세요.",
+          explain:"분갈이 과정을 순서대로 잘 보여 주지만, 자막이 없어 교실에서 소리가 안 들리면 정보 전달이 어렵습니다."},
+        {id:5, cat:"visual", kind:"prescribe",
+          card:{type:"영상", thumb:"video", ttl:"식물의 분갈이 방법", src:"MBC 뉴스 · 2019. 5. 15.",
+            body:"화분에서 식물을 뿌리째 뽑아 새 화분에 옮겨 심는 분갈이 과정을 순서대로 보여 주는 영상이다. 진행자가 각 단계를 말로 설명한다. 과정을 차례대로 담아 따라 하기 좋지만, 영상에 자막이 들어가 있지 않다."},
+          q:"이 영상을 어떻게 재구성하면 좋을까요?",
+          opts:["내용을 잘 전달할 수 있도록 영상에 자막을 넣는다.","소리만 더 크게 키운 다른 영상으로 통째로 바꾼다.","영상을 빼 버리고 분갈이 과정을 글로만 설명한다.","영상 길이를 두 배로 늘려 더 천천히 보여 준다."],
+          hint:"소리가 안 들려도 읽을 수 있게요.",
+          explain:"교실에서 소리가 잘 들리지 않을 수 있으니, 정보를 잘 전달할 수 있도록 자막을 활용하면 좋습니다.",
+          after:"subtitle"}
+      ],
+      [
+        {id:6, cat:"visual", kind:"diagnose",
+          card:{type:"기사", ttl:"반려 식물 기르는 이유 1위 '정서 안정', 정말 효과 있을까?", src:"농민신문 · 2023. 1. 11.",
+            body:"농촌진흥청이 3년간 유아·아동 자녀를 둔 109가구와 식물 기르기 프로그램을 진행하고 심리 상태를 비교하였다. 그 결과 부모의 스트레스 호르몬인 코르티솔 농도가 56.5% 줄었고, 자녀의 우울감도 20.9% 감소했다. 또 성인 암 환자를 대상으로 한 식물 치료 프로그램에서는 우울감과 스트레스가 각각 45%, 34% 줄었다. 혈액 검사에서는 '행복 호르몬'인 세로토닌 분비가 40%나 늘었다."},
+          q:"이 기사 자료를 청중에게 그대로 전하면, 어떤 점이 아쉬울까요?",
+          opts:["실험 결과 수치가 줄글로 나열돼 있어 한눈에 파악하기 어렵다.","실험에 참여한 사람 수가 적어 결과를 믿기 어렵다.","효과를 보여 주는 실험 사례가 하나뿐이라 부족하다.","발표 주제와 관련 없는 내용이 섞여 있다."],
+          hint:"숫자가 글 속에 줄줄이 적혀 있으면 어떨까요?",
+          explain:"실험 결과 수치가 줄글로 나열되어 있어 청중이 한눈에 파악하기 어렵습니다."},
+        {id:7, cat:"visual", kind:"prescribe",
+          card:{type:"기사", ttl:"반려 식물 기르는 이유 1위 '정서 안정', 정말 효과 있을까?", src:"농민신문 · 2023. 1. 11.",
+            body:"109가구 실험에서 부모의 코르티솔이 56.5%, 자녀 우울감이 20.9% 줄었다. 성인 암 환자 대상에서는 우울감 45%, 스트레스 34%가 줄고 세로토닌이 40% 늘었다. 식물을 기르면 심리 상태와 호르몬에 긍정적인 변화가 나타난다는 내용이다."},
+          q:"이 수치들을 어떻게 재구성하면 한눈에 들어올까요?",
+          opts:["여러 실험 결과 수치를 일정한 양식으로 체계적으로 정리한 도표로 보여 준다.","수치를 모두 빼고 느낀 점만 간단하게 설명한다.","더 많은 실험 수치를 줄글로 빼곡하게 덧붙인다.","수치를 정리하지 않고 모두 긴 문장으로 풀어 쓴다."],
+          hint:"흩어진 결과 수치를 한 양식으로 정리하면 한눈에 들어와요.",
+          explain:"정서 안정 효과를 한눈에 파악할 수 있도록, 여러 실험 결과 수치를 일정한 양식의 도표로 체계적으로 정리해 보여 주면 좋습니다.",
+          after:"bar"},
+        {id:8, cat:"term", kind:"term", explainVisual:"graphvs",
+          q:"도표와 그래프의 쓰임으로 알맞은 것은?",
+          opts:["도표는 데이터를 체계적으로 정리해 보여 줄 때, 그래프는 데이터의 변화나 흐름을 시각적으로 비교하고 싶을 때 유용하다.","그래프는 데이터를 체계적으로 정리할 때, 도표는 변화를 비교하고 싶을 때 유용하다.","도표와 그래프는 쓰임이 똑같아서 어느 것을 써도 차이가 없다.","도표와 그래프는 모두 수치 없이 그림만으로 나타내는 자료이다."],
+          hint:"하나는 '결과를 정리', 다른 하나는 '변화·비교'에 강해요.",
+          explain:"도표는 여러 자료를 체계적으로 정리해 보여 줄 때 유용하고, 그래프는 수치의 변화나 흐름을 막대·선으로 비교해 보여 줄 때 유용합니다. 교과서의 정서 안정 도표처럼 결과를 항목별로 정리한 것은 도표입니다."}
+      ],
+      [
+        {id:9, cat:"visual", kind:"prescribe",
+          card:{type:"책", ttl:"식물을 돌볼 때 중요한 세 가지 요소", src:"『식물과 같이 살고 있습니다』",
+            body:"식물이 성장하려면 물, 햇빛, 흙이 필요하다. 먼저 물은 식물의 생명 유지에 꼭 필요한데, 실내 식물은 스스로 물을 얻을 수 없어 사람이 챙겨 주어야 한다. 또한 식물은 적절한 양의 햇빛을 받아야 건강하게 자란다. 마지막으로 흙은 식물이 자라는 데 필요한 양분을 품고 있다."},
+          q:"이 책의 핵심(물·햇빛·흙)을 청중이 오래 기억하게 하려면, 어떻게 재구성하면 좋을까요?",
+          opts:["핵심 단어(물·햇빛·흙)를 간단한 그림과 함께 제시한다.","물·햇빛·흙을 하나하나 긴 문장으로 자세히 풀어 쓴다.","세 가지 중 가장 중요한 하나만 골라 설명한다.","물·햇빛·흙을 더 어려운 학술 용어로 바꾸어 설명한다."],
+          hint:"핵심어 + 그림이면 기억에 콕 박혀요.",
+          explain:"반려 식물을 기를 때 알아 두어야 할 핵심이므로, 핵심 단어를 간단한 그림과 함께 제시하면 청중이 오래 기억합니다.",
+          after:"icons"},
+        {id:10, cat:"term", kind:"term", visual:"icons",
+          q:"방금처럼 핵심 정보를 누구나 알아보는 단순한 그림 기호로 나타낸 위와 같은 시각 자료를 무엇이라고 할까요?",
+          opts:["픽토그램","인포그래픽","다이어그램","일러스트"],
+          hint:"화장실·비상구 표지처럼, 하나의 뜻을 단순한 그림 기호로 나타낸 거예요.",
+          explain:"픽토그램은 사물이나 개념을 누구나 알아볼 수 있는 단순한 그림 기호로 나타낸 것입니다. 여러 정보를 도표·그림으로 종합한 인포그래픽과는 다릅니다."},
+        {id:11, cat:"term", kind:"term", explainVisual:"compare",
+          q:"픽토그램과 인포그래픽의 차이를 바르게 설명한 것은?",
+          opts:["픽토그램은 하나의 뜻을 단순한 그림 기호로, 인포그래픽은 여러 정보를 그림·도표로 종합해 보여 준다.","픽토그램은 움직이는 영상이고, 인포그래픽은 멈춰 있는 사진이다.","픽토그램은 글자가 아주 많고, 인포그래픽은 글자가 하나도 없다.","이름만 다를 뿐 픽토그램과 인포그래픽은 똑같은 시각 자료이다."],
+          hint:"하나는 '단순한 기호 하나', 다른 하나는 '여러 정보의 종합'이에요.",
+          explain:"픽토그램은 화장실·비상구 표지처럼 하나의 뜻을 단순한 그림 기호로 나타냅니다. 인포그래픽은 여러 정보와 수치를 그림·도표로 묶어 한눈에 보여 줍니다."}
+      ]
+    ],
+    tail:[
+      {id:12, cat:"term", kind:"fill",
+        q:"반려 식물의 정서 안정 효과를 한눈에 파악할 수 있도록, 심리 상태와 호르몬의 수치 변화를 ___(으)로 나타내면 좋다.",
+        answer:"도표", accept:["도표"], chosung:"ㄷㅍ",
+        hint:"여러 항목의 결과를 한 양식으로 정리해 보여 주는 시각 자료예요. (교과서 표현)",
+        explain:"교과서 예시처럼 여러 항목의 결과를 체계적으로 정리할 때는 도표가 알맞습니다. 변화의 흐름을 선·막대로 그릴 때는 그래프를 씁니다."},
+      {id:13, cat:"visual", kind:"fill",
+        q:"분갈이처럼 순서가 있는 과정은, 소리가 안 들려도 읽을 수 있도록 ___을 넣은 영상으로 보여 주면 좋다.",
+        answer:"자막", accept:["자막"], chosung:"ㅈㅁ",
+        hint:"소리 없이도 내용을 읽을 수 있게 화면에 넣는 글자예요.",
+        explain:"분갈이 같은 과정은 자막을 넣은 영상으로 보여 주면 청중이 쉽게 이해합니다."},
+      {id:14, cat:"term", kind:"term", explainVisual:"vtypes",
+        q:"발표에 쓰이는 시각 자료의 쓰임을 바르게 설명한 것은?",
+        opts:["그래프는 수치를 막대·선·원으로 나타낸 그림이다.","도표는 그래프와 표를 합쳐 부르는 좁은 말이다.","표는 실제 모습을 생생하게 담은 사진 자료이다.","인포그래픽은 하나의 뜻만 단순한 기호로 나타낸 자료이다."],
+        hint:"막대·선·원으로 수치를 나타낸 그림을 무엇이라 부를까요?",
+        explain:"그래프는 수치를 막대·선·원으로 나타낸 그림입니다. 도표는 그래프와 표를 아우르는 넓은 말, 표는 행과 열 정리, 픽토그램은 단순 기호, 인포그래픽은 정보 종합입니다."}
+    ]
+  },
+  dust:{
+    name:"미세 먼지", short:"미세 먼지", ico:"😷",
+    brief:{topic:"미세 먼지", purpose:"미세 먼지에 관한 정보 전달", audience:"같은 반 친구들", place:"우리 반 교실"},
+    lead:[],
+    groups:[
+      [
+        {id:1, cat:"audience", kind:"diagnose",
+          card:{type:"지식백과", ttl:"미세 먼지와 황사의 차이점", src:"네이버 지식백과",
+            body:"황사는 바람에 하늘 높이 올라간 미세한 모래 먼지가 대기 중에 퍼져 떨어지는 흙모래이다. 주로 칼슘, 철분, 알루미늄, 마그네슘 같은 토양 성분을 포함한다. 반면 미세 먼지는 연소 작용으로 발생해 황산염, 질산염, 암모니아 같은 이온 성분으로 이루어진다. 여기에 금속 화합물, 탄소 화합물 같은 유해 물질도 들어 있다."},
+          q:"이 자료를 청중에게 그대로 보여 주면, 어떤 점이 아쉬울까요?",
+          opts:["'황산염·질산염' 같은 전문 용어가 많아 청중이 이해하기 어렵다.","내용은 정확하지만 분량이 많아 핵심을 추리기 어렵다.","통계 수치가 없어 주장의 근거가 부족해 보인다.","발표 주제와 동떨어진 엉뚱한 내용을 담고 있다."],
+          hint:"어려운 화학 용어가 잔뜩 들어 있어요.",
+          explain:"신뢰할 만한 자료지만 전문 용어가 많아 청중의 지적 수준에 비해 이해하기 어렵습니다."},
+        {id:2, cat:"audience", kind:"prescribe",
+          card:{type:"지식백과", ttl:"미세 먼지와 황사의 차이점", src:"네이버 지식백과",
+            body:"황사는 바람에 날아온 흙모래로 칼슘·철분·알루미늄 같은 토양 성분을 포함한다. 반면 미세 먼지는 연소 작용으로 발생해 황산염·질산염 같은 이온 성분과 금속·탄소 화합물 같은 유해 물질로 이루어진다. 두 가지는 생기는 원인과 성분이 서로 다르다."},
+          q:"청중을 위해 이 자료를 어떻게 재구성하면 좋을까요?",
+          opts:["어려운 용어는 쉬운 말로 풀고, 황사와 미세 먼지를 견주어(대조해) 설명한다.","전문성을 위해 더 어려운 용어를 덧붙여 설명한다.","황사 설명은 빼고 미세 먼지 내용만 그대로 읽는다.","두 대상을 따로따로 길게 설명해 분량을 늘린다."],
+          hint:"어려운 말은 쉽게! 그리고 둘을 '견주어' 보여 주면 차이가 또렷해져요.",
+          explain:"어려운 용어는 쉬운 말로 풀어 설명하고, 황사와 미세 먼지의 차이를 견주어 보여 주는 '대조'의 방법을 함께 쓰면 청중이 더 잘 이해합니다.",
+          after:"easy"}
+      ],
+      [
+        {id:3, cat:"visual", kind:"diagnose",
+          card:{type:"책", ttl:"미세 먼지의 몸속 유입 경로", src:"『의사들이 들려주는 미세 먼지와 건강 이야기』",
+            body:"미세 먼지는 입자가 매우 작아 코털 등에 걸러지지 않고 우리 몸에 쉽게 들어온다. 코털을 지나 섬모까지 통과해 기관지를 거쳐 폐포에 도달한다. 폐포는 이산화 탄소와 산소를 교환하는 역할을 한다. 폐포가 이 역할을 할 때 폐포에 있던 미세 먼지도 혈관으로 이동한다."},
+          q:"이 자료에서 아쉬운 점은 무엇일까요?",
+          opts:["미세 먼지가 몸에 들어오는 이동 과정이 글로만 설명돼 있어, 한눈에 이해하기 어렵다.","유입 과정의 일부 단계가 빠져 있어 내용이 불완전하다.","어려운 의학 용어가 많아 한 문장도 이해하기 힘들다.","발표 주제와 관련 없는 내용을 담고 있다."],
+          hint:"코 → 기관지 → 폐포… 과정이 글로만 적혀 있어요.",
+          explain:"미세 먼지가 몸에 들어오는 이동 과정이 글로만 설명되어 있어 청중이 한눈에 이해하기 어렵습니다."},
+        {id:4, cat:"visual", kind:"prescribe",
+          card:{type:"책", ttl:"미세 먼지의 몸속 유입 경로", src:"『의사들이 들려주는 미세 먼지와 건강 이야기』",
+            body:"미세 먼지는 입자가 작아 코털에 걸러지지 않고 코털과 섬모를 통과해 기관지를 거쳐 폐포에 도달한다. 폐포는 이산화 탄소와 산소를 교환하는데, 이때 폐포에 있던 미세 먼지가 혈관으로 이동한다. 코에서 혈관까지 단계적으로 이어지는 과정이다."},
+          q:"이 유입 과정을 어떻게 재구성하면 좋을까요?",
+          opts:["코에서 혈관까지 이어지는 유입 경로를 그림으로 보여 준다.","유입 과정을 더 긴 글로 빠짐없이 자세하게 풀어 쓴다.","복잡한 과정은 모두 생략하고 결론만 한 줄로 말한다.","어려운 의학 용어를 더 넣어 정확하게 설명한다."],
+          hint:"경로는 그림으로 보면 한눈에 들어와요.",
+          explain:"미세 먼지가 몸속에 들어왔을 때의 유입 경로를 그림으로 보여 주면 청중이 쉽게 이해합니다.",
+          after:"path"},
+        {id:5, cat:"term", kind:"term", visual:"path",
+          q:"방금처럼 복잡한 정보나 과정을 그림·도표로 종합해 알기 쉽게 정리한 위와 같은 시각 자료를 무엇이라고 부를까요?",
+          opts:["인포그래픽","픽토그램","다이어그램","도표"],
+          hint:"정보(information)와 그래픽(graphic)을 합친 말이에요.",
+          explain:"인포그래픽은 정보·과정을 그림과 도표로 종합해 시각화한 것입니다. 하나의 개념을 단순 기호로 나타낸 픽토그램보다 담는 정보가 많습니다."},
+        {id:6, cat:"term", kind:"term", explainVisual:"compare",
+          q:"픽토그램과 인포그래픽의 차이를 바르게 설명한 것은?",
+          opts:["픽토그램은 하나의 뜻을 단순한 그림 기호로, 인포그래픽은 여러 정보를 그림·도표로 종합해 보여 준다.","픽토그램은 움직이는 영상이고, 인포그래픽은 멈춰 있는 사진이다.","픽토그램은 글자가 아주 많고, 인포그래픽은 글자가 하나도 없다.","이름만 다를 뿐 픽토그램과 인포그래픽은 똑같은 시각 자료이다."],
+          hint:"하나는 '단순한 기호 하나', 다른 하나는 '여러 정보의 종합'이에요.",
+          explain:"픽토그램은 화장실·비상구 표지처럼 하나의 뜻을 단순한 그림 기호로 나타냅니다. 인포그래픽은 여러 정보와 수치를 그림·도표로 묶어 한눈에 보여 줍니다."}
+      ],
+      [
+        {id:7, cat:"credibility", kind:"diagnose",
+          card:{type:"뉴스", ttl:"미세 먼지가 미치는 영향", src:"SBS 뉴스 · 2017. 4. 4.",
+            body:"2013년 10월, 세계보건기구(WHO)는 미세 먼지를 1급 발암 물질로 지정하였다. 또한 영국의 실험 결과, 미세 먼지가 심한 지역에서 알츠하이머병으로 사망한 환자 37명의 뇌 조직에서 초미세 먼지 입자 수백만 개가 검출되었다. 미세 먼지는 호흡기뿐 아니라 뇌 건강에도 영향을 줄 수 있다."},
+          q:"이 자료로 발표할 때, 무엇을 보완하면 좋을까요?",
+          opts:["주장을 더 믿을 수 있도록 뒷받침할 근거를 보강하면 좋다.","충격을 주도록 더 무서운 사례를 잔뜩 추가하면 좋다.","내용이 어려우니 제시된 수치를 모두 빼면 좋다.","주제와 관련이 없으니 이 자료를 통째로 빼면 좋다."],
+          hint:"내용을 더 믿게 하려면 무엇을 더하면 좋을까요?",
+          explain:"미세 먼지의 위험을 다룬 내용을 청중이 더 믿을 수 있도록, 뒷받침할 근거를 보강하면 좋습니다."},
+        {id:8, cat:"credibility", kind:"prescribe",
+          card:{type:"뉴스", ttl:"미세 먼지가 미치는 영향", src:"SBS 뉴스 · 2017. 4. 4.",
+            body:"2013년 WHO가 미세 먼지를 1급 발암 물질로 지정했고, 영국 실험에서는 미세 먼지가 심한 지역의 사망 환자 뇌 조직에서 초미세 먼지가 검출되었다. 미세 먼지가 호흡기뿐 아니라 뇌 건강에도 영향을 줄 수 있음을 보여 주는 내용이다."},
+          q:"이 내용의 신뢰성을 높이려면 어떻게 재구성하면 좋을까요?",
+          opts:["내용을 뒷받침할 전문가의 인터뷰를 보조 자료로 활용한다.","더 큰 효과를 위해 실험 수치를 임의로 부풀려 적는다.","간결함을 위해 자료에 적힌 출처를 일부러 지운다.","관심을 끌도록 더 자극적인 표현으로 내용을 바꾼다."],
+          hint:"전문가의 말이 더해지면 더 믿음이 가요.",
+          explain:"내용을 뒷받침할 수 있는 전문가의 인터뷰를 보조 자료로 활용하면 신뢰성을 높일 수 있습니다.",
+          after:"interview"}
+      ],
+      [
+        {id:9, cat:"visual", kind:"diagnose",
+          card:{type:"블로그", ttl:"미세 먼지로부터 우리를 보호하는 방법", src:"전북특별자치도 공식 블로그",
+            body:"미세 먼지로부터 몸을 지키는 방법은 다음과 같다. 첫째, 외출 후에는 목욕을 하며 몸에 묻은 미세 먼지를 제거한다. 둘째, 미세 먼지가 심한 날에도 하루 3~5분 정도는 환기를 해 주어야 한다. 셋째, 평소 물, 해조류, 채소류 등을 섭취하며 건강을 관리한다."},
+          q:"이 방법들을 글로만 전하면, 어떤 점이 아쉬울까요?",
+          opts:["방법을 글로만 전하면 직접 하는 모습을 보여 줄 수 없어, 생생하게 전달되지 않는다.","안내한 방법이 너무 많아 모두 기억하기 어렵다.","방법의 순서가 뒤섞여 있어 따라 하기 헷갈린다.","발표 주제와 관련 없는 내용을 담고 있다."],
+          hint:"'환기하는 법'은 글보다 직접 보는 게 낫겠죠?",
+          explain:"글로만 전달하면 직접 하는 모습을 보여 줄 수 없어, 청중에게 생생하게 전달되지 않습니다."},
+        {id:10, cat:"visual", kind:"prescribe",
+          card:{type:"블로그", ttl:"미세 먼지로부터 우리를 보호하는 방법", src:"전북특별자치도 공식 블로그",
+            body:"외출 후 목욕으로 몸에 묻은 미세 먼지를 제거하고, 미세 먼지가 심한 날에도 하루 3~5분은 환기한다. 평소 물·해조류·채소류를 섭취하며 건강을 관리한다. 일상에서 실천할 수 있는 보호 방법을 안내하는 자료이다."},
+          q:"환기 방법을 청중이 잘 따라 하게 하려면, 어떻게 재구성하면 좋을까요?",
+          opts:["미세 먼지 환기 방법을 영상으로 촬영해서 직접 보여 준다.","환기 방법을 글로 더 길고 자세하게 풀어서 쓴다.","안내하는 방법의 개수를 절반으로 줄여 정리한다.","방법을 어려운 전문 용어로 바꾸어 설명한다."],
+          hint:"직접 하는 모습을 영상으로 보여 주면 따라 하기 쉬워요.",
+          explain:"미세 먼지 환기 방법을 영상으로 촬영해서 제시하면 청중이 쉽게 따라 할 수 있습니다.",
+          after:"demo"}
+      ]
+    ],
+    tail:[
+      {id:11, cat:"credibility", kind:"fill",
+        q:"미세 먼지의 위험을 다룬 내용은, ___의 인터뷰를 인용해 보조 자료로 쓰면 더 믿을 수 있다.",
+        answer:"전문가", accept:["전문가","전문가의","의사","의사의"], chosung:"ㅈㅁㄱ",
+        hint:"그 분야를 깊이 아는 사람의 말을 인용하면 믿음이 가요.",
+        explain:"전문가의 인터뷰를 인용해 보조 자료로 더하면 내용의 신뢰성이 높아집니다."},
+      {id:12, cat:"audience", kind:"fill",
+        q:"'황산염'처럼 어려운 개념은, 청중의 수준에 맞게 ___ 말로 풀어 설명하면 좋다.",
+        answer:"쉬운", accept:["쉬운","쉬운말","쉽게","쉬운 말"], chosung:"ㅅㅇ",
+        hint:"청중이 알아듣기 편하도록 바꾼 말이에요.",
+        explain:"어려운 용어는 쉬운 말로 풀어 설명할 때 청중이 잘 이해합니다."},
+      {id:13, cat:"term", kind:"term", explainVisual:"vtypes",
+        q:"발표에 쓰이는 시각 자료의 쓰임을 바르게 설명한 것은?",
+        opts:["그래프는 수치를 막대·선·원으로 나타낸 그림이다.","도표는 그래프와 표를 합쳐 부르는 좁은 말이다.","표는 실제 모습을 생생하게 담은 사진 자료이다.","인포그래픽은 하나의 뜻만 단순한 기호로 나타낸 자료이다."],
+        hint:"막대·선·원으로 수치를 나타낸 그림을 무엇이라 부를까요?",
+        explain:"그래프는 수치를 막대·선·원으로 나타낸 그림입니다. 도표는 그래프와 표를 아우르는 넓은 말, 표는 행과 열 정리, 픽토그램은 단순 기호, 인포그래픽은 정보 종합입니다."}
+    ]
+  }
+};
+const KIND_LABEL = {intro:"준비", diagnose:"살펴보기", prescribe:"재구성", term:"용어", fill:"정리"};
+const KIND_CLASS = {intro:"k-intro", diagnose:"k-look", prescribe:"k-build", term:"k-term", fill:"k-fill"};
+
+function thumbHTML(t){
+  if(t==="video") return '<svg viewBox="0 0 150 100" width="100%" font-family="system-ui"><rect width="150" height="100" rx="9" fill="#1f2a2e"/><circle cx="75" cy="42" r="16" fill="rgba(255,255,255,.92)"/><path d="M70 34 L85 42 L70 50 Z" fill="#1f2a2e"/><rect x="17" y="74" width="116" height="16" rx="4" fill="rgba(255,255,255,.14)"/><text x="75" y="86" text-anchor="middle" font-size="9.5" fill="#9fb0ab">자막 없음</text></svg>';
+  return "";
+}
+function afterHTML(type){
+  switch(type){
+    case "air": return '<svg viewBox="0 0 520 150" width="100%" height="150" font-family="system-ui"><text x="130" y="20" text-anchor="middle" font-size="12" font-weight="700" fill="#155e54">흡수의 원리</text><text x="390" y="20" text-anchor="middle" font-size="12" font-weight="700" fill="#b76c1e">방출의 원리</text><line x1="260" y1="30" x2="260" y2="140" stroke="#cdc6b4" stroke-dasharray="4 4"/><g transform="translate(110,40)"><rect x="14" y="60" width="22" height="34" rx="3" fill="#c98a4a"/><path d="M25 64 C5 40 10 22 25 18 C40 22 45 40 25 64" fill="#3aa06a"/><path d="M25 50 C12 36 16 26 25 24 C34 26 38 36 25 50" fill="#56b87f"/></g><g fill="#8a8378" font-size="11"><circle cx="60" cy="55" r="4" fill="#9aa6a2"/><text x="38" y="45">오염 물질</text><path d="M70 58 Q100 70 120 78" stroke="#9aa6a2" fill="none" marker-end="url(#ar)"/></g><g transform="translate(360,40)"><rect x="14" y="60" width="22" height="34" rx="3" fill="#c98a4a"/><path d="M25 64 C5 40 10 22 25 18 C40 22 45 40 25 64" fill="#3aa06a"/></g><g fill="#b76c1e" font-size="11"><text x="430" y="50">음이온 방출</text><path d="M400 70 Q430 64 452 58" stroke="#e0892f" fill="none" marker-end="url(#ar2)"/><circle cx="455" cy="56" r="3" fill="#e0892f"/><circle cx="448" cy="68" r="3" fill="#e0892f"/></g><defs><marker id="ar" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#9aa6a2"/></marker><marker id="ar2" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#e0892f"/></marker></defs><text x="260" y="140" text-anchor="middle" font-size="11.5" fill="#566">→ 어려운 글 대신, 흡수·방출 과정을 한눈에</text></svg>';
+    case "subtitle": return '<svg viewBox="0 0 520 150" width="100%" height="150" font-family="system-ui"><rect x="150" y="14" width="220" height="118" rx="10" fill="#1f2a2e"/><circle cx="260" cy="62" r="20" fill="rgba(255,255,255,.9)"/><path d="M254 52 L274 62 L254 72 Z" fill="#1f2a2e"/><rect x="162" y="100" width="196" height="22" rx="5" fill="rgba(255,255,255,.92)"/><text x="260" y="115" text-anchor="middle" font-size="11.5" fill="#1f2a2e" font-weight="600">화분에서 식물을 살살 뽑습니다</text><text x="260" y="146" text-anchor="middle" font-size="11.5" fill="#566">→ 자막을 넣어 소리 없이도 전달</text></svg>';
+    case "bar": return '<svg viewBox="0 0 520 232" width="100%" font-family="system-ui"><rect x="8" y="6" width="504" height="90" rx="11" fill="#eef5ec" stroke="#cfe2cd"/><text x="22" y="27" font-size="12.5" font-weight="700" fill="#3f5d3c">유아·아동 자녀를 둔 109가구 · 식물 기르기 결과</text><g text-anchor="middle"><text x="150" y="56" font-size="12" fill="#555">코르티솔 농도</text><text x="150" y="82" font-size="18" font-weight="800" fill="#d2483f">56.5% ▼</text><text x="360" y="56" font-size="12" fill="#555">우울감</text><text x="360" y="82" font-size="18" font-weight="800" fill="#d2483f">20.9% ▼</text></g><rect x="8" y="104" width="504" height="92" rx="11" fill="#eef2f6" stroke="#cdd9e2"/><text x="22" y="125" font-size="12.5" font-weight="700" fill="#3c4d5d">성인 암 환자 대상 · 식물 치료 결과</text><g text-anchor="middle"><text x="110" y="153" font-size="12" fill="#555">우울감</text><text x="110" y="179" font-size="17" font-weight="800" fill="#d2483f">45% ▼</text><text x="260" y="153" font-size="12" fill="#555">스트레스</text><text x="260" y="179" font-size="17" font-weight="800" fill="#d2483f">34% ▼</text><text x="410" y="153" font-size="12" fill="#555">세로토닌</text><text x="410" y="179" font-size="17" font-weight="800" fill="#2f6fb0">40% ▲</text></g><text x="260" y="222" text-anchor="middle" font-size="11.5" fill="#566">→ 줄글 수치를 도표로, 수치 변화를 한눈에</text></svg>';
+    case "icons": return '<svg viewBox="0 0 520 138" width="100%" height="138" font-family="system-ui">'+ic(80,"💧","물")+ic(230,"☀️","햇빛")+ic(380,"🌱","흙")+'<text x="260" y="128" text-anchor="middle" font-size="11.5" fill="#566">→ 핵심어를 그림 기호로</text></svg>';
+    case "easy": return '<div style="display:flex;gap:12px;font-family:system-ui;"><div style="flex:1;background:#f6ead8;border-radius:11px;padding:12px 14px;"><div style="font-weight:700;color:#b76c1e;font-size:13.5px;">황사</div><div style="font-size:13px;color:#3c4946;margin-top:4px;line-height:1.5;">중국·몽골에서 바람에 날아온 <b>흙먼지</b></div></div><div style="flex:1;background:#d8ebe6;border-radius:11px;padding:12px 14px;"><div style="font-weight:700;color:#155e54;font-size:13.5px;">미세 먼지</div><div style="font-size:13px;color:#3c4946;margin-top:4px;line-height:1.5;">자동차·공장이 무언가를 태울 때 나오는 <b>아주 작은 먼지</b></div></div></div><div style="text-align:center;font-size:11.5px;color:#566;margin-top:9px;">→ 쉬운 말로 풀고, 둘을 견주어(대조) 보여 주기</div>';
+    case "path": return '<svg viewBox="0 0 520 118" width="100%" height="118" font-family="system-ui">'+ps(20,"코·코털",0)+pa(118)+ps(140,"기관지",1)+pa(238)+ps(260,"폐포",2)+pa(358)+ps(380,"혈관",3)+'<text x="260" y="108" text-anchor="middle" font-size="11.5" fill="#566">→ 글로 된 과정을 경로 그림으로</text></svg>';
+    case "interview": return '<div style="display:flex;align-items:center;gap:14px;font-family:system-ui;"><div style="width:58px;height:58px;border-radius:50%;background:#d8ebe6;display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0;">👩‍⚕️</div><div style="flex:1;background:#fff;border:1px solid #cdc6b4;border-radius:13px;padding:12px 15px;"><div style="font-size:13.5px;color:#2c3835;line-height:1.5;">"미세 먼지는 세계보건기구가 지정한 1급 발암 물질로, 건강에 큰 영향을 줍니다."</div><div style="font-size:12px;color:#6f7b78;margin-top:6px;">— 환경의학과 전문의 인터뷰 (보조 자료)</div></div></div><div style="text-align:center;font-size:11.5px;color:#566;margin-top:9px;">→ 전문가 인터뷰로 신뢰성 보강</div>';
+    case "demo": return '<svg viewBox="0 0 520 150" width="100%" height="150" font-family="system-ui"><rect x="150" y="14" width="220" height="100" rx="10" fill="#1f2a2e"/><text x="260" y="36" text-anchor="middle" font-size="12" font-weight="700" fill="#eaf4f1">미세 먼지 환기 방법</text><g fill="#eaf4f1" font-size="11"><text x="172" y="62">① 창문 열기</text><text x="172" y="80">② 짧게 환기</text><text x="172" y="98">③ 물걸레 청소</text></g><circle cx="320" cy="78" r="17" fill="rgba(255,255,255,.9)"/><path d="M315 70 L332 78 L315 86 Z" fill="#1f2a2e"/><text x="260" y="138" text-anchor="middle" font-size="11.5" fill="#566">→ 방법을 영상으로 촬영해 시연</text></svg>';
+    case "compare": return '<div style="display:flex;gap:10px;font-family:system-ui;"><div style="flex:1;background:#ece6f5;border-radius:11px;padding:11px;text-align:center;"><div style="font-weight:700;color:#6b4ea8;font-size:12.5px;">픽토그램</div><div style="font-size:27px;letter-spacing:5px;margin:7px 0;">🚻 ♿ 🚭</div><div style="font-size:11.5px;color:#5a5550;line-height:1.4;">하나의 뜻을<br>단순한 그림 기호로</div></div><div style="flex:1;background:#d8ebe6;border-radius:11px;padding:11px;text-align:center;"><div style="font-weight:700;color:#155e54;font-size:12.5px;">인포그래픽</div><svg viewBox="0 0 150 50" width="126" height="42" style="margin:6px auto 2px;"><rect x="0" y="0" width="150" height="50" rx="6" fill="#fff" stroke="#cfe6df"/><rect x="9" y="7" width="60" height="7" rx="2" fill="#155e54"/><rect x="11" y="24" width="8" height="18" rx="2" fill="#2f9e57"/><rect x="23" y="19" width="8" height="23" rx="2" fill="#2f9e57"/><rect x="35" y="30" width="8" height="12" rx="2" fill="#e0892f"/><circle cx="98" cy="21" r="11" fill="#d8ebe6"/><text x="98" y="26" font-size="12" text-anchor="middle">💧</text><text x="98" y="45" font-size="9" text-anchor="middle" fill="#155e54" font-weight="700">56%</text><text x="127" y="26" font-size="13" text-anchor="middle">☀️</text></svg><div style="font-size:11.5px;color:#5a5550;line-height:1.4;">여러 정보·수치를<br>그림과 도표로 종합</div></div></div>';
+    case "vtypes": return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;font-family:system-ui;">'+vt("📊","그래프","수치를 막대·선·원으로 나타낸 그림")+vt("🗂️","도표","그래프와 표를 아우르는 넓은 말")+vt("📋","표","정보를 행과 열로 정리")+vt("♿","픽토그램","하나의 뜻을 단순한 그림 기호로")+vt("📰","인포그래픽","여러 정보를 그림·도표로 종합")+vt("🎬","사진·영상","실제 모습·과정을 생생하게")+'</div>';
+    case "graphvs": return '<div style="display:flex;gap:10px;font-family:system-ui;"><div style="flex:1;background:#e7eff6;border-radius:11px;padding:11px;text-align:center;"><div style="font-weight:700;color:#2f6fb0;font-size:12.5px;">그래프</div><svg viewBox="0 0 150 54" width="120" height="43" style="margin:7px auto 4px;"><line x1="12" y1="46" x2="142" y2="46" stroke="#b9c4cf"/><rect x="26" y="26" width="15" height="20" rx="2" fill="#2f6fb0"/><rect x="58" y="15" width="15" height="31" rx="2" fill="#2f6fb0"/><rect x="90" y="32" width="15" height="14" rx="2" fill="#2f6fb0"/><polyline points="33,23 66,12 98,29 121,18" fill="none" stroke="#e0892f" stroke-width="2"/></svg><div style="font-size:11.5px;color:#5a5550;line-height:1.4;">변화·흐름을<br>막대·선으로 비교</div></div><div style="flex:1;background:#eef5ec;border-radius:11px;padding:11px;text-align:center;"><div style="font-weight:700;color:#3f7a4f;font-size:12.5px;">도표</div><svg viewBox="0 0 150 54" width="124" height="45" style="margin:6px auto 3px;"><rect x="4" y="4" width="142" height="46" rx="6" fill="#fff" stroke="#cfe2cd"/><text x="13" y="21" font-size="9" fill="#555">코르티솔</text><text x="90" y="21" font-size="9.5" font-weight="800" fill="#d2483f">56.5% ▼</text><text x="13" y="39" font-size="9" fill="#555">세로토닌</text><text x="90" y="39" font-size="9.5" font-weight="800" fill="#2f6fb0">40% ▲</text></svg><div style="font-size:11.5px;color:#5a5550;line-height:1.4;">결과를<br>체계적으로 정리</div></div></div>';
+    default: return "";
+  }
+}
+function bar(x,label,val,color,arrow){var h=Math.max(8,val*1.6),y=118-h;return '<g><rect x="'+x+'" y="'+y+'" width="46" height="'+h+'" rx="4" fill="'+color+'"/><text x="'+(x+23)+'" y="'+(y-5)+'" text-anchor="middle" font-size="11" font-weight="700" fill="'+color+'">'+val+'%'+arrow+'</text><text x="'+(x+23)+'" y="132" text-anchor="middle" font-size="10.5" fill="#566">'+label+'</text></g>';}
+function ic(cx,emoji,label){return '<g><circle cx="'+cx+'" cy="48" r="32" fill="#dcf2e4"/><text x="'+cx+'" y="58" text-anchor="middle" font-size="30">'+emoji+'</text><text x="'+cx+'" y="100" text-anchor="middle" font-size="14" font-weight="700" fill="#155e54">'+label+'</text></g>';}
+function ps(x,label,i){var c=["#d8ebe6","#cfe6df","#c5e0d7","#bcdbd0"];return '<g><rect x="'+x+'" y="28" width="96" height="46" rx="9" fill="'+c[i]+'"/><text x="'+(x+48)+'" y="56" text-anchor="middle" font-size="13" font-weight="700" fill="#155e54">'+label+'</text></g>';}
+function pa(x){return '<path d="M'+x+' 51 L'+(x+20)+' 51" stroke="#1f7a6e" stroke-width="2" marker-end="url(#pa)"/><defs><marker id="pa" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L7,4 L0,8" fill="#1f7a6e"/></marker></defs>';}
+function vt(ico,name,desc){return '<div style="display:flex;align-items:center;gap:9px;background:#f7f4ec;border:1px solid #e3ddcc;border-radius:9px;padding:8px 11px;"><span style="font-size:18px;flex-shrink:0;">'+ico+'</span><span><b style="font-size:13px;color:#23302d;">'+name+'</b><br><span style="font-size:11px;color:#5a6663;">'+desc+'</span></span></div>';}
+
+const $ = id => document.getElementById(id);
+let state = {stageKey:null, level:"easy", idx:0, items:[], answered:[], score:0, combo:0, best:0, startAt:0, elapsed:0, max:0};
+let pendingStage = null;
+let muted = false, actx = null;
+
+/* ── 온라인 모드 화면 전환 ── */
+if (IS_ONLINE) {
+  $("privacyOffline").style.display = "none";
+  $("privacyOnline").style.display = "block";
+  const ep = $("endPrivacy");
+  if (ep) ep.textContent = "학습 결과는 담당 선생님의 학습 관리 시스템에 자동 전송됩니다. 이름과 소감은 리포트 이미지(JPG) 생성에도 사용됩니다.";
+}
+
+/* ── 시작 화면 선택 ── */
+document.querySelectorAll(".stage").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll(".stage").forEach(x => x.classList.remove("sel"));
+  b.classList.add("sel"); pendingStage = b.dataset.stage; $("startGo").disabled = false;
+}));
+document.querySelectorAll(".lvl").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll(".lvl").forEach(x => x.classList.remove("sel"));
+  b.classList.add("sel"); state.level = b.dataset.lvl;
+}));
+$("startGo").addEventListener("click", () => { if (pendingStage) startStage(pendingStage); });
+
+/* ── 학생 인증 ── */
+async function doLogin(){
+  const idVal = $("loginId").value.trim(), nameVal = $("loginName").value.trim(), msg = $("loginMsg");
+  if(!/^\d{5}$/.test(idVal)){ msg.textContent = "학번은 5자리 숫자여야 합니다."; return; }
+  if(!nameVal){ msg.textContent = "이름을 입력하세요."; return; }
+  msg.textContent = ""; $("loginBtn").style.display = "none"; $("loginSpinner").style.display = "block";
+  const result = await verifyStudent(idVal, nameVal);
+  $("loginBtn").style.display = "block"; $("loginSpinner").style.display = "none";
+  if(result.status === "ok"){
+    STUDENT = {id:idVal, name:nameVal, className:result.className||"", verified:true};
+    $("loginOverlay").style.display = "none";
+    notifyGameStart(STUDENT.id, STUDENT.name, STUDENT.className);
+    doStartStage(pendingStage);
+  } else { msg.textContent = result.message || "인증에 실패했습니다."; }
+}
+function startStage(key){
+  if(IS_ONLINE && !STUDENT.verified){ pendingStage = key; $("loginOverlay").style.display = "flex"; $("loginId").focus(); return; }
+  if(IS_ONLINE && STUDENT.verified){ notifyGameStart(STUDENT.id, STUDENT.name, STUDENT.className); }
+  doStartStage(key);
+}
+function doStartStage(key){ showBrief(key); }
+
+function showBrief(key){
+  const s = STAGES[key].brief;
+  $("brTopic").textContent = s.topic; $("brPurpose").textContent = s.purpose;
+  $("brAud").textContent = s.audience; $("brPlace").textContent = s.place;
+  $("briefRight").textContent = STAGES[key].ico + " " + STAGES[key].short;
+  show("briefScreen");
+}
+$("briefGo").addEventListener("click", () => beginGame(pendingStage));
+
+function shuffle(arr){ const a = arr.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+
+function allItems(key){
+  const st = STAGES[key], out = [...(st.lead||[])];
+  st.groups.forEach(g => out.push(...g));
+  out.push(...(st.tail||[]));
+  return out;
+}
+
+function beginGame(key){
+  state.stageKey = key; const stage = STAGES[key];
+  let raw = [...(stage.lead||[])];
+  shuffle(stage.groups).forEach(g => raw.push(...g));
+  raw.push(...(stage.tail||[]));
+  state.items = raw.map(it => {
+    if(!it.opts) return {...it};
+    let opts = it.opts.slice(); const correct = opts[0];
+    if(state.level === "easy" && opts.length > 3){
+      const w = opts.slice(1); w.splice(Math.floor(Math.random()*w.length), 1); opts = [correct, ...w];
+    }
+    return {...it, _opts:shuffle(opts), _correct:correct};
+  });
+  state.idx = 0; state.score = 0; state.combo = 0; state.best = 0;
+  state.answered = new Array(state.items.length).fill(null);
+  state.max = maxScoreOf(state.items.length);
+  state.startAt = Date.now();
+  $("sideIco").textContent = stage.ico; $("sideName").textContent = stage.short;
+  $("bTopic").textContent = stage.brief.topic; $("bAud").textContent = stage.brief.audience; $("bPlace").textContent = stage.brief.place;
+  show("gameScreen"); renderQuestion();
+}
+
+function isResolved(i){ const r = state.answered[i]; return !!(r && (r.ok || r.revealed)); }
+
+function renderQuestion(){
+  const it = state.items[state.idx], total = state.items.length;
+  $("pnum").textContent = (state.idx+1) + " / " + total;
+  $("pfill").style.width = (total>1 ? (state.idx/(total-1))*100 : 100) + "%";
+  $("bandRight").textContent = (state.idx+1) + " / " + total + " · " + state.score + "점";
+  const badge = $("kindBadge"); badge.textContent = KIND_LABEL[it.kind]; badge.className = "kind-badge " + KIND_CLASS[it.kind];
+  refreshMeters();
+
+  if(it.card){
+    $("cardSrc").style.display = "flex"; $("cardType").textContent = it.card.type; $("cardTitle").textContent = it.card.ttl;
+    $("cardSrcName").textContent = "— " + it.card.src; $("cardBody").textContent = it.card.body;
+    const th = $("cardThumb");
+    if(it.card.thumb){ th.style.display = "block"; th.innerHTML = thumbHTML(it.card.thumb); }
+    else { th.style.display = "none"; th.innerHTML = ""; }
+  } else $("cardSrc").style.display = "none";
+
+  if(it.kind === "term" && it.visual){ $("termVisual").style.display = "block"; $("termVisualBody").innerHTML = afterHTML(it.visual); }
+  else $("termVisual").style.display = "none";
+
+  const locked = isResolved(state.idx), isFill = it.kind === "fill";
+  if(isFill){
+    $("qText").textContent = "빈칸에 알맞은 말을 채워 보세요.";
+    $("opts").style.display = "none"; $("fillWrap").style.display = "block"; renderFill(it, locked);
+  } else {
+    $("qText").textContent = it.q; $("fillWrap").style.display = "none"; $("opts").style.display = "flex";
+    const box = $("opts"); box.innerHTML = ""; const letters = ["1","2","3","4"];
+    it._opts.forEach((text, i) => {
+      const el = document.createElement("button"); el.className = "opt";
+      el.innerHTML = '<span class="lt">'+letters[i]+'</span><span>'+text+'</span>';
+      if(locked){ el.classList.add("locked"); if(text === it._correct) el.classList.add("correct"); else el.classList.add("dim"); }
+      else el.addEventListener("click", () => choose(i, el));
+      box.appendChild(el);
+    });
+  }
+  $("hintBox").style.display = "none";
+  $("hintBtn").style.display = (!isFill && state.level === "easy" && it.hint && !locked) ? "inline-block" : "none";
+  const fb = $("feedback"); fb.style.display = "none"; fb.innerHTML = ""; $("afterWrap").style.display = "none";
+  if(locked) showResolved(it, true);
+  $("btnPrev").disabled = false;
+  $("btnNext").textContent = (state.idx === total-1) ? "결과 보기 ▶" : "다음 ▶";
+}
+
+function renderFill(it, locked){
+  $("fillSentence").innerHTML = it.q.replace("___", '<span class="fill-blank">'+(locked?it.answer:"&nbsp;&nbsp;&nbsp;&nbsp;")+'</span>');
+  const inp = $("fillInput"); inp.value = locked ? it.answer : ""; inp.disabled = locked;
+  inp.classList.remove("shake"); $("fillSubmit").disabled = locked;
+  if(state.level === "easy" && !locked){ $("chosungHint").style.display = "inline-block"; $("chosungHint").innerHTML = '초성 힌트 · <b>'+it.chosung+'</b>'; }
+  else $("chosungHint").style.display = "none";
+  if(!locked) setTimeout(() => inp.focus(), 60);
+}
+
+function choose(i, el){
+  const it = state.items[state.idx];
+  if(isResolved(state.idx)) return;
+  const text = it._opts[i], ok = (text === it._correct);
+  if(ok){ el.classList.add("correct"); lockOptions(); markCorrect(it, text); }
+  else markWrong(it, () => { el.classList.add("wrong"); setTimeout(() => el.classList.remove("wrong"), 420); });
+}
+
+function submitFill(){
+  const it = state.items[state.idx];
+  if(it.kind !== "fill" || isResolved(state.idx)) return;
+  const val = $("fillInput").value.trim(); if(!val) return;
+  const norm = s => s.replace(/[\s·.,]/g, "").toLowerCase();
+  const ok = it.accept.some(a => norm(a) === norm(val));
+  if(ok){
+    $("fillInput").disabled = true; $("fillSubmit").disabled = true; $("chosungHint").style.display = "none";
+    const blank = document.querySelector(".fill-blank"); if(blank) blank.textContent = it.answer;
+    markCorrect(it, val);
+  } else markWrong(it, () => { const inp = $("fillInput"); inp.classList.add("shake"); setTimeout(() => inp.classList.remove("shake"), 420); });
+}
+
+function markCorrect(it, chosen){
+  const rec = state.answered[state.idx];
+  const firstOk = !rec;
+  let g = firstOk ? BASE_PT : RETRY_PT, bonus = 0;
+  if(firstOk){ state.combo++; if(state.combo > state.best) state.best = state.combo; bonus = comboBonus(state.combo); g += bonus; }
+  state.score += g;
+  state.answered[state.idx] = {chosen:chosen, ok:true, firstOk:firstOk, tries:(rec?rec.tries:0), revealed:false};
+  playSound(true);
+  showResolved(it, false, g);
+  refreshMeters(); $("hintBtn").style.display = "none";
+  const c = state.combo;
+  if(firstOk && (c === 3 || (c >= 5 && c % 5 === 0))) comboBanner(c, g);
+  else correctBanner(g, firstOk);
+}
+
+function markWrong(it, shakeFn){
+  playSound(false); state.combo = 0;
+  state.score = Math.max(0, state.score - PENALTY);
+  const rec = state.answered[state.idx];
+  const tries = (rec ? rec.tries : 0) + 1;
+  state.answered[state.idx] = {chosen:"", ok:false, firstOk:false, tries:tries, revealed:false};
+  const fb = $("feedback"); fb.style.display = "block";
+  if(tries >= 2){
+    state.answered[state.idx].revealed = true;
+    if(it.kind === "fill"){
+      $("fillInput").disabled = true; $("fillSubmit").disabled = true; $("chosungHint").style.display = "none";
+      const blank = document.querySelector(".fill-blank"); if(blank) blank.textContent = it.answer;
+      $("fillInput").value = it.answer;
+    } else lockOptions(true);
+    $("hintBtn").style.display = "none";
+    showResolved(it, true);
+  } else {
+    fb.innerHTML = '<div class="fb-hint"><b>❌ 다시 생각해 봐요.</b> ' + it.hint + '<br><span style="font-size:12.5px;opacity:.85">한 번 더 틀리면 정답과 해설을 보여 줄게요.</span></div>';
+  }
+  refreshMeters(); if(shakeFn) shakeFn();
+}
+
+function lockOptions(showAnswer){
+  const it = state.items[state.idx];
+  document.querySelectorAll("#opts .opt").forEach(el => {
+    const t = el.querySelector("span:last-child").textContent;
+    el.classList.add("locked");
+    if(t === it._correct){ if(showAnswer) el.classList.add("correct"); }
+    else el.classList.add("dim");
+    el.replaceWith(el.cloneNode(true));
+  });
+}
+
+function showResolved(it, review, g){
+  const fb = $("feedback"); fb.style.display = "block"; const rec = state.answered[state.idx];
+  const vis = it.explainVisual ? '<div class="ex-visual">'+afterHTML(it.explainVisual)+'</div>' : '';
+  if(rec && rec.revealed){
+    fb.innerHTML = '<div class="fb-reveal"><b>💡 정답을 알려 줄게요 · ' + (it._correct || it.answer) + '</b><br>' + it.explain + vis + '</div>';
+  } else {
+    const tag = (rec && rec.firstOk) ? "첫 시도 정답!" : "다시 풀어서 정답!";
+    const extra = (!review && g != null) ? ' <b>+'+g+'점</b>' : '';
+    fb.innerHTML = '<div class="fb-ok"><b>✅ '+tag+'</b>'+extra+'<br>'+it.explain+vis+'</div>';
+  }
+  if(it.after){ $("afterWrap").style.display = "block"; $("afterStage").innerHTML = afterHTML(it.after); }
+  else $("afterWrap").style.display = "none";
+}
+
+function refreshMeters(){
+  $("scoreMeter").innerHTML = "점수 <b>"+state.score+"</b>";
+  const cm = $("comboMeter"); cm.innerHTML = "🔥 콤보 <b>"+state.combo+"</b>";
+  cm.className = state.combo >= 2 ? "meter combo-on" : "meter";
+  if(state.combo >= 2){ cm.animate([{transform:"scale(1)"},{transform:"scale(1.18)"},{transform:"scale(1)"}], {duration:320}); }
+  const total = state.items.length;
+  $("bandRight").textContent = (state.idx+1) + " / " + total + " · " + state.score + "점";
+}
+
+/* ── 배너 ── */
+let bannerTimer = null;
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function showBanner(html, ms){
+  const dim = $("bannerDim"), b = $("banner");
+  b.innerHTML = html; dim.classList.add("on");
+  b.classList.remove("pop"); void b.offsetWidth; if(!reduceMotion) b.classList.add("pop");
+  clearTimeout(bannerTimer); bannerTimer = setTimeout(hideBanner, ms || 900);
+}
+function hideBanner(){ $("bannerDim").classList.remove("on"); clearTimeout(bannerTimer); }
+function correctBanner(g, firstOk){
+  const rays = reduceMotion ? "" : '<div class="rays"></div>';
+  showBanner(rays + '<div class="bt">정답!</div><div class="bs" id="cntUp">+0점</div>', 900);
+  countUp(g);
+  if(!reduceMotion) confetti(46);
+}
+function comboBanner(c, g){
+  const rays = reduceMotion ? "" : '<div class="rays"></div>';
+  const txt = c === 3 ? "3콤보! 🔥" : (c === 5 || c === 10 ? c+"콤보! 🎉🎊" : "🌟 "+c+"연속! 최고예요");
+  showBanner(rays + '<div class="bt">'+txt+'</div><div class="bs" id="cntUp">+0점</div>', 1200);
+  countUp(g);
+  playCombo(c);
+  if(!reduceMotion) confetti(c >= 5 ? 90 : 60);
+}
+function countUp(g){
+  const el = $("cntUp"); if(!el) return;
+  let v = 0; const step = Math.max(1, Math.round(g/12));
+  const t = setInterval(() => { v = Math.min(g, v+step); el.textContent = "+"+v+"점"; if(v >= g) clearInterval(t); }, 28);
+}
+/* 색종이 */
+const cvC = $("confetti"); let parts = [], rafId = null;
+function confetti(n){
+  cvC.style.display = "block"; cvC.width = innerWidth; cvC.height = innerHeight;
+  const cols = ["#F58A2E","#FFD166","#2F9E57","#1B3A5C","#E8B43C","#FFFFFF"];
+  for(let i=0;i<n;i++) parts.push({x:innerWidth/2+(Math.random()-.5)*260, y:innerHeight/2, vx:(Math.random()-.5)*9,
+    vy:-Math.random()*11-4, g:.36, r:Math.random()*Math.PI, vr:(Math.random()-.5)*.3, s:5+Math.random()*6,
+    c:cols[Math.floor(Math.random()*cols.length)], life:0});
+  if(!rafId) rafId = requestAnimationFrame(tick);
+}
+function tick(){
+  const ctx = cvC.getContext("2d"); ctx.clearRect(0,0,cvC.width,cvC.height);
+  parts = parts.filter(p => p.life < 90);
+  parts.forEach(p => { p.life++; p.vy += p.g; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+    ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.r); ctx.fillStyle = p.c; ctx.globalAlpha = Math.max(0,1-p.life/90);
+    ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*.62); ctx.restore(); });
+  if(parts.length) rafId = requestAnimationFrame(tick);
+  else { rafId = null; cvC.style.display = "none"; }
+}
+
+/* ── 힌트 · 입력 ── */
+$("hintBtn").addEventListener("click", () => {
+  const it = state.items[state.idx], hb = $("hintBox");
+  hb.style.display = "block"; hb.innerHTML = '<b>💡 힌트 ·</b> ' + it.hint; $("hintBtn").style.display = "none";
+});
+$("fillSubmit").addEventListener("click", submitFill);
+$("fillInput").addEventListener("keydown", e => { if(e.key === "Enter"){ e.stopPropagation(); submitFill(); } });
+
+/* ── 내비게이션 ── */
+function goPrev(){ if(state.idx > 0){ state.idx--; renderQuestion(); } }
+function goNext(){ hideBanner(); if(state.idx < state.items.length-1){ state.idx++; renderQuestion(); } else finishStage(); }
+$("btnPrev").addEventListener("click", goPrev);
+$("btnNext").addEventListener("click", goNext);
+$("btnQuit").addEventListener("click", () => { if(confirm("게임을 끝내고 결과를 볼까요?")) finishStage(); });
+document.addEventListener("keydown", e => {
+  if(!$("gameScreen").classList.contains("active")) return;
+  if(document.activeElement && document.activeElement.id === "fillInput") return;
+  if(e.key === "Enter" || e.key === " " || e.key === "ArrowRight"){
+    e.preventDefault();
+    if(isResolved(state.idx)) goNext();
+    else { const it = state.items[state.idx]; if(it.kind === "fill") $("fillInput").focus(); }
+  } else if(e.key === "ArrowLeft"){ e.preventDefault(); goPrev(); }
+});
+
+function show(id){ document.querySelectorAll(".screen").forEach(s => s.classList.remove("active")); $(id).classList.add("active"); window.scrollTo(0,0); }
+
+/* ── 사운드 ── */
+$("muteBtn").addEventListener("click", () => { muted = !muted; $("muteBtn").textContent = muted ? "🔇" : "🔊"; });
+function tone(freq,start,dur,type,vol){ const o=actx.createOscillator(),g=actx.createGain(); o.type=type||"sine";
+  o.frequency.value=freq; g.gain.setValueAtTime(vol||0.16,start); g.gain.exponentialRampToValueAtTime(0.001,start+dur);
+  o.connect(g); g.connect(actx.destination); o.start(start); o.stop(start+dur); }
+function playSound(ok){ if(muted) return; try{ actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+  const now = actx.currentTime;
+  if(ok) [523,659,784,1047].forEach((f,i) => tone(f, now+i*0.07, 0.09, "sine"));
+  else { tone(220,now,0.16,"sawtooth",0.12); tone(165,now+0.08,0.18,"sawtooth",0.12); } }catch(e){} }
+function playCombo(c){ if(muted) return; try{ actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+  const now = actx.currentTime;
+  if(c === 3) [659,784,988].forEach((f,i) => tone(f, now+i*0.09, 0.13, "triangle"));
+  else { [523,659,784,1047,1319].forEach((f,i) => tone(f, now+i*0.08, 0.16, "triangle")); noise(now+0.1); noise(now+0.3); } }catch(e){} }
+function noise(at){ const len = actx.sampleRate*0.25, buf = actx.createBuffer(1,len,actx.sampleRate), d = buf.getChannelData(0);
+  for(let i=0;i<len;i++) d[i] = (Math.random()*2-1) * (1 - i/len);
+  const s = actx.createBufferSource(), g = actx.createGain(); s.buffer = buf; g.gain.value = 0.09;
+  s.connect(g); g.connect(actx.destination); s.start(at); }
+
+/* ══ 결과 집계 ══ */
+function qTextOf(it){ return it.kind === "fill" ? it.q.replace("___","◻︎") : it.q; }
+function ansOf(it){ return it._correct || it.answer; }
+function catStats(){
+  const m = {};
+  state.items.forEach((it,i) => {
+    const r = state.answered[i]; if(!r) return;           // 미응답은 분모에서 제외
+    const c = it.cat; m[c] = m[c] || {n:0, ok:0};
+    m[c].n++; if(r.firstOk) m[c].ok++;
+  });
+  return m;
+}
+function verdictOf(acc){
+  if(acc >= 95) return "완벽해요!";
+  if(acc >= 85) return "아주 잘했어요";
+  if(acc >= 70) return "잘하고 있어요";
+  if(acc >= 50) return "기본은 잡혔어요";
+  return "다시 한 번 도전해요";
+}
+let R = {};
+function finishStage(){
+  hideBanner();
+  const stage = STAGES[state.stageKey], total = state.items.length;
+  state.elapsed = Date.now() - state.startAt;
+  const answered = state.answered.filter(a => a).length;
+  const firstOk  = state.answered.filter(a => a && a.firstOk).length;
+  const retryOk  = state.answered.filter(a => a && a.ok && !a.firstOk).length;
+  const miss     = state.answered.filter(a => a && !a.ok).length;
+  const skipped  = total - answered;
+  const acc = answered ? Math.round(firstOk/answered*100) : 0;
+  const mins = Math.floor(state.elapsed/60000), secs = Math.round(state.elapsed/1000)%60;
+
+  const stats = catStats();
+  const good = [], bad = [];
+  Object.keys(stats).forEach(c => {
+    const s = stats[c]; if(s.n < 2) return;               // 1문항뿐인 유형은 표시하지 않음
+    const rate = s.ok/s.n;
+    if(rate === 1) good.push({c, s});
+    else if(rate < 0.5) bad.push({c, s});
+  });
+  let focus = null, allLow = false;
+  const multi = Object.keys(stats).filter(c => stats[c].n >= 2);
+  if(multi.length && multi.every(c => stats[c].ok/stats[c].n < 0.5)) allLow = true;
+  const cands = multi.map(c => ({c, wrong:stats[c].n-stats[c].ok, rate:stats[c].ok/stats[c].n, n:stats[c].n}))
+                     .filter(x => x.wrong > 0)
+                     .sort((a,b) => b.wrong-a.wrong || a.rate-b.rate || b.n-a.n);
+  if(cands.length) focus = cands[0].c;
+
+  const wrongs = []; state.items.forEach((it,i) => { const a = state.answered[i]; if(a && !a.firstOk) wrongs.push(it); });
+  const wrongIds = []; state.items.forEach((it,i) => { const a = state.answered[i]; if(a && !a.ok) wrongIds.push(it.id); });
+
+  R = {stage, total, answered, firstOk, retryOk, miss, skipped, acc, mins, secs, stats, good, bad, focus, allLow, wrongs};
+  window._wrongs = wrongs;
+
+  /* 화면 채우기 */
+  $("endTitle").textContent = stage.ico + " " + stage.short + " — 정비 완료!";
+  $("endRight").textContent = stage.ico + " " + stage.short + " · " + (state.level === "easy" ? "쉬움" : "어려움");
+  $("finalScore").textContent = state.score; $("maxScore").textContent = state.max;
+  $("finalAcc").textContent = acc + "%"; $("finalCombo").textContent = state.best;
+  $("finalTime").textContent = mins + "분 " + secs + "초";
+  let v = (skipped ? '끝까지 풀지 않았어요 ('+skipped+'문항 남음)<br>' : '') + verdictOf(acc);
+  v += '<div class="sub">첫 시도 정답 '+firstOk+' · 다시 풀어 맞힘 '+retryOk+' · 못 맞힘 '+miss+
+       (skipped ? ' · 미응답 '+skipped : '') + '</div>';
+  $("verdict").innerHTML = v;
+  $("goodTypes").innerHTML = good.length
+    ? good.map(g => CATEGORIES[g.c].ico+' <b>'+CATEGORIES[g.c].label+'</b> '+g.s.ok+'/'+g.s.n).join("<br>")
+    : '<span style="color:#6E7B8A">아직 완벽하게 맞힌 유형이 없어요.</span>';
+  $("badTypes").innerHTML = bad.length
+    ? bad.map(g => CATEGORIES[g.c].ico+' <b>'+CATEGORIES[g.c].label+'</b> '+g.s.ok+'/'+g.s.n).join("<br>")
+    : '<span style="color:#6E7B8A">특별히 보완할 유형이 없어요.</span>';
+  $("advice").innerHTML = adviceHTML();
+
+  $("noteName").value = IS_ONLINE && STUDENT.verified ? STUDENT.name : "";
+  if(IS_ONLINE && STUDENT.verified){ $("noteName").readOnly = true; $("noteName").style.background = "#F4F0E4"; }
+
+  /* 연동 모드: 결과 전송 */
+  if(IS_ONLINE && STUDENT.verified){
+    submitResult({
+      studentId:STUDENT.id, studentName:STUDENT.name, className:STUDENT.className,
+      stage:stage.short + " / " + (state.level === "easy" ? "쉬움" : "어려움"),
+      totalQuestions:total, answeredCount:answered, skippedCount:skipped,
+      correctCount:firstOk, retryCorrectCount:retryOk, score:state.score, maxScore:state.max,
+      accuracy:acc, bestCombo:state.best, elapsedSeconds:Math.round(state.elapsed/1000),
+      wrongItems:wrongIds.join(","), reflection:""
+    }).then(res => {
+      const el = document.createElement("div"); el.className = "sendmsg";
+      if(res.status === "ok"){ el.style.background = "#e8f5e9"; el.style.color = "#2e7d32"; el.textContent = "✅ 결과가 선생님께 전송되었습니다."; }
+      else { el.style.background = "#ffebee"; el.style.color = "#c62828";
+        el.innerHTML = '❌ 전송 실패 <button onclick="this.parentElement.remove();finishStage();" style="margin-left:8px;padding:4px 12px;border:1px solid #c62828;border-radius:6px;background:#fff;color:#c62828;cursor:pointer;font-size:12px;font-family:inherit">재전송</button>'; }
+      const p = $("endPrivacy"); if(p) p.before(el);
+    });
+  }
+  show("endScreen");
+}
+function adviceText(){
+  if(R.allLow) return "유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.";
+  if(!R.focus) return "약점이 보이지 않아요. 다음 사례에 도전해 보세요.";
+  const c = CATEGORIES[R.focus];
+  return c.label + " — " + c.tip;
+}
+function adviceHTML(){
+  const t = adviceText();
+  return '<b>🎯 가장 먼저 공부할 것</b><br>' + t;
+}
+
+/* ══ 종료 화면 버튼 ══ */
+$("retryBtn").addEventListener("click", () => beginGame(state.stageKey));
+$("homeBtn").addEventListener("click", () => show("startScreen"));
+$("downloadBtn").addEventListener("click", downloadNote);
+$("reportBtn").addEventListener("click", downloadReport);
+$("reviewBtn").addEventListener("click", openReview);
+$("reviewClose").addEventListener("click", () => $("reviewModal").classList.remove("on"));
+$("reviewModal").addEventListener("click", e => { if(e.target.id === "reviewModal") $("reviewModal").classList.remove("on"); });
+
+function openReview(){
+  $("reviewSub").textContent = "이번 판에 나온 " + state.items.length + "문항입니다. (" + R.stage.short + ")";
+  $("reviewList").innerHTML = state.items.map(it =>
+    '<div class="rv"><span class="tag '+KIND_CLASS[it.kind]+'">'+CATEGORIES[it.cat].label+'</span>'+
+    '<div class="rq">'+qTextOf(it)+'</div>'+
+    '<div class="ra">✅ 정답 · '+ansOf(it)+'</div>'+
+    '<div class="re">'+it.explain+'</div></div>').join("");
+  $("reviewModal").classList.add("on");
+}
+
+/* ══ 공통 캔버스 도구 ══ */
+const SF = "system-ui,-apple-system,'Malgun Gothic',sans-serif";
+function wrap(ctx, text, maxW, font){
+  ctx.font = font; const lines = []; let cur = "";
+  text.split("").forEach(ch => { if(ctx.measureText(cur+ch).width > maxW){ lines.push(cur); cur = ch; } else cur += ch; });
+  if(cur) lines.push(cur); return lines;
+}
+function roundBox(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function stamp(){
+  const d = new Date(), p = n => String(n).padStart(2,"0");
+  return {ymd:d.getFullYear()+"."+p(d.getMonth()+1)+"."+p(d.getDate()),
+          hm:p(d.getHours())+":"+p(d.getMinutes()),
+          file:d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+"_"+p(d.getHours())+p(d.getMinutes())};
+}
+function needName(){
+  const n = $("noteName").value.trim();
+  if(!n){ alert("이름을 먼저 입력해 주세요."); $("noteName").focus(); return null; }
+  return n;
+}
+function saveJPG(cv, filename){
+  const a = document.createElement("a"); a.href = cv.toDataURL("image/jpeg", 0.94); a.download = filename; a.click();
+}
+const PRIV_OFF = "본 게임은 서버로 데이터를 전송·저장하지 않습니다. 이름과 소감은 이 이미지를 만드는 데에만 쓰입니다.";
+const PRIV_ON  = "학습 결과는 담당 선생님의 학습 관리 시스템에 전송됩니다. 이름과 소감은 이 이미지 생성에도 쓰입니다.";
+const CREDIT_LINE = "제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com";
+
+/* ══ 산출물 ① 오답노트 JPG ══ */
+function downloadNote(){
+  const name = needName(); if(!name) return;
+  const wrongs = window._wrongs || [], stage = R.stage, st = stamp();
+  const lvl = state.level === "easy" ? "쉬움" : "어려움";
+  const W = 860, pad = 40, cv = document.createElement("canvas"), ctx = cv.getContext("2d");
+  const inner = W - 2*pad - 36;
+  const blocks = wrongs.map(it => {
+    const q = wrap(ctx, qTextOf(it), inner, "bold 17px "+SF);
+    const a = wrap(ctx, "✅ 정답 · " + ansOf(it), inner, "16px "+SF);
+    const e = wrap(ctx, it.explain, inner, "13px "+SF);
+    const h = 18+22 + q.length*25 + 8 + a.length*23 + 6 + e.length*20 + 18;
+    return {kl:CATEGORIES[it.cat].label, q, a, e, h};
+  });
+  let body = 0; blocks.forEach(b => body += b.h + 14);
+  const H = 172 + (wrongs.length ? body : 96) + 62;
+  cv.width = W; cv.height = H;
+  ctx.fillStyle = "#FFFBEC"; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle = "#F58A2E"; ctx.fillRect(0,0,W,10);
+  ctx.fillStyle = "#1B3A5C"; ctx.font = "bold 26px "+SF;
+  ctx.fillText("📒 발표 자료 정비소 — 오답노트", pad, 58);
+  ctx.fillStyle = "#333A45"; ctx.font = "15px "+SF;
+  ctx.fillText("사례 · " + stage.short + " (" + lvl + ")    이름 · " + name + "    완료 · " + st.ymd + " " + st.hm, pad, 88);
+  ctx.fillStyle = "#6E7B8A"; ctx.font = "14px "+SF;
+  ctx.fillText("점수 " + state.score + " / " + state.max + "점 · 첫 시도 정답률 " + R.acc + "%", pad, 114);
+  ctx.strokeStyle = "#E8D6A8"; ctx.beginPath(); ctx.moveTo(pad,134); ctx.lineTo(W-pad,134); ctx.stroke();
+  let y = 162;
+  if(!wrongs.length){
+    ctx.fillStyle = "#2F9E57"; ctx.font = "bold 20px "+SF;
+    ctx.fillText("🎉 축하해요! 모든 문제를 첫 시도에 맞혔어요.", pad, y+36);
+    ctx.fillStyle = "#1F6E3E"; ctx.font = "16px "+SF;
+    ctx.fillText(stage.short + " 자료를 보는 안목이 훌륭해요!", pad, y+66);
+  } else blocks.forEach(b => {
+    ctx.fillStyle = "#FFFFFF"; ctx.strokeStyle = "#FBE9B8"; roundBox(ctx,pad,y,W-2*pad,b.h,12); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = "#D2483F"; ctx.fillRect(pad,y,5,b.h);
+    let yy = y+24; const lx = pad+18;
+    ctx.fillStyle = "#8A6D1F"; ctx.font = "bold 13px "+SF; ctx.fillText("[" + b.kl + "]", lx, yy); yy += 22;
+    ctx.fillStyle = "#1B3A5C"; ctx.font = "bold 17px "+SF; b.q.forEach(l => { ctx.fillText(l,lx,yy); yy += 25; }); yy += 6;
+    ctx.fillStyle = "#2F9E57"; ctx.font = "16px "+SF; b.a.forEach(l => { ctx.fillText(l,lx,yy); yy += 23; }); yy += 4;
+    ctx.fillStyle = "#64748b"; ctx.font = "13px "+SF; b.e.forEach(l => { ctx.fillText(l,lx,yy); yy += 20; });
+    y += b.h + 14;
+  });
+  ctx.fillStyle = "#9AA6B2"; ctx.font = "12px "+SF;
+  ctx.fillText("🔒 " + (IS_ONLINE ? PRIV_ON : PRIV_OFF), pad, H-40);
+  ctx.fillText(CREDIT_LINE + " · " + MADE_DATE, pad, H-20);
+  saveJPG(cv, name + "_오답노트_" + stage.short.replace(/\s/g,"") + "_" + lvl + "_" + st.file + ".jpg");
+}
+
+/* ══ 산출물 ② 학습 결과 분석 리포트 JPG ══ */
+function downloadReport(){
+  const name = needName(); if(!name) return;
+  const stage = R.stage, st = stamp(), ref = $("noteRef").value.trim();
+  const lvl = state.level === "easy" ? "쉬움" : "어려움";
+  const W = 860, pad = 40, cv = document.createElement("canvas"), ctx = cv.getContext("2d");
+  const inner = W - 2*pad - 32;
+  const advL = wrap(ctx, adviceText(), inner, "14px "+SF);
+  const refL = ref ? wrap(ctx, ref, inner, "14px "+SF) : [];
+  const achL = wrap(ctx, ACH_CODE + " " + ACH_TEXT, W-2*pad, "12px "+SF);
+  const goodN = Math.max(1, R.good.length), badN = Math.max(1, R.bad.length);
+  const H = 150 + 92 + 66 + (74 + Math.max(goodN,badN)*24) + (54 + advL.length*21)
+          + (ref ? 46 + refL.length*21 : 0) + 30 + achL.length*18 + 46;
+  cv.width = W; cv.height = H;
+  ctx.fillStyle = "#FFFBEC"; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle = "#F58A2E"; ctx.fillRect(0,0,W,10);
+  ctx.fillStyle = "#1B3A5C"; ctx.font = "bold 26px "+SF;
+  ctx.fillText("📊 발표 자료 정비소 — 학습 리포트", pad, 58);
+  ctx.fillStyle = "#333A45"; ctx.font = "15px "+SF;
+  ctx.fillText("사례 · " + stage.short + " (" + lvl + ")    이름 · " + name + "    완료 · " + st.ymd + " " + st.hm, pad, 88);
+  ctx.strokeStyle = "#E8D6A8"; ctx.beginPath(); ctx.moveTo(pad,108); ctx.lineTo(W-pad,108); ctx.stroke();
+
+  /* 요약 수치 */
+  let y = 126;
+  const cells = [["점수", state.score + " / " + state.max], ["첫 시도 정답률", R.acc + "%"],
+                 ["최고 콤보", state.best], ["소요 시간", R.mins + "분 " + R.secs + "초"]];
+  const cw = (W - 2*pad - 3*10)/4;
+  cells.forEach((c,i) => {
+    const x = pad + i*(cw+10);
+    ctx.fillStyle = "#FFFFFF"; ctx.strokeStyle = "#FBE9B8"; roundBox(ctx,x,y,cw,74,12); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = "#D9741C"; ctx.font = "bold 22px "+SF; ctx.textAlign = "center";
+    ctx.fillText(String(c[1]), x+cw/2, y+38);
+    ctx.fillStyle = "#6E7B8A"; ctx.font = "12px "+SF; ctx.fillText(c[0], x+cw/2, y+60); ctx.textAlign = "left";
+  });
+  y += 92;
+  /* 총평 */
+  ctx.fillStyle = "#FFF3E2"; ctx.strokeStyle = "#FBE9B8"; roundBox(ctx,pad,y,W-2*pad,56,12); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = "#1B3A5C"; ctx.font = "bold 17px "+SF;
+  ctx.fillText((R.skipped ? "끝까지 풀지 않았어요 (" + R.skipped + "문항 남음) · " : "") + verdictOf(R.acc), pad+16, y+24);
+  ctx.fillStyle = "#6E7B8A"; ctx.font = "13px "+SF;
+  ctx.fillText("첫 시도 정답 " + R.firstOk + " · 다시 풀어 맞힘 " + R.retryOk + " · 못 맞힘 " + R.miss +
+               (R.skipped ? " · 미응답 " + R.skipped : ""), pad+16, y+45);
+  y += 66;
+  /* 유형 분석 */
+  const bw = (W - 2*pad - 12)/2, bh = 50 + Math.max(goodN,badN)*24;
+  [["👍 잘하는 유형", R.good, "#2F9E57", "특별히 완벽한 유형이 없어요."],
+   ["🔧 보완이 필요한 유형", R.bad, "#D2483F", "특별히 보완할 유형이 없어요."]].forEach((col,i) => {
+    const x = pad + i*(bw+12);
+    ctx.fillStyle = "#FFFFFF"; ctx.strokeStyle = "#FBE9B8"; roundBox(ctx,x,y,bw,bh,12); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = "#1B3A5C"; ctx.font = "bold 14px "+SF; ctx.fillText(col[0], x+16, y+26);
+    ctx.font = "14px "+SF;
+    if(col[1].length){ ctx.fillStyle = col[2];
+      col[1].forEach((g,k) => ctx.fillText(CATEGORIES[g.c].label + "  " + g.s.ok + "/" + g.s.n, x+16, y+52+k*24)); }
+    else { ctx.fillStyle = "#9AA6B2"; ctx.fillText(col[3], x+16, y+52); }
+  });
+  y += bh + 14;
+  /* 가장 먼저 공부할 것 */
+  const ah = 34 + advL.length*21;
+  ctx.fillStyle = "#FFF4D6"; ctx.strokeStyle = "#F0DCA8"; roundBox(ctx,pad,y,W-2*pad,ah,12); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = "#E8B43C"; ctx.fillRect(pad,y,5,ah);
+  ctx.fillStyle = "#6E5410"; ctx.font = "bold 14px "+SF; ctx.fillText("🎯 가장 먼저 공부할 것", pad+18, y+22);
+  ctx.fillStyle = "#8A6D1F"; ctx.font = "14px "+SF;
+  advL.forEach((l,k) => ctx.fillText(l, pad+18, y+44+k*21));
+  y += ah + 14;
+  /* 학습 소감 */
+  if(ref){
+    const rh = 30 + refL.length*21;
+    ctx.fillStyle = "#FFFFFF"; ctx.strokeStyle = "#FBE9B8"; roundBox(ctx,pad,y,W-2*pad,rh,12); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = "#1B3A5C"; ctx.font = "bold 13px "+SF; ctx.fillText("✍️ 학습 소감", pad+16, y+20);
+    ctx.fillStyle = "#333A45"; ctx.font = "14px "+SF;
+    refL.forEach((l,k) => ctx.fillText(l, pad+16, y+40+k*21));
+    y += rh + 14;
+  }
+  /* 꼬리말 */
+  ctx.strokeStyle = "#E8D6A8"; ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(W-pad,y); ctx.stroke();
+  y += 20;
+  ctx.fillStyle = "#6E7B8A"; ctx.font = "12px "+SF;
+  achL.forEach((l,k) => ctx.fillText(l, pad, y+k*18));
+  y += achL.length*18 + 6;
+  ctx.fillStyle = "#9AA6B2";
+  ctx.fillText("🔒 " + (IS_ONLINE ? PRIV_ON : PRIV_OFF), pad, y);
+  ctx.fillText(CREDIT_LINE + " · " + MADE_DATE, pad, y+18);
+  saveJPG(cv, name + "_학습리포트_" + stage.short.replace(/\s/g,"") + "_" + lvl + "_" + st.file + ".jpg");
+}
+
+/* ══ 교사용 학습 데이터 목록 (엑셀) ══ */
+function xesc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function xrow(cells, style){
+  return "<Row>" + cells.map(c => '<Cell'+(style?' ss:StyleID="'+style+'"':'')+'><Data ss:Type="String">'+xesc(c)+'</Data></Cell>').join("") + "</Row>";
+}
+function xsheet(title, rows){
+  return '<Worksheet ss:Name="'+xesc(title)+'"><Table>'+
+    '<Column ss:Width="46"/><Column ss:Width="96"/><Column ss:Width="420"/><Column ss:Width="150"/><Column ss:Width="330"/>'+
+    rows.join("") + '</Table></Worksheet>';
+}
+function downloadTeacherXls(){
+  const sheets = [];
+  Object.keys(STAGES).forEach(key => {
+    const st = STAGES[key], items = allItems(key), rows = [];
+    rows.push(xrow(["원본 id","유형","문제(예문)","정답","해설"], "hd"));
+    items.forEach(it => {
+      const q = (it.card ? "[" + it.card.type + " · " + it.card.ttl + " / " + it.card.src + "] " + it.card.body + "  ▶ " : "") + qTextOf(it);
+      rows.push(xrow([it.id, CATEGORIES[it.cat].label, q, ansOf(it), it.explain]));
+    });
+    rows.push(xrow([""]));
+    rows.push(xrow(["성취기준", ACH_CODE + " " + ACH_TEXT]));
+    rows.push(xrow(["배점 규칙", "첫 시도 정답 +" + BASE_PT + " · 재시도 정답 +" + RETRY_PT + " · 오답 −" + PENALTY + "(하한 0) · 3~4콤보 +5 · 5콤보 이상 +10"]));
+    rows.push(xrow(["총문항 수", items.length + "문항 · 만점 " + maxScoreOf(items.length) + "점"]));
+    rows.push(xrow(["크레딧", CREDIT_LINE + " · 제작일 " + MADE_DATE + " · 최종 수정 " + LAST_MOD]));
+    sheets.push(xsheet(st.short, rows));
+  });
+  /* 유형별 요약 */
+  const sum = [];
+  sum.push(xrow(["유형 코드","유형명","설명","학습 조언(tip)","문항 수(반려 식물 / 미세 먼지)"], "hd"));
+  Object.keys(CATEGORIES).forEach(c => {
+    const n1 = allItems("plant").filter(it => it.cat === c).length;
+    const n2 = allItems("dust").filter(it => it.cat === c).length;
+    sum.push(xrow([c, CATEGORIES[c].label, CATEGORIES[c].desc, CATEGORIES[c].tip, n1 + " / " + n2]));
+  });
+  sum.push(xrow([""]));
+  sum.push(xrow(["게임 코드", GAME_CONFIG.gameCode + " · " + GAME_CONFIG.gameName]));
+  sum.push(xrow(["성취기준", ACH_CODE + " " + ACH_TEXT]));
+  sum.push(xrow(["총문항 수", allItems("plant").length + " + " + allItems("dust").length + " = " +
+    (allItems("plant").length + allItems("dust").length) + "문항 · 만점 " +
+    maxScoreOf(allItems("plant").length) + " / " + maxScoreOf(allItems("dust").length) + "점"]));
+  sum.push(xrow(["크레딧", CREDIT_LINE + " · 제작일 " + MADE_DATE + " · 최종 수정 " + LAST_MOD]));
+  sheets.push(xsheet("유형별 요약", sum));
+
+  const xml = '<?xml version="1.0" encoding="UTF-8"?>\n<?mso-application progid="Excel.Sheet"?>\n' +
+    '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">' +
+    '<Styles><Style ss:ID="hd"><Font ss:Bold="1"/><Interior ss:Color="#FBE9B8" ss:Pattern="Solid"/></Style></Styles>' +
+    sheets.join("") + '</Workbook>';
+  const d = new Date(), p = n => String(n).padStart(2,"0");
+  const fn = GAME_CONFIG.gameCode + "_발표자료정비소_학습데이터목록_" + d.getFullYear() + p(d.getMonth()+1) + p(d.getDate()) + ".xls";
+  const blob = new Blob(["\ufeff" + xml], {type:"application/vnd.ms-excel"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = fn; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+(function(){ const t = $("lastMod"); if(t){ t.style.cursor = "default"; t.addEventListener("click", downloadTeacherXls); } })();
+</script>
+</body>
+</html>
