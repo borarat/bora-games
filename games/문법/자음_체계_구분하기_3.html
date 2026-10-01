@@ -3,7 +3,8 @@
 <!-- 리모델링 2026.10.01 02:20 (1차 야간)
      문항: 소리의 세기 단계에서 ㅎ 제외 (교과서: ㅎ은 세기 분류에 넣지 않음) → 15문항에서 14문항
      용어: 비음 → 비음(콧소리), 유음 → 유음(흐름소리) (교과서 괄호 병기). 단답형은 비음·콧소리·비음(콧소리) 모두 인정
-     해설: ㅇ 해설에 '첫소리 ㅇ은 소리가 없다' 안내 추가 (받침 발음 설명은 넣지 않음 — 교사 결정) -->
+     해설: ㅇ 해설에 '첫소리 ㅇ은 소리가 없다' 안내 추가 (받침 발음 설명은 넣지 않음 — 교사 결정)
+     2026.10.01 13:00 피드백: 오답 시 '정답은 ~이에요/예요' 조사를 받침 유무로 선택 · 단답형: 콧소리(비음)·흐름소리(유음)처럼 괄호 앞뒤를 바꾼 답도 인정 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -298,7 +299,7 @@ button{cursor:pointer}
     </div>
 
     <div class="start-foot">
-     <div class="credit">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.08.13 · <span id="lastMod">최종 수정 2026.10.01 02:20</span></div>
+     <div class="credit">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.08.13 · <span id="lastMod">최종 수정 2026.10.01 13:00</span></div>
      <div>
       <div class="privacy" id="privacyOffline">
        <b>🔒 개인정보 보호 안내</b><br>
@@ -447,7 +448,7 @@ button{cursor:pointer}
 
 <script>
 const MADE_DATE='2026.08.13';
-const LAST_MOD='2026.10.01 02:20';
+const LAST_MOD='2026.10.01 13:00';
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -584,9 +585,10 @@ const STAGES=[
 const PAIRS=[['ㄱ','ㄲ','ㅋ'],['ㄷ','ㄸ','ㅌ'],['ㅂ','ㅃ','ㅍ'],['ㅈ','ㅉ','ㅊ'],['ㅅ','ㅆ',null]];
 
 function hasJong(w){const ch=w.charCodeAt(w.length-1);if(ch<0xAC00||ch>0xD7A3)return false;return (ch-0xAC00)%28!==0}
+function ieyo(w){return hasJong(String(w).replace(/\(.*\)$/,''))?'이에요':'예요'}  // 받침 있으면 '이에요', 없으면 '예요' (괄호 병기는 괄호 앞말 기준)
 function makeDetail(si,c){
   const st=STAGES[si],cat=c[st.key],C=CATEGORIES[cat];
-  let s=c.char+'('+c.name+')은 '+C.label+(hasJong(C.label.replace(/\(.*\)$/,''))?'이에요':'예요')+'. ';  // 괄호 병기는 괄호 앞말에 조사를 맞춘다
+  let s=c.char+'('+c.name+')은 '+C.label+ieyo(C.label)+'. ';  // 괄호 병기는 괄호 앞말에 조사를 맞춘다
   if(cat==='resonant') s+=(c.char==='ㄹ'?'공기가 혀 옆으로':'공기가 코로')+' 막힘없이 흘러나오며 목청이 울려요. ';
   else s+=C.act+' ';
   if(st.key==='int'){
@@ -616,7 +618,9 @@ function isAccepted(cat,raw){
   const t=String(raw).trim();
   if(/[?？]$/.test(t))return false;
   const C=CATEGORIES[cat];
-  return [C.label,...C.syn].map(norm).includes(norm(t));
+  const ok=[C.label,...C.syn];
+  ok.slice().forEach(x=>{const m=norm(x).match(/^(.+)\((.+)\)$/);if(m)ok.push(m[2]+'('+m[1]+')')});  // 괄호 앞뒤를 바꿔 쓴 답도 인정: 콧소리(비음)·흐름소리(유음)
+  return ok.map(norm).includes(norm(t));
 }
 
 // ═══════════════════════════════════════════
@@ -749,7 +753,7 @@ function render(){
   const fb=$('fb');fb.className='fb';$('hint').className='hint';$('retryBtn').className='retry-btn';$('detail').className='detail';
   if(it.st==='first'){setFb(true,'정답! +'+it.gain+'점')}
   else if(it.st==='retry'){setFb(true,'다시 풀어 맞혔어요! +'+RETRY_PTS+'점')}
-  else if(it.st==='fail'){setFb(false,'아쉬워요. 정답은 \''+q.answer+'\'이에요.')}
+  else if(it.st==='fail'){setFb(false,'아쉬워요. 정답은 \''+q.answer+'\''+ieyo(q.answer)+'.')}
   else if(it.st==='wrong'){
     if(!it.retried){setFb(false,'틀렸어요 (−'+PENALTY+'점)'+(it.my?' · 내 답: '+it.my:''));$('retryBtn').className='retry-btn on'}
     $('hint').innerHTML='<b>💡 힌트</b> · '+st.hint;$('hint').className='hint on';

@@ -4,7 +4,8 @@
      개념: 1단계 어근 슬라이드의 "어근은 홀로 단어를 이룰 수 있어요." 삭제 (교사 승인: 어근 = 실질적인 뜻을 나타내는 부분)
      힌트: 합성어 tip을 교사 승인 문장으로, 합성어 힌트를 "실질적인 뜻을 나타내는가" 기준으로
      채점: 4단계에서 틀린 적이 있으면 1과정 끝과 문항 끝 모두 '정답!' 대신 재시도 배너(색종이·광선 없음). 점수·기록은 원래도 재시도 정답
-     버그: 채점 전 → 키로 문항이 넘어가던 것 막음 (지침 6-1) -->
+     버그: 채점 전 → 키로 문항이 넘어가던 것 막음 (지침 6-1)
+     2026.10.01 13:00 재시도 배너를 모든 단계로: 틀린 뒤 다시 풀어 맞히면 0~3단계도 '정답!'·색종이 대신 작은 재시도 배너 (첫 시도 정답은 그대로 큰 배너) -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -313,7 +314,7 @@ body.glow::after{content:'';position:fixed;inset:0;pointer-events:none;box-shado
    </div>
    <div class="credit">
     제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-    제작일 2025.09.05 · <span id="lastMod">최종 수정 2026.10.01 05:20</span>
+    제작일 2025.09.05 · <span id="lastMod">최종 수정 2026.10.01 13:00</span>
    </div>
    <div class="privacy" id="privacyOffline">
     <b>🔒 개인정보 보호 안내</b><br>
@@ -440,7 +441,7 @@ body.glow::after{content:'';position:fixed;inset:0;pointer-events:none;box-shado
 
 <script>
 const MADE_DATE = '2025.09.05';
-const LAST_MOD = '2026.10.01 05:20';
+const LAST_MOD = '2026.10.01 13:00';
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
 // ═══════════════════════════════════════════
@@ -882,7 +883,7 @@ function complete(q, failed){
   if(q.stage===4) q.step=2;
   renderQ();
   if(q.status==='first'){ const h=$('hud'); h.classList.remove('pulse'); void h.offsetWidth; h.classList.add('pulse'); }
-  if(q.status==='retry' && q.stage===4) retryBanner(gained);   // 4단계: 틀린 적이 있으면 '정답!' 대신 재시도 배너
+  if(q.status==='retry') retryBanner(gained);   // 모든 단계: 틀린 적이 있으면 '정답!' 대신 재시도 배너
   else if(q.status!=='fail') showBanner(q.status==='first'?S.combo:0, gained);
   else { SND.bad(); if(allDone()){ const me=S; setTimeout(()=>{ if(S===me && !S.finished && $('play').classList.contains('on')) finish(); },2600); } }
 }

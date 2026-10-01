@@ -2,7 +2,9 @@
 <html lang="ko">
 <!-- 리모델링 2026.10.01 02:23 (1차 야간)
      채점: 잘못 탭 감점 −5 → −10 (맞힘 득점과 같게, 지침 3-6 속도형). 놓친 목표 모음 감점(−5)은 그대로
-     화면: 시작 화면에 ㅚ·ㅟ 이중 모음 발음 허용 안내 한 줄, '게임 끝내기' 확인 단계(확인창이 떠 있는 동안 시간·두더지 멈춤) -->
+     화면: 시작 화면에 ㅚ·ㅟ 이중 모음 발음 허용 안내 한 줄, '게임 끝내기' 확인 단계(확인창이 떠 있는 동안 시간·두더지 멈춤)
+     2026.10.01 13:00 안내: ㅚ·ㅟ 문구를 '단모음으로 발음하는 것이 원칙이지만, 이중 모음으로 발음할 수도 있어요'로
+     2026.10.01 13:00 '게임 끝내기' 확인을 브라우저 confirm() 대신 화면 안 확인창으로 (떠 있는 동안 시간·두더지 멈춤, 계속하기·Esc면 이어서) -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -239,6 +241,9 @@ body.playing{overflow:hidden;}
 .modalHead{background:var(--accent); color:#fff; padding:11px 16px; font-weight:700; display:flex; justify-content:space-between; align-items:center;}
 .modalHead button{background:rgba(255,255,255,.22); color:#fff; border:none; border-radius:8px; min-height:36px; padding:0 12px; font-weight:700; cursor:pointer;}
 .modalBody{padding:12px 16px; overflow-y:auto;}
+.qmBody{padding:20px 16px; text-align:center; line-height:1.6;}
+.qmBody b{color:var(--dark); font-size:18px;}
+.qmBody .btnRow{margin-top:16px;}
 .modalBody h4{margin:10px 0 6px; color:var(--dark);}
 .rv{border-bottom:1px solid #f1eef8; padding:7px 0; font-size:14px; line-height:1.5; word-break:keep-all;}
 .rv b{font-size:15.5px;}
@@ -322,7 +327,7 @@ body.playing{overflow:hidden;}
       <p><b>혀의 앞뒤</b> — 혀의 앞부분이 올라가면 전설, 뒷부분이 올라가면 후설이에요.</p>
       <p><b>혀의 높낮이</b> — 입을 조금 벌리면 고모음, 더 벌리면 중모음, 크게 벌리면 저모음.</p>
       <p><b>입술 모양</b> — 입술을 둥글게 오므리면 원순, 그대로 두면 평순이에요.</p>
-      <p>※ ㅚ·ㅟ는 이중 모음으로도 발음할 수 있지만, 여기서는 단모음으로 분류해요.</p>
+      <p>※ ㅚ·ㅟ는 단모음으로 발음하는 것이 원칙이지만, 이중 모음으로 발음할 수도 있어요.</p>
       <table class="vtable">
        <tr><th></th><th colspan="2">전설 모음</th><th colspan="2">후설 모음</th></tr>
        <tr><th></th><th>평순</th><th>원순</th><th>평순</th><th>원순</th></tr>
@@ -368,7 +373,7 @@ body.playing{overflow:hidden;}
 
    <div class="credit">
     <span class="seg">제작 · 보라라샘</span> · <span class="seg">전주서신중학교 교사</span> · <span class="seg">siaawase@gmail.com</span><br>
-    <span class="seg">제작일 2026.08.13</span> · <span class="seg" id="lastMod">최종 수정 2026.10.01 02:23</span>
+    <span class="seg">제작일 2026.08.13</span> · <span class="seg" id="lastMod">최종 수정 2026.10.01 13:00</span>
    </div>
 
    <div class="privacy" id="privacyOffline">
@@ -456,7 +461,7 @@ body.playing{overflow:hidden;}
 
    <div class="credit">
     <span class="seg">제작 · 보라라샘</span> · <span class="seg">전주서신중학교 교사</span> · <span class="seg">siaawase@gmail.com</span><br>
-    <span class="seg">제작일 2026.08.13</span> · <span class="seg" id="lastMod2">최종 수정 2026.10.01 02:23</span>
+    <span class="seg">제작일 2026.08.13</span> · <span class="seg" id="lastMod2">최종 수정 2026.10.01 13:00</span>
    </div>
   </div>
  </div>
@@ -470,6 +475,15 @@ body.playing{overflow:hidden;}
  </div>
 </div>
 
+<div class="modal" id="quitModal" role="dialog" aria-modal="true" aria-labelledby="qmTitle">
+ <div class="modalCard" style="max-width:420px">
+  <div class="modalHead"><span id="qmTitle">⏹ 게임 끝내기</span></div>
+  <div class="qmBody">
+   <b>게임을 끝낼까요?</b><br>지금까지의 결과로 마무리돼요.
+   <div class="btnRow two"><button class="btn sec" id="qmNo">계속하기</button><button class="btn" id="qmYes">끝내기</button></div>
+  </div>
+ </div>
+</div>
 <div class="modal" id="reviewModal">
  <div class="modalCard">
   <div class="modalHead"><span>📖 오늘 나온 모음</span><button id="reviewClose">닫기 ✕</button></div>
@@ -482,7 +496,7 @@ body.playing{overflow:hidden;}
 
 <script>
 const MADE_DATE = "2026.08.13";
-const LAST_MOD = "2026.10.01 02:23";
+const LAST_MOD = "2026.10.01 13:00";
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -758,7 +772,7 @@ function drawVowel(kind){
 }
 
 function spawn(){
-  if(!S || S.endAt) return;
+  if(!S || S.endAt || S.paused) return;
   const free = []; let act = 0;
   holeData.forEach((h,i) => { if(h.active) act++; else free.push(i); });
   if(act >= S.cfg.maxActive || !free.length) return;
@@ -902,31 +916,48 @@ function comboFx(c){
 
 
 $("muteBtn").addEventListener("click", () => { muted = !muted; $("muteBtn").textContent = muted ? "🔇 소리" : "🔊 소리"; });
-// 게임 끝내기: 한 번 확인한 뒤 끝낸다. 확인창이 떠 있는 동안에는 시간과 두더지를 멈춘다
-$("quitBtn").addEventListener("click", () => {
-  if(!S || S.endAt) return;
+// 게임 끝내기: 한 번 확인한 뒤 끝낸다 (지침 6-1). 화면 안 확인창이 떠 있는 동안에는 시간과 두더지를 멈춘다
+function askQuit(){
+  if(!S || S.endAt || S.paused) return;
   const now = Date.now();
-  clearInterval(spawnTimer); clearInterval(gameTimer);
-  const rest = holeData.map(h => {
+  S.paused = true; S.pauseAt = now;
+  clearInterval(spawnTimer); clearInterval(gameTimer); clearTimeout(gameTimer);
+  S.moleRest = holeData.map(h => {
     if(!h.active || !h.hideTO) return null;
     clearTimeout(h.hideTO); h.hideTO = null;
     return Math.max(0, (h.hideAt || now) - now);
   });
-  if(confirm("게임을 끝낼까요? 지금까지의 결과로 마무리돼요.")){ endGame("quit"); return; }
-  if(document.activeElement) document.activeElement.blur();
-  const t = Date.now();
+  $("quitModal").classList.add("active"); $("qmNo").focus();
+}
+function quitCancel(){
+  if(!S || !S.paused) return;
+  $("quitModal").classList.remove("active");
+  S.paused = false;
+  const now = S.pauseAt, t = Date.now();
   S.startAt += t - now;  // 확인창이 떠 있던 시간은 소요 시간에서 뺀다
   holeData.forEach((h, i) => {
-    if(rest[i] === null || !h.active) return;
-    h.hideAt = t + rest[i];
-    h.hideTO = setTimeout(() => hideMole(i, false), rest[i]);
+    const r = S.moleRest[i];
+    if(r === null || r === undefined || !h.active) return;
+    h.hideAt = t + r;
+    h.hideTO = setTimeout(() => hideMole(i, false), r);
   });
   spawnTimer = setInterval(spawn, S.cfg.spawn);
   // 멈추기 전 1초 가운데 남은 부분부터 다시 센다 (끝내기→취소를 반복해 시간을 버는 일이 없게)
   const tickRest = Math.max(0, 1000 - (now - (S.lastTickAt || now)));
   S.lastTickAt = t - (1000 - tickRest);
-  gameTimer = setTimeout(() => { tick(); if(S && !S.endAt) gameTimer = setInterval(tick, 1000); }, tickRest);
-});
+  gameTimer = setTimeout(() => { tick(); if(S && !S.endAt && !S.paused) gameTimer = setInterval(tick, 1000); }, tickRest);
+  if(document.activeElement) document.activeElement.blur();
+}
+function quitConfirm(){
+  if(!S || !S.paused) return;
+  $("quitModal").classList.remove("active");
+  S.startAt += Date.now() - S.pauseAt; S.paused = false;
+  endGame("quit");
+}
+$("quitBtn").addEventListener("click", askQuit);
+$("qmNo").addEventListener("click", quitCancel);
+$("qmYes").addEventListener("click", quitConfirm);
+$("quitModal").addEventListener("click", e => { if(e.target.id === "quitModal") quitCancel(); });
 
 /* ═══════════ 분석 (유형 = 모음) ═══════════ */
 function gradeText(rate){
@@ -1300,6 +1331,7 @@ document.addEventListener("keydown", e => {
     if(e.key === "Enter" || e.key === " " || e.code === "Space"){ e.preventDefault(); confirmBanner(); }
     return;
   }
+  if(S && S.paused){ if(e.key === "Escape"){ e.preventDefault(); quitCancel(); } return; }
   if($("reviewModal").classList.contains("active") && e.key === "Escape"){ $("reviewModal").classList.remove("active"); return; }
   if($("playScreen").classList.contains("active") && S && !S.endAt && e.code in KEYMAP){
     e.preventDefault(); onTap(KEYMAP[e.code]);

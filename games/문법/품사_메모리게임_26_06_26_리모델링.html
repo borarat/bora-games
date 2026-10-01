@@ -2,7 +2,8 @@
 <html lang="ko">
 <!-- 리모델링 2026.10.01 05:10 (2차 야간)
      문항: 수사 단어 카드 '다섯' → '넷' ('다섯'은 관형사로도 쓰여 정답이 둘. 교사 승인)
-     채점: 총평 기준을 지침 5-2 표(95/85/70/50%)에 맞춤. 정답률 = 찾은 짝 ÷ 두 장씩 뒤집은 횟수 -->
+     채점: 총평 기준을 지침 5-2 표(95/85/70/50%)에 맞춤. 정답률 = 찾은 짝 ÷ 두 장씩 뒤집은 횟수
+     2026.10.01 13:00 '게임 끝내기' 확인 단계 추가(지침 6-1): 화면 안 확인창이 떠 있는 동안 시간·전체 공개 초 세기 멈춤, 취소·Esc면 이어서 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -155,8 +156,11 @@ details.concept summary{cursor:pointer;font-weight:700;color:var(--deep);font-si
 .end-privacy{max-width:760px;margin:16px auto 0;text-align:left}
 
 /* ===== 복습 모달 ===== */
-#review{position:fixed;inset:0;background:rgba(40,30,80,.45);z-index:80;display:none;align-items:center;justify-content:center;padding:16px}
-#review.on{display:flex}
+#review,#quitModal{position:fixed;inset:0;background:rgba(40,30,80,.45);z-index:80;display:none;align-items:center;justify-content:center;padding:16px}
+#review.on,#quitModal.on{display:flex}
+#quitModal .rv{max-width:420px}
+#quitModal .rv-b{text-align:center;padding:20px 18px}
+#quitModal .qm-btns{display:flex;gap:10px;justify-content:center;margin-top:16px}
 .rv{background:#fff;border-radius:16px;max-width:760px;width:100%;max-height:88vh;display:flex;flex-direction:column;overflow:hidden}
 .rv-h{background:var(--accent);color:#fff;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;font-weight:700}
 .rv-h button{background:rgba(255,255,255,.22);border:none;color:#fff;border-radius:8px;padding:6px 12px;font-weight:700;min-height:36px}
@@ -240,7 +244,7 @@ details.concept summary{cursor:pointer;font-weight:700;color:var(--deep);font-si
 
    <div class="credit">
     제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-    제작일 2026.06.26 · <span id="lastMod">최종 수정 2026.10.01 05:10</span>
+    제작일 2026.06.26 · <span id="lastMod">최종 수정 2026.10.01 13:00</span>
    </div>
 
    <div class="privacy" id="privacyOffline">
@@ -328,6 +332,17 @@ details.concept summary{cursor:pointer;font-weight:700;color:var(--deep);font-si
 </div>
 
 <!-- ===== 복습 모달 ===== -->
+<div id="quitModal" role="dialog" aria-modal="true" aria-labelledby="qmTitle">
+ <div class="rv">
+  <div class="rv-h"><span id="qmTitle">게임 끝내기</span></div>
+  <div class="rv-b">
+   <div class="rv-q">게임을 끝낼까요?</div>
+   <div class="rv-d">지금까지의 결과로 마무리돼요.</div>
+   <div class="qm-btns"><button class="btn sec" id="qmNo">계속하기</button><button class="btn" id="qmYes">끝내기</button></div>
+  </div>
+ </div>
+</div>
+
 <div id="review">
  <div class="rv">
   <div class="rv-h"><span id="rvTitle">오늘 나온 문제</span><button id="rvClose">닫기 ✕</button></div>
@@ -341,7 +356,7 @@ details.concept summary{cursor:pointer;font-weight:700;color:var(--deep);font-si
 
 <script>
 const MADE_DATE = '2026.06.26';
-const LAST_MOD = '2026.10.01 05:10';
+const LAST_MOD = '2026.10.01 13:00';
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -561,7 +576,7 @@ function doStartStage(n) {
   Object.assign(S, {
     stage: n, first: null, lock: false, peeking: false, peekUsed: false,
     moves: 0, matched: 0, score: 0, combo: 0, maxCombo: 0,
-    startTs: 0, elapsed: 0, timer: null, finished: false, lastSubmit: null
+    startTs: 0, elapsed: 0, timer: null, finished: false, lastSubmit: null, paused: false
   });
   const r = buildRound(st);
   S.cards = r.cards; S.round = r.round; S.total = r.round.length;
@@ -675,18 +690,53 @@ $('peekBtn').addEventListener('click', () => {
   S.peekUsed = true; S.peeking = true; startTimer();
   const btn = $('peekBtn'); btn.disabled = true;
   S.cards.forEach(c => { if (!c.done) c.el.classList.add('up'); });
-  let left = 7; btn.textContent = `👀 ${left}초`;
-  S.peekCd = setInterval(() => {
-    left--;
-    if (left > 0) { btn.textContent = `👀 ${left}초`; return; }
-    clearInterval(S.peekCd);
-    S.cards.forEach(c => { if (!c.done && c !== S.first) c.el.classList.remove('up'); });
-    btn.textContent = '👀 공개 사용함';
-    S.peeking = false;
-  }, 1000);
+  S.peekLeft = 7; btn.textContent = `👀 ${S.peekLeft}초`;
+  S.peekCd = setInterval(peekStep, 1000);
 });
+function peekStep() {
+  const btn = $('peekBtn');
+  S.peekLeft--;
+  if (S.peekLeft > 0) { btn.textContent = `👀 ${S.peekLeft}초`; return; }
+  clearInterval(S.peekCd);
+  S.cards.forEach(c => { if (!c.done && c !== S.first) c.el.classList.remove('up'); });
+  btn.textContent = '👀 공개 사용함';
+  S.peeking = false;
+}
 $('restartBtn').addEventListener('click', () => doStartStage(S.stage));
-$('quitBtn').addEventListener('click', () => finish(true));
+// 게임 끝내기: 한 번 확인한 뒤 끝낸다 (지침 6-1). 확인창이 떠 있는 동안 시간과 전체 공개 초 세기를 멈춘다
+function askQuit() {
+  if (S.finished || S.paused) return;
+  S.paused = true; S.pauseAt = Date.now();
+  clearInterval(S.timer); clearInterval(S.peekCd);
+  $('quitModal').classList.add('on'); $('qmNo').focus();
+}
+function closeQuit() {
+  $('quitModal').classList.remove('on');
+  if (!S.paused) return 0;
+  S.paused = false;
+  const gap = Date.now() - S.pauseAt;
+  if (S.startTs) S.startTs += gap;  // 확인창이 떠 있던 시간은 소요 시간에서 뺀다
+  return gap;
+}
+function quitCancel() {
+  if (!S.paused) return;
+  closeQuit();
+  if (S.startTs) S.timer = setInterval(() => { S.elapsed = Date.now() - S.startTs; $('gTime').textContent = fmtTime(S.elapsed); }, 250);
+  if (S.peeking) S.peekCd = setInterval(peekStep, 1000);
+  if (document.activeElement) document.activeElement.blur();
+}
+function quitConfirm() {
+  if (!S.paused) return;
+  closeQuit();
+  finish(true);
+}
+$('quitBtn').addEventListener('click', askQuit);
+$('qmNo').addEventListener('click', quitCancel);
+$('qmYes').addEventListener('click', quitConfirm);
+$('quitModal').addEventListener('click', e => { if (e.target.id === 'quitModal') quitCancel(); });
+document.addEventListener('keydown', e => {
+  if (S.paused && e.key === 'Escape') { e.preventDefault(); quitCancel(); }
+});
 
 /* =========================================================
    피드백 연출
@@ -800,6 +850,7 @@ function gradeText(eff) {
 
 function finish(quit) {
   if (S.finished) return;
+  if (S.paused) closeQuit();  // 확인창이 떠 있는 동안 마지막 짝이 맞아 끝나는 경우
   S.finished = true;
   clearInterval(S.timer);
   clearInterval(S.peekCd);

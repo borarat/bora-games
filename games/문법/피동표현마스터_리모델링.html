@@ -2,7 +2,8 @@
 <!-- 리모델링 2026.10.01 06:30 (3차 야간)
      정의: 시작 화면 피동 표현 정의를 교과서 문구로 ("주어가 다른 대상에게 동작이나 행위를 당하는 것을 나타내는 표현")
      내용: 접미사 선택을 어간 끝소리로 설명한 부분 삭제 — 시작 화면 안내, 재시도 힌트, 유형별 tip 4개, 문항 해설 36개(형태 설명으로)
-     문항: 20번 피동문 '두꺼운 책 밑에 장난감이 눌려 있다.' → '두꺼운 책에 장난감이 눌렸다.' (교사 승인, '-어 있-' 제거) -->
+     문항: 20번 피동문 '두꺼운 책 밑에 장난감이 눌려 있다.' → '두꺼운 책에 장난감이 눌렸다.' (교사 승인, '-어 있-' 제거)
+     2026.10.01 13:00 유형별 tip 4개 끝에 "헷갈리면 접미사를 붙여 문장 속에서 소리 내 읽어 보세요." 한 문장 추가 (받침 규칙은 넣지 않음) -->
 <html lang="ko">
 <head>
 <meta charset="utf-8"/>
@@ -289,7 +290,7 @@ button{font-family:inherit}
 
    <div class="maker">
     제작 · <b>보라라샘</b> · 전주서신중학교 교사 · siaawase@gmail.com<br>
-    제작일 2026.04.01 · <span id="lastMod">최종 수정 2026.10.01 06:30</span>
+    제작일 2026.04.01 · <span id="lastMod">최종 수정 2026.10.01 13:00</span>
    </div>
 
    <div class="privacy" id="privacyOffline">
@@ -381,7 +382,7 @@ button{font-family:inherit}
     <button class="btn sec" onclick="goHome()">⌂ 시작화면으로</button>
    </div>
    <div class="privacy" style="margin-top:10px;text-align:left" id="endPrivacy">입력하신 이름과 소감은 서버에 저장되지 않으며, 리포트 이미지(JPG) 생성용으로만 쓰입니다.</div>
-   <div class="maker" style="margin-top:12px">제작 · <b>보라라샘</b> · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.04.01 · 최종 수정 2026.10.01 06:30</div>
+   <div class="maker" style="margin-top:12px">제작 · <b>보라라샘</b> · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.04.01 · 최종 수정 2026.10.01 13:00</div>
   </div>
  </div>
 </section>
@@ -400,7 +401,7 @@ button{font-family:inherit}
 
 <script>
 const MADE_DATE='2026.04.01';
-const LAST_MOD='2026.10.01 06:30';
+const LAST_MOD='2026.10.01 13:00';
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -452,13 +453,13 @@ const GAME_NAME='피동 표현 마스터';
 
 const CATEGORIES={
   yi:{label:'-이-', color:'y', desc:'-이-가 붙는 피동사',
-    tip:'보이다, 놓이다, 섞이다, 덮이다처럼 -이-가 붙어요.'},
+    tip:'보이다, 놓이다, 섞이다, 덮이다처럼 -이-가 붙어요. 헷갈리면 접미사를 붙여 문장 속에서 소리 내 읽어 보세요.'},
   hi:{label:'-히-', color:'p', desc:'-히-가 붙는 피동사',
-    tip:'먹히다, 막히다, 잡히다, 읽히다처럼 -히-가 붙어요.'},
+    tip:'먹히다, 막히다, 잡히다, 읽히다처럼 -히-가 붙어요. 헷갈리면 접미사를 붙여 문장 속에서 소리 내 읽어 보세요.'},
   ri:{label:'-리-', color:'s', desc:'-리-가 붙는 피동사',
-    tip:'밀리다, 팔리다, 들리다, 흔들리다처럼 -리-가 붙어요.'},
+    tip:'밀리다, 팔리다, 들리다, 흔들리다처럼 -리-가 붙어요. 헷갈리면 접미사를 붙여 문장 속에서 소리 내 읽어 보세요.'},
   gi:{label:'-기-', color:'g', desc:'-기-가 붙는 피동사',
-    tip:'안기다, 담기다, 쫓기다, 찢기다처럼 -기-가 붙어요.'}
+    tip:'안기다, 담기다, 쫓기다, 찢기다처럼 -기-가 붙어요. 헷갈리면 접미사를 붙여 문장 속에서 소리 내 읽어 보세요.'}
 };
 const CAT_ORDER=['yi','hi','ri','gi'];
 const SFX2CAT={'-이-':'yi','-히-':'hi','-리-':'ri','-기-':'gi'};

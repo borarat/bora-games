@@ -2,7 +2,8 @@
 <!-- 리모델링 2026.10.01 03:01 (1차 야간)
      피드백: 짝이 맞으면 한 줄 설명(조음 위치 카드의 '소리 나는 방법' 문구, ㅇ은 받침 [ŋ] 메모)
      채점: 격려 문구 기준을 지침 5-2 표(95/85/70/50%)로
-     연동: wrongItems를 원본 id(교사용 엑셀의 id)로 전송 -->
+     연동: wrongItems를 원본 id(교사용 엑셀의 id)로 전송
+     2026.10.01 13:00 성취기준: 2022 [9국04-01]에 2015 [9국04-02] 병기 (교사 확인) -->
 <html lang="ko">
 <head>
 <meta charset="utf-8"/>
@@ -181,7 +182,7 @@ button{font-family:var(--font)}
     </div>
    </div>
 
-   <div class="std"><b>성취기준</b>[9국04-01] 국어의 음운 체계와 문자 체계를 이해하고 국어생활에 활용한다.</div>
+   <div class="std"><b>성취기준</b>[9국04-01](2022 개정) 국어의 음운 체계와 문자 체계를 이해하고 국어생활에 활용한다.<br>[9국04-02](2015 개정) 음운의 체계를 알고 그 특성을 이해한다.</div>
 
    <div class="two">
     <div class="box">
@@ -208,7 +209,7 @@ button{font-family:var(--font)}
 
    <div class="credit">
     제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-    제작일 2025.11.06 · <span id="lastMod">최종 수정 2026.10.01 03:01</span>
+    제작일 2025.11.06 · <span id="lastMod">최종 수정 2026.10.01 13:00</span>
    </div>
 
    <div class="privacy" id="privacyOffline">
@@ -321,7 +322,7 @@ button{font-family:var(--font)}
 
 <script>
 const MADE_DATE = '2025.11.06';
-const LAST_MOD = '2026.10.01 03:01';
+const LAST_MOD = '2026.10.01 13:00';
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -369,7 +370,11 @@ const $ = id => document.getElementById(id);
 // ═══════════════════════════════════════════
 // 학습 데이터
 // ═══════════════════════════════════════════
-const STANDARD = { code: '[9국04-01]', text: '국어의 음운 체계와 문자 체계를 이해하고 국어생활에 활용한다.' };
+const STANDARDS = [
+  { code: '[9국04-01]', year: '2022', text: '국어의 음운 체계와 문자 체계를 이해하고 국어생활에 활용한다.' },
+  { code: '[9국04-02]', year: '2015', text: '음운의 체계를 알고 그 특성을 이해한다.' }
+];
+const STD_LINE = STANDARDS.map(s => `${s.code}(${s.year} 개정) ${s.text}`).join('  ·  ');
 const PLACES = {
   lips:   { label: '입술소리',       line1: '입술',       cons: ['ㅁ','ㅂ','ㅃ','ㅍ'],
             how: '두 입술이 닿았다 떨어지며 나는 소리' },
@@ -817,7 +822,7 @@ function downloadTeacherXls(){
   const row=(arr,style)=>`<Row>${arr.map(v=>cell(v,style)).join('')}</Row>`;
   const tail=[
     [],
-    ['성취기준', `${STANDARD.code} ${STANDARD.text}`],
+    ['성취기준', STD_LINE],
     ['배점 규칙', `짝 맞춤 +${BASE}점 · 3~4연속 +5점 추가 · 5연속부터 +10점 추가 · 틀려도 감점 없음(연속만 끊김) · 만점 ${MAX_SCORE}점`],
     ['총 문항 수', `${PAIR_TOTAL}쌍 (카드 ${PAIR_TOTAL*2}장: 자음 ${PAIR_TOTAL}장 + 조음 위치 ${PAIR_TOTAL}장)`],
     ['크레딧', `제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com · 제작일 ${MADE_DATE} · 최종 수정 ${LAST_MOD}`]

@@ -2,7 +2,8 @@
 <!-- 리모델링 2026.10.01 06:50 (3차 야간)
      내용: 무게·두께 유형 tip의 '-고 있다' 판별 → '-는다/-ㄴ다' 판별 (교사 승인 문장, 다른 품사 게임과 같은 판별법)
      채점: 잘못 탭 감점 −5 → −10 (맞힘 기본점과 같게, 지침 3-6 속도형)
-     화면: 모바일 등급 M1 유지(교사 결정 2026.10.01: 탭 조작이라 휴대폰에서도 사용). 정답률에 놓침 포함 -->
+     화면: 모바일 등급 M1 유지(교사 결정 2026.10.01: 탭 조작이라 휴대폰에서도 사용). 정답률에 놓침 포함
+     2026.10.01 13:00 '게임 끝내기' 확인 단계 추가(지침 6-1): 화면 안 확인창이 떠 있는 동안 시간·두더지 멈춤, 취소·Esc면 이어서 -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -234,6 +235,9 @@ body.t-verb .pTgt .tgt{color:var(--verb);} body.t-adj .pTgt .tgt{color:var(--adj
 .modalHead{background:var(--accent); color:#fff; padding:11px 16px; font-weight:700; display:flex; justify-content:space-between; align-items:center;}
 .modalHead button{background:rgba(255,255,255,.22); color:#fff; border:none; border-radius:8px; min-height:36px; padding:0 12px; font-weight:700; cursor:pointer;}
 .modalBody{padding:12px 16px; overflow-y:auto;}
+.qmBody{padding:20px 16px; text-align:center; line-height:1.6;}
+.qmBody b{color:var(--dark); font-size:18px;}
+.qmBody .btnRow{margin-top:16px;}
 .modalBody h4{margin:10px 0 6px; color:var(--dark);}
 .rv{border-bottom:1px solid #f1eef8; padding:7px 0; font-size:14px; line-height:1.5; word-break:keep-all;}
 .rv b{font-size:15.5px;}
@@ -342,7 +346,7 @@ body.t-verb .pTgt .tgt{color:var(--verb);} body.t-adj .pTgt .tgt{color:var(--adj
 
    <div class="credit">
     <span class="seg">제작 · 보라라샘</span> · <span class="seg">전주서신중학교 교사</span> · <span class="seg">siaawase@gmail.com</span><br>
-    <span class="seg">제작일 2026.06.03</span> · <span class="seg" id="lastMod">최종 수정 2026.10.01 06:50</span>
+    <span class="seg">제작일 2026.06.03</span> · <span class="seg" id="lastMod">최종 수정 2026.10.01 13:00</span>
    </div>
 
    <div class="privacy" id="privacyOffline">
@@ -429,7 +433,7 @@ body.t-verb .pTgt .tgt{color:var(--verb);} body.t-adj .pTgt .tgt{color:var(--adj
 
    <div class="credit">
     <span class="seg">제작 · 보라라샘</span> · <span class="seg">전주서신중학교 교사</span> · <span class="seg">siaawase@gmail.com</span><br>
-    <span class="seg">제작일 2026.06.03</span> · <span class="seg" id="lastMod2">최종 수정 2026.10.01 06:50</span>
+    <span class="seg">제작일 2026.06.03</span> · <span class="seg" id="lastMod2">최종 수정 2026.10.01 13:00</span>
    </div>
   </div>
  </div>
@@ -443,6 +447,15 @@ body.t-verb .pTgt .tgt{color:var(--verb);} body.t-adj .pTgt .tgt{color:var(--adj
  </div>
 </div>
 
+<div class="modal" id="quitModal" role="dialog" aria-modal="true" aria-labelledby="qmTitle">
+ <div class="modalCard" style="max-width:420px">
+  <div class="modalHead"><span id="qmTitle">⏹ 게임 끝내기</span></div>
+  <div class="qmBody">
+   <b>게임을 끝낼까요?</b><br>지금까지의 결과로 마무리돼요.
+   <div class="btnRow two"><button class="btn sec" id="qmNo">계속하기</button><button class="btn" id="qmYes">끝내기</button></div>
+  </div>
+ </div>
+</div>
 <div class="modal" id="reviewModal">
  <div class="modalCard">
   <div class="modalHead"><span>📖 오늘 나온 단어</span><button id="reviewClose">닫기 ✕</button></div>
@@ -455,7 +468,7 @@ body.t-verb .pTgt .tgt{color:var(--verb);} body.t-adj .pTgt .tgt{color:var(--adj
 
 <script>
 const MADE_DATE = "2026.06.03";
-const LAST_MOD = "2026.10.01 06:50";
+const LAST_MOD = "2026.10.01 13:00";
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -743,12 +756,14 @@ function runGame(){
   updateHUD();
   show("playScreen");
   spawnTimer = setInterval(spawn, cfg.spawn);
+  S.lastTickAt = Date.now();
   gameTimer = setInterval(tick, 1000);
   spawn(); setTimeout(spawn, 200); if(cfg.maxActive >= 3) setTimeout(spawn, 400);
 }
 
 function tick(){
   if(!S || S.endAt) return;
+  S.lastTickAt = Date.now();
   S.time--;
   if(S.time <= 0){ S.time = 0; updateHUD(); endGame("time"); return; }
   updateHUD();
@@ -778,7 +793,7 @@ function drawWord(cls){
 }
 
 function spawn(){
-  if(!S || S.endAt) return;
+  if(!S || S.endAt || S.paused) return;
   const free = []; let act = 0;
   holeData.forEach((h,i) => { if(h.active) act++; else free.push(i); });
   if(act >= S.cfg.maxActive || !free.length) return;
@@ -792,6 +807,7 @@ function spawn(){
   S.appear[w.cat] = (S.appear[w.cat]||0) + 1;
   if(!S.seen.includes(w.id)) S.seen.push(w.id);
   sndPop();
+  h.hideAt = Date.now() + S.cfg.visible;
   h.hideTO = setTimeout(() => hideMole(idx, false), S.cfg.visible);
 }
 
@@ -912,7 +928,48 @@ function comboFx(c){
 }
 
 $("muteBtn").addEventListener("click", () => { muted = !muted; $("muteBtn").textContent = muted ? "🔇 소리" : "🔊 소리"; });
-$("quitBtn").addEventListener("click", () => endGame("quit"));
+// 게임 끝내기: 한 번 확인한 뒤 끝낸다 (지침 6-1). 확인창이 떠 있는 동안에는 시간과 두더지를 멈춘다
+function askQuit(){
+  if(!S || S.endAt || S.paused) return;
+  const now = Date.now();
+  S.paused = true; S.pauseAt = now;
+  clearInterval(spawnTimer); clearInterval(gameTimer); clearTimeout(gameTimer);
+  S.moleRest = holeData.map(h => {
+    if(!h.active || !h.hideTO) return null;
+    clearTimeout(h.hideTO); h.hideTO = null;
+    return Math.max(0, (h.hideAt || now) - now);
+  });
+  $("quitModal").classList.add("active"); $("qmNo").focus();
+}
+function quitCancel(){
+  if(!S || !S.paused) return;
+  $("quitModal").classList.remove("active");
+  S.paused = false;
+  const now = S.pauseAt, t = Date.now();
+  S.startAt += t - now;  // 확인창이 떠 있던 시간은 소요 시간에서 뺀다
+  holeData.forEach((h, i) => {
+    const r = S.moleRest[i];
+    if(r === null || r === undefined || !h.active) return;
+    h.hideAt = t + r;
+    h.hideTO = setTimeout(() => hideMole(i, false), r);
+  });
+  spawnTimer = setInterval(spawn, S.cfg.spawn);
+  // 멈추기 전 1초 가운데 남은 부분부터 다시 센다 (끝내기→취소를 반복해 시간을 버는 일이 없게)
+  const tickRest = Math.max(0, 1000 - (now - (S.lastTickAt || now)));
+  S.lastTickAt = t - (1000 - tickRest);
+  gameTimer = setTimeout(() => { tick(); if(S && !S.endAt && !S.paused) gameTimer = setInterval(tick, 1000); }, tickRest);
+  if(document.activeElement) document.activeElement.blur();
+}
+function quitConfirm(){
+  if(!S || !S.paused) return;
+  $("quitModal").classList.remove("active");
+  S.startAt += Date.now() - S.pauseAt; S.paused = false;
+  endGame("quit");
+}
+$("quitBtn").addEventListener("click", askQuit);
+$("qmNo").addEventListener("click", quitCancel);
+$("qmYes").addEventListener("click", quitConfirm);
+$("quitModal").addEventListener("click", e => { if(e.target.id === "quitModal") quitCancel(); });
 
 /* ═══════════ 분석 ═══════════ */
 function gradeText(rate){
@@ -1303,6 +1360,7 @@ document.addEventListener("keydown", e => {
     if(e.key === "Enter" || e.key === " " || e.code === "Space"){ e.preventDefault(); confirmBanner(); }
     return;
   }
+  if(S && S.paused){ if(e.key === "Escape"){ e.preventDefault(); quitCancel(); } return; }
   if($("reviewModal").classList.contains("active") && e.key === "Escape"){ $("reviewModal").classList.remove("active"); return; }
   if($("playScreen").classList.contains("active") && S && !S.endAt && e.code in KEYMAP){
     e.preventDefault(); onTap(KEYMAP[e.code]);

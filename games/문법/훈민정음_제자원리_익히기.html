@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <!-- 리모델링 2026.10.01 08:00 (4차 야간)
      문항: 이체자 설명을 교과서 문구로 통일(1단계 ㆁ·ㄹ·ㅿ 해설, 2단계 '이체자' 이름표 해설, 5단계 칼·별·글 종성 설명, 유형 설명·tip),
-           '획을 하나 지워 보세요' 판정법을 '획을 더해 소리가 세졌는가'로(G209와 같은 기준), 체계표 목구멍소리 열 머리와 2단계 '목구멍소리' 이름표 해설에 '(목청소리)' 병기 -->
+           '획을 하나 지워 보세요' 판정법을 '획을 더해 소리가 세졌는가'로(G209와 같은 기준), 체계표 목구멍소리 열 머리와 2단계 '목구멍소리' 이름표 해설에 '(목청소리)' 병기
+     수정(2026.10.01 13:00): 휴대폰 폭(390px)에서 5단계 아래 이동 버튼 줄이 2px 넘치던 문제 — 600px 이하에서 .body 열 minmax(0,1fr)·버튼 여백 축소 -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -511,6 +512,9 @@ textarea.fi{resize:vertical;min-height:56px}
   .catgrid{grid-template-columns:1fr}
   .r2grid{grid-template-columns:1fr}
   #play{padding:0 8px 10px}
+  .body{grid-template-columns:minmax(0,1fr)}
+  .side{gap:5px}
+  .nav{min-width:0;padding:10px 2px}
 }
 .chart th.hd .alt-nm{display:block;font-size:.72em;font-weight:500;opacity:.8;line-height:1.2}
 .chart.mini th.hd .alt-nm{font-size:.85em}
@@ -657,7 +661,7 @@ const MASCOT_B64 = 'iVBORw0KGgoAAAANSUhEUgAAAIQAAACxCAMAAAAyLeWLAAAB/lBMVEUAAABM
    제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com
    ═══════════════════════════════════════════ */
 const MADE_DATE = '2026.09.10';
-const MOD_DATE  = '2026.10.01 08:00';
+const MOD_DATE  = '2026.10.01 13:00';
 
 /* ★★ 시트에서 문법·2학년의 마지막 번호를 확인한 뒤 이 한 줄만 고치면 됩니다 ★★ */
 const GAME_CODE = 'G211';

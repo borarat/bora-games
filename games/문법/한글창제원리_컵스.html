@@ -4,6 +4,7 @@
            해설도 '기본자 ○에 획을 더해 만든 가획자, ○보다 소리가 셈'으로 바꿈. 기본자 문항은 그대로
            가획자·이체자 판정법을 '획을 더해 소리가 세졌는가'로(교과서 기준), 이체자 설명을 교과서 문구로 통일, 시작 화면 목구멍소리에 '(목청소리)' 병기
      추가(교사 결정 2026.10.01): 1단계 뒤·2단계에서 ㄹ 문항(id 20·34) 삭제(27/13문항), 1·2단계 개념 화면 제목 '기본자는 발음 기관의 모양을 본떴어요'
+     수정(2026.10.01 13:00): ㄹ 문항(id 20·34)을 '어느 기본자에 획을 더해 만들었을까요?'(정답 ㄴ, 이체자)로 되살림(28/14문항), ㅿ 이름 '반치음'으로 통일, 3단계 가획자 해설에 '○보다 소리가 셉니다' 추가
      버그: 답하기 전 Enter·Space·→ 로 문제가 넘어가던 문제 — 채점 전에는 키로 넘기지 않음 -->
 <html lang="ko">
 <head>
@@ -491,7 +492,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
        <div><b>발음 기관</b> <span class="nb">어금닛소리</span> · <span class="nb">혓소리</span> · <span class="nb">입술소리</span> · <span class="nb">잇소리</span> · <span class="nb">목구멍소리(목청소리)</span></div>
        <div><b>자음자를 만든 방법</b> <span class="nb">기본자</span> · <span class="nb">가획자</span> · <span class="nb">이체자</span></div>
        <div><b>모음자를 만든 방법</b> <span class="nb">기본자</span> · <span class="nb">초출자</span> · <span class="nb">재출자</span> · <span class="nb">합용자</span></div>
-       <div><b>옛 글자</b> <span class="nb">ㆁ(옛이응)</span> · <span class="nb">ㆆ(여린히읗)</span> · <span class="nb">ㅿ(반시옷)</span> · <span class="nb">ㆍ(아래아)</span></div>
+       <div><b>옛 글자</b> <span class="nb">ㆁ(옛이응)</span> · <span class="nb">ㆆ(여린히읗)</span> · <span class="nb">ㅿ(반치음)</span> · <span class="nb">ㆍ(아래아)</span></div>
       </div>
      </div>
     </div>
@@ -502,11 +503,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
       <div class="stages">
        <button class="stage-btn" data-stage="1">
         <span class="num">1<br>단계</span>
-        <span class="tx"><span class="t">자음의 발음 기관 · 초급</span><span class="d">27문제 — 앞 14문제는 소리의 이름으로,<br>뒤 13문제는 본뜬 발음 기관의 모양 또는 획을 더한 기본자로 분류</span></span>
+        <span class="tx"><span class="t">자음의 발음 기관 · 초급</span><span class="d">28문제 — 앞 14문제는 소리의 이름으로,<br>뒤 14문제는 본뜬 발음 기관의 모양 또는 획을 더한 기본자로 분류</span></span>
        </button>
        <button class="stage-btn" data-stage="2">
         <span class="num">2<br>단계</span>
-        <span class="tx"><span class="t">자음의 발음 기관 · 고급</span><span class="d">13문제 — 기본자는 발음 기관 그림만 보고,<br>가획자는 획을 더한 기본자를 찾아 분류</span></span>
+        <span class="tx"><span class="t">자음의 발음 기관 · 고급</span><span class="d">14문제 — 기본자는 발음 기관 그림만 보고,<br>가획자는 획을 더한 기본자를 찾아 분류</span></span>
        </button>
        <button class="stage-btn" data-stage="3">
         <span class="num">3<br>단계</span>
@@ -523,7 +524,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 
    <div class="credit">
     제작 · <b>보라라샘</b> · <b>전주서신중학교 교사</b> · <b>siaawase@gmail.com</b><br>
-    제작일 2026.08.23 · <span id="lastMod">최종 수정 2026.10.01 07:40</span>
+    제작일 2026.08.23 · <span id="lastMod">최종 수정 2026.10.01 13:00</span>
    </div>
 
    <div class="privacy" id="privacyOffline">
@@ -584,7 +585,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
  <div class="band">
   <span class="area">문법</span>
   <span class="goal" id="pGoal"></span>
-  <span class="right"><span id="pQno">1 / 27</span> · <span id="pScore">0점</span></span>
+  <span class="right"><span id="pQno">1 / 28</span> · <span id="pScore">0점</span></span>
  </div>
  <div class="pbar"><i id="barFill"></i></div>
  <div class="pbody">
@@ -706,10 +707,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 /* =========================================================
    G209 한글 창제 원리 컵스
    제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com
-   제작일 2026.08.23 · 최종 수정 2026.10.01 07:40
+   제작일 2026.08.23 · 최종 수정 2026.10.01 13:00
    ========================================================= */
 const MADE_DATE = '2026.08.23';
-const LAST_MOD  = '2026.10.01 07:40';
+const LAST_MOD  = '2026.10.01 13:00';
 const GAME_NAME = '한글 창제 원리 컵스';
 
 // ═══════════════════════════════════════════
@@ -824,7 +825,7 @@ const JAMO={
  'ㆍ':['DOT']
 };
 /* 헷갈리기 쉬운 글자는 이름을 함께 보여 줍니다 */
-const JAMO_NAME={'ㅇ':'이응','ㆁ':'옛이응','ㆆ':'여린히읗','ㅿ':'반시옷','ㆍ':'아래아'};
+const JAMO_NAME={'ㅇ':'이응','ㆁ':'옛이응','ㆆ':'여린히읗','ㅿ':'반치음','ㆍ':'아래아'};
 function jamoSVG(ch,cls){
   const p=JAMO[ch]; if(!p) return null;
   if(p[0]==='DOT'){   /* ㆍ 아래아 — 글꼴에 없는 기기가 있어 직접 그린다 */
@@ -935,9 +936,8 @@ const HINT={
  vow_comb:'이미 만들어진 모음자 두 개를 합쳐 놓은 글자입니다. 글자 안에서 아는 모음자를 찾아보세요.'};
 
 /* ================= 문항 ================= */
-/* 1단계 앞 14문항(id 1~14) · 뒤 13문항(id 15~28, ㄹ id 20 제외) · 2단계 13문항(id 29~42, ㄹ id 34 제외)에 공통으로 쓰입니다
-   ㄹ은 이체자라 '모양을 본떴나' / '어느 기본자에 획을 더했나'로 묻지 않고 뒤 두 묶음에서 뺍니다 (교사 결정 2026.10.01) */
-const NO_SHAPE_Q=['ㄹ'];
+/* 1단계 앞 14문항(id 1~14) · 뒤 14문항(id 15~28) · 2단계(id 29~42)에 공통으로 쓰입니다
+   ㄹ(id 20·34)은 이체자지만 ㄴ에 획을 더했으므로 '어느 기본자에 획을 더해 만들었을까요?'로 묻습니다 (교사 결정 2026.10.01) */
 const CONS14=[
  {ch:'ㄱ',cat:'pos_a',ex:'ㄱ은 혀뿌리가 목구멍을 막는 모양을 본뜬 어금닛소리(아음)의 기본자입니다.',
   exS:'어금닛소리 기본자 ㄱ이 혀뿌리가 목구멍을 막는 모양을 그대로 본떴습니다.'},
@@ -974,15 +974,15 @@ const CONS17=[
  {id:45,ch:'ㅁ',cat:'con_base',ex:'ㅁ은 입의 모양을 본뜬 기본자입니다.'},
  {id:46,ch:'ㅅ',cat:'con_base',ex:'ㅅ은 이의 모양을 본뜬 기본자입니다.'},
  {id:47,ch:'ㅇ',cat:'con_base',ex:'ㅇ은 목구멍의 모양을 본뜬 기본자입니다.'},
- {id:48,ch:'ㅋ',cat:'con_add',ex:'ㅋ은 기본자 ㄱ에 획을 하나 더해 만든 가획자입니다.'},
- {id:49,ch:'ㄷ',cat:'con_add',ex:'ㄷ은 기본자 ㄴ에 획을 더해 만든 가획자입니다.'},
- {id:50,ch:'ㅌ',cat:'con_add',ex:'ㅌ은 ㄴ → ㄷ에 다시 획을 더해 만든 가획자입니다.'},
- {id:51,ch:'ㅂ',cat:'con_add',ex:'ㅂ은 기본자 ㅁ에 획을 더해 만든 가획자입니다.'},
- {id:52,ch:'ㅍ',cat:'con_add',ex:'ㅍ은 ㅁ → ㅂ에 다시 획을 더해 만든 가획자입니다.'},
- {id:53,ch:'ㅈ',cat:'con_add',ex:'ㅈ은 기본자 ㅅ에 획을 더해 만든 가획자입니다.'},
- {id:54,ch:'ㅊ',cat:'con_add',ex:'ㅊ은 ㅅ → ㅈ에 다시 획을 더해 만든 가획자입니다.'},
- {id:55,ch:'ㆆ',cat:'con_add',ex:'ㆆ(여린히읗)은 기본자 ㅇ에 획을 더해 만든 가획자입니다.'},
- {id:56,ch:'ㅎ',cat:'con_add',ex:'ㅎ은 ㅇ → ㆆ에 다시 획을 더해 만든 가획자입니다.'},
+ {id:48,ch:'ㅋ',cat:'con_add',ex:'ㅋ은 기본자 ㄱ에 획을 하나 더해 만든 가획자입니다. ㄱ보다 소리가 셉니다.'},
+ {id:49,ch:'ㄷ',cat:'con_add',ex:'ㄷ은 기본자 ㄴ에 획을 더해 만든 가획자입니다. ㄴ보다 소리가 셉니다.'},
+ {id:50,ch:'ㅌ',cat:'con_add',ex:'ㅌ은 ㄴ → ㄷ에 다시 획을 더해 만든 가획자입니다. ㄷ보다 소리가 셉니다.'},
+ {id:51,ch:'ㅂ',cat:'con_add',ex:'ㅂ은 기본자 ㅁ에 획을 더해 만든 가획자입니다. ㅁ보다 소리가 셉니다.'},
+ {id:52,ch:'ㅍ',cat:'con_add',ex:'ㅍ은 ㅁ → ㅂ에 다시 획을 더해 만든 가획자입니다. ㅂ보다 소리가 셉니다.'},
+ {id:53,ch:'ㅈ',cat:'con_add',ex:'ㅈ은 기본자 ㅅ에 획을 더해 만든 가획자입니다. ㅅ보다 소리가 셉니다.'},
+ {id:54,ch:'ㅊ',cat:'con_add',ex:'ㅊ은 ㅅ → ㅈ에 다시 획을 더해 만든 가획자입니다. ㅈ보다 소리가 셉니다.'},
+ {id:55,ch:'ㆆ',cat:'con_add',ex:'ㆆ(여린히읗)은 기본자 ㅇ에 획을 더해 만든 가획자입니다. ㅇ보다 소리가 셉니다.'},
+ {id:56,ch:'ㅎ',cat:'con_add',ex:'ㅎ은 ㅇ → ㆆ에 다시 획을 더해 만든 가획자입니다. ㆆ보다 소리가 셉니다.'},
  {id:57,ch:'ㆁ',cat:'con_var',ex:'ㆁ(옛이응)은 ㅇ에 획을 더했지만 소리가 세지지 않아 이체자입니다.'},
  {id:58,ch:'ㄹ',cat:'con_var',ex:'ㄹ(반혓소리)은 ㄴ에 획을 더했지만 소리가 세지지 않아 이체자입니다.'},
  {id:59,ch:'ㅿ',cat:'con_var',ex:'ㅿ(반잇소리)은 ㅅ에 획을 더했지만 소리가 세지지 않아 이체자입니다.'}];
@@ -1046,23 +1046,23 @@ function shuffle(a){const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math
 
 const STAGES=[
  {label:'1단계',jamo:true,desc:'발음 기관 · 초급',goal:'자음자를 발음 기관에 따라 나눈다',
-  full:'1단계 · 자음의 발음 기관에 따른 분류(초급)',file:'1단계_발음기관_초급',n:27,
+  full:'1단계 · 자음의 발음 기관에 따른 분류(초급)',file:'1단계_발음기관_초급',n:28,
   build(){
     const a=shuffle(CONS14.map((c,i)=>({id:i+1,ch:c.ch,cat:c.cat,cups:POS_CUPS,ex:c.ex,
       prompt:'이 자음자는 어느 발음 기관에서 나는 소리일까요?'})));
     const b=shuffle(CONS14.map((c,i)=>askBase(c.ch)
       ? {id:i+15,ch:c.ch,cat:c.cat,cups:BASE_CUPS,ex:c.exS,baseQ:true,hint:BASE_HINT,prompt:BASE_PROMPT}
       : {id:i+15,ch:c.ch,cat:c.cat,cups:SHAPE_CUPS,ex:c.exS,
-      prompt:'이 자음자는 어떤 발음 기관의 모양을 본떠 만들었을까요?'}).filter(q=>NO_SHAPE_Q.indexOf(q.ch)<0));
+      prompt:'이 자음자는 어떤 발음 기관의 모양을 본떠 만들었을까요?'}));
     return a.concat(b);
   }},
  {label:'2단계',jamo:true,desc:'발음 기관 · 고급',goal:'그림을 보고 발음 기관을 찾고, 가획자는 기본자를 찾는다',
-  full:'2단계 · 자음의 발음 기관에 따른 분류(고급)',file:'2단계_발음기관_고급',n:13,
+  full:'2단계 · 자음의 발음 기관에 따른 분류(고급)',file:'2단계_발음기관_고급',n:14,
   build(){
     return shuffle(CONS14.map((c,i)=>askBase(c.ch)
       ? {id:i+29,ch:c.ch,cat:c.cat,cups:BASE_CUPS,ex:c.exS,baseQ:true,hint:BASE_HINT,prompt:BASE_PROMPT}
       : {id:i+29,ch:c.ch,cat:c.cat,cups:IMG_CUPS,ex:c.ex,
-      prompt:'그림을 잘 보세요. 이 자음자는 어느 발음 기관의 모양을 본떴을까요?'}).filter(q=>NO_SHAPE_Q.indexOf(q.ch)<0));
+      prompt:'그림을 잘 보세요. 이 자음자는 어느 발음 기관의 모양을 본떴을까요?'}));
   }},
  {label:'3단계',jamo:true,desc:'자음자 만들기',goal:'자음자를 만든 방법으로 나눈다',
   full:'3단계 · 자음자를 만든 방법에 따른 분류',file:'3단계_자음자를_만든_방법',n:17,
@@ -1576,13 +1576,13 @@ function teacherRows(si){
   if(si===0){
     const a=CONS14.map((c,i)=>({id:i+1,cat:c.cat,ch:c.ch,ans:cupLabel(POS_CUPS,c.cat),ex:c.ex,note:'소리의 이름으로 분류'}));
     const b=CONS14.map((c,i)=>askBase(c.ch)
-      ? ({id:i+15,cat:c.cat,ch:c.ch,ans:'기본자 '+BASE_OF[c.cat],ex:c.exS,note:'획을 더한 기본자로 분류'})
-      : ({id:i+15,cat:c.cat,ch:c.ch,ans:cupLabel(SHAPE_CUPS,c.cat),ex:c.exS,note:'본뜬 모양으로 분류'})).filter(r=>NO_SHAPE_Q.indexOf(r.ch)<0);
+      ? ({id:i+15,cat:c.cat,ch:c.ch,ans:'기본자 '+BASE_OF[c.cat],ex:c.exS,note:c.ch==='ㄹ'?'획을 더한 기본자로 분류(이체자)':'획을 더한 기본자로 분류'})
+      : ({id:i+15,cat:c.cat,ch:c.ch,ans:cupLabel(SHAPE_CUPS,c.cat),ex:c.exS,note:'본뜬 모양으로 분류'}));
     return a.concat(b);
   }
   if(si===1) return CONS14.map((c,i)=>askBase(c.ch)
-      ? ({id:i+29,cat:c.cat,ch:c.ch,ans:'기본자 '+BASE_OF[c.cat],ex:c.exS,note:'획을 더한 기본자로 분류(컵은 기본자 글자)'})
-      : ({id:i+29,cat:c.cat,ch:c.ch,ans:cupLabel(IMG_CUPS,c.cat),ex:c.ex,note:'컵은 그림만 표시'})).filter(r=>NO_SHAPE_Q.indexOf(r.ch)<0);
+      ? ({id:i+29,cat:c.cat,ch:c.ch,ans:'기본자 '+BASE_OF[c.cat],ex:c.exS,note:c.ch==='ㄹ'?'획을 더한 기본자로 분류(이체자, 컵은 기본자 글자)':'획을 더한 기본자로 분류(컵은 기본자 글자)'})
+      : ({id:i+29,cat:c.cat,ch:c.ch,ans:cupLabel(IMG_CUPS,c.cat),ex:c.ex,note:'컵은 그림만 표시'}));
   if(si===2) return CONS17.map(c=>({id:c.id,cat:c.cat,ch:c.ch,ans:cupLabel(MAKE_CUPS,c.cat),ex:c.ex,note:''}));
   return VOW22.map(c=>({id:c.id,cat:c.cat,ch:c.ch,ans:cupLabel(VOW_CUPS,c.cat),ex:c.ex,note:''}));
 }
