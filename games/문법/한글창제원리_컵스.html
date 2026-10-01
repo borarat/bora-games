@@ -5,6 +5,7 @@
            가획자·이체자 판정법을 '획을 더해 소리가 세졌는가'로(교과서 기준), 이체자 설명을 교과서 문구로 통일, 시작 화면 목구멍소리에 '(목청소리)' 병기
      추가(교사 결정 2026.10.01): 1단계 뒤·2단계에서 ㄹ 문항(id 20·34) 삭제(27/13문항), 1·2단계 개념 화면 제목 '기본자는 발음 기관의 모양을 본떴어요'
      수정(2026.10.01 13:00): ㄹ 문항(id 20·34)을 '어느 기본자에 획을 더해 만들었을까요?'(정답 ㄴ, 이체자)로 되살림(28/14문항), ㅿ 이름 '반치음'으로 통일, 3단계 가획자 해설에 '○보다 소리가 셉니다' 추가
+     수정(2026.10.01 16:10): 2015 성취기준 삭제(교사 결정: 2022만)
      버그: 답하기 전 Enter·Space·→ 로 문제가 넘어가던 문제 — 채점 전에는 키로 넘기지 않음 -->
 <html lang="ko">
 <head>
@@ -454,7 +455,6 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 
    <div class="box std" style="margin-bottom:14px">
     <h3>성취기준</h3>
-    <p><span class="cur">2015</span>[9국04-08] 한글의 창제 원리를 이해한다.</p>
     <p><span class="cur">2022</span>[9국04-01] 국어의 음운 체계와 문자 체계를 이해하고 국어생활에 활용한다.</p>
    </div>
 
@@ -524,7 +524,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 
    <div class="credit">
     제작 · <b>보라라샘</b> · <b>전주서신중학교 교사</b> · <b>siaawase@gmail.com</b><br>
-    제작일 2026.08.23 · <span id="lastMod">최종 수정 2026.10.01 13:00</span>
+    제작일 2026.08.23 · <span id="lastMod">최종 수정 2026.10.01 16:10</span>
    </div>
 
    <div class="privacy" id="privacyOffline">
@@ -707,10 +707,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 /* =========================================================
    G209 한글 창제 원리 컵스
    제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com
-   제작일 2026.08.23 · 최종 수정 2026.10.01 13:00
+   제작일 2026.08.23 · 최종 수정 2026.10.01 16:10
    ========================================================= */
 const MADE_DATE = '2026.08.23';
-const LAST_MOD  = '2026.10.01 13:00';
+const LAST_MOD  = '2026.10.01 16:10';
 const GAME_NAME = '한글 창제 원리 컵스';
 
 // ═══════════════════════════════════════════
@@ -756,7 +756,6 @@ async function submitResult(resultData) {
 
 /* ================= 성취기준 ================= */
 const STANDARDS = [
-  {cur:'2015', code:'[9국04-08]', text:'한글의 창제 원리를 이해한다.'},
   {cur:'2022', code:'[9국04-01]', text:'국어의 음운 체계와 문자 체계를 이해하고 국어생활에 활용한다.'}
 ];
 

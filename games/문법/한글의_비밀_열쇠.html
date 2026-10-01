@@ -2,6 +2,7 @@
 <!-- 리모델링 2026.10.01 07:10 (4차 야간)
      문항: 이체자 설명을 교과서 문구로 통일(2단계 17·20·22·23번, 이체자 tip), 목구멍소리 첫 등장에 '(목청소리)' 병기(2단계 5·13번, 13번은 '목청소리' 입력도 인정),
            5단계 14번 풀어쓰기 비교 대상에서 일본어 문자 삭제(영어 알파벳만)
+     수정(2026.10.01 16:10): 2015 성취기준 삭제(교사 결정: 2022만)
      버그: 객관식에서 답하기 전 Enter·Space·→ 로 넘기면 문항이 잠기던 문제 — 채점 전에는 키로 넘기지 않음 -->
 <html lang="ko">
 <head>
@@ -370,7 +371,6 @@ input,textarea{font-family:inherit}
      <div>
       <div class="box std">
        <h3>성취기준 · 학습 목표</h3>
-       <p><span class="code">(2015)</span> [9국04-08] 한글의 창제 원리를 이해한다.</p>
        <p><span class="code">(2022)</span> [9국04-01] 국어의 음운 체계와 문자 체계를 이해하고 국어생활에 활용한다.</p>
        <p style="margin-top:5px;color:#5b4e86">한글의 창제 원리를 이해하고, 그 가치를 안다.</p>
       </div>
@@ -432,7 +432,7 @@ input,textarea{font-family:inherit}
 
     <div class="credit">
      <span class="cline">제작 · <b>보라라샘</b> · <b>전주서신중학교 교사</b> · <b>siaawase@gmail.com</b></span>
-     <span class="cline">제작일 2026.08.31 · <span id="lastMod">최종 수정 2026.10.01 07:10</span></span>
+     <span class="cline">제작일 2026.08.31 · <span id="lastMod">최종 수정 2026.10.01 16:10</span></span>
     </div>
 
     <div class="privacy" id="privacyOffline">
@@ -581,15 +581,14 @@ input,textarea{font-family:inherit}
 /* =========================================================
    한글의 비밀 열쇠  ·  게임코드 G210 (옛 코드 HAN02)
    제작 · 보라라샘 (전주서신중학교 교사) · siaawase@gmail.com
-   제작일 2026.08.31 · 최종 수정 2026.10.01
+   제작일 2026.08.31 · 최종 수정 2026.10.01 16:10
    ========================================================= */
 const MADE_DATE = '2026.08.31';
-const LASTMOD   = '2026.10.01 07:10';
+const LASTMOD   = '2026.10.01 16:10';
 const GAME_NAME = '한글의 비밀 열쇠';
 const BASE = 10;                     // 문항 기본점
 
 const ACHIEVE = {
-  y2015:'(2015) [9국04-08] 한글의 창제 원리를 이해한다.',
   y2022:'(2022) [9국04-01] 국어의 음운 체계와 문자 체계를 이해하고 국어생활에 활용한다.'
 };
 
@@ -2016,8 +2015,8 @@ $('btnReport').addEventListener('click',()=>{
   y=memoBox(ctx,y,info.memo,W);
 
   /* 꼬리말 — 성취기준 + 개인정보 + 크레딧 */
-  ctx.fillStyle='#f6f3ee'; ctx.fillRect(44,y,W-88,58); ctx.strokeStyle='#e2dccf'; ctx.lineWidth=1.5; ctx.strokeRect(44,y,W-88,58);
-  ctx.fillStyle='#5b5340'; ctx.font=F(13.5); ctx.fillText(ACHIEVE.y2015,60,y+24); ctx.fillText(ACHIEVE.y2022,60,y+46); y+=58+26;
+  ctx.fillStyle='#f6f3ee'; ctx.fillRect(44,y,W-88,38); ctx.strokeStyle='#e2dccf'; ctx.lineWidth=1.5; ctx.strokeRect(44,y,W-88,38);
+  ctx.fillStyle='#5b5340'; ctx.font=F(13.5); ctx.fillText(ACHIEVE.y2022,60,y+24); y+=38+26;
   ctx.fillStyle='#8b8570'; ctx.font=F(12.5);
   ctx.fillText('🔒 이 이미지의 이름·소감은 서버에 저장되지 않으며, 리포트 이미지 생성용으로만 처리됩니다.',44,y); y+=22;
   creditFoot(ctx,W,y);
@@ -2046,7 +2045,6 @@ function downloadTeacherXls(){
   const total=STAGE_ORDER.reduce((s,n)=>s+BANK[n].length,0);
   let info=rowOf(cellS('항목')+cellS('내용'));
   info+=rowOf(cellS('게임')+cellS(GAME_NAME+' ('+GAME_CONFIG.gameCode+')'));
-  info+=rowOf(cellS('성취기준')+cellS(ACHIEVE.y2015));
   info+=rowOf(cellS('성취기준')+cellS(ACHIEVE.y2022));
   info+=rowOf(cellS('배점 규칙')+cellS('기본점 '+BASE+'점 · 콤보 3~4연속 +5 / 5연속↑ +10 · 재시도 정답 +'+Math.round(BASE/2)+' · 오답 −5(하한 0)'));
   info+=rowOf(cellS('단계별 만점')+cellS(STAGE_ORDER.map(n=>STAGES[n].label+' '+maxScore(BANK[n].length)+'점').join(' · ')));

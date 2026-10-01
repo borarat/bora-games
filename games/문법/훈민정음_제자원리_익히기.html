@@ -2,7 +2,8 @@
 <!-- 리모델링 2026.10.01 08:00 (4차 야간)
      문항: 이체자 설명을 교과서 문구로 통일(1단계 ㆁ·ㄹ·ㅿ 해설, 2단계 '이체자' 이름표 해설, 5단계 칼·별·글 종성 설명, 유형 설명·tip),
            '획을 하나 지워 보세요' 판정법을 '획을 더해 소리가 세졌는가'로(G209와 같은 기준), 체계표 목구멍소리 열 머리와 2단계 '목구멍소리' 이름표 해설에 '(목청소리)' 병기
-     수정(2026.10.01 13:00): 휴대폰 폭(390px)에서 5단계 아래 이동 버튼 줄이 2px 넘치던 문제 — 600px 이하에서 .body 열 minmax(0,1fr)·버튼 여백 축소 -->
+     수정(2026.10.01 13:00): 휴대폰 폭(390px)에서 5단계 아래 이동 버튼 줄이 2px 넘치던 문제 — 600px 이하에서 .body 열 minmax(0,1fr)·버튼 여백 축소
+     수정(2026.10.01 16:10): 2015 성취기준 삭제(교사 결정: 2022만) -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -661,14 +662,12 @@ const MASCOT_B64 = 'iVBORw0KGgoAAAANSUhEUgAAAIQAAACxCAMAAAAyLeWLAAAB/lBMVEUAAABM
    제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com
    ═══════════════════════════════════════════ */
 const MADE_DATE = '2026.09.10';
-const MOD_DATE  = '2026.10.01 13:00';
+const MOD_DATE  = '2026.10.01 16:10';
 
 /* ★★ 시트에서 문법·2학년의 마지막 번호를 확인한 뒤 이 한 줄만 고치면 됩니다 ★★ */
 const GAME_CODE = 'G211';
 
-/* ★★ 2015 개정 코드는 확인이 필요합니다. 확인 후 이 한 줄만 고치면
-       시작 화면·리포트 JPG·엑셀에 모두 반영됩니다 ★★ */
-const ACH_2015 = { code:'9국04-08', text:'한글의 창제 원리를 이해한다.' };
+/* 성취기준 — 2022 개정만 표시(교사 결정). 시작 화면·리포트 JPG·엑셀에 모두 반영됩니다 */
 const ACH_2022 = { code:'9국04-01', text:'국어의 음운 체계와 문자 체계를 이해하고 국어생활에 활용한다.' };
 
 /* 배점 (지침 4장) */
@@ -2226,7 +2225,7 @@ function makeReport(){
   const HW = (IW-14)/2;
   const sumH = 40 + Math.max(measureH(mg,bestT,HW-36,20), measureH(mg,weakT,HW-36,20)) + 14;
   const feelH = fl ? 34+measureH(mg,fl,TW,19)+14 : 0;
-  const ach = '성취기준 (2015) ['+ACH_2015.code+'] '+ACH_2015.text+'\n성취기준 (2022) ['+ACH_2022.code+'] '+ACH_2022.text;
+  const ach = '성취기준 (2022) ['+ACH_2022.code+'] '+ACH_2022.text;
   mg.font='12px '+FONT;
   const achH = measureH(mg, ach, IW, 17);
 
@@ -2329,10 +2328,9 @@ function xSheet(name, rows){
 }
 function downloadTeacherXls(){
   const rule = ['배점 규칙','첫 시도 정답 +'+BASE_PT+' · 다시 풀어 맞힘 +'+RETRY_PT+' · 오답 −'+PENALTY+'(하한 0) · 콤보 3~4 +5 / 5이상 +10 · 5단계 체계표 보기 −'+HINT_COST];
-  const ach1 = ['성취기준 (2015)','['+ACH_2015.code+'] '+ACH_2015.text];
-  const ach2 = ['성취기준 (2022)','['+ACH_2022.code+'] '+ACH_2022.text];
+  const ach = ['성취기준 (2022)','['+ACH_2022.code+'] '+ACH_2022.text];
   const credit = ['크레딧', CREDIT_LINE+' · 제작일 '+MADE_DATE+' · 최종 수정 '+MOD_DATE+' · 게임코드 '+GAME_CODE];
-  const tail = (n,max)=>[[],['총문항 수',String(n),'만점',String(max)],ach1,ach2,rule,credit];
+  const tail = (n,max)=>[[],['총문항 수',String(n),'만점',String(max)],ach,rule,credit];
 
   const hdrPlace = ['원본 id','유형','카드','놓을 자리','해설'];
   const s1 = [hdrPlace].concat(CONS_CARDS.map(c=>[c.id, CATLABEL(c.cat), jnText(c.ch), slotLabel({group:c.group,slot:c.slot,text:c.ch},1), c.detail]))
@@ -2360,7 +2358,7 @@ function downloadTeacherXls(){
   const sum = [['유형 코드','유형 이름','설명','학습 조언(tip)','출제 수(자모 기준)']]
     .concat(Object.keys(CATEGORIES).map(k=>[k, CATEGORIES[k].label, CATEGORIES[k].desc + (CATEGORIES[k].ex?' (예: '+CATEGORIES[k].ex+')':''), CATEGORIES[k].tip, String(count[k]||0)]))
     .concat([[],['전체 문항 수', String(Object.values(STAGE_INFO).reduce((a,b)=>a+b.total,0))],
-             ['전체 만점', String(Object.values(STAGE_INFO).reduce((a,b)=>a+b.max,0))], ach1, ach2, rule, credit]);
+             ['전체 만점', String(Object.values(STAGE_INFO).reduce((a,b)=>a+b.max,0))], ach, rule, credit]);
 
   const xml = '<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?>'
     + '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">'
@@ -2386,7 +2384,6 @@ $('mobBadge').textContent = MOBILE_BADGE;
 $('wmPlay').textContent = '제작 · 보라라샘 / ' + MADE_DATE;
 $('stdBox').innerHTML =
   '「성취기준」<br>' +
-  '(2015) <b>[' + ACH_2015.code + ']</b> ' + esc(ACH_2015.text) + '<br>' +
   '(2022) <b>[' + ACH_2022.code + ']</b> ' + esc(ACH_2022.text);
 $('catGrid').innerHTML = Object.keys(CATEGORIES).map(k=>{
   const c = CATEGORIES[k];
