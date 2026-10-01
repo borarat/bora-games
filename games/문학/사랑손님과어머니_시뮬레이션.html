@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko">
+<!-- 리모델링 2026.10.01 21:00 (9차) — 게임 코드 L401, 기술 수정만 (원작 세부는 교과서 대조 후)
+     폰트: Pretendard CDN(jsdelivr) 삭제 → Noto Sans KR (학교망에서 CDN이 막히면 빈 화면이 8초 넘게 뜨던 문제)
+     결말: 게이지 비교 대신 마지막 장면(s6)에서 고른 선택이 결말을 정함 / s5 독백 가지도 s5 선택(거절·받아들임)으로 나눔
+     표기: 옛 이메일 → siaawase@gmail.com, 제작일 2026.06.09, 최종 수정 시각, 게임 코드 표시 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -7,7 +11,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
 <style>
     * { box-sizing: border-box; }
     html, body { height: 100%; margin: 0; }
@@ -153,7 +156,7 @@
     .review-banner.show { display: block; }
 
     .story-box {
-        font-family: 'Pretendard', sans-serif;
+        font-family: 'Noto Sans KR', sans-serif;
         font-size: 16px; line-height: 1.8; color: #2b2624;
         margin-bottom: 14px; padding: 4px 2px;
         overflow-y: auto; flex: 1; min-height: 0;
@@ -213,7 +216,7 @@
         background-color: #fffdf9; border-radius: 10px; margin-bottom: 16px;
     }
     .ending-box h3 { font-family: 'Gowun Batang', serif; margin: 0 0 10px; color: #5c4b43; font-size: 18px; }
-    .ending-box p { font-family: 'Pretendard', sans-serif; font-size: 15px; line-height: 1.8; margin: 0 0 10px; }
+    .ending-box p { font-family: 'Noto Sans KR', sans-serif; font-size: 15px; line-height: 1.8; margin: 0 0 10px; }
     .ending-box p:last-child { margin-bottom: 0; }
 
     .note-box {
@@ -311,13 +314,14 @@
         </div>
         <div class="rule-grid" style="margin-bottom:14px;">
             <div class="rule-card" style="flex:1;">
-                두 마음 중 마지막에 더 높은 쪽에 따라 <strong>결말이 갈립니다.</strong> 어려운 낱말에는 점선이 그어져 있어요. 눌러 보면 뜻풀이가 나옵니다.
+                두 게이지는 어머니의 마음이 어느 쪽으로 기우는지 보여 줍니다. <strong>마지막 장면에서 무엇을 고르느냐에 따라 결말이 갈립니다.</strong> 어려운 낱말에는 점선이 그어져 있어요. 눌러 보면 뜻풀이가 나옵니다.
             </div>
         </div>
 
         <div class="creator-info">
             제작 <strong>보라라샘</strong> · 전주서신중학교 교사<br>
-            siaawase@g.jbedu.kr · 2026. 6. 9.
+            siaawase@gmail.com<br>
+            제작일 2026.06.09 · 최종 수정 2026.10.01 21:00 · 게임 코드 L401
         </div>
 
         <button class="start-btn" onclick="startGame()">시뮬레이션 시작하기</button>
@@ -354,7 +358,7 @@
             <button class="nav-btn home" id="home-btn" onclick="goHome()">↺ 처음으로</button>
         </div>
 
-        <div class="ingame-credit">제작 · 보라라샘 / 2026.6.9</div>
+        <div class="ingame-credit">제작 · 보라라샘 / 2026.06.09</div>
     </div>
 </div>
 
@@ -437,8 +441,8 @@
                 + "<p>\"옥희가 아버지를 새로 가지면 세상이 욕을 한단다. 옥희 어머니는 " + g("화냥년") + "이다, 화냥년의 딸이다 — 그렇게 손가락질하겠지.\"</p>"
                 + "<p>이제 마음을 정해야 합니다. 옥희를 곱게 차려 입히고, 나는 풍금 옆의 하얀 손수건을 집어 듭니다.</p>",
             choices: [
-                { text: "손수건 속에 거절의 뜻을 적어 넣어, 옥희 편에 아저씨께 들려 보낸다.", love: -15, duty: 20, next: "branch_check" },
-                { text: "거절 대신, 그 마음을 받아들이는 답을 적어 넣어 보낸다.", love: 20, duty: -18, next: "branch_check" }
+                { text: "손수건 속에 거절의 뜻을 적어 넣어, 옥희 편에 아저씨께 들려 보낸다.", love: -15, duty: 20, next: "s6" },
+                { text: "거절 대신, 그 마음을 받아들이는 답을 적어 넣어 보낸다.", love: 20, duty: -18, next: "monologue" }
             ]
         },
         monologue: {
@@ -454,8 +458,8 @@
                 + "<p>아저씨는 옥희에게 예쁜 인형을 하나 쥐어 주었습니다. 나는 벽장에 남은 달걀 여섯 알을 모두 삶아, 소금과 함께 손수건에 싸 두었습니다 — 가시는 찻간에서나마 드시라고.</p>"
                 + "<p>옥희의 손을 잡고 나설 채비를 합니다. 당신의 마지막 선택은 무엇입니까?</p>",
             choices: [
-                { text: "옥희와 뒷동산에 올라, 기차가 까만 점이 되어 사라질 때까지 가만히 바라본다.", love: 0, duty: 12, next: "ending" },
-                { text: "더는 견디지 못하고, 옥희의 손을 잡고 정거장으로 달음질친다 — 그이를 붙잡으러.", love: 20, duty: -22, next: "ending" }
+                { text: "옥희와 뒷동산에 올라, 기차가 까만 점이 되어 사라질 때까지 가만히 바라본다.", love: 0, duty: 12, next: "ending", ending: "A" },
+                { text: "더는 견디지 못하고, 옥희의 손을 잡고 정거장으로 달음질친다 — 그이를 붙잡으러.", love: 20, duty: -22, next: "ending", ending: "B" }
             ]
         }
     };
@@ -518,10 +522,10 @@
         }
     }
 
-    function advanceTo(nextId){
-        if (nextId === "branch_check") nextId = (love >= duty) ? "monologue" : "s6";
+    function advanceTo(nextId, endingType){
         if (nextId === "ending"){
-            const type = (duty >= love) ? "A" : "B";
+            // 결말은 마지막 장면에서 고른 선택이 정한다 (게이지 비교로 정하면 고른 행동과 결말이 어긋남)
+            const type = endingType || ((duty >= love) ? "A" : "B");
             path.push({ id: "ending", resolved: true, endingType: type, loveAfter: love, dutyAfter: duty });
             viewIndex = path.length - 1;
             render();
@@ -542,7 +546,7 @@
         if (c.love > 0 && c.love >= Math.abs(c.duty)) sfxLove();
         else if (c.duty > 0) sfxDuty();
         rec.resolved = true; rec.choiceIndex = i; rec.loveAfter = love; rec.dutyAfter = duty;
-        advanceTo(c.next);
+        advanceTo(c.next, c.ending);
     }
 
     function continueNarration(){
