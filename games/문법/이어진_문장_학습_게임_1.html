@@ -715,13 +715,15 @@ function submitStage1(){
   if(q.type==='B'){
     // 붙임표·괄호·공백·끝 마침표 차이로 오답이 되지 않게 ('-고'도 '고'와 같이) — 지침 3-6
     const nb=s=>s.replace(/[\s\-‐–—~()（）.。]/g,'');
-    isCorrect=(nb(val)===nb(q.blank));
+    // '-(으)면'처럼 (으)를 괄호로 쓴 답도 인정: 괄호만 지운 것('으면')과 '(으)'를 통째로 지운 것('면') 둘 다 비교
+    isCorrect=(nb(val)===nb(q.blank))||(nb(val.replace(/[(（]으[)）]/g,''))===nb(q.blank));
     userAnswers[current]=val;
     const bd=document.getElementById('blank-display');
     if(bd)bd.textContent=val;
   } else {
-    const normalize=s=>s.replace(/[\s.,!?。，、]/g,'');
-    const nVal=normalize(val);
+    // 띄어쓰기·마침표·쉼표만 무시한다. 물음표·느낌표로 끝나면 오답 (지침 3-6)
+    const normalize=s=>s.replace(/[\s.,。，、]/g,'');
+    const nVal=/[?？!！]\s*$/.test(val)?'\u0000':normalize(val);
     const candidates=[q.answer,...(q.altAnswers||[])];
     isCorrect=candidates.some(c=>normalize(c)===nVal);
     userAnswers[current]=val;
@@ -776,16 +778,17 @@ function processAnswer(isCorrect,q){
     if(combo>=3){playCombo();showToast(`🔥 ${combo}콤보! +${BASE+bonus}점`)}
     else playCorrect();
     if(combo>=2){document.getElementById('combo-badge').classList.remove('hidden');document.getElementById('combo-val').textContent=combo}
-    showFeedback(true,`정답! +${BASE+bonus}점${bonus?' (콤보 보너스!)':''}`);
+    var fbMsg=`정답! +${BASE+bonus}점${bonus?' (콤보 보너스!)':''}`;
   } else {
     combo=0;wrongCount++;score=Math.max(0,score-PENALTY);
     document.getElementById('combo-badge').classList.add('hidden');
     playWrong();
-    showFeedback(false,`틀렸어요! −${PENALTY}점`);
+    var fbMsg=`틀렸어요! −${PENALTY}점`;
   }
   document.getElementById('score-val').textContent=score;
+  renderQuestion(); // 먼저 잠긴 상태로 다시 그린 뒤
+  showFeedback(isCorrect,fbMsg); // 방금 채점한 점수 문구를 덮어쓴다 (복원 문구 '이미 맞힌 문제'가 남지 않게)
   showDetail(q);
-  renderQuestion(); // re-render with disabled state
 
   // 전부 답했으면 자동 종료
   if(answered.every(a=>a!=null))setTimeout(()=>showComplete(),1500);
