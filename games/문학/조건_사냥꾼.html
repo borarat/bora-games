@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
+<!-- 리모델링 2026.10.01 17:00 (7차)
+     코드 L201 → L202 · 「사랑손님과 어머니」 발표 1935년 · 1단계 7번/2단계 세트 B: 어머니를 막은 원인 = 법이 없어진 뒤에도 남은 관습(시선)
+     3단계 채점: '-기에' 오인(여기에 등) · 공백 든 키워드(남의 눈) · 마름+지주 감점 · '집'/'참' 글자 걸림 고침 · 마스코트 이미지 교체 -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -258,17 +261,7 @@ body.glow::after{content:''; position:fixed; inset:0; z-index:940; pointer-event
  </div>
  <div class="pad">
   <div class="head">
-   <svg id="mascot" class="mascot-img" viewBox="0 0 132 177" width="67" height="90" role="img" aria-label="마스코트 자리">
-     <rect x="0" y="0" width="132" height="177" rx="16" fill="#E8F6F0" stroke="#BEE3D6"/>
-     <rect x="26" y="30" width="80" height="104" rx="6" fill="#fff" stroke="#9FD3C2"/>
-     <rect x="38" y="46" width="56" height="6" rx="3" fill="#CDE9DF"/>
-     <rect x="38" y="60" width="44" height="6" rx="3" fill="#CDE9DF"/>
-     <rect x="38" y="74" width="52" height="7" rx="3.5" fill="#F7D58A"/>
-     <rect x="38" y="88" width="38" height="6" rx="3" fill="#CDE9DF"/>
-     <circle cx="84" cy="106" r="20" fill="none" stroke="#2E9B79" stroke-width="5"/>
-     <line x1="98" y1="120" x2="114" y2="138" stroke="#2E9B79" stroke-width="7" stroke-linecap="round"/>
-     <text x="66" y="160" text-anchor="middle" font-size="15" fill="#0F6E56" font-family="sans-serif">마스코트</text>
-    </svg>
+   <img id="mascot" class="mascot-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAACxCAMAAAAyLeWLAAAB/lBMVEUAAABMNSXZ1s7hupPcto7alVnNxba4uryMqcKptsLQiEyTp7jTmmfXpXTkwZxGLBvipW3i2snLeDWcscPUrIR8osLnx6NqSDBNMR7FvbLb0b2telCoq6vGxsb7+vqth2eHm6ivpJaMZ0rhmlvgnWGLeGm2g1ipmozGfUJtWEjTgTySlpVaRDS2lHXo6OeVhXbk4dl0UjmdsL6+wL1ELiDFbCd4mraGWDe8wcLGxsaXc1Z4ZVZ8oL77+vo6JhhiPSWoq6uTjIa4urzZ1s6DXELwsnh6bWK8dTuSYzwIBQUbFRNuOBZ3Qh3groDi0rsqHRdMNSWcoJuvpJbFvbLi2sl1nsKSlpWzajKptsLawZ7Nxbbo6OdtWEiLeGmpmowxIyF7c2l+lJ2BTSeTjIa2WBG8YhyjbUXd4eLk4dk8MS1ELiBlT0B4ZVaVhXaTp7imf2GvpJbAZh3An4De3+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADGtm7NAAAAgHRSTlMA///////////////////////////////////////////////////////////////////////////c////3P//3P/c3P///////////////9z/3Nzc/9z/3P/c3Nzc3P/////c/////9z/3P/c3Nz/oP///wAAAAAAAAAAAAAAAKaTQcIAABeqSURBVHja7VwHd+JItl4kUUpVKCAjhMjYYINxTh2me3q6e3vyvNnZ3dmcw8vx/5/z7r1VEghjLLfp3XPeebVjaANWffrud0PdKvYHP/j/sa3xC5Ml7cmrSdLRnvxdAPwjm+wdVPIRH+wN/sZAnhwfVJpepTi8SnzMPvqbQdg79C4q68fhr/8mED5+VvEqm8bBJx8cw68r9w7v4DcfFMJP72EhG3u//GAQXv+wHIRKpXn4iw+E4buDshhwfCBFxg/BUPnnD4Hhk8oD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" alt="보라라샘" draggable="false">
    <div>
     <h1>조건 사냥꾼</h1>
     <div class="sub">조건에 맞게, 한 문단으로 — <span style="white-space:nowrap">서논술형 답안 쓰기 훈련</span></div>
@@ -309,7 +302,7 @@ body.glow::after{content:''; position:fixed; inset:0; z-index:940; pointer-event
 
   <div class="credit">
    제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-   제작일 2026.09.24 · 최종 수정 2026.09.25 23:31
+   제작일 2026.09.24 · 최종 수정 2026.10.01 17:00
   </div>
   <div class="privacy" id="privacyOffline">
    <b>🔒 개인정보 보호 안내</b><br>
@@ -392,7 +385,7 @@ body.glow::after{content:''; position:fixed; inset:0; z-index:940; pointer-event
   </div>
   <div class="credit">
    제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-   제작일 2026.09.24 · 최종 수정 2026.09.25 23:31
+   제작일 2026.09.24 · 최종 수정 2026.10.01 17:00
   </div>
  </div>
 </div>
@@ -419,16 +412,16 @@ body.glow::after{content:''; position:fixed; inset:0; z-index:940; pointer-event
 
 <script>
 /* ═══════════════════════════════════════════════════════════
-   조건 사냥꾼 — L201 · 문학 · 중2 · 서논술형 답안 쓰기 훈련
+   조건 사냥꾼 — L202 · 문학 · 중2 · 서논술형 답안 쓰기 훈련
    ═══════════════════════════════════════════════════════════ */
 const MADE_DATE = '2026.09.24';
-const MOD_DATE  = '2026.09.25 23:31';
+const MOD_DATE  = '2026.10.01 17:00';
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
 // ═══════════════════════════════════════════
 const GAME_CONFIG = {
-  gameCode: "L201",
+  gameCode: "L202",
   gameName: "조건 사냥꾼",
   webAppUrl: "https://script.google.com/macros/s/AKfycbzgq9yT5svpFzeFwW5p2pWOpL-lKpj5_RldoJejFT1EOk1Osjcf6hDx85jGQzvr5rU0ww/exec"
 };
@@ -486,7 +479,7 @@ const SOURCES = {
   b2 : { label:'<자료>', tab:'<자료> 시대 배경', src:'선생님이 쓴 설명 자료',
     note:'작품 상황 — 어머니와 사랑방에 머무는 아저씨는 서로 마음이 있었지만, 어머니는 끝내 그 마음을 받아들이지 않는다.',
     marks:['개가(결혼했던 여자가 남편과 사별하거나 이혼하여 다른 남자와 결혼함)한 여성의 자손은 벼슬길에 오르지 못하도록 하는 법','여성의 개가에 대한 부정적 의식은'],
-    text:'가부장제는 가장인 남성이 강력한 권한을 가지고 가족 구성원을 통솔하는 가족 형태이다. 조선 시대의 가부장제 사회에서는 \'개가(결혼했던 여자가 남편과 사별하거나 이혼하여 다른 남자와 결혼함)한 여성의 자손은 벼슬길에 오르지 못하도록 하는 법\'이 있었다. 1894년 갑오개혁 때 과부의 개가를 허용하도록 하였으나 여성의 개가에 대한 부정적 의식은 「사랑손님과 어머니」가 발표된 1930년에도 여전하였다.' },
+    text:'가부장제는 가장인 남성이 강력한 권한을 가지고 가족 구성원을 통솔하는 가족 형태이다. 조선 시대의 가부장제 사회에서는 \'개가(결혼했던 여자가 남편과 사별하거나 이혼하여 다른 남자와 결혼함)한 여성의 자손은 벼슬길에 오르지 못하도록 하는 법\'이 있었다. 1894년 갑오개혁 때 과부의 개가를 허용하도록 하였으나 여성의 개가에 대한 부정적 의식은 「사랑손님과 어머니」가 발표된 1935년에도 여전하였다.' },
 
   c2 : { label:'<자료>', tab:'<자료> 오늘날', src:'선생님이 만든 가상 자료',
     caution:'선생님이 수업을 위해 지어낸 상황입니다. 실제로 있었던 일이 아닙니다.',
@@ -559,7 +552,7 @@ const S1 = [
    cond:'어머니와 아저씨의 사랑이 이루어지지 않은 까닭을 <자료 2>와 연관 지어 쓸 것.',
    ask:'이 조건을 지킨 답안은?',
    opts:[{t:'어머니와 아저씨는 사랑했지만 헤어졌다.'},
-         {t:'개가한 여성의 자손은 벼슬길에 오르지 못하게 한 법이 있었기 때문에 어머니는 아저씨를 포기했다.',ok:1},
+         {t:'개가를 막던 법은 없어졌지만 개가한 여성을 낮춰 보는 시선이 여전히 남아 있었기 때문에 어머니는 아저씨를 포기했다.',ok:1},
          {t:'<자료 2>에는 가부장제가 설명되어 있다.'}],
    hint:'"연관 지어"는 자료의 내용과 인물의 행동을 이어 붙이라는 뜻입니다.',
    detail:'"연관 지어"는 자료 내용과 작품 인물의 행동을 이어서 쓰라는 뜻이다. 자료만 옮겨 쓰거나 작품만 써서는 안 된다.' },
@@ -600,7 +593,7 @@ const S2 = [
    cards:[
     {t:'가부장제', req:1, why:'배경을 가리키는 핵심 용어'},
     {t:'개가(재혼)에 대한 부정적 인식', req:1, why:'어머니의 행동을 누른 사회의 시선'},
-    {t:'자손이 벼슬길에 오르지 못한다', req:1, why:'자료가 제시한 구체적 제약'},
+    {t:'법은 없어졌어도 남아 있던 관습', req:1, why:'개가를 막던 법은 1894년에 없어졌지만, 개가를 낮춰 보는 의식은 작품이 발표된 1935년에도 여전했어요. 어머니를 막은 것은 법이 아니라 이 관습이에요.'},
     {t:'남들의 시선 걱정', req:1, why:'어머니가 망설인 까닭'},
     {t:'아저씨를 포기한다 / 사랑이 이루어지지 않는다', req:1, why:'배경이 행동에 미친 결과'},
     {t:'갑오개혁', why:'자료에 나오더라도 인물의 행동과 곧바로 이어지지 않아요.'},
@@ -630,6 +623,10 @@ const S2 = [
 const has  = (t,w) => t.indexOf(w) >= 0;
 const anyOf = (t,a) => a.some(w => has(t,w));
 
+/* 3단계 채점 도우미 (7차) — t는 공백을 뺀 답안 */
+// '-기에'(까닭)만 인정: 앞 글자가 용언 어간·시제 표지일 때. '여기에·이야기에·분위기에'는 제외
+const CAUSE_GIE = /(있|없|했|않|하|이|았|었|였|겠|되|싶|많|적|같|좋|싫|크|작|높|낮|아니|르|렵|웠|쉽|럽)기에/;
+
 const S3 = [
  { id:12, cat:'write', title:'세트 1 · 「동백꽃」 (A형)', srcs:['s2a','s2b'],
    prompt:'<자료 2>와 <자료 3>을 통해 두 인물의 관계를 찾고, 이러한 관계가 인물의 행동에 미친 영향을 작성하시오.',
@@ -640,16 +637,18 @@ const S3 = [
       keys:['마름','소작농'],
       grade(t){
         const a=has(t,'마름'), b=anyOf(t,['소작농','소작인']);
+        const j=anyOf(t,['지주','땅주인']);
         if(a&&b) return {s:5,msg:'마름과 소작농, 두 용어가 모두 들어갔어요.'};
-        if(anyOf(t,['지주','땅 주인','땅주인'])) return {s:2,lv:'r',msg:'⚠ 점순이네는 지주가 아니라 마름이에요. 지주는 땅 주인입니다.'};
-        if(a||b) return {s:3,lv:'y',msg:'한 쪽만 들어갔어요. 마름과 소작농을 함께 써야 관계가 됩니다.'};
+        // 마름을 쓰고 지주를 함께 쓴 답(지주 대신 땅을 관리하는 마름)은 감점하지 않는다. 점순이네를 지주로 쓴 답만 감점
+        if(!a && /점순[^.]*?(지주|땅주인)/.test(t)) return {s:2,lv:'r',msg:'⚠ 점순이네는 지주가 아니라 마름이에요. 지주는 땅 주인입니다.'};
+        if(a||b) return {s:3,lv:'y',msg:'한 쪽만 들어갔어요. 마름과 소작농을 함께 써야 관계가 됩니다.'+(j&&!a?' 점순이네는 지주(땅 주인)가 아니라 그 땅을 관리하는 마름이에요.':'')};
         return {s:0,lv:'r',msg:'관계를 가리키는 용어(마름 · 소작농)가 없어요.'};
       } },
     { label:'② 근거', ph:'그렇게 판단한 근거를 <자료 2-(나)>에서 찾아 쓰세요.', pts:5,
       keys:['땅','쫓겨'],
       grade(t){
-        const g1 = has(t,'땅') && anyOf(t,['떨어','뺏','잃']);
-        const g2 = anyOf(t,['쫓겨','내쫓','집']);
+        const g1 = has(t,'땅') && anyOf(t,['떨어','뺏','빼앗','잃','부칠수없','부치지못','못부치','못짓','짓지못']);
+        const g2 = anyOf(t,['쫓겨','내쫓','쫓아내','쫓기']) || /집(을|도|까지|마저)?(잃|빼앗|뺏)/.test(t) || /집에서(나가|떠나)/.test(t);
         if(g1&&g2) return {s:5,msg:'땅과 집, 두 가지 불이익이 모두 들어갔어요.'};
         if(g1||g2) return {s:3,lv:'y',msg:'근거가 하나뿐이에요. 땅이 떨어지는 것과 집에서 쫓겨나는 것을 함께 쓰세요.'};
         return {s:0,lv:'r',msg:'(나)의 근거(땅 · 쫓겨남)가 보이지 않아요.'};
@@ -657,8 +656,9 @@ const S3 = [
     { label:'③ 영향', ph:'그 관계가 두 인물의 말과 행동에 어떤 영향을 주었는지 쓰세요.', pts:5,
       keys:['욕','참'],
       grade(t){
-        const p = anyOf(t,['욕','모욕','괴롭']);
-        const n = anyOf(t,['대거리','못','참','눈물']);
+        const t2 = t.replace(/욕심/g,'').replace(/잘못/g,'').replace(/참지(않|못)/g,'#');   // '참지 않고 대들었다'는 '참다'가 아니다
+        const p = anyOf(t2,['욕','모욕','괴롭']);
+        const n = anyOf(t2,['대거리','못','눈물']) || /참(았|고|는|으|을|아)/.test(t2);
         if(p&&n) return {s:5,msg:'점순이 쪽과 \'나\' 쪽의 행동이 모두 들어갔어요.'};
         if(p||n) return {s:3,lv:'y',msg:'한 인물만 썼어요. 두 인물의 말과 행동을 모두 쓰세요.'};
         return {s:0,lv:'r',msg:'관계가 행동에 미친 영향이 드러나지 않았어요.'};
@@ -674,8 +674,8 @@ const S3 = [
     { label:'① 주제', ph:'작품이 보여 주는 것을, 어머니가 거절한 까닭을 근거로 쓰세요.', pts:5,
       keys:['시선','포기'],
       grade(t){
-        const a = anyOf(t,['시선','남들의 눈','남의 눈','체면']);
-        const b = anyOf(t,['거절','포기','옥희']);
+        const a = anyOf(t,['시선','남들의눈','남의눈','체면','관습','편견','부정적','손가락질','수군']);
+        const b = anyOf(t,['거절','포기','옥희','받아들이지않','받아들이지못','단념','떠나보내']);
         if(a&&b) return {s:5,msg:'사회의 시선과 어머니의 선택이 이어졌어요.'};
         if(a||b) return {s:3,lv:'y',msg:'한 쪽만 들어갔어요. 시선(체면)과 어머니의 선택을 이어서 쓰세요.'};
         return {s:0,lv:'r',msg:'작품이 보여 주는 것이 드러나지 않았어요.'};
@@ -693,7 +693,7 @@ const S3 = [
     { label:'③ 생각', ph:'자신의 생각과 까닭을 쓰세요.', pts:5, byForm:1,
       keys:['때문이다'],
       grade(t){
-        const cause = anyOf(t,['때문이다','왜냐하면','기에','까닭은','이유는']);
+        const cause = anyOf(t,['때문','왜냐하면','까닭은','이유는','까닭이다','이유이다','이유다']) || CAUSE_GIE.test(t);
         if(cause) return {s:5,msg:'까닭을 밝히는 표지가 있어요. 생각의 내용은 사람마다 달라도 됩니다.'};
         if(/해야\s*한다[.!]?$/.test(t.trim())) return {s:1,lv:'r',msg:'⚠ "급식 교훈"이에요. 어떤 작품에나 쓸 수 있는 문장 대신, 왜 그렇게 생각하는지를 쓰세요.'};
         return {s:2,lv:'y',msg:'까닭이 없어요. "…기 때문이다", "왜냐하면 …"을 붙이세요.'};
@@ -1350,7 +1350,7 @@ function dlTeacherXls(){
    sheet('1단계 조건사냥',r1)+sheet('2단계 키워드사냥',r2)+sheet('3단계 한문단쓰기',r3)+sheet('자료 원문',r5)+sheet('유형별 요약',r4)+'</Workbook>';
   const a=document.createElement('a');
   a.href='data:application/vnd.ms-excel;charset=utf-8,'+encodeURIComponent(xml);
-  a.download='L201_조건사냥꾼_학습데이터목록_'+ymd()+'.xls'; a.click();
+  a.download='L202_조건사냥꾼_학습데이터목록_'+ymd()+'.xls'; a.click();
 }
 function ymd(){ const d=new Date(),p=n=>String(n).padStart(2,'0');
  return d.getFullYear()+p(d.getMonth()+1)+p(d.getDate()); }

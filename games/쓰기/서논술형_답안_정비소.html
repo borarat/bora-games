@@ -1,5 +1,11 @@
 <!DOCTYPE html>
 <html lang="ko">
+<!-- 리모델링 2026.10.01 17:00 (7차)
+     코드: 게임 코드 W201 → W401 (교사 결정: 학년 구분 없음) — 전송 gameCode·엑셀 파일명
+     채점: 문장 단위 채점 — 핵심 낱말 뒤 부정 표현(않다·안·못·없다·아니다·모르다)이면 불인정, 낱말만 늘어놓은 조각은 채점 제외,
+           내용 조건이 하나도 없으면 형식 조건도 불인정, 1-5 교훈은 '내용+맺는 말'이 한 문장에, 1-5 비교는 인물+행동,
+           동의어 보강(부지런히·성실히·열심히, 미래·앞날·나중 등)
+     문항: 1-5 진단 해설 — 베낀 부분은 조건 ②(까닭) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -477,6 +483,7 @@ textarea.pulse{box-shadow:0 0 0 4px rgba(212,113,143,.35)!important; border-colo
    <h3 style="color:#1e4f8a">ⓘ 이 채점은 완벽하지 않아요</h3>
    <p>🤖 사람이나 AI가 읽는 것이 아니라, <b>조건마다 정해 둔 말이 답안에 들어갔는지</b> 확인하는 방식이에요.</p>
    <p>그래서 뜻은 맞는데 다른 말로 쓴 경우 점수가 안 나올 수 있고, 말만 넣고 논리가 어긋나도 점수가 나올 수 있어요. 맞춤법과 띄어쓰기는 채점하지 않아요.</p>
+   <p>✋ 정해 둔 말이 들어 있어도 <b>바로 뒤에 '않다·못·없다' 같은 부정하는 말</b>이 오거나, 문장이 아니라 <b>낱말만 늘어놓은 것</b>이면 인정하지 않아요.</p>
    <p>🌱 <b>점수는 참고만 하고, 모범 답안과 견주어 좋은 답안의 짜임을 익히는 데 쓰세요.</b> 실제 시험은 선생님이 읽고 채점합니다.</p>
   </div>
 
@@ -498,7 +505,7 @@ textarea.pulse{box-shadow:0 0 0 4px rgba(212,113,143,.35)!important; border-colo
 
   <div class="credit">
    제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-   제작일 2026.09.27 · 최종 수정 2026.09.28 20:36
+   제작일 2026.09.27 · 최종 수정 2026.10.01 17:00
   </div>
   <div class="privacy" id="privacyOffline">
    <b>🔒 개인정보 보호 안내</b><br>
@@ -579,7 +586,7 @@ textarea.pulse{box-shadow:0 0 0 4px rgba(212,113,143,.35)!important; border-colo
   </div>
   <div class="credit">
    제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-   제작일 2026.09.27 · 최종 수정 2026.09.28 20:36
+   제작일 2026.09.27 · 최종 수정 2026.10.01 17:00
   </div>
  </div>
 </div>
@@ -631,7 +638,7 @@ const ITEMS = [
     ['두 문장 이상으로 쓰지 않았다', false, '"잠을 잤다."와 "경주에서 졌다." 두 문장으로 썼다.', null,
       '답안에 마침표가 몇 개 있나요?']
   ],
-  fix:[ {l:'① 토끼가 거북이를 어떻게 여겼나', k:'reason', t:'any', w:['얕보','얕본','얕잡','깔보','무시','방심','자만','우습게','만만','업신'],
+  fix:[ {l:'① 토끼가 거북이를 어떻게 여겼나', k:'reason', t:'any', w:['얕보','얕본','얕잡','깔보','무시','방심','자만','우습게','만만','업신','느림보','느리다고','느리다며','못 따라','따라오지 못','따라잡지 못','이기지 못할','이길 수 없','늦게 올','늦게 오'],
           hint:'토끼가 "해 질 녘에나 오겠지"라고 한 것은 거북이를 어떻게 본 것일까요? 그 마음을 한 낱말로 써 보세요.'},
         {l:'② 그 생각이 이어진 행동', k:'text', t:'any', w:['잠','잤','쉬었','쉬어','쉬다','졸','자고','자 버','자버'],
           hint:'그런 생각을 한 토끼가 경주 도중에 무엇을 했나요?'},
@@ -656,9 +663,9 @@ const ITEMS = [
     ['지문에 없는 내용을 덧붙였다', false, '지문에 있는 내용만 썼다.', null,
       '답안의 낱말을 하나씩 지문에서 찾아보세요. 못 찾는 말이 있나요?']
   ],
-  fix:[ {l:'① 소년이 앞서 한 행동', k:'text', t:'any', w:['거짓','속','장난','없는데','없었는데','없는 늑대'],
+  fix:[ {l:'① 소년이 앞서 한 행동', k:'text', t:'any', w:['거짓','속','장난','없는데','없었는데','없는 늑대','늑대가 없','늑대는 없'],
           hint:'소년이 늑대가 없는데도 무엇이라고 외쳤나요? 그 행동을 한 낱말로.'},
-        {l:'① 마을 사람들의 마음 변화', k:'reason', t:'any', w:['믿지','안 믿','못 믿','의심','또 거짓','이번에도','신뢰','믿음','듣지 않','안 듣','귀 기울이지','무시','흘려','거짓말로 여','거짓말이라고 여','거짓말이라고 생각','장난으로 여','장난이라고','속지 않'],
+        {l:'① 마을 사람들의 마음 변화', k:'reason', t:'any', w:['믿지','안 믿','못 믿','의심','또 거짓','이번에도','신뢰를 잃','신뢰가 깨','신뢰가 사라','신뢰하지','신뢰를 하지','믿음을 잃','믿음이 깨','믿음이 사라','믿음이 없','신뢰가 없','신용을 잃','듣지 않','안 듣','귀 기울이지','무시','흘려','거짓말로 여','거짓말이라고 여','거짓말이라고 생각','장난으로 여','장난이라고','속지 않'],
           hint:'두 번 속은 마을 사람들은 소년의 말을 어떻게 여기게 되었을까요? "믿-"으로 시작하는 말을 넣어 보세요.'},
         {l:'② 두 문장 이상', t:'sent', n:2, k:'form', hint:'마침표(.)로 끝나는 문장이 두 개 이상인지 세어 보세요. 까닭 한 문장, 결과 한 문장처럼 나누어 쓰면 비문도 줄어요.'} ],
   model:['소년은 두 번이나 거짓으로 늑대가 나타났다고 외쳐 마을 사람들을 속였다. 그래서 마을 사람들은 소년의 말을 더 이상 믿지 않게 되었고, 진짜 늑대가 나타났을 때도 또 거짓말이라고 여겨 오지 않았다.'],
@@ -684,7 +691,7 @@ const ITEMS = [
   ],
   fix:[ {l:'① 흥부가 고쳐 준 까닭', k:'compare', t:'any', w:['불쌍','가엾','가여','안타까','안쓰럽','안쓰러','측은','안됐','안되어','진심','딱하','딱해','마음이 아','마음 아','가슴 아','돕고 싶','도와주고 싶','도와주려'],
           hint:'지문 첫 문장에 흥부가 제비를 어떻게 여겼는지 나와 있어요. 그 말을 찾아 쓰세요.'},
-        {l:'① 놀부가 고쳐 준 까닭', k:'compare', t:'any', w:['욕심','탐','재물','부자가 되고 싶','부자가 되려','부자 되려','샘','시기','질투','흉내','따라 하'],
+        {l:'① 놀부가 고쳐 준 까닭', k:'compare', t:'any', w:['욕심','탐','재물','부자가 되고 싶','부자가 되려','부자 되려','샘','시기','질투','흉내','따라 하','돈을 원','돈을 바라','돈을 벌','돈 욕심','돈에 눈'],
           hint:'놀부의 까닭은 지문에 쓰여 있지 않아요. 흥부가 부자가 된 소식을 듣고 멀쩡한 제비 다리를 일부러 부러뜨렸다면, 놀부가 바란 것은 무엇일까요?'},
         {l:'② 두 인물이 맞은 결과', k:'compare', t:'all', g:[['보화','부자','보물','금은','부유','잘 살','잘살'],['잃','빼앗','뺏','망','혼','벌','거지','가난','빈털터리','쫓겨','날리','날렸','없어졌']], gl:['흥부의 결과','놀부의 결과'],
           hint:'흥부의 결과와 놀부의 결과를 둘 다 써야 해요. 한쪽만 쓰지 않았나요?'},
@@ -709,7 +716,7 @@ const ITEMS = [
     ['지문에 없는 인물을 끌어왔다', false, '할머니와 마을만 나온다.', null,
       '답안에 나오는 사람이 누구누구인가요? 모두 지문에 있나요?']
   ],
-  fix:[ {l:'① 마을이 처한 상황', k:'text', t:'any', w:['가뭄','가물','메마','비가 오지','비가 안','비가 내리지','물이 귀','물이 부족','물이 모자','물이 없','두 동이'],
+  fix:[ {l:'① 마을이 처한 상황', k:'text', t:'any', w:['가뭄','가물어','가물었','가물던','메마','비가 오지','비가 안','비가 내리지','오지 않','내리지 않','석 달','물이 귀','귀했','귀한','물이 부족','물이 모자','물이 없','두 동이','넉넉하지 않','충분하지 않','말라','말랐','바닥'],
           hint:'"힘든 때"를 지우고, 지문 첫 두 문장에서 마을에 무슨 일이 있었는지 찾아 쓰세요.'},
         {l:'① 이웃집의 사정', k:'text', t:'any', w:['아기','갓난','열이','아프','앓'],
           hint:'하필 그 집에 물을 둔 까닭이 지문 마지막 문장에 있어요. 그 집에 누가 있었나요?'},
@@ -727,16 +734,22 @@ const ITEMS = [
   opts:[
     ['개미와 베짱이의 행동을 비교하지 않았다', false, '두 인물의 행동을 모두 썼다.', null,
       '답안에 개미가 한 일과 베짱이가 한 일이 둘 다 있나요?'],
-    ['지문의 문장을 거의 그대로 옮겨 적었다', true, '조건 ①의 "자신의 말로"를 어겼다. 지문 첫 문장을 그대로 옮겼다.', 'copy',
+    ['지문의 문장을 거의 그대로 옮겨 적었다', true, '까닭(조건 ②) 부분을 지문 첫 문장 그대로 옮겼다. 두 인물의 행동은 들어 있지만, 지문을 베끼지 말고 무엇이 달랐는지 자기 말로 정리해야 한다.', 'copy',
       '답안과 지문의 첫 문장을 나란히 놓고 읽어 보세요. 다른 곳이 몇 글자나 되나요?'],
     ['지문에 없는 내용을 덧붙였다', false, '지문에 있는 내용만 썼다.', null,
       '답안의 낱말을 하나씩 지문에서 찾아보세요. 못 찾는 말이 있나요?'],
     ['교훈이 무엇인지 쓰지 않았다', true, '조건 ① 누락. 까닭만 있고 교훈이 없다.', 'missing',
       '문제는 "교훈"과 "까닭" 두 가지를 쓰라고 해요. 답안은 "~때문이다"로 끝나는데, 그러면 무엇의 까닭인가요? 그 "무엇"이 답안에 있나요?']
   ],
-  fix:[ {l:'① 교훈 (자신의 말로)', k:'own', t:'any', w:['준비','대비','미리','앞날','미래','내일'], nocopy:true,
+  fix:[ {l:'① 교훈 (자신의 말로)', k:'own', t:'all', same:true, nocopy:true,
+          g:[['준비','대비','미리','앞날','미래','내일','나중','훗날','장래','부지런','성실','열심','게으르','게으름','게을리','노력','저축','아껴'],
+             ['해야','야 한다','필요','중요','않으면','안 하면','안하면','못하면','안 된다','안된다','말아야','법이다','하자','바람직','수 있다','게 된다','소중']],
+          gl:['교훈의 내용(미리 준비·부지런히 등)','교훈을 맺는 말(~해야 한다 등)'],
           hint:'개미는 겨울을 위해 여름에 무엇을 "미리" 했나요? 그것을 "~해야 한다"는 한 문장으로 먼저 쓰세요. 지문을 옮겨 쓰면 인정되지 않아요.'},
-        {l:'② 개미와 베짱이의 비교', k:'compare', t:'all', g:[['개미'],['베짱이']], gl:['개미가 한 일','베짱이가 한 일'],
+        {l:'② 개미와 베짱이의 비교', k:'compare', t:'all',
+          g:[['개미'],['먹이','모았','모으','모아','쌓','일했','일하','일을','일만','땀','준비','대비','부지런','성실','열심','저축','곳간','날라','날랐'],
+             ['베짱이'],['노래','놀','게으','게을','즐기','즐겼','쉬','일하지 않','일을 안','일을 하지 않','준비하지 않','준비를 안','준비를 하지 않','대비하지 않','모으지 않','굶','배고','아무것도 하지']],
+          gl:['개미','개미가 한 일','베짱이','베짱이가 한 일'],
           hint:'"개미는 ~했지만 베짱이는 ~했다" 틀로 두 인물을 한 문장에 넣어 보세요.'},
         {l:'③ 두 문장 이상', t:'sent', n:2, k:'form', hint:'마침표(.)로 끝나는 문장이 두 개 이상인지 세어 보세요. 까닭 한 문장, 결과 한 문장처럼 나누어 쓰면 비문도 줄어요.'} ],
   model:['앞날을 미리 준비해야 어려운 때를 견딜 수 있다. 개미는 다가올 겨울을 생각해 여름에 부지런히 먹이를 모았지만, 베짱이는 당장 즐거운 일만 하다가 겨울에 먹을 것이 없어 굶주렸기 때문이다.'],
@@ -806,13 +819,13 @@ const ITEMS = [
     ["'하지 말아야 한다'는 주장만 있고 그렇게 생각하는 까닭이 없다", true, '조건 ④. 게다가 어떤 이야기에나 붙일 수 있는 한 줄 교훈이다.', 'reason',
       '마지막 문장 "거짓말을 하지 말아야 한다" 뒤에 "왜냐하면"을 붙여 보세요. 답안에 이어질 말이 있나요?']
   ],
-  fix:[ {l:'① 이야기에서 거짓말의 결과', k:'text', t:'any', w:['양 떼','양떼','양을','양들','양이','아무도','믿지','듣지 않','잃','물어 갔','물어갔'],
+  fix:[ {l:'① 이야기에서 거짓말의 결과', k:'text', t:'any', w:['양 떼','양떼','잃','물어 갔','물어갔','물려','잡아먹','아무도','믿지','듣지 않','오지 않','안 왔','오지 못','도우러 오지'],
           hint:'지문 마지막 문장을 보세요. 소년의 거짓말 때문에 결국 무슨 일이 생겼나요?'},
-        {l:'② 자료에서 장난 신고의 결과', k:'text', t:'any', w:['소방차','출동','늦','화재'],
+        {l:'② 자료에서 장난 신고의 결과', k:'text', t:'any', w:['소방차','출동','늦','화재','오지 못','가지 못','도착하지 못','출동하지 못'],
           hint:'<자료>에서 소방관이 한 말을 보세요. 장난 신고 뒤에 진짜 불이 나면 어떻게 된다고 했나요?'},
         {l:'③ 두 결과의 공통점', k:'compare', t:'any', w:['공통','같은 점','같다','둘 다','마찬가지','두 경우','똑같'],
           hint:'"두 경우 모두 ~라는 점에서 같다"로 문장을 시작해 보세요. 소년의 거짓말과 장난 신고는 누구에게, 언제 피해를 주나요?'},
-        {l:'④ 주장과 까닭', k:'reason', t:'all', g:[['생각한다','안 된다','해야 한다','말아야','바람직','옳지'],['때문이다','왜냐하면','까닭은','이유는','기 때문']], gl:['주장','그렇게 생각하는 까닭'],
+        {l:'④ 주장과 까닭', k:'reason', t:'all', g:[['생각한다','안 된다','해야 한다','야 한다','말아야','바람직','옳지','주장한다'],['때문이다','때문에','왜냐하면','까닭은','이유는','기 때문']], gl:['주장','그렇게 생각하는 까닭'],
           hint:'"나는 ~라고 생각한다. 왜냐하면 ~ 때문이다." 두 문장을 이어 쓰세요. 주장만 쓰고 끝내면 안 돼요.'},
         {l:'⑤ 한 문단', k:'form', t:'para',
           hint:'줄을 나누거나 번호를 매기지 말고 이어 쓰세요.'},
@@ -838,7 +851,7 @@ const ITEMS = [
     ['한 문단이 아니다', false, '줄을 나누지 않고 이어 썼다.', null,
       '답안에 줄바꿈이나 번호가 있나요?']
   ],
-  fix:[ {l:'① 입장', k:'own', t:'all',   g:[['공정','공평'],['생각','주장','본다','입장']], gl:['공정한지 아닌지','입장을 밝히는 말(~라고 생각한다)'],
+  fix:[ {l:'① 입장', k:'own', t:'all', neg:false,   g:[['공정','공평'],['생각','주장','본다','입장']], gl:['공정한지 아닌지','입장을 밝히는 말(~라고 생각한다)'],
           hint:'"나는 ~ 공정한(공정하지 않은) 시합이었다고 생각한다"로 첫 문장을 시작하세요.'},
         {l:'② 이야기 속 근거 2개 이상', k:'reason', t:'count', n:2, w:['출발','같은 길','산길','심판','여우','하자고','느림보','빠르','빨랐','느리','느린','잠','방심','쉬지'],
           hint:'지문에서 근거가 될 사실을 찾아보세요 — 같은 곳에서 출발, 같은 길, 여우 심판, 토끼가 먼저 하자고 함, 실력 차이, 토끼의 낮잠. "첫째, 둘째"로 두 개를 나눠 쓰세요.'},
@@ -877,9 +890,9 @@ const ITEMS = [
           hint:'지문 둘째 문장을 보세요. 신하들은 옷이 보였나요? 그런데도 훌륭하다고 말한 까닭은 무엇이었나요?'},
         {l:'② 자료에서 학생들이 말 못 한 까닭', k:'text', t:'any', w:['분위기','다를까','나만'],
           hint:'<자료>의 둘째 문장에 까닭 두 가지가 따옴표로 나와 있어요. 그 말을 찾아 쓰세요.'},
-        {l:'③ 아이의 행동이 가져온 변화', k:'text', t:'all', g:[['아이'],['드러','알게','수군','깨닫','밝혀','바뀌','변']], gl:['아이의 행동','그 뒤에 일어난 변화'],
+        {l:'③ 아이의 행동이 가져온 변화', k:'text', t:'all', g:[['아이'],['드러','알게','수군','깨닫','밝혀','바뀌','변','달라','알아차']], gl:['아이의 행동','그 뒤에 일어난 변화'],
           hint:'아이가 외친 뒤 지문 마지막 문장에 무슨 일이 일어났나요? "아이가 ~하자 ~가 시작되었다"로 써 보세요.'},
-        {l:'④ 다른 의견이 필요한 까닭', k:'reason', t:'all', g:[['때문이다','므로','왜냐하면','까닭은','이유는'],['필요','바로잡','더 나은','잘못','고칠']], gl:['까닭을 나타내는 말(~때문이다)','다른 의견의 좋은 점'],
+        {l:'④ 다른 의견이 필요한 까닭', k:'reason', t:'all', g:[['때문이다','때문에','므로','왜냐하면','까닭은','이유는'],['필요','바로잡','더 나은','잘못','고칠']], gl:['까닭을 나타내는 말(~때문이다)','다른 의견의 좋은 점'],
           hint:'"~해야 한다"로 끝내지 말고, 다른 의견이 있으면 모둠에 어떤 좋은 점이 있는지를 "~기 때문이다"로 이어 쓰세요.'},
         {l:'⑤ 한 문단', k:'form', t:'para', hint:'줄을 나누거나 번호를 매기지 말고 이어 쓰세요.'},
         {l:'⑤ 두 문장 이상', t:'sent', n:2, k:'form', hint:'마침표(.)로 끝나는 문장이 두 개 이상인지 세어 보세요. 한 문장에 여러 내용을 몰아넣으면 비문이 되기 쉬워요.'} ],
@@ -918,17 +931,74 @@ function copyHit(item,text){
   let best=''; srcs.forEach(s=>{ const c=longestCommon(a,bare(s)); if(c.length>best.length) best=c; });
   return best.length>=COPY_MIN ? best : '';
 }
-/* 문장 수: 마침표·물음표·느낌표로 나눈 조각 중 4글자 이상인 것 */
-function sentCount(raw){ return String(raw).split(/[.!?。]+/).filter(x=>bare(x).length>=4).length; }
-function checkCond(c,raw){
-  const t=norm(raw);
-  if(c.t==='any')   return anyW(t,c.w);
-  if(c.t==='all')   return c.g.every(g=>anyW(t,g));
-  if(c.t==='count') return c.w.filter(w=>hasW(t,w)).length >= c.n;
-  if(c.t==='para')  return !/\n/.test(raw.trim()) && !/(^|\s)\d\s*[.)]/.test(raw);
-  if(c.t==='sent')  return sentCount(raw) >= (c.n||2);
-  return false;
+/* ── 7차 보강: 문장 단위 채점 ──
+   ① 마침표·줄바꿈으로 나눈 조각 가운데 '문장'만 채점한다. 두 어절 이상이고 서술어(-다 등)로 끝나야 문장이다.
+      쉼표로 낱말만 늘어놓은 조각("얕봄, 방심, 잠")은 문장이 아니다.
+   ② 핵심 낱말 바로 뒤(같은 어절 ~ 다음 두 어절)에 부정 표현(않다·안·못·없다·아니다·모르다)이 오면 그 낱말은 인정하지 않는다.
+      예외: '~지 않으면/않도록'처럼 조건으로 쓴 부정, 낱말 자체에 부정이 든 것('믿지', '못 벗'), 인물 이름, c.neg===false인 조건(입장).
+      앞 어절이 '-고·-서·-지만·-면' 등 이어 주는 말로 끝나면 부정이 다른 서술어에 걸린 것이므로 거기서 멈춘다.
+   ③ 내용 조건을 하나도 채우지 못하면 형식 조건(두 문장·한 문단)도 인정하지 않는다. */
+const NEG_KW  = /않|못|없|아니|모르|모른|몰라|몰랐|말아|말고|(^|\s)안\s|지$/;
+const NAME_KW = ['개미','베짱이','아이','토끼','거북','흥부','놀부','할머니','소년','나그네','사람','상대','친구','남의','남을','다른'];
+const isNegEj = w => /않|없|아니|모르|모른|몰라|몰랐|못하|못했|못한|못할|못해/.test(w) || /^(안|못)$/.test(w) ||
+  /^(안|못)(하|했|해|한|할|함|돼|됐|되|된|가|갔|와|왔|믿|들|자|잤|쉬|일|모)/.test(w);
+const COND_END = /(면|도록)$/;
+const STOP_END = /(고|서|며|면|니까|는데|은데|지만|으나|려고|려면|야|도록|면서|므로|니|때문에|기에|자)$/;
+const ENDOK = /(다|요|죠|까|네|지|라|자|음|함|됨|임|것|때문)$/;
+function ejList(s){ return String(s).split(/\s+/).map(bare).filter(Boolean); }
+function isListChunk(s){ const parts=String(s).split(/[,，·\/、]+/).map(p=>p.trim()).filter(p=>bare(p));
+  return parts.length>=3 && parts.every(p=>ejList(p).length<=2); }
+/* 문장으로 볼 조각만 돌려준다: {raw, ejs, s(이어 붙인 글자), st(어절 시작 위치)} */
+function sentences(raw){
+  return String(raw).split(/[.!?。\n]+/).map(x=>x.trim()).filter(x=>bare(x)).map(x=>{
+    const ejs=ejList(x), st=[]; let p=0; ejs.forEach(e=>{ st.push(p); p+=e.length; });
+    const last=ejs[ejs.length-1]||'';
+    return {raw:x, ejs, s:ejs.join(''), st, ok: ejs.length>=2 && ENDOK.test(last) && !isListChunk(x)};
+  });
 }
+/* 한 문장에서 낱말 kw가 부정되지 않은 채로 쓰였는가. 0: 없음 · 1: 인정 · -1: 부정되어 불인정 */
+function kwIn(se,kw,useNeg){
+  const n=bare(kw); if(!n) return 0; let pos=se.s.indexOf(n), seen=false;
+  if(pos<0) return 0;
+  const skipNeg = useNeg===false || NEG_KW.test(kw) || NAME_KW.indexOf(kw)>=0;
+  while(pos>=0){ seen=true;
+    if(skipNeg) return 1;
+    const end=pos+n.length-1; let E=0; while(E+1<se.st.length && se.st[E+1]<=end) E++;
+    const win=[se.s.slice(end+1, se.st[E]+se.ejs[E].length), se.ejs[E+1], se.ejs[E+2]];
+    let neg=false;
+    for(let k=0;k<win.length;k++){ const w=win[k]; if(w===undefined) break; if(!w) continue;
+      if(isNegEj(w)){ neg=!COND_END.test(w); break; }
+      if(STOP_END.test(w)) break; }
+    if(!neg) return 1;
+    kwIn.lastEj=se.ejs[E];
+    pos=se.s.indexOf(n,pos+1);
+  }
+  return seen?-1:0;
+}
+/* 문장 목록에서 낱말 묶음(a) 가운데 하나라도 인정되는가. negHit: 부정 때문에 빠진 낱말을 모은다 */
+function anyIn(ses,a,useNeg,negHit){ let ok=false;
+  a.forEach(w=>{ let r=0, ej=''; ses.forEach(se=>{ const v=kwIn(se,w,useNeg); if(v===1) r=1; else if(v===-1&&r===0){ r=-1; ej=kwIn.lastEj; } });
+    if(r===1) ok=true; else if(r===-1&&negHit) negHit.push({w,ej}); });
+  return ok; }
+/* 문장 수: '문장'으로 인정된 조각 중 4글자 이상인 것 */
+function sentCount(raw){ return sentences(raw).filter(x=>x.ok&&x.s.length>=4).length; }
+/* 조건 하나 채점. 'all'이면 묶음별 결과(parts)도 함께 돌려준다 */
+function evalCond(c,raw,negHit){
+  const ses=sentences(raw).filter(x=>x.ok), useNeg=c.neg;
+  if(c.t==='any')   return {ok:anyIn(ses,c.w,useNeg,negHit)};
+  if(c.t==='all'){
+    if(c.same){ // 한 문장 안에 모든 묶음이 있어야 한다
+      const per=ses.map(se=>c.g.map(g=>anyIn([se],g,useNeg,negHit)));
+      const whole=per.find(p=>p.every(Boolean));
+      const parts=c.g.map((g,i)=>whole?true:per.some(p=>p[i]));
+      return {ok:!!whole, parts}; }
+    const parts=c.g.map(g=>anyIn(ses,g,useNeg,negHit)); return {ok:parts.every(Boolean), parts}; }
+  if(c.t==='count') return {ok:c.w.filter(w=>anyIn(ses,[w],useNeg,negHit)).length >= c.n};
+  if(c.t==='para')  return {ok:!/\n/.test(raw.trim()) && !/(^|\s)\d\s*[.)]/.test(raw)};
+  if(c.t==='sent')  return {ok:sentCount(raw) >= (c.n||2)};
+  return {ok:false};
+}
+function checkCond(c,raw){ return evalCond(c,raw).ok; }
 /* 문체 점검 — 모든 문장이 '-다'로 끝나야 한다 */
 function styleCheck(raw){
   const out={casual:[],polite:[]};
@@ -943,10 +1013,21 @@ function gradeText(item,raw,fixPt){
   const copy = copyHit(item,raw);
   const s=raw.trim();
   const fatal = /\?\s*$/.test(s) ? '의문문으로 끝났어요. 답안은 묻는 말이 아니라 답하는 말로 씁니다.' : null;
-  const hits = item.fix.map(c=>{ let ok=checkCond(c,raw); if(ok&&c.nocopy&&copy) ok=false; return ok; });
+  const negHit=[];
+  const ev = item.fix.map(c=>{ const e=evalCond(c,raw,c.k==='form'?null:negHit); if(e.ok&&c.nocopy&&copy) e.ok=false; return e; });
+  const hits = ev.map(e=>e.ok), parts = ev.map(e=>e.parts||null);
+  // 내용 조건을 하나도 못 채웠으면 형식 조건(두 문장·한 문단)도 인정하지 않는다
+  const noContent = !item.fix.some((c,i)=>c.k!=='form'&&hits[i]);
+  let formVoid=false;
+  if(noContent) item.fix.forEach((c,i)=>{ if(c.k==='form'&&hits[i]){ hits[i]=false; formVoid=true; } });
   const n=hits.filter(Boolean).length;
   const got = fatal ? 0 : Math.round(fixPt*n/item.fix.length);
   const warns=[], style=styleCheck(raw);
+  const notSent=sentences(raw).filter(x=>!x.ok&&x.s.length>=2);
+  if(notSent.length) warns.push('문장으로 끝맺지 않았거나 낱말만 늘어놓은 부분은 채점에 넣지 않았어요: "'+notSent[0].raw.slice(0,24)+(notSent[0].raw.length>24?'…':'')+'"'+(notSent.length>1?' 외 '+(notSent.length-1)+'곳':''));
+  const negShow=[...new Set(negHit.filter(o=>item.fix.some((c,i)=>!hits[i]&&c.k!=='form'&&[].concat(c.w||[],...(c.g||[])).indexOf(o.w)>=0)).map(o=>o.ej))];
+  if(negShow.length) warns.push("'"+negShow.slice(0,3).join("', '")+"' 뒤에 부정하는 말(않다·안·못·없다·아니다·모르다)이 있어 그 조건을 채운 것으로 보지 않았어요. 지문과 같은 뜻인지 확인하세요.");
+  if(formVoid) warns.push('조건이 묻는 내용이 하나도 들어가지 않아 형식 조건(두 문장 이상·한 문단)도 채운 것으로 보지 않았어요.');
   (item.warns||[]).forEach(w=>{ if(!anyW(norm(raw),w.w)) return; if(w.ifFail&&!w.ifFail.some(i=>!hits[i])) return; warns.push(w.msg); });
   if(copy) warns.push('지문의 "'+copy.slice(0,24)+(copy.length>24?'…':'')+'" 부분을 그대로 옮겼어요. '+
     (item.fix.some(c=>c.nocopy)?'이 문제는 "자신의 말로"가 조건이라 인정되지 않아요.':'그 문장이 무엇을 뜻하는지 자기 말로 정리해 보세요.'));
@@ -954,19 +1035,19 @@ function gradeText(item,raw,fixPt){
   if(/(때문에|해서|하는)\s*$/.test(s)) warns.push('문장이 끝나지 않았어요. "-기 때문이다"처럼 맺어 보세요.');
   if(style.casual.length) warns.push("서술형 답안은 '-다'로 끝나는 문어체로 쓰는 것이 원칙이에요. 예: '…"+style.casual[0]+"' → '…다'"+(style.casual.length>1?' (외 '+(style.casual.length-1)+'곳)':''));
   if(style.polite.length) warns.push("'-습니다'가 아니라 '-다'로 써요. 예: '…"+style.polite[0]+"' → '…다'");
-  return {hits,got,fatal,warns,copy,style};
+  return {hits,parts,got,fatal,warns,copy,style};
 }
-if(typeof module!=='undefined') module.exports={gradeText,copyHit,checkCond,longestCommon,norm,bare,styleCheck,anyW};
+if(typeof module!=='undefined') module.exports={gradeText,copyHit,checkCond,evalCond,sentences,longestCommon,norm,bare,styleCheck,anyW};
 
 
 /* ══════════════════════════════════════════════════════════
    서논술형 답안 정비소 v11 — 엔진
    ══════════════════════════════════════════════════════════ */
 const MADE_DATE = '2026.09.27';
-const MOD_DATE  = '2026.09.28 20:36';
+const MOD_DATE  = '2026.10.01 17:00';
 
 const GAME_CONFIG = {
-  gameCode: "W201",
+  gameCode: "W401",
   gameName: "서논술형 답안 정비소",
   webAppUrl: "https://script.google.com/macros/s/AKfycbzgq9yT5svpFzeFwW5p2pWOpL-lKpj5_RldoJejFT1EOk1Osjcf6hDx85jGQzvr5rU0ww/exec"
 };
@@ -1278,10 +1359,9 @@ function paintFix(q,r){
   // 빠진 조건마다 이 문제에 맞는 힌트
   const failed=q.fix.map((c,i)=>d.hits[i]?null:c).filter(Boolean);
   if(failed.length&&!allOK){
-    const t=norm(r.fixText||'');
     h+='<div class="hint"><b>💡 빠진 조건을 채우려면</b>'+failed.map(c=>{
       let part='';
-      if(c.t==='all'&&c.gl){ const ok=c.g.map(g=>anyW(t,g));
+      if(c.t==='all'&&c.gl){ const pi=q.fix.indexOf(c); const ok=(d.parts&&d.parts[pi])||evalCond(c,r.fixText||'').parts;
         const got=c.gl.filter((l,i)=>ok[i]), miss=c.gl.filter((l,i)=>!ok[i]);
         part='<div class="parts">'+(got.length?'<span class="pok">✔ 찾음: '+got.map(esc).join(' · ')+'</span>':'')+
              '<span class="pno">✘ 못 찾음: '+miss.map(esc).join(' · ')+'</span></div>'; }
@@ -1611,7 +1691,8 @@ function xmlEsc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').
 function sheet(name,rows){ return '<Worksheet ss:Name="'+xmlEsc(name)+'"><Table>'+rows.map(r=>'<Row>'+r.map(c=>
   '<Cell><Data ss:Type="String">'+xmlEsc(c==null?'':c)+'</Data></Cell>').join('')+'</Row>').join('')+'</Table></Worksheet>'; }
 function fixRule(c){ return '['+CTYPES[c.k].label+'] '+(c.t==='sent'?('마침표로 끝나는 문장 '+(c.n||2)+'개 이상') : c.t==='para'?'줄바꿈·번호 없음' : c.t==='count'?('다음 중 '+c.n+'개 이상: '+c.w.join(' | ')) :
-  c.t==='all'?c.g.map(g=>'('+g.join(' | ')+')').join(' 그리고 ') : c.w.join(' | ')+(c.nocopy?' (지문 베끼기면 불인정)':'')); }
+  (c.t==='all'?c.g.map(g=>'('+g.join(' | ')+')').join(' 그리고 ')+(c.same?' — 한 문장 안에서':'') : c.w.join(' | '))+(c.nocopy?' (지문 베끼기면 불인정)':'')+
+  (c.k!=='form'?(c.neg===false?' · 부정 표현 검사 안 함':' · 낱말 뒤에 부정 표현이 오면 불인정'):'')); }
 function dlTeacherXls(){
   closeModal('teacherModal');
   const sheets=[];
@@ -1637,7 +1718,7 @@ function dlTeacherXls(){
   const xml='<?xml version="1.0" encoding="UTF-8"?>\n<?mso-application progid="Excel.Sheet"?>\n'+
    '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">'+sheets.join('')+'</Workbook>';
   const a=document.createElement('a'); a.href='data:application/vnd.ms-excel;charset=utf-8,'+encodeURIComponent(xml);
-  a.download='W201_답안정비소_학습데이터목록_'+ymd()+'.xls'; a.click();
+  a.download='W401_답안정비소_학습데이터목록_'+ymd()+'.xls'; a.click();
 }
 function ymd(){ const d=new Date(),p=n=>String(n).padStart(2,'0'); return d.getFullYear()+p(d.getMonth()+1)+p(d.getDate()); }
 function stampFull(){ const d=new Date(),p=n=>String(n).padStart(2,'0');

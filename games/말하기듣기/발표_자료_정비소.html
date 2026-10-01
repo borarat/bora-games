@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko">
+<!-- 리모델링 2026.10.01 17:00 (7차)
+     문항: 도표 = 숫자를 칸에 정리한 표(교사 결정)로 통일 — 식물 #14·미세 먼지 #13 보기·해설, #8 해설, #12 발문·해설, 도표 그림 2개를 표 모양으로
+     문항: 미세 먼지 #5 보기 '다이어그램' → '그래프'(정답 하나로)
+     채점: 교사 전송 오답 목록(wrongItems)을 오답노트와 같은 범위(첫 시도에 틀린 문항)로 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -337,7 +341,7 @@
 
         <div class="maker">
           제작 · <b>보라라샘</b> · 전주서신중학교 교사 · siaawase@gmail.com<br>
-          제작일 2026.06.11 · <span id="lastMod">최종 수정 2026.09.19 00:42</span>
+          제작일 2026.06.11 · <span id="lastMod">최종 수정 2026.10.01 17:00</span>
         </div>
 
         <div class="privacy" id="privacyOffline">
@@ -517,7 +521,7 @@
 </div>
 <script>
 const MADE_DATE = "2026.06.11";
-const LAST_MOD  = "2026.09.19 00:42";
+const LAST_MOD  = "2026.10.01 17:00";
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -585,7 +589,7 @@ const CATEGORIES = {
   term: {
     label: "시각 자료 용어", ico: "📚",
     desc: "도표·그래프·픽토그램·인포그래픽 구분하기",
-    tip: "\"하나의 뜻인가, 여러 정보인가?\"로 갈라 보세요. 단순한 기호 하나는 픽토그램, 정보를 묶어 보여 주면 인포그래픽, 수치를 정리하면 도표, 변화를 막대·선으로 그리면 그래프입니다."
+    tip: "\"하나의 뜻인가, 여러 정보인가?\"로 갈라 보세요. 단순한 기호 하나는 픽토그램, 정보를 묶어 보여 주면 인포그래픽, 수치를 칸에 정리하면 도표(표), 변화를 막대·선으로 그리면 그래프입니다."
   }
 };
 
@@ -659,7 +663,7 @@ const STAGES = {
           q:"도표와 그래프의 쓰임으로 알맞은 것은?",
           opts:["도표는 데이터를 체계적으로 정리해 보여 줄 때, 그래프는 데이터의 변화나 흐름을 시각적으로 비교하고 싶을 때 유용하다.","그래프는 데이터를 체계적으로 정리할 때, 도표는 변화를 비교하고 싶을 때 유용하다.","도표와 그래프는 쓰임이 똑같아서 어느 것을 써도 차이가 없다.","도표와 그래프는 모두 수치 없이 그림만으로 나타내는 자료이다."],
           hint:"하나는 '결과를 정리', 다른 하나는 '변화·비교'에 강해요.",
-          explain:"도표는 여러 자료를 체계적으로 정리해 보여 줄 때 유용하고, 그래프는 수치의 변화나 흐름을 막대·선으로 비교해 보여 줄 때 유용합니다. 교과서의 정서 안정 도표처럼 결과를 항목별로 정리한 것은 도표입니다."}
+          explain:"도표(숫자를 칸에 정리한 표)는 여러 자료를 체계적으로 정리해 보여 줄 때 유용하고, 그래프는 수치의 변화나 흐름을 막대·선으로 비교해 보여 줄 때 유용합니다. 교과서의 정서 안정 도표처럼 결과를 항목별로 정리한 것은 도표입니다."}
       ],
       [
         {id:9, cat:"visual", kind:"prescribe",
@@ -684,10 +688,10 @@ const STAGES = {
     ],
     tail:[
       {id:12, cat:"term", kind:"fill",
-        q:"반려 식물의 정서 안정 효과를 한눈에 파악할 수 있도록, 심리 상태와 호르몬의 수치 변화를 ___(으)로 나타내면 좋다.",
-        answer:"도표", accept:["도표"], chosung:"ㄷㅍ",
-        hint:"여러 항목의 결과를 한 양식으로 정리해 보여 주는 시각 자료예요. (교과서 표현)",
-        explain:"교과서 예시처럼 여러 항목의 결과를 체계적으로 정리할 때는 도표가 알맞습니다. 변화의 흐름을 선·막대로 그릴 때는 그래프를 씁니다."},
+        q:"반려 식물의 정서 안정 효과를 한눈에 파악할 수 있도록, 여러 실험 결과 수치를 칸에 체계적으로 정리한 ___(으)로 나타내면 좋다.",
+        answer:"도표", accept:["도표","표"], chosung:"ㄷㅍ",
+        hint:"여러 항목의 결과 수치를 칸에 정리해 보여 주는 시각 자료예요. (교과서 표현)",
+        explain:"교과서 예시처럼 여러 항목의 결과 수치를 칸에 체계적으로 정리할 때는 도표(표)가 알맞습니다. 수치의 변화나 흐름을 막대·선으로 그릴 때는 그래프를 씁니다."},
       {id:13, cat:"visual", kind:"fill",
         q:"분갈이처럼 순서가 있는 과정은, 소리가 안 들려도 읽을 수 있도록 ___을 넣은 영상으로 보여 주면 좋다.",
         answer:"자막", accept:["자막"], chosung:"ㅈㅁ",
@@ -695,9 +699,9 @@ const STAGES = {
         explain:"분갈이 같은 과정은 자막을 넣은 영상으로 보여 주면 청중이 쉽게 이해합니다."},
       {id:14, cat:"term", kind:"term", explainVisual:"vtypes",
         q:"발표에 쓰이는 시각 자료의 쓰임을 바르게 설명한 것은?",
-        opts:["그래프는 수치를 막대·선·원으로 나타낸 그림이다.","도표는 그래프와 표를 합쳐 부르는 좁은 말이다.","표는 실제 모습을 생생하게 담은 사진 자료이다.","인포그래픽은 하나의 뜻만 단순한 기호로 나타낸 자료이다."],
+        opts:["그래프는 수치를 막대·선·원으로 나타낸 그림이다.","도표는 수치의 변화를 막대·선으로 그린 그림이다.","표는 실제 모습을 생생하게 담은 사진 자료이다.","인포그래픽은 하나의 뜻만 단순한 기호로 나타낸 자료이다."],
         hint:"막대·선·원으로 수치를 나타낸 그림을 무엇이라 부를까요?",
-        explain:"그래프는 수치를 막대·선·원으로 나타낸 그림입니다. 도표는 그래프와 표를 아우르는 넓은 말, 표는 행과 열 정리, 픽토그램은 단순 기호, 인포그래픽은 정보 종합입니다."}
+        explain:"그래프는 수치를 막대·선·원으로 나타낸 그림입니다. 도표는 숫자를 행과 열의 칸에 정리한 표로, 막대·선으로 그리는 그래프와 다릅니다. 픽토그램은 단순 기호, 인포그래픽은 정보 종합입니다."}
     ]
   },
   dust:{
@@ -740,7 +744,7 @@ const STAGES = {
           after:"path"},
         {id:5, cat:"term", kind:"term", visual:"path",
           q:"방금처럼 복잡한 정보나 과정을 그림·도표로 종합해 알기 쉽게 정리한 위와 같은 시각 자료를 무엇이라고 부를까요?",
-          opts:["인포그래픽","픽토그램","다이어그램","도표"],
+          opts:["인포그래픽","픽토그램","그래프","도표"],
           hint:"정보(information)와 그래픽(graphic)을 합친 말이에요.",
           explain:"인포그래픽은 정보·과정을 그림과 도표로 종합해 시각화한 것입니다. 하나의 개념을 단순 기호로 나타낸 픽토그램보다 담는 정보가 많습니다."},
         {id:6, cat:"term", kind:"term", explainVisual:"compare",
@@ -797,9 +801,9 @@ const STAGES = {
         explain:"어려운 용어는 쉬운 말로 풀어 설명할 때 청중이 잘 이해합니다."},
       {id:13, cat:"term", kind:"term", explainVisual:"vtypes",
         q:"발표에 쓰이는 시각 자료의 쓰임을 바르게 설명한 것은?",
-        opts:["그래프는 수치를 막대·선·원으로 나타낸 그림이다.","도표는 그래프와 표를 합쳐 부르는 좁은 말이다.","표는 실제 모습을 생생하게 담은 사진 자료이다.","인포그래픽은 하나의 뜻만 단순한 기호로 나타낸 자료이다."],
+        opts:["그래프는 수치를 막대·선·원으로 나타낸 그림이다.","도표는 수치의 변화를 막대·선으로 그린 그림이다.","표는 실제 모습을 생생하게 담은 사진 자료이다.","인포그래픽은 하나의 뜻만 단순한 기호로 나타낸 자료이다."],
         hint:"막대·선·원으로 수치를 나타낸 그림을 무엇이라 부를까요?",
-        explain:"그래프는 수치를 막대·선·원으로 나타낸 그림입니다. 도표는 그래프와 표를 아우르는 넓은 말, 표는 행과 열 정리, 픽토그램은 단순 기호, 인포그래픽은 정보 종합입니다."}
+        explain:"그래프는 수치를 막대·선·원으로 나타낸 그림입니다. 도표는 숫자를 행과 열의 칸에 정리한 표로, 막대·선으로 그리는 그래프와 다릅니다. 픽토그램은 단순 기호, 인포그래픽은 정보 종합입니다."}
     ]
   }
 };
@@ -814,15 +818,15 @@ function afterHTML(type){
   switch(type){
     case "air": return '<svg viewBox="0 0 520 150" width="100%" height="150" font-family="system-ui"><text x="130" y="20" text-anchor="middle" font-size="12" font-weight="700" fill="#155e54">흡수의 원리</text><text x="390" y="20" text-anchor="middle" font-size="12" font-weight="700" fill="#b76c1e">방출의 원리</text><line x1="260" y1="30" x2="260" y2="140" stroke="#cdc6b4" stroke-dasharray="4 4"/><g transform="translate(110,40)"><rect x="14" y="60" width="22" height="34" rx="3" fill="#c98a4a"/><path d="M25 64 C5 40 10 22 25 18 C40 22 45 40 25 64" fill="#3aa06a"/><path d="M25 50 C12 36 16 26 25 24 C34 26 38 36 25 50" fill="#56b87f"/></g><g fill="#8a8378" font-size="11"><circle cx="60" cy="55" r="4" fill="#9aa6a2"/><text x="38" y="45">오염 물질</text><path d="M70 58 Q100 70 120 78" stroke="#9aa6a2" fill="none" marker-end="url(#ar)"/></g><g transform="translate(360,40)"><rect x="14" y="60" width="22" height="34" rx="3" fill="#c98a4a"/><path d="M25 64 C5 40 10 22 25 18 C40 22 45 40 25 64" fill="#3aa06a"/></g><g fill="#b76c1e" font-size="11"><text x="430" y="50">음이온 방출</text><path d="M400 70 Q430 64 452 58" stroke="#e0892f" fill="none" marker-end="url(#ar2)"/><circle cx="455" cy="56" r="3" fill="#e0892f"/><circle cx="448" cy="68" r="3" fill="#e0892f"/></g><defs><marker id="ar" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#9aa6a2"/></marker><marker id="ar2" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#e0892f"/></marker></defs><text x="260" y="140" text-anchor="middle" font-size="11.5" fill="#566">→ 어려운 글 대신, 흡수·방출 과정을 한눈에</text></svg>';
     case "subtitle": return '<svg viewBox="0 0 520 150" width="100%" height="150" font-family="system-ui"><rect x="150" y="14" width="220" height="118" rx="10" fill="#1f2a2e"/><circle cx="260" cy="62" r="20" fill="rgba(255,255,255,.9)"/><path d="M254 52 L274 62 L254 72 Z" fill="#1f2a2e"/><rect x="162" y="100" width="196" height="22" rx="5" fill="rgba(255,255,255,.92)"/><text x="260" y="115" text-anchor="middle" font-size="11.5" fill="#1f2a2e" font-weight="600">화분에서 식물을 살살 뽑습니다</text><text x="260" y="146" text-anchor="middle" font-size="11.5" fill="#566">→ 자막을 넣어 소리 없이도 전달</text></svg>';
-    case "bar": return '<svg viewBox="0 0 520 232" width="100%" font-family="system-ui"><rect x="8" y="6" width="504" height="90" rx="11" fill="#eef5ec" stroke="#cfe2cd"/><text x="22" y="27" font-size="12.5" font-weight="700" fill="#3f5d3c">유아·아동 자녀를 둔 109가구 · 식물 기르기 결과</text><g text-anchor="middle"><text x="150" y="56" font-size="12" fill="#555">코르티솔 농도</text><text x="150" y="82" font-size="18" font-weight="800" fill="#d2483f">56.5% ▼</text><text x="360" y="56" font-size="12" fill="#555">우울감</text><text x="360" y="82" font-size="18" font-weight="800" fill="#d2483f">20.9% ▼</text></g><rect x="8" y="104" width="504" height="92" rx="11" fill="#eef2f6" stroke="#cdd9e2"/><text x="22" y="125" font-size="12.5" font-weight="700" fill="#3c4d5d">성인 암 환자 대상 · 식물 치료 결과</text><g text-anchor="middle"><text x="110" y="153" font-size="12" fill="#555">우울감</text><text x="110" y="179" font-size="17" font-weight="800" fill="#d2483f">45% ▼</text><text x="260" y="153" font-size="12" fill="#555">스트레스</text><text x="260" y="179" font-size="17" font-weight="800" fill="#d2483f">34% ▼</text><text x="410" y="153" font-size="12" fill="#555">세로토닌</text><text x="410" y="179" font-size="17" font-weight="800" fill="#2f6fb0">40% ▲</text></g><text x="260" y="222" text-anchor="middle" font-size="11.5" fill="#566">→ 줄글 수치를 도표로, 수치 변화를 한눈에</text></svg>';
+    case "bar": return '<table style="width:100%;border-collapse:collapse;font-family:system-ui;font-size:12.5px;background:#fff;text-align:center;"><tr style="background:#eef5ec;color:#3f5d3c;font-weight:700;"><td style="padding:6px 8px;border:1px solid #cfe2cd;">실험 대상</td><td style="padding:6px 8px;border:1px solid #cfe2cd;">항목</td><td style="padding:6px 8px;border:1px solid #cfe2cd;">변화</td></tr><tr><td style="padding:6px 8px;border:1px solid #cfe2cd;color:#555;">유아·아동 자녀를 둔 109가구</td><td style="padding:6px 8px;border:1px solid #cfe2cd;color:#555;">부모의 코르티솔 농도</td><td style="padding:6px 8px;border:1px solid #cfe2cd;font-weight:800;color:#d2483f;">56.5% ▼</td></tr><tr><td style="padding:6px 8px;border:1px solid #cfe2cd;color:#555;">유아·아동 자녀를 둔 109가구</td><td style="padding:6px 8px;border:1px solid #cfe2cd;color:#555;">자녀의 우울감</td><td style="padding:6px 8px;border:1px solid #cfe2cd;font-weight:800;color:#d2483f;">20.9% ▼</td></tr><tr><td style="padding:6px 8px;border:1px solid #cfe2cd;color:#555;">성인 암 환자</td><td style="padding:6px 8px;border:1px solid #cfe2cd;color:#555;">우울감</td><td style="padding:6px 8px;border:1px solid #cfe2cd;font-weight:800;color:#d2483f;">45% ▼</td></tr><tr><td style="padding:6px 8px;border:1px solid #cfe2cd;color:#555;">성인 암 환자</td><td style="padding:6px 8px;border:1px solid #cfe2cd;color:#555;">스트레스</td><td style="padding:6px 8px;border:1px solid #cfe2cd;font-weight:800;color:#d2483f;">34% ▼</td></tr><tr><td style="padding:6px 8px;border:1px solid #cfe2cd;color:#555;">성인 암 환자</td><td style="padding:6px 8px;border:1px solid #cfe2cd;color:#555;">세로토닌 분비</td><td style="padding:6px 8px;border:1px solid #cfe2cd;font-weight:800;color:#2f6fb0;">40% ▲</td></tr></table><div style="text-align:center;font-size:11.5px;color:#566;margin-top:9px;">→ 줄글 수치를 칸에 정리한 도표로, 한눈에</div>';
     case "icons": return '<svg viewBox="0 0 520 138" width="100%" height="138" font-family="system-ui">'+ic(80,"💧","물")+ic(230,"☀️","햇빛")+ic(380,"🌱","흙")+'<text x="260" y="128" text-anchor="middle" font-size="11.5" fill="#566">→ 핵심어를 그림 기호로</text></svg>';
     case "easy": return '<div style="display:flex;gap:12px;font-family:system-ui;"><div style="flex:1;background:#f6ead8;border-radius:11px;padding:12px 14px;"><div style="font-weight:700;color:#b76c1e;font-size:13.5px;">황사</div><div style="font-size:13px;color:#3c4946;margin-top:4px;line-height:1.5;">중국·몽골에서 바람에 날아온 <b>흙먼지</b></div></div><div style="flex:1;background:#d8ebe6;border-radius:11px;padding:12px 14px;"><div style="font-weight:700;color:#155e54;font-size:13.5px;">미세 먼지</div><div style="font-size:13px;color:#3c4946;margin-top:4px;line-height:1.5;">자동차·공장이 무언가를 태울 때 나오는 <b>아주 작은 먼지</b></div></div></div><div style="text-align:center;font-size:11.5px;color:#566;margin-top:9px;">→ 쉬운 말로 풀고, 둘을 견주어(대조) 보여 주기</div>';
     case "path": return '<svg viewBox="0 0 520 118" width="100%" height="118" font-family="system-ui">'+ps(20,"코·코털",0)+pa(118)+ps(140,"기관지",1)+pa(238)+ps(260,"폐포",2)+pa(358)+ps(380,"혈관",3)+'<text x="260" y="108" text-anchor="middle" font-size="11.5" fill="#566">→ 글로 된 과정을 경로 그림으로</text></svg>';
     case "interview": return '<div style="display:flex;align-items:center;gap:14px;font-family:system-ui;"><div style="width:58px;height:58px;border-radius:50%;background:#d8ebe6;display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0;">👩‍⚕️</div><div style="flex:1;background:#fff;border:1px solid #cdc6b4;border-radius:13px;padding:12px 15px;"><div style="font-size:13.5px;color:#2c3835;line-height:1.5;">"미세 먼지는 세계보건기구가 지정한 1급 발암 물질로, 건강에 큰 영향을 줍니다."</div><div style="font-size:12px;color:#6f7b78;margin-top:6px;">— 환경의학과 전문의 인터뷰 (보조 자료)</div></div></div><div style="text-align:center;font-size:11.5px;color:#566;margin-top:9px;">→ 전문가 인터뷰로 신뢰성 보강</div>';
     case "demo": return '<svg viewBox="0 0 520 150" width="100%" height="150" font-family="system-ui"><rect x="150" y="14" width="220" height="100" rx="10" fill="#1f2a2e"/><text x="260" y="36" text-anchor="middle" font-size="12" font-weight="700" fill="#eaf4f1">미세 먼지 환기 방법</text><g fill="#eaf4f1" font-size="11"><text x="172" y="62">① 창문 열기</text><text x="172" y="80">② 짧게 환기</text><text x="172" y="98">③ 물걸레 청소</text></g><circle cx="320" cy="78" r="17" fill="rgba(255,255,255,.9)"/><path d="M315 70 L332 78 L315 86 Z" fill="#1f2a2e"/><text x="260" y="138" text-anchor="middle" font-size="11.5" fill="#566">→ 방법을 영상으로 촬영해 시연</text></svg>';
     case "compare": return '<div style="display:flex;gap:10px;font-family:system-ui;"><div style="flex:1;background:#ece6f5;border-radius:11px;padding:11px;text-align:center;"><div style="font-weight:700;color:#6b4ea8;font-size:12.5px;">픽토그램</div><div style="font-size:27px;letter-spacing:5px;margin:7px 0;">🚻 ♿ 🚭</div><div style="font-size:11.5px;color:#5a5550;line-height:1.4;">하나의 뜻을<br>단순한 그림 기호로</div></div><div style="flex:1;background:#d8ebe6;border-radius:11px;padding:11px;text-align:center;"><div style="font-weight:700;color:#155e54;font-size:12.5px;">인포그래픽</div><svg viewBox="0 0 150 50" width="126" height="42" style="margin:6px auto 2px;"><rect x="0" y="0" width="150" height="50" rx="6" fill="#fff" stroke="#cfe6df"/><rect x="9" y="7" width="60" height="7" rx="2" fill="#155e54"/><rect x="11" y="24" width="8" height="18" rx="2" fill="#2f9e57"/><rect x="23" y="19" width="8" height="23" rx="2" fill="#2f9e57"/><rect x="35" y="30" width="8" height="12" rx="2" fill="#e0892f"/><circle cx="98" cy="21" r="11" fill="#d8ebe6"/><text x="98" y="26" font-size="12" text-anchor="middle">💧</text><text x="98" y="45" font-size="9" text-anchor="middle" fill="#155e54" font-weight="700">56%</text><text x="127" y="26" font-size="13" text-anchor="middle">☀️</text></svg><div style="font-size:11.5px;color:#5a5550;line-height:1.4;">여러 정보·수치를<br>그림과 도표로 종합</div></div></div>';
-    case "vtypes": return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;font-family:system-ui;">'+vt("📊","그래프","수치를 막대·선·원으로 나타낸 그림")+vt("🗂️","도표","그래프와 표를 아우르는 넓은 말")+vt("📋","표","정보를 행과 열로 정리")+vt("♿","픽토그램","하나의 뜻을 단순한 그림 기호로")+vt("📰","인포그래픽","여러 정보를 그림·도표로 종합")+vt("🎬","사진·영상","실제 모습·과정을 생생하게")+'</div>';
-    case "graphvs": return '<div style="display:flex;gap:10px;font-family:system-ui;"><div style="flex:1;background:#e7eff6;border-radius:11px;padding:11px;text-align:center;"><div style="font-weight:700;color:#2f6fb0;font-size:12.5px;">그래프</div><svg viewBox="0 0 150 54" width="120" height="43" style="margin:7px auto 4px;"><line x1="12" y1="46" x2="142" y2="46" stroke="#b9c4cf"/><rect x="26" y="26" width="15" height="20" rx="2" fill="#2f6fb0"/><rect x="58" y="15" width="15" height="31" rx="2" fill="#2f6fb0"/><rect x="90" y="32" width="15" height="14" rx="2" fill="#2f6fb0"/><polyline points="33,23 66,12 98,29 121,18" fill="none" stroke="#e0892f" stroke-width="2"/></svg><div style="font-size:11.5px;color:#5a5550;line-height:1.4;">변화·흐름을<br>막대·선으로 비교</div></div><div style="flex:1;background:#eef5ec;border-radius:11px;padding:11px;text-align:center;"><div style="font-weight:700;color:#3f7a4f;font-size:12.5px;">도표</div><svg viewBox="0 0 150 54" width="124" height="45" style="margin:6px auto 3px;"><rect x="4" y="4" width="142" height="46" rx="6" fill="#fff" stroke="#cfe2cd"/><text x="13" y="21" font-size="9" fill="#555">코르티솔</text><text x="90" y="21" font-size="9.5" font-weight="800" fill="#d2483f">56.5% ▼</text><text x="13" y="39" font-size="9" fill="#555">세로토닌</text><text x="90" y="39" font-size="9.5" font-weight="800" fill="#2f6fb0">40% ▲</text></svg><div style="font-size:11.5px;color:#5a5550;line-height:1.4;">결과를<br>체계적으로 정리</div></div></div>';
+    case "vtypes": return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;font-family:system-ui;">'+vt("📊","그래프","수치를 막대·선·원으로 나타낸 그림")+vt("📋","도표(표)","숫자를 행과 열의 칸에 정리")+vt("💬","자막","소리 없이도 읽도록 화면에 넣는 글자")+vt("♿","픽토그램","하나의 뜻을 단순한 그림 기호로")+vt("📰","인포그래픽","여러 정보를 그림·도표로 종합")+vt("🎬","사진·영상","실제 모습·과정을 생생하게")+'</div>';
+    case "graphvs": return '<div style="display:flex;gap:10px;font-family:system-ui;"><div style="flex:1;background:#e7eff6;border-radius:11px;padding:11px;text-align:center;"><div style="font-weight:700;color:#2f6fb0;font-size:12.5px;">그래프</div><svg viewBox="0 0 150 54" width="120" height="43" style="margin:7px auto 4px;"><line x1="12" y1="46" x2="142" y2="46" stroke="#b9c4cf"/><rect x="26" y="26" width="15" height="20" rx="2" fill="#2f6fb0"/><rect x="58" y="15" width="15" height="31" rx="2" fill="#2f6fb0"/><rect x="90" y="32" width="15" height="14" rx="2" fill="#2f6fb0"/><polyline points="33,23 66,12 98,29 121,18" fill="none" stroke="#e0892f" stroke-width="2"/></svg><div style="font-size:11.5px;color:#5a5550;line-height:1.4;">변화·흐름을<br>막대·선으로 비교</div></div><div style="flex:1;background:#eef5ec;border-radius:11px;padding:11px;text-align:center;"><div style="font-weight:700;color:#3f7a4f;font-size:12.5px;">도표(표)</div><svg viewBox="0 0 150 54" width="124" height="45" style="margin:6px auto 3px;"><rect x="4" y="4" width="142" height="46" fill="#fff" stroke="#9fbf9b"/><rect x="4" y="4" width="142" height="15" fill="#eef5ec" stroke="#9fbf9b"/><line x1="4" y1="34" x2="146" y2="34" stroke="#9fbf9b"/><line x1="75" y1="4" x2="75" y2="50" stroke="#9fbf9b"/><text x="39" y="15" font-size="8.5" text-anchor="middle" fill="#3f5d3c" font-weight="700">항목</text><text x="110" y="15" font-size="8.5" text-anchor="middle" fill="#3f5d3c" font-weight="700">변화</text><text x="39" y="30" font-size="9" text-anchor="middle" fill="#555">코르티솔</text><text x="110" y="30" font-size="9.5" text-anchor="middle" font-weight="800" fill="#d2483f">56.5% ▼</text><text x="39" y="46" font-size="9" text-anchor="middle" fill="#555">세로토닌</text><text x="110" y="46" font-size="9.5" text-anchor="middle" font-weight="800" fill="#2f6fb0">40% ▲</text></svg><div style="font-size:11.5px;color:#5a5550;line-height:1.4;">숫자를 칸에<br>체계적으로 정리</div></div></div>';
     default: return "";
   }
 }
@@ -1205,7 +1209,7 @@ function finishStage(){
   if(cands.length) focus = cands[0].c;
 
   const wrongs = []; state.items.forEach((it,i) => { const a = state.answered[i]; if(a && !a.firstOk) wrongs.push(it); });
-  const wrongIds = []; state.items.forEach((it,i) => { const a = state.answered[i]; if(a && !a.ok) wrongIds.push(it.id); });
+  const wrongIds = wrongs.map(it => it.id);   // 오답노트와 같은 범위(첫 시도에 틀린 문항)
 
   R = {stage, total, answered, firstOk, retryOk, miss, skipped, acc, mins, secs, stats, good, bad, focus, allLow, wrongs};
   window._wrongs = wrongs;
