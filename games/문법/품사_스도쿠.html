@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
+<!-- 리모델링 기록
+  2026.10.01 19:00 (8차) 맞힌 칸 잠금(점수 한 번만), 재전송 시 시간 보너스 한 번만, PART 2 "의미에 따른"→"형태·기능·의미에 따른", 관형사 예 새→헌, 오답 표시 0.65초 동안 칸 잠금, 화면 크기 바뀔 때 맞힌 칸 유지
+-->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -174,6 +177,7 @@
   .cell.empty{cursor:pointer;background:#fff;border:2px dashed var(--pt);}
   .cell.empty:hover{background:var(--pt-soft);}
   .cell.filled{cursor:pointer;}
+  .cell.filled.locked{cursor:default;}
   .cell.flash-ok{animation:flok .5s ease;}
   .cell.flash-no{animation:flno .5s ease;}
   .cell.flash-line{animation:flline .7s ease;z-index:1;}
@@ -312,7 +316,7 @@
         </div>
         <div class="part-card p2" onclick="choosePart(2)">
           <div class="pname">PART 2</div>
-          <div class="pdesc"><b>의미</b>에 따라 나눈 품사 9가지</div>
+          <div class="pdesc"><b>형태·기능·의미</b>에 따라 나눈 품사 9가지</div>
           <div class="ptag">9 × 9 스도쿠</div>
         </div>
       </div>
@@ -328,7 +332,7 @@
 
       <div class="credit-box">
         <p>제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com</p>
-        <p>제작일 2026.06.08 · <span id="lastMod">최종 수정 2026.09.24 14:30</span> · Made with Claude</p>
+        <p>제작일 2026.06.08 · <span id="lastMod">최종 수정 2026.10.01 19:00</span> · Made with Claude</p>
       </div>
 
       <div class="privacy" id="privacyOffline">
@@ -517,11 +521,11 @@ const PART1={
 const PART2={
   size:9,parts:["명사","대명사","수사","동사","형용사","관형사","부사","조사","감탄사"],
   short:["명","대","수","동","형","관","부","조","감"],
-  colors:["--d1","--d2","--d3","--d4","--d5","--d6","--d7","--d8","--d9"],title:"의미에 따른 품사",
-  rule:"단어를 <b>의미</b>를 중심으로 나눈 9가지 품사!<br>명사·대명사·수사·동사·형용사·관형사·부사·조사·감탄사를 가로 9칸·세로 9칸에 한 번씩 채워요.",
+  colors:["--d1","--d2","--d3","--d4","--d5","--d6","--d7","--d8","--d9"],title:"형태·기능·의미에 따른 품사",
+  rule:"<b>형태·기능·의미</b>를 함께 보고 단어를 나눈 9가지 품사!<br>명사·대명사·수사·동사·형용사·관형사·부사·조사·감탄사를 가로 9칸·세로 9칸에 한 번씩 채워요.",
   stages:{1:{blanks:18,maxLine:2},2:{blanks:32,maxLine:4},3:{blanks:45,maxLine:6}},
   summaryTitle:"📚 9품사 정리",
-  summary:[{name:"명사",desc:"사물·사람의 이름 (학교, 친구)"},{name:"대명사",desc:"이름을 대신 가리킴 (나, 그것)"},{name:"수사",desc:"수량·순서를 나타냄 (하나, 첫째)"},{name:"동사",desc:"움직임을 나타냄 (먹다, 달리다)"},{name:"형용사",desc:"성질·상태를 나타냄 (예쁘다, 높다)"},{name:"관형사",desc:"체언을 꾸며 줌 (새, 모든)"},{name:"부사",desc:"주로 용언을 꾸며 줌 (매우, 빨리)"},{name:"조사",desc:"말의 관계·뜻을 더함 (이/가, 을/를)"},{name:"감탄사",desc:"느낌·부름·대답을 나타냄 (아, 네)"}]
+  summary:[{name:"명사",desc:"사물·사람의 이름 (학교, 친구)"},{name:"대명사",desc:"이름을 대신 가리킴 (나, 그것)"},{name:"수사",desc:"수량·순서를 나타냄 (하나, 첫째)"},{name:"동사",desc:"움직임을 나타냄 (먹다, 달리다)"},{name:"형용사",desc:"성질·상태를 나타냄 (예쁘다, 높다)"},{name:"관형사",desc:"체언을 꾸며 줌 (헌, 모든)"},{name:"부사",desc:"주로 용언을 꾸며 줌 (매우, 빨리)"},{name:"조사",desc:"말의 관계·뜻을 더함 (이/가, 을/를)"},{name:"감탄사",desc:"느낌·부름·대답을 나타냄 (아, 네)"}]
 };
 const STAGE_DESC={1:"1단계 — 빈칸이 적어요. 한 줄에 빈칸 최대 2개.",2:"2단계 — 빈칸이 늘어나요. 적당한 도전!",3:"3단계 — 빈칸이 많아요. 진짜 추론력 발휘!"};
 
@@ -651,6 +655,7 @@ function buildBoard(){
     cell.style.width=cellW+'px';cell.style.height=cellH+'px';cell.style.fontSize=fontSize;
     cell.dataset.r=r;cell.dataset.c=c;
     if(state.fixed[r][c]){const v=state.grid[r][c];cell.classList.add('fixed');cell.textContent=cellLabel(v);cell.style.color='var('+DATA.colors[v]+')';}
+    else if(state.grid[r][c]!==-1){const v=state.grid[r][c];cell.classList.add('filled','locked');cell.textContent=cellLabel(v);cell.style.color='var('+DATA.colors[v]+')';} // 화면 크기 바뀌어 다시 그릴 때 맞힌 칸 유지 (2026.10.01)
     else{cell.classList.add('empty');cell.onclick=()=>onCellClick(r,c);}
     board.appendChild(cell);
   }
@@ -682,7 +687,7 @@ function buildPalette(){
 // ═══════════════════════════════════════════
 function onCellClick(r,c){
   if(state.fixed[r][c])return;const el=cellEl(r,c);
-  if(state.grid[r][c]!==-1){state.grid[r][c]=-1;el.textContent='';el.className='cell empty';el.style.color='';el.onclick=()=>onCellClick(r,c);return;}
+  if(state.grid[r][c]!==-1||el.dataset.pending)return; // 맞힌 칸·오답 표시 중인 칸은 잠금 — 지웠다 다시 채워 점수·콤보·줄 보너스를 또 받지 않도록 (2026.10.01)
   if(state.selChip===null){banner('낱말 카드를 먼저 고르세요','no');return;}
   const guess=state.selChip,answer=state.solution[r][c];
   el.textContent=cellLabel(guess);el.classList.remove('empty');el.classList.add('filled');el.style.color='var('+DATA.colors[guess]+')';
@@ -691,11 +696,11 @@ function onCellClick(r,c){
     let bonus=0;if(state.combo>=5)bonus=10;else if(state.combo>=3)bonus=5;state.score+=bonus;
     el.classList.add('flash-ok');setTimeout(()=>el.classList.remove('flash-ok'),500);
     if(bonus>0){sndCombo();banner(state.combo+' COMBO!  +'+(10+bonus),'combo');}else{sndOk();banner('정답!  +10','ok');}
-    state.grid[r][c]=guess;checkLineBonus(r,c);
+    state.grid[r][c]=guess;el.classList.add('locked');el.onclick=null;checkLineBonus(r,c);
   }else{
     state.score-=5;if(state.score<0)state.score=0;state.no++;state.combo=0;sndNo();
-    el.classList.add('flash-no');banner('오답…  −5','no');
-    setTimeout(()=>{state.grid[r][c]=-1;el.textContent='';el.className='cell empty';el.style.color='';el.onclick=()=>onCellClick(r,c);},650);
+    el.classList.add('flash-no');banner('오답…  −5','no');el.dataset.pending='1';
+    setTimeout(()=>{delete el.dataset.pending;state.grid[r][c]=-1;el.textContent='';el.className='cell empty';el.style.color='';el.onclick=()=>onCellClick(r,c);},650);
   }
   clearChipSelection();updateHUD();checkDone();
 }
@@ -729,7 +734,9 @@ function checkDone(){
 }
 
 function showResult(){
-  const bonus=timeBonus(currentPart,state.elapsed);state.score+=bonus;
+  // 시간 보너스는 한 번만 더함 — 재전송으로 showResult가 다시 불려도 중복 가산 안 됨 (2026.10.01)
+  if(state.timeBonus===undefined){state.timeBonus=timeBonus(currentPart,state.elapsed);state.score+=state.timeBonus;}
+  const bonus=state.timeBonus;
   $('rScore').textContent=state.score;$('rOk').textContent=state.ok;$('rNo').textContent=state.no;
   $('rCombo').textContent=state.maxCombo;$('rTime').textContent=fmtTime(state.elapsed);$('rTimeBonus').textContent='+'+bonus;
   const tm=$('timeMsg');
@@ -775,7 +782,7 @@ function downloadTeacherXls(){
   h+='<table><tr><th>단계</th><th>빈칸 수</th><th>줄당 최대 빈칸</th></tr>';
   [1,2,3].forEach(s=>{const c=PART1.stages[s];h+='<tr><td>'+s+'단계</td><td>'+c.blanks+'</td><td>'+c.maxLine+'</td></tr>';});
   h+='</table><br>';
-  h+='<h2>Part 2 · 의미에 따른 품사 (9×9)</h2>';
+  h+='<h2>Part 2 · 형태·기능·의미에 따른 품사 (9×9)</h2>';
   h+='<table><tr><th>번호</th><th>이름</th><th>약어</th><th>설명</th></tr>';
   PART2.summary.forEach((s,i)=>{h+='<tr><td>'+(i+1)+'</td><td>'+s.name+'</td><td>'+PART2.short[i]+'</td><td>'+s.desc+'</td></tr>';});
   h+='</table><br>';
@@ -792,7 +799,7 @@ function downloadTeacherXls(){
   h+='</body></html>';
   const blob=new Blob(['\ufeff'+h],{type:'application/vnd.ms-excel;charset=utf-8'});
   const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download='G105_품사스도쿠_학습데이터목록_20260924.xls';a.click();
+  const a=document.createElement('a');a.href=url;a.download='G105_품사스도쿠_학습데이터목록_20261001.xls';a.click();
   URL.revokeObjectURL(url);
 }
 
