@@ -1,0 +1,1532 @@
+<!DOCTYPE html>
+<html lang="ko">
+<!-- 리모델링 2026.10.01 17:00 (7차)
+     코드 L201 → L202 · 「사랑손님과 어머니」 발표 1935년 · 1단계 7번/2단계 세트 B: 어머니를 막은 원인 = 법이 없어진 뒤에도 남은 관습(시선)
+     3단계 채점: '-기에' 오인(여기에 등) · 공백 든 키워드(남의 눈) · 마름+지주 감점 · '집'/'참' 글자 걸림 고침 · 마스코트 이미지 교체 -->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>조건 사냥꾼 — 조건에 맞게, 한 문단으로</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+html{color-scheme:light}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+ --bg:#F2FBF7; --acc:#2E9B79; --acc2:#248566; --ink:#0F6E56; --line:#DDF2E9;
+ --ink2:#5b6b70; --body:#333; --ng:#dc2626; --ngbg:#fef2f2; --warn:#b45309; --warnbg:#fffbeb;
+}
+body{
+ font-family:'Noto Sans KR','Malgun Gothic','맑은 고딕',sans-serif;
+ background:var(--bg); color:var(--body); -webkit-text-size-adjust:100%;
+ word-break:keep-all; overflow-wrap:break-word;
+ min-height:100vh;
+}
+.wrap{display:none; max-width:920px; margin:0 auto 60px; background:#fff;
+ border:1px solid var(--line); border-radius:12px; overflow:hidden;
+ box-shadow:0 2px 14px rgba(15,110,86,.07)}
+.wrap.on{display:block}
+
+/* ── 영역 헤더 띠 ── */
+.band{background:var(--acc); color:#fff; min-height:38px; display:flex; align-items:center;
+ justify-content:space-between; gap:10px; padding:0 14px; font-size:13.5px; font-weight:700;
+ border-radius:12px 12px 0 0; letter-spacing:-.2px}
+.band .goal{font-weight:500; opacity:.95}
+.band .badge{background:rgba(255,255,255,.22); border-radius:999px; padding:3px 10px;
+ font-size:12px; font-weight:700; white-space:nowrap}
+.band .hud{display:flex; align-items:center; gap:10px; white-space:nowrap}
+.band .combo{background:rgba(255,255,255,.22); border-radius:999px; padding:3px 10px; font-size:12px}
+.band .combo.pulse{animation:pop .4s ease}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.35)}100%{transform:scale(1)}}
+@media (max-width:600px){.band .goal{display:none}}
+
+/* ── 시작 화면 ── */
+.pad{padding:48px 30px 34px}
+.head{display:flex; align-items:center; gap:16px; margin-bottom:8px}
+.mascot-img{height:90px; border-radius:12px; -webkit-touch-callout:none;
+ -webkit-user-select:none; user-select:none; touch-action:manipulation; cursor:default}
+h1{font-size:clamp(22px,4.4vw,30px); color:var(--ink); font-weight:700; letter-spacing:-.6px; line-height:1.25}
+.sub{font-size:14px; color:var(--ink2); margin-top:4px}
+.box{border:1px solid var(--line); background:#FBFEFC; border-radius:10px; padding:14px 16px; margin-top:16px}
+.box h3{font-size:14.5px; color:var(--ink); margin-bottom:6px}
+.box p,.box li{font-size:13.5px; line-height:1.72; color:var(--body)}
+.box ul,.box ol{padding-left:19px}
+.box .code{font-size:12px; color:var(--acc); font-weight:700}
+.types{display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:8px; margin-top:16px}
+.tcard{border:1px solid var(--line); border-radius:10px; padding:10px 12px; background:#fff}
+.tcard b{font-size:13px; color:var(--ink); display:block; margin-bottom:2px}
+.tcard span{font-size:12px; color:var(--ink2); line-height:1.6}
+.btn{font-family:inherit; font-size:15px; font-weight:700; border-radius:12px; cursor:pointer;
+ padding:13px 20px; border:2px solid var(--acc); background:var(--acc); color:#fff; min-height:46px}
+.btn:hover{background:var(--acc2); border-color:var(--acc2)}
+.btn.sec{background:#fff; color:var(--ink)}
+.btn.sec:hover{background:#F2FBF7}
+.btn:disabled{opacity:.45; cursor:not-allowed}
+.stagebtns{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:20px}
+@media (max-width:600px){.stagebtns{grid-template-columns:1fr}.pad{padding:48px 18px 30px}}
+.startrow{margin-top:16px}
+.startrow .btn{width:100%; font-size:17px; padding:15px}
+.credit{margin-top:22px; border:1px solid var(--line); border-radius:10px; padding:11px 14px;
+ font-size:12px; color:var(--ink2); line-height:1.75; background:#FBFEFC}
+.privacy{margin-top:10px; border:1px solid var(--line); border-radius:10px; padding:11px 14px;
+ font-size:12px; color:var(--ink2); line-height:1.75; background:#FBFEFC}
+.privacy b{color:var(--ink)}
+.notice{margin-top:14px; border:1px solid #FBE9B8; background:var(--warnbg); border-radius:10px;
+ padding:11px 14px; font-size:12.5px; color:var(--warn); line-height:1.7}
+
+/* ── 문제 화면 ── */
+.playbody{display:flex; gap:0; position:relative}
+.nav{flex:0 0 126px; border-right:1px solid var(--line); padding:14px 10px;
+ display:flex; flex-direction:column; gap:8px; background:#FBFEFC}
+.nav button{font-family:inherit; font-size:13px; font-weight:700; padding:11px 4px; min-height:46px; white-space:nowrap;
+ border:1px solid var(--line); border-radius:10px; background:#fff; color:var(--ink); cursor:pointer}
+.nav button:hover{background:#F2FBF7}
+.nav button.end{color:var(--ng); border-color:#f3d4d4}
+.stage{flex:1; padding:18px 20px 46px; min-width:0; max-height:calc(100vh - 100px); overflow:auto}
+@media (max-width:700px){
+ .playbody{flex-direction:column}
+ .nav{flex:none; border-right:none; border-bottom:1px solid var(--line);
+  flex-direction:row; padding:10px}
+ .nav button{flex:1}
+ .stage{padding:14px 14px 30px; max-height:none}
+}
+.bar{height:5px; background:var(--line); border-radius:99px; overflow:hidden; margin-bottom:14px}
+.bar i{display:block; height:100%; background:var(--acc); border-radius:99px; transition:width .3s}
+.qcard{border:1px solid var(--line); background:#fff; border-radius:10px; padding:15px 17px}
+.tag{display:inline-block; font-size:11.5px; font-weight:700; color:var(--acc);
+ border:1px solid var(--line); background:#F2FBF7; border-radius:999px; padding:2px 9px; margin-bottom:9px}
+.cond{border-left:4px solid var(--acc); background:#F2FBF7; border-radius:0 8px 8px 0;
+ padding:10px 13px; font-size:14px; line-height:1.72; margin-bottom:11px; color:var(--ink)}
+.ask{font-size:15.5px; font-weight:700; color:var(--body); line-height:1.6; margin-bottom:13px}
+.opts{display:grid; gap:8px}
+.opt{font-family:inherit; text-align:left; font-size:14.5px; line-height:1.6; padding:13px 15px;
+ min-height:46px; border:1.5px solid var(--line); border-radius:10px; background:#fff;
+ color:var(--body); cursor:pointer; display:flex; gap:9px; align-items:flex-start}
+.opt:hover{border-color:var(--acc); background:#F8FDFB}
+.opt .n{flex:0 0 auto; font-weight:700; color:var(--acc)}
+.opt.ok{border-color:#16a34a; background:#f0fdf4}
+.opt.no{border-color:var(--ng); background:var(--ngbg)}
+.opt.lock{cursor:default; opacity:.85}
+.mark{margin-left:auto; font-weight:700}
+.shake{animation:sh .38s}
+@keyframes sh{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.hint{margin-top:11px; border:1.5px dashed var(--warn); background:var(--warnbg); border-radius:10px;
+ padding:11px 13px; font-size:13.5px; line-height:1.7; color:var(--warn)}
+.hint b{color:#92400e}
+.sol{margin-top:11px; border:1px solid var(--line); background:#F2FBF7; border-radius:10px;
+ padding:11px 13px; font-size:13.5px; line-height:1.72; color:var(--ink)}
+.src{border:1px solid var(--line); background:#FBFEFC; border-radius:10px; padding:11px 13px;
+ font-size:13px; line-height:1.7; margin-bottom:11px}
+.src b{color:var(--ink); font-size:12.5px}
+.src.ph{border:1.5px dashed #FBE9B8; background:var(--warnbg); color:var(--warn)}
+.src.ph b{color:var(--warn)}
+.src .srch{display:flex; align-items:baseline; gap:8px; justify-content:space-between}
+.src .srch .from{font-size:11.5px; color:var(--ink2); font-weight:400}
+.srcT{font-family:inherit; font-size:11.5px; font-weight:700; color:var(--acc); background:#fff;
+ border:1px solid var(--line); border-radius:999px; padding:3px 10px; cursor:pointer; white-space:nowrap}
+.srcT:hover{background:#F2FBF7}
+.src .srcc{margin-top:5px; font-size:11.5px; color:var(--warn); font-weight:700}
+.src .srcn{margin-top:5px; font-size:12.5px; color:var(--ink); background:#fff;
+ border:1px solid var(--line); border-radius:8px; padding:7px 10px; line-height:1.6}
+.src .srcb{position:relative; margin-top:7px; max-height:96px; overflow:hidden; line-height:1.8}
+.srcwrap{margin-bottom:11px}
+.srctabs{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:-1px}
+.stab{font-family:inherit; font-size:12.5px; font-weight:700; color:var(--ink2); background:#F6FBF9;
+ border:1px solid var(--line); border-bottom:none; border-radius:9px 9px 0 0; padding:7px 13px;
+ cursor:pointer; min-height:36px}
+.stab.on{background:#FBFEFC; color:var(--ink); border-color:var(--line); box-shadow:0 1px 0 0 #FBFEFC}
+.srcwrap .src{display:none; margin-bottom:0; border-radius:0 10px 10px 10px}
+.srcwrap .src.act{display:block}
+.src.open .srcb{max-height:none}
+.src .srcb::after{content:''; position:absolute; left:0; right:0; bottom:0; height:44px;
+ background:linear-gradient(rgba(251,254,252,0),#FBFEFC); pointer-events:none}
+.src.open .srcb::after{display:none}
+.src .srcb mark{background:#FEF3C7; color:#92400e; padding:0 2px; border-radius:3px}
+.conds{border:1px solid var(--line); border-radius:10px; padding:10px 13px 10px 15px; margin-bottom:11px; background:#FBFEFC}
+.conds b{font-size:12.5px; color:var(--acc); display:block; margin-bottom:4px}
+.conds ol{padding-left:18px; margin:0}
+.conds li{font-size:13.5px; line-height:1.72; color:var(--body); margin-bottom:2px}
+.cards{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px}
+@media (max-width:780px){.cards{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:430px){.cards{grid-template-columns:1fr}}
+.card{font-family:inherit; font-size:13.5px; line-height:1.5; padding:12px 11px; min-height:48px;
+ border:1.5px solid var(--line); border-radius:10px; background:#fff; color:var(--body);
+ cursor:pointer; text-align:left; display:flex; gap:7px; align-items:flex-start}
+.card:hover{border-color:var(--acc)}
+.card .ck{flex:0 0 auto; font-weight:700; color:var(--line)}
+.card.sel{border-color:var(--acc); background:#F2FBF7}
+.card.sel .ck{color:var(--acc)}
+.card.rOk{border-color:#16a34a; background:#f0fdf4}
+.card.rMiss{border-color:var(--warn); background:var(--warnbg)}
+.card.rTrap{border-color:var(--ng); background:var(--ngbg)}
+.slots{display:grid; gap:11px; margin-bottom:12px}
+.slot label{display:block; font-size:13.5px; font-weight:700; color:var(--ink); margin-bottom:5px}
+.slot .pt{float:right; font-size:12px; color:var(--ink2); font-weight:500}
+.slot textarea{width:100%; font-family:inherit; font-size:15px; line-height:1.65; padding:11px 13px;
+ border:1.5px solid var(--line); border-radius:10px; background:#fff; color:var(--body);
+ resize:vertical; min-height:74px}
+.slot textarea:focus{outline:none; border-color:var(--acc)}
+.slot .fb{font-size:12.5px; line-height:1.65; margin-top:5px; min-height:16px}
+.slot .fb.g{color:#15803d} .slot .fb.y{color:var(--warn)} .slot .fb.r{color:var(--ng)}
+.rowbtn{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:6px}
+.rowbtn .btn{flex:1; min-width:130px}
+.pcredit{position:absolute; right:14px; bottom:8px; font-size:10.5px; color:#9fb8b0; pointer-events:none}
+@media (max-width:700px){.pcredit{position:static; text-align:right; margin-top:8px}}
+
+/* ── 배너 / 파티클 ── */
+#dim{position:fixed; inset:0; display:none; z-index:800;
+ background:radial-gradient(circle at 50% 45%,rgba(0,0,0,.30),rgba(0,0,0,.18))}
+#fx{position:fixed; inset:0; pointer-events:none; z-index:900; display:none}
+#banner{position:fixed; left:50%; top:45%; transform:translate(-50%,-50%) scale(.3);
+ z-index:950; display:none; text-align:center; pointer-events:none; width:92%; max-width:520px}
+#banner.show{animation:spring .35s cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes spring{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}
+ 60%{transform:translate(-50%,-50%) scale(1.15);opacity:1}
+ 100%{transform:translate(-50%,-50%) scale(1);opacity:1}}
+#banner.out{animation:fo .35s ease forwards}
+@keyframes fo{to{opacity:0}}
+#banner .ray{position:absolute; left:50%; top:50%; width:460px; height:460px; margin:-230px 0 0 -230px;
+ border-radius:50%; z-index:-1; opacity:.5;
+ background:conic-gradient(from 0deg,transparent 0 8deg,rgba(255,255,255,.75) 8deg 12deg,transparent 12deg 30deg);
+ animation:spin 9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#banner .big{font-size:clamp(38px,9vw,62px); font-weight:700; letter-spacing:-1px; line-height:1.1;
+ background:linear-gradient(180deg,#fffbe6,#ffd75e 55%,#f59e0b);
+ -webkit-background-clip:text; background-clip:text; color:transparent;
+ filter:drop-shadow(0 0 14px rgba(255,214,94,.8)) drop-shadow(0 3px 5px rgba(0,0,0,.35))}
+#banner .big.rb{background:linear-gradient(90deg,#fb7185,#fbbf24,#4ade80,#38bdf8,#c084fc);
+ -webkit-background-clip:text; background-clip:text}
+#banner .gain{font-size:clamp(22px,5vw,32px); font-weight:700; color:#fff; margin-top:4px;
+ text-shadow:0 0 12px rgba(255,214,94,.9),0 2px 5px rgba(0,0,0,.5)}
+#banner .msg{font-size:15px; color:#fff; margin-top:8px; text-shadow:0 2px 6px rgba(0,0,0,.6)}
+#banner .skip{font-size:12px; color:rgba(255,255,255,.85); margin-top:14px}
+body.glow::after{content:''; position:fixed; inset:0; z-index:940; pointer-events:none;
+ box-shadow:inset 0 0 70px 14px rgba(251,191,36,.75); animation:gp .9s ease}
+@keyframes gp{0%,100%{opacity:0}50%{opacity:1}}
+
+/* ── 모달 ── */
+.modal{position:fixed; inset:0; display:none; z-index:9998; background:rgba(0,0,0,.5);
+ justify-content:center; align-items:center; padding:16px}
+.modal.on{display:flex}
+.sheet{background:#fff; border-radius:16px; padding:22px; max-width:640px; width:100%;
+ max-height:86vh; overflow:auto; box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.sheet h2{font-size:18px; color:var(--ink); margin-bottom:6px}
+.sheet p{font-size:13.5px; color:var(--ink2); line-height:1.7}
+.rv{border:1px solid var(--line); border-radius:10px; padding:11px 13px; margin-top:9px; font-size:13px; line-height:1.7}
+.rv .t{font-size:11.5px; font-weight:700; color:var(--acc)}
+.rv .a{color:#15803d; font-weight:700} .rv .d{color:var(--ink2); font-size:12.5px}
+
+/* ── 종료 화면 ── */
+.sum{display:grid; grid-template-columns:repeat(auto-fit,minmax(118px,1fr)); gap:9px; margin-top:16px}
+.stat{border:1px solid var(--line); border-radius:10px; padding:11px; text-align:center; background:#FBFEFC}
+.stat b{display:block; font-size:21px; color:var(--ink); line-height:1.3}
+.stat span{font-size:11.5px; color:var(--ink2)}
+.scoreBig{text-align:center; margin-top:14px}
+.scoreBig b{font-size:clamp(34px,8vw,50px); color:var(--acc); line-height:1.1}
+.scoreBig span{font-size:15px; color:var(--ink2)}
+.verdict{text-align:center; font-size:17px; font-weight:700; color:var(--ink); margin-top:8px}
+.erase{border:1px solid var(--line); border-radius:10px; padding:13px 15px; margin-top:14px; background:#FBFEFC}
+.erase h3{font-size:14.5px; color:var(--ink); margin-bottom:8px}
+.erase .ans{font-size:14px; line-height:1.85; color:var(--body); background:#fff;
+ border:1px solid var(--line); border-radius:8px; padding:11px 13px}
+.erase .ans s{color:#9fb8b0; text-decoration-color:var(--acc)}
+.erase .ans mark{background:#d1fae5; color:#065f46; padding:0 2px; border-radius:3px; text-decoration:line-through; text-decoration-color:#059669}
+.erase .left{margin-top:9px; font-size:13.5px; line-height:1.8; color:var(--ng)}
+.erase .left b{color:var(--ng)}
+.chips{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px}
+.chip{font-size:12.5px; padding:4px 10px; border-radius:999px; border:1px solid #f3d4d4;
+ background:var(--ngbg); color:var(--ng); font-weight:700}
+.chip.ok{border-color:#bbf7d0; background:#f0fdf4; color:#15803d; text-decoration:line-through}
+.inps{margin-top:16px}
+.inps label{display:block; font-size:13px; font-weight:700; color:var(--ink); margin:10px 0 4px}
+.inps input,.inps textarea{width:100%; font-family:inherit; font-size:15px; padding:11px 13px;
+ border:1.5px solid var(--line); border-radius:10px; background:#fff; color:var(--body)}
+.inps textarea{min-height:62px; resize:vertical}
+.acts{display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-top:14px}
+.acts .btn{width:100%}
+@media (max-width:520px){.acts{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){
+ #banner.show{animation:none; transform:translate(-50%,-50%) scale(1); opacity:1}
+ #banner .ray{animation:none; display:none}
+ .shake{animation:none} body.glow::after{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ 시작 화면 ══════════════ -->
+<div class="wrap on" id="start">
+ <div class="band">
+  <span>문학</span>
+  <span class="badge">💻 노트북 권장</span>
+ </div>
+ <div class="pad">
+  <div class="head">
+   <img id="mascot" class="mascot-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAACxCAMAAAAyLeWLAAAB/lBMVEUAAABMNSXZ1s7hupPcto7alVnNxba4uryMqcKptsLQiEyTp7jTmmfXpXTkwZxGLBvipW3i2snLeDWcscPUrIR8osLnx6NqSDBNMR7FvbLb0b2telCoq6vGxsb7+vqth2eHm6ivpJaMZ0rhmlvgnWGLeGm2g1ipmozGfUJtWEjTgTySlpVaRDS2lHXo6OeVhXbk4dl0UjmdsL6+wL1ELiDFbCd4mraGWDe8wcLGxsaXc1Z4ZVZ8oL77+vo6JhhiPSWoq6uTjIa4urzZ1s6DXELwsnh6bWK8dTuSYzwIBQUbFRNuOBZ3Qh3groDi0rsqHRdMNSWcoJuvpJbFvbLi2sl1nsKSlpWzajKptsLawZ7Nxbbo6OdtWEiLeGmpmowxIyF7c2l+lJ2BTSeTjIa2WBG8YhyjbUXd4eLk4dk8MS1ELiBlT0B4ZVaVhXaTp7imf2GvpJbAZh3An4De3+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADGtm7NAAAAgHRSTlMA///////////////////////////////////////////////////////////////////////////c////3P//3P/c3P///////////////9z/3Nzc/9z/3P/c3Nzc3P/////c/////9z/3P/c3Nz/oP///wAAAAAAAAAAAAAAAKaTQcIAABeqSURBVHja7VwHd+JItl4kUUpVKCAjhMjYYINxTh2me3q6e3vyvNnZ3dmcw8vx/5/z7r1VEghjLLfp3XPeebVjaANWffrud0PdKvYHP/j/sa3xC5Ml7cmrSdLRnvxdAPwjm+wdVPIRH+wN/sZAnhwfVJpepTi8SnzMPvqbQdg79C4q68fhr/8mED5+VvEqm8bBJx8cw68r9w7v4DcfFMJP72EhG3u//GAQXv+wHIRKpXn4iw+E4buDshhwfCBFxg/BUPnnD4Hhk8oD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" alt="보라라샘" draggable="false">
+   <div>
+    <h1>조건 사냥꾼</h1>
+    <div class="sub">조건에 맞게, 한 문단으로 — <span style="white-space:nowrap">서논술형 답안 쓰기 훈련</span></div>
+   </div>
+  </div>
+
+  <div class="box">
+   <h3>📘 성취기준</h3>
+   <p><span class="code">[9국05-05]</span> 작품에 반영된 사회·문화적 상황을 이해하며 작품을 감상한다.</p>
+  </div>
+
+  <div class="box">
+   <h3>🎮 게임 방법</h3>
+   <ol>
+    <li><b>1단계 조건 사냥</b> — 조건 문장을 읽고 무엇을 요구하는지 고릅니다. 8문항 × 5점.</li>
+    <li><b>2단계 키워드 사냥</b> — 답안에 반드시 들어가야 할 말을 모두 고릅니다. 3세트 × 10점.</li>
+    <li><b>3단계 한 문단 쓰기</b> — 칸을 나눠 직접 써 봅니다. 2세트 × 15점.</li>
+   </ol>
+   <p style="margin-top:7px">1단계는 첫 시도에 맞히면 연속 정답 보너스가 붙습니다. 3연속 +5점, 5연속부터 +10점.</p>
+   <p>틀리면 힌트를 보고 한 번 더 풀 수 있습니다. 다시 풀어 맞히면 절반 점수를 받습니다.</p>
+   <p>3단계는 몇 번이든 고쳐 쓸 수 있습니다. 고쳐 쓰기에는 감점이 없습니다.</p>
+   <p><b>만점 <span id="maxLabel">150</span>점</b> (기본 100점 + 1단계 연속 보너스 50점)</p>
+  </div>
+
+  <div class="types" id="typeList"></div>
+
+  <div class="startrow"><button class="btn" onclick="startStage(1)">🏹 1단계부터 시작하기</button></div>
+  <div class="stagebtns">
+   <button class="btn sec" onclick="startStage(1)">1단계 조건 사냥</button>
+   <button class="btn sec" onclick="startStage(2)">2단계 키워드 사냥</button>
+   <button class="btn sec" onclick="startStage(3)">3단계 한 문단 쓰기</button>
+  </div>
+
+  <div class="notice" id="draftNotice">
+   📄 2·3단계에는 시험지의 자료 원문이 그대로 실려 있습니다. 자료 상자의 <b>전문 펼치기</b>를 누르면 전체를 볼 수 있고,
+   채점이 끝나면 근거가 되는 문장에 형광펜이 칠해집니다.
+  </div>
+
+  <div class="credit">
+   제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
+   제작일 2026.09.24 · 최종 수정 2026.10.01 17:00
+  </div>
+  <div class="privacy" id="privacyOffline">
+   <b>🔒 개인정보 보호 안내</b><br>
+   본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다.<br>
+   게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.
+  </div>
+  <div class="privacy" id="privacyOnline" style="display:none">
+   <b>🔒 개인정보 보호 안내</b><br>
+   본 게임의 학습 결과(학번, 이름, 점수, 오답 정보, 학습 소감)는 담당 선생님의 학습 관리용 스프레드시트에 안전하게 전송·저장됩니다.<br>
+   수집된 정보는 학습 지도 목적으로만 사용되며, 제3자에게 제공되지 않습니다.
+  </div>
+ </div>
+</div>
+
+<!-- 학생 인증 오버레이 -->
+<div id="loginOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;justify-content:center;align-items:center">
+ <div style="background:#fff;border-radius:20px;padding:32px;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center">
+  <div style="font-size:36px;margin-bottom:8px">🔑</div>
+  <h2 style="font-size:20px;margin-bottom:4px;color:var(--ink)">학생 인증</h2>
+  <p style="font-size:13px;color:var(--ink2);margin-bottom:20px">학번과 이름을 입력하면 게임을 시작할 수 있어요.</p>
+  <div style="text-align:left;margin-bottom:12px">
+   <label style="font-size:13px;font-weight:700;color:var(--ink)">학번 (5자리)</label>
+   <input id="loginId" type="text" maxlength="5" inputmode="numeric" placeholder="예: 20101" style="width:100%;padding:10px 14px;border:2px solid var(--line);border-radius:10px;font-size:16px;margin-top:4px;box-sizing:border-box">
+  </div>
+  <div style="text-align:left;margin-bottom:16px">
+   <label style="font-size:13px;font-weight:700;color:var(--ink)">이름</label>
+   <input id="loginName" type="text" maxlength="10" placeholder="예: 김민준" style="width:100%;padding:10px 14px;border:2px solid var(--line);border-radius:10px;font-size:16px;margin-top:4px;box-sizing:border-box">
+  </div>
+  <div id="loginMsg" style="font-size:13px;color:var(--ng);min-height:20px;margin-bottom:12px"></div>
+  <button id="loginBtn" onclick="doLogin()" style="width:100%;padding:12px;background:var(--ink);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer">확인</button>
+  <div id="loginSpinner" style="display:none;margin-top:12px"><div style="width:28px;height:28px;border:3px solid var(--line);border-top-color:var(--ink);border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto"></div></div>
+ </div>
+</div>
+
+<!-- ══════════════ 문제 화면 ══════════════ -->
+<div class="wrap" id="play">
+ <div class="band">
+  <span><span id="bandArea">문학</span> <span class="goal" id="bandGoal"></span></span>
+  <span class="hud"><span class="combo" id="comboHud">🔥 0</span><span id="bandProg">1 / 8 · 0점</span></span>
+ </div>
+ <div class="playbody">
+  <div class="nav">
+   <button onclick="goPrev()">◀ 이전</button>
+   <button onclick="goNext()">다음 ▶</button>
+   <button class="end" onclick="finish()">■ 게임 끝내기</button>
+  </div>
+  <div class="stage" id="stageBody"></div>
+  <div class="pcredit">제작 · 보라라샘 / 2026.09.24</div>
+ </div>
+</div>
+
+<!-- ══════════════ 종료 화면 ══════════════ -->
+<div class="wrap" id="end">
+ <div class="band"><span>문학 · 학습 결과</span><span class="badge" id="endStageBadge">1단계</span></div>
+ <div class="pad">
+  <div class="scoreBig"><b id="endScore">0</b><span> / <span class="endMax">150</span>점</span></div>
+  <div class="verdict" id="endVerdict"></div>
+  <div class="sum" id="endStats"></div>
+  <div id="eraseArea"></div>
+  <div class="box" id="typeReport"></div>
+
+  <div class="inps">
+   <label for="inName">학생 이름 <span style="color:var(--ng)">*필수</span></label>
+   <input id="inName" type="text" maxlength="12" placeholder="실명을 입력하세요">
+   <label for="inRefl">학습 소감 (선택)</label>
+   <textarea id="inRefl" maxlength="200" placeholder="오늘 배운 것, 어려웠던 것을 적어 보세요."></textarea>
+  </div>
+
+  <div class="acts">
+   <button class="btn" id="btnNextStage" onclick="nextStage()">다음 단계로 ▶</button>
+   <button class="btn sec" id="btnRetry" onclick="retryStage()">이 단계 다시 하기</button>
+   <button class="btn" onclick="dlWrong()">📄 오답노트 내려받기</button>
+   <button class="btn" onclick="dlReport()">📊 학습 리포트 내려받기</button>
+   <button class="btn sec" onclick="openReview()">📖 오늘 나온 문제 모두 보기</button>
+   <button class="btn sec" onclick="toStart()">🏠 시작화면으로</button>
+  </div>
+
+  <div class="privacy" style="margin-top:12px;text-align:left" id="endPrivacy">
+   입력하신 이름과 소감은 서버에 저장되지 않으며, 리포트 이미지(JPG) 생성용으로만 쓰입니다.
+  </div>
+  <div class="credit">
+   제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
+   제작일 2026.09.24 · 최종 수정 2026.10.01 17:00
+  </div>
+ </div>
+</div>
+
+<div id="dim"></div>
+<canvas id="fx"></canvas>
+<div id="banner"><div class="ray"></div><div class="big" id="bnBig"></div><div class="gain" id="bnGain"></div><div class="msg" id="bnMsg"></div><div class="skip">Enter · Space · → 로 계속</div></div>
+
+<div class="modal" id="reviewModal"><div class="sheet">
+ <h2>📖 오늘 나온 문제</h2>
+ <p>이번 판에 실제로 출제된 문항만 보여 줍니다.</p>
+ <div id="reviewBody"></div>
+ <button class="btn sec" style="width:100%;margin-top:14px" onclick="closeModal('reviewModal')">닫기</button>
+</div></div>
+
+<div class="modal" id="teacherModal"><div class="sheet" style="max-width:400px;text-align:center">
+ <h2>학습 데이터 목록</h2>
+ <p>전체 문항의 정답과 해설이 담긴 파일을 내려받습니다.</p>
+ <div style="display:flex;gap:8px;margin-top:16px">
+  <button class="btn sec" style="flex:1" onclick="closeModal('teacherModal')">취소</button>
+  <button class="btn" style="flex:1" onclick="dlTeacherXls()">내려받기</button>
+ </div>
+</div></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   조건 사냥꾼 — L202 · 문학 · 중2 · 서논술형 답안 쓰기 훈련
+   ═══════════════════════════════════════════════════════════ */
+const MADE_DATE = '2026.09.24';
+const MOD_DATE  = '2026.10.01 17:00';
+
+// ═══════════════════════════════════════════
+// ★ Apps Script 연동 설정
+// ═══════════════════════════════════════════
+const GAME_CONFIG = {
+  gameCode: "L202",
+  gameName: "조건 사냥꾼",
+  webAppUrl: "https://script.google.com/macros/s/AKfycbzgq9yT5svpFzeFwW5p2pWOpL-lKpj5_RldoJejFT1EOk1Osjcf6hDx85jGQzvr5rU0ww/exec"
+};
+const params = new URLSearchParams(location.search);
+const TEACHER_KEY = params.get("key");
+const IS_ONLINE = !!TEACHER_KEY;
+let STUDENT = { id: "", name: "", className: "", verified: false };
+
+async function verifyStudent(studentId, studentName) {
+  if (!IS_ONLINE) return { status: "ok" };
+  try {
+    const res = await fetch(GAME_CONFIG.webAppUrl, {
+      method: "POST", headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ action: "verify", teacherKey: TEACHER_KEY, studentId, studentName })
+    });
+    return await res.json();
+  } catch (e) { return { status: "error", message: "서버에 연결할 수 없습니다. 인터넷 연결을 확인해주세요." }; }
+}
+function notifyGameStart(studentId, studentName, className) {
+  if (!IS_ONLINE) return;
+  fetch(GAME_CONFIG.webAppUrl, {
+    method: "POST", headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify({ action: "start", teacherKey: TEACHER_KEY, gameCode: GAME_CONFIG.gameCode, studentId, studentName, className })
+  }).catch(() => {});
+}
+async function submitResult(resultData) {
+  if (!IS_ONLINE) return { status: "ok" };
+  try {
+    const res = await fetch(GAME_CONFIG.webAppUrl, {
+      method: "POST", headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ action: "submit", teacherKey: TEACHER_KEY, gameCode: GAME_CONFIG.gameCode, gameName: GAME_CONFIG.gameName, ...resultData })
+    });
+    return await res.json();
+  } catch (e) { return { status: "error", message: "결과 전송에 실패했습니다." }; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   ★★★ 자료 원문 — 여기만 채우면 됩니다 ★★★
+   실제 시험지의 자료 텍스트를 text에 넣으세요.
+   text가 비어 있으면 화면에 "교사 입력 예정" 안내가 뜹니다.
+   ══════════════════════════════════════════════════════════ */
+const SOURCES = {
+  s2a: { label:'<자료 2-(가)>', src:'김유정, 「동백꽃」',
+    marks:['아까에 한 욕을 울 밖으로 또 퍼붓는 것이다','대거리 한마디 못하는','두 눈에 눈물까지 불끈 내솟는다'],
+    text:'점순이가 즈 집 봉당에 홀로 걸터앉았는데, 아, 이게 치마 앞에다 우리 씨암탉을 꼭 붙들어 놓고는 "이놈의 닭! 죽어라. 죽어라." 요렇게 암팡스레 패 주는 것이 아닌가. 그것도 대가리나 치면 모른다마는 아주 알도 못 낳으라고 그 볼기짝께를 주먹으로 콕콕 쥐어박는 것이다. 나는 눈에 쌍심지가 오르고 사지가 부르르 떨렸으나 사방을 한번 휘돌아보고야 그제서 점순이 집에 아무도 없음을 알았다. <중략>\n\n그리고 나의 등 뒤를 향하여 나에게만 들릴 듯 말 듯 한 음성으로 "이 바보 녀석아!" "얘! 너 배냇병신이지?" 그만도 좋으련만 "얘! 너 느 아버지가 고자라지?" "뭐? 울 아버지가 그래 고자야?" 할 양으로 열벙거지가 나서 고개를 홱 돌리어 바라봤더니 그때까지 울타리 위로 나와 있어야 할 점순이의 대가리가 어디 갔는지 보이지를 않는다. 그러다 돌아서서 오자면 아까에 한 욕을 울 밖으로 또 퍼붓는 것이다. 욕을 이토록 먹어 가면서도 대거리 한마디 못하는 걸 생각하니 돌부리에 채어 발톱 밑이 터지는 것도 모를 만치 분하고 급기야는 두 눈에 눈물까지 불끈 내솟는다.' },
+
+  s2b: { label:'<자료 2-(나)>', src:'김유정, 「동백꽃」',
+    marks:['인젠 땅이 떨어지고 집도 내쫓기고'],
+    text:'나는 대뜸 달려들어서 나도 모르는 사이에 큰 수탉을 단매로 때려 엎었다. 닭은 푹 엎어진 채 다리 하나 꼼짝 못 하고 그대로 죽어 버렸다. 그리고 나는 멍하니 섰다가 점순이가 매섭게 눈을 홉뜨고 닥치는 바람에 뒤로 벌렁 나자빠졌다.\n\n"이놈아! 너 왜 남의 닭을 때려죽이니?" "그럼 어때?" 하고 일어나다가 "뭐 이 자식아! 누 집 닭인데?" 하고 복장을 떼미는 바람에 다시 벌렁 자빠졌다. 그러고 나서 가만히 생각을 하니 분하기도 하고 무안도 스럽고, 또 한편 일을 저질렀으니 인젠 땅이 떨어지고 집도 내쫓기고 해야 될는지 모른다.\n\n나는 비슬비슬 일어나며 소맷자락으로 눈을 가리고는 얼김에 엉 하고 울음을 놓았다. 그러다 점순이가 앞으로 다가와서 "그럼 너 이담부텀 안 그럴 터냐?" 하고 물을 때에야 비로소 살길을 찾은 듯싶었다. 나는 눈물을 우선 씻고 뭘 안 그러는지 명색도 모르건만 "그래!" 하고 무턱대고 대답하였다.' },
+
+  s3 : { label:'<자료 3>', src:'선생님이 쓴 설명 자료',
+    marks:['마름은 땅 주인을 대신하여 소작농을 관리하고 소작료를 거두는 중간 관리인이었습니다','소작농이 계속 농사를 지을지 말지를 결정할 수도 있었기에'],
+    text:'1930년대 농촌에서 소작농(小作農)은 지주(땅 주인)에게 땅을 빌려 농사를 짓고 수확물의 대부분을 빌린 값으로 내야 했던 가난한 농민이었습니다. 반면 마름은 땅 주인을 대신하여 소작농을 관리하고 소작료를 거두는 중간 관리인이었습니다. 마름은 소작농이 계속 농사를 지을지 말지를 결정할 수도 있었기에, 소작농에게는 매우 큰 권력을 가진 존재였습니다.' },
+
+  b2 : { label:'<자료>', tab:'<자료> 시대 배경', src:'선생님이 쓴 설명 자료',
+    note:'작품 상황 — 어머니와 사랑방에 머무는 아저씨는 서로 마음이 있었지만, 어머니는 끝내 그 마음을 받아들이지 않는다.',
+    marks:['개가(결혼했던 여자가 남편과 사별하거나 이혼하여 다른 남자와 결혼함)한 여성의 자손은 벼슬길에 오르지 못하도록 하는 법','여성의 개가에 대한 부정적 의식은'],
+    text:'가부장제는 가장인 남성이 강력한 권한을 가지고 가족 구성원을 통솔하는 가족 형태이다. 조선 시대의 가부장제 사회에서는 \'개가(결혼했던 여자가 남편과 사별하거나 이혼하여 다른 남자와 결혼함)한 여성의 자손은 벼슬길에 오르지 못하도록 하는 법\'이 있었다. 1894년 갑오개혁 때 과부의 개가를 허용하도록 하였으나 여성의 개가에 대한 부정적 의식은 「사랑손님과 어머니」가 발표된 1935년에도 여전하였다.' },
+
+  c2 : { label:'<자료>', tab:'<자료> 오늘날', src:'선생님이 만든 가상 자료',
+    caution:'선생님이 수업을 위해 지어낸 상황입니다. 실제로 있었던 일이 아닙니다.',
+    marks:['요즘 가족의 모습이 다양한데도 교재 예시에는 여전히 한 가지 모습의 가족만 나온다'],
+    text:'한 초등학교에서 \'우리 가족 소개하기\' 숙제를 내자 몇몇 학생이 발표를 망설였다. 한 학부모는 요즘 가족의 모습이 다양한데도 교재 예시에는 여전히 한 가지 모습의 가족만 나온다고 말했다.' }
+};
+
+/* ══════════════════════════════════════════════════════════
+   유형 마스터 — 학습 리포트가 여기서 조언을 가져온다
+   ══════════════════════════════════════════════════════════ */
+const CATEGORIES = {
+  cond: { label: '조건 뜯어보기', icon: '🔍',
+    desc: '조건이 몇 가지를 요구하는지, 어떤 자료에서 찾으라는지 짚어내기',
+    tip: '조건 문장에 밑줄을 긋고 "과·와·-고", 괄호, <자료 ○>에 표시해 보세요. 표시한 개수가 답안에 들어갈 덩어리 수입니다.' },
+  form: { label: '답안 형식 점검', icon: '📝',
+    desc: '한 문단으로, 문장을 끝맺어, \'-다\'체로 쓰기',
+    tip: '다 쓴 뒤 마지막 글자만 보세요. "때문에·해서"로 끝나면 문장이 끝나지 않은 것이고, 번호를 매기면 한 문단이 아닙니다.' },
+  habit:{ label: '내용 판단과 점검', icon: '🧭',
+    desc: '어떤 작품에나 쓸 수 있는 말을 걸러내고, 쓴 뒤 스스로 점검하기',
+    tip: '"우리는 ~해야 한다"처럼 다른 작품에도 그대로 쓸 수 있는 문장이면 지우세요. 작품 속 인물과 상황의 이름이 들어가야 내 생각입니다.' },
+  keyword:{ label: '핵심 키워드 선별', icon: '🎯',
+    desc: '답안에 반드시 들어가야 할 말을 찾고 함정을 걸러내기',
+    tip: '자료에 쓰인 용어를 그대로 옮겨 적으세요. "신분 차이"처럼 내 말로 바꾸면 채점 기준의 말과 달라집니다.' },
+  write:{ label: '한 문단으로 쓰기', icon: '✍️',
+    desc: '조건 순서대로 키워드를 담아 한 문단을 완성하기',
+    tip: '쓰기 전 여백에 키워드를 적고, 다 쓴 뒤 하나씩 지워 보세요. 남은 키워드가 곧 잃은 점수입니다.' }
+};
+
+/* ══════════════════════════════════════════════════════════
+   1단계 — 조건 사냥 (선택형 8문항 · 문항당 5점)
+   ══════════════════════════════════════════════════════════ */
+const S1 = [
+ { id:1, cat:'cond',
+   cond:'「동백꽃」의 시점을 정확한 용어로 쓸 것. (작품 속에서 근거를 찾아 쓸 것.)',
+   ask:'이 조건에서 써야 할 것은 몇 가지일까?',
+   opts:[{t:'한 가지'},{t:'두 가지',ok:1},{t:'세 가지'}],
+   hint:'괄호 안의 문장도 빼놓지 말고 세어 보세요.',
+   detail:'괄호 안의 문장도 조건이다. 시점 + 작품 속 근거, 두 가지를 써야 한다.' },
+ { id:2, cat:'cond',
+   cond:'<자료 2>와 작품을 비교하여, 달라진 점과 여전히 남아 있는 점을 쓸 것.',
+   ask:'이 조건이 두 가지를 요구한다는 것을 알려 주는 신호는?',
+   opts:[{t:'"비교하여"'},{t:'"달라진 점과 … 남아 있는 점"의 \'과\'',ok:1},{t:'"<자료 2>"'}],
+   hint:'써야 할 것의 개수를 알려 주는 것은 두 낱말을 이어 주는 조사입니다.',
+   detail:'조건 속 "과", "와", "-고"는 써야 할 것이 두 가지라는 신호다.' },
+ { id:3, cat:'cond',
+   cond:'<자료 2>와 <자료 3>을 바탕으로 점순이와 \'나\'의 관계를 파악하여 쓸 것. (<자료 2-(나)>에서 근거를 찾아 쓸 것.)',
+   ask:'관계의 근거는 어디에서 찾아야 할까?',
+   opts:[{t:'<자료 2-(가)>'},{t:'<자료 2-(나)>',ok:1},{t:'<자료 3>'},{t:'아무 데서나'}],
+   hint:'괄호 안이 근거를 찾을 자료를 따로 지정하고 있습니다.',
+   detail:'"어느 자료에서" 찾으라고 지정한 것도 조건이다. 다른 자료에서 가져오면 조건을 어긴 것이다.' },
+ { id:4, cat:'habit',
+   ask:'다음 중 이른바 "급식 교훈"은?',
+   opts:[{t:'이 작품은 당시 사회의 시선이 개인의 행복을 가로막았음을 보여 준다.'},
+         {t:'우리는 서로를 존중해야 한다.',ok:1},
+         {t:'마름은 소작농이 농사를 계속 지을지 정할 만큼 큰 힘을 가졌다.'}],
+   hint:'다른 작품에 그대로 옮겨 써도 말이 되는 문장을 찾아보세요.',
+   detail:'어떤 작품에나 쓸 수 있는 한 줄 교훈은 "내 생각"이 되지 못한다.' },
+ { id:5, cat:'form',
+   cond:'한 문단으로 쓸 것.',
+   ask:'다음 답안이 조건을 어긴 이유는?<div class="sol" style="margin:9px 0 0">1. \'나\'의 가족은 소작농이다.<br>2. 욕을 먹어도 대거리하지 못한다.</div>',
+   opts:[{t:'내용이 틀렸다'},{t:'번호를 매겨 따로 썼다 — 한 문단이 아니다',ok:1},{t:'너무 짧다'}],
+   hint:'조건은 "한 문단"인데, 이 답안의 모양이 어떤지 보세요.',
+   detail:'번호를 매기거나 줄을 나누면 한 문단이 아니다. 내용이 맞아도 조건을 어긴 것이 된다.' },
+ { id:6, cat:'form',
+   ask:'다음 답안 문장의 문제는?<div class="sol" style="margin:9px 0 0">… 개가한 여성을 낮춰 보는 시선이 남아 있었기 때문에</div>',
+   opts:[{t:'맞춤법이 틀렸다'},{t:'문장을 끝맺지 않았다',ok:1},{t:'자료를 쓰지 않았다'}],
+   hint:'문장의 마지막 글자를 보세요.',
+   detail:'"때문에", "해서"로 끝나면 문장이 끝나지 않은 것이다. "-기 때문이다"로 맺어야 한다.' },
+ { id:7, cat:'cond',
+   cond:'어머니와 아저씨의 사랑이 이루어지지 않은 까닭을 <자료 2>와 연관 지어 쓸 것.',
+   ask:'이 조건을 지킨 답안은?',
+   opts:[{t:'어머니와 아저씨는 사랑했지만 헤어졌다.'},
+         {t:'개가를 막던 법은 없어졌지만 개가한 여성을 낮춰 보는 시선이 여전히 남아 있었기 때문에 어머니는 아저씨를 포기했다.',ok:1},
+         {t:'<자료 2>에는 가부장제가 설명되어 있다.'}],
+   hint:'"연관 지어"는 자료의 내용과 인물의 행동을 이어 붙이라는 뜻입니다.',
+   detail:'"연관 지어"는 자료 내용과 작품 인물의 행동을 이어서 쓰라는 뜻이다. 자료만 옮겨 쓰거나 작품만 써서는 안 된다.' },
+ { id:8, cat:'habit',
+   ask:'답안을 다 쓴 뒤 3분 동안 할 일로 알맞지 <b>않은</b> 것은?',
+   opts:[{t:'문장 끝에 조건 번호를 달아 본다'},
+         {t:'핵심 키워드가 다 들어갔는지 지워 가며 확인한다'},
+         {t:'분량이 적으면 아는 내용을 더 붙여 길게 늘인다',ok:1},
+         {t:'\'-다\'로 끝까지 썼는지 본다'}],
+   hint:'점수를 올리는 일과 분량을 늘리는 일은 다릅니다.',
+   detail:'길이는 점수가 아니다. 길게 써도 키워드가 빠지면 점수가 나오지 않는다.' }
+];
+
+/* ══════════════════════════════════════════════════════════
+   2단계 — 키워드 사냥 (3세트 · 세트당 10점)
+   필수 전부 + 함정 없음 → 10점 / 누락 −3 / 함정 −3 (최저 0)
+   ══════════════════════════════════════════════════════════ */
+const S2 = [
+ { id:9, cat:'keyword', title:'세트 A · 「동백꽃」 관계와 영향', srcs:['s2a','s2b','s3'],
+   prompt:'<자료 2>와 <자료 3>을 통해 두 인물의 관계를 찾고, 이러한 관계가 인물의 행동에 미친 영향을 작성하시오.',
+   conds:['<자료 2>와 <자료 3>을 바탕으로 점순이와 \'나\'의 관계를 파악하여 쓸 것. (<자료 2-(나)>에서 근거를 찾아 쓸 것.)',
+          '위에서 파악한 관계가 <자료 2-(가)>에서 인물의 말과 행동에 미친 영향을 쓸 것.'],
+   cards:[
+    {t:'마름', req:1, why:'점순이네의 위치를 가리키는 용어'},
+    {t:'소작농(소작인)', req:1, why:'\'나\'의 집이 놓인 위치'},
+    {t:'땅이 떨어진다 / 집에서 쫓겨난다', req:1, why:'(나)에서 찾아야 하는 근거'},
+    {t:'욕을 퍼붓는다 (모욕적인 말)', req:1, why:'(가)에 드러난 점순이의 말'},
+    {t:'대거리 못 한다 / 참는다', req:1, why:'(가)에 드러난 \'나\'의 행동'},
+    {t:'지주 · 땅 주인', why:'자료 3을 다시 보세요. 지주는 땅 주인이고, 점순이네는 그 땅을 관리하는 마름이에요. 지난 시험에서 가장 많이 나온 실수예요.'},
+    {t:'닭싸움', why:'관계를 설명하는 말이 아니라 사건의 한 요소예요.'},
+    {t:'동백꽃 향기', why:'관계와 영향을 묻는 문항과 관계가 없어요.'},
+    {t:'신분 차이', why:'막연한 내 말이에요. 자료가 준 용어(마름·소작농)를 그대로 써야 채점 기준과 맞습니다.'}
+   ]},
+ { id:10, cat:'keyword', title:'세트 B · 「사랑손님과 어머니」 배경과 행동', srcs:['b2'],
+   prompt:'<자료>를 참고하여 사회적 배경이 인물의 행동에 미친 영향을 작성하시오.',
+   conds:['아저씨에 대한 어머니의 속마음과 겉으로 드러나는 행동을 비교하여 쓸 것.',
+          '어머니와 아저씨의 사랑이 이루어지지 않은 까닭을 <자료>와 연관 지어 쓸 것.'],
+   cards:[
+    {t:'가부장제', req:1, why:'배경을 가리키는 핵심 용어'},
+    {t:'개가(재혼)에 대한 부정적 인식', req:1, why:'어머니의 행동을 누른 사회의 시선'},
+    {t:'법은 없어졌어도 남아 있던 관습', req:1, why:'개가를 막던 법은 1894년에 없어졌지만, 개가를 낮춰 보는 의식은 작품이 발표된 1935년에도 여전했어요. 어머니를 막은 것은 법이 아니라 이 관습이에요.'},
+    {t:'남들의 시선 걱정', req:1, why:'어머니가 망설인 까닭'},
+    {t:'아저씨를 포기한다 / 사랑이 이루어지지 않는다', req:1, why:'배경이 행동에 미친 결과'},
+    {t:'갑오개혁', why:'사건 이름만으로는 어머니의 행동이 설명되지 않아요. 중요한 것은 법이 없어진 뒤에도 남은 관습이에요.'},
+    {t:'달걀 · 풍금', why:'인물의 마음을 보여 주는 소재지만 사회적 배경은 아니에요.'},
+    {t:'어머니가 아저씨를 싫어했다', why:'작품 내용과 다릅니다.'}
+   ]},
+ { id:11, cat:'keyword', title:'세트 C · 오늘에 비추기 (B형 맛보기)', srcs:['c2'],
+   prompt:'작품이 오늘날 어떤 의미를 가지는지, 자신의 생각을 까닭과 함께 쓰시오.',
+   conds:['작품의 주제를, 어머니가 거절한 까닭을 근거로 밝힐 것.',
+          '<자료>와 작품을 비교하여, 달라진 점과 여전히 남아 있는 점을 쓸 것.',
+          '이에 대한 자신의 생각을 까닭과 함께 쓸 것.',
+          '한 문단으로 쓸 것.'],
+   cards:[
+    {t:'작품의 주제', req:1, why:'무엇을 오늘에 비출지 먼저 밝혀야 해요.'},
+    {t:'오늘날 달라진 점', req:1, why:'조건의 \'과\'가 요구하는 첫 덩어리'},
+    {t:'그런데도 남아 있는 점', req:1, why:'조건의 \'과\'가 요구하는 둘째 덩어리'},
+    {t:'제시된 자료(오늘날 상황) 언급', req:1, why:'자료를 쓰라고 지정한 조건'},
+    {t:'내 생각 + 까닭', req:1, why:'"까닭과 함께"가 조건입니다.'},
+    {t:'줄거리 요약', why:'줄거리는 물어보지 않았어요. 분량만 늘어납니다.'},
+    {t:'"우리는 ~해야 한다" 한 줄 교훈', why:'어떤 작품에나 쓸 수 있는 말은 내 생각이 되지 못해요.'}
+   ]}
+];
+
+/* ══════════════════════════════════════════════════════════
+   3단계 — 한 문단 쓰기 (2세트 · 세트당 15점, 칸별 5점)
+   ══════════════════════════════════════════════════════════ */
+const has  = (t,w) => t.indexOf(w) >= 0;
+const anyOf = (t,a) => a.some(w => has(t,w));
+
+/* 3단계 채점 도우미 (7차) — t는 공백을 뺀 답안 */
+// '-기에'(까닭)만 인정: 앞 글자가 용언 어간·시제 표지일 때. '여기에·이야기에·분위기에'는 제외
+const CAUSE_GIE = /(있|없|했|않|하|이|았|었|였|겠|되|싶|많|적|같|좋|싫|크|작|높|낮|아니|르|렵|웠|쉽|럽)기에(?!는|도)/;   // '-기에는'(재혼하기에는)은 까닭이 아님
+
+const S3 = [
+ { id:12, cat:'write', title:'세트 1 · 「동백꽃」 (A형)', srcs:['s2a','s2b'],
+   prompt:'<자료 2>와 <자료 3>을 통해 두 인물의 관계를 찾고, 이러한 관계가 인물의 행동에 미친 영향을 작성하시오.',
+   conds:['<자료 2>와 <자료 3>을 바탕으로 점순이와 \'나\'의 관계를 파악하여 쓸 것. (<자료 2-(나)>에서 근거를 찾아 쓸 것.)',
+          '위에서 파악한 관계가 <자료 2-(가)>에서 인물의 말과 행동에 미친 영향을 쓸 것.'],
+   slots:[
+    { label:'① 관계', ph:'점순이와 \'나\'의 관계를 쓰세요.', pts:5,
+      keys:['마름','소작농'],
+      grade(t){
+        const a=has(t,'마름'), b=anyOf(t,['소작농','소작인']);
+        const j=anyOf(t,['지주','땅주인']);
+        if(a&&b) return {s:5,msg:'마름과 소작농, 두 용어가 모두 들어갔어요.'};
+        // 마름을 쓰고 지주를 함께 쓴 답(지주 대신 땅을 관리하는 마름)은 감점하지 않는다. 점순이네를 지주로 쓴 답만 감점
+        if(!a && /점순[^.]*?(지주|땅주인)/.test(t)) return {s:2,lv:'r',msg:'⚠ 점순이네는 지주가 아니라 마름이에요. 지주는 땅 주인입니다.'};
+        if(a||b) return {s:3,lv:'y',msg:'한 쪽만 들어갔어요. 마름과 소작농을 함께 써야 관계가 됩니다.'+(j&&!a?' 점순이네는 지주(땅 주인)가 아니라 그 땅을 관리하는 마름이에요.':'')};
+        return {s:0,lv:'r',msg:'관계를 가리키는 용어(마름 · 소작농)가 없어요.'};
+      } },
+    { label:'② 근거', ph:'그렇게 판단한 근거를 <자료 2-(나)>에서 찾아 쓰세요.', pts:5,
+      keys:['땅','쫓겨'],
+      grade(t){
+        if(/(잃|뺏|빼앗|쫓겨나|쫓기|떨어)지(는|도)?않았/.test(t)) return {s:0,lv:'r',msg:'땅이나 집을 잃지 않았다는 말은 근거가 되지 않아요. (나)에서 \'나\'가 걱정한 불이익을 쓰세요.'};
+        const g1 = has(t,'땅') && anyOf(t,['떨어','뺏','빼앗','잃','부칠수없','부치지못','못부치','못짓','짓지못']);
+        const g2 = anyOf(t,['쫓겨','내쫓','쫓아내','쫓기','집이없어','살집이없','살곳이없']) || /집(을|도|까지|마저)?(잃|빼앗|뺏)/.test(t) || /집에서(나가|떠나)/.test(t);
+        if(g1&&g2) return {s:5,msg:'땅과 집, 두 가지 불이익이 모두 들어갔어요.'};
+        if(g1||g2) return {s:3,lv:'y',msg:'근거가 하나뿐이에요. 땅이 떨어지는 것과 집에서 쫓겨나는 것을 함께 쓰세요.'};
+        return {s:0,lv:'r',msg:'(나)의 근거(땅 · 쫓겨남)가 보이지 않아요.'};
+      } },
+    { label:'③ 영향', ph:'그 관계가 두 인물의 말과 행동에 어떤 영향을 주었는지 쓰세요.', pts:5,
+      keys:['욕','참'],
+      grade(t){
+        const t2 = t.replace(/욕심/g,'').replace(/잘못/g,'').replace(/못(된|생|난)/g,'#').replace(/참고(하|해|했|할|한|로|자료)/g,'#').replace(/참지(않|못)/g,'#');   // '참지 않고 대들었다'는 '참다'가 아니다
+        const p = anyOf(t2,['욕','모욕','괴롭']);
+        const n = anyOf(t2,['대거리','못','눈물']) || /참(았|고|는|으|을|아)/.test(t2);
+        if(p&&n) return {s:5,msg:'점순이 쪽과 \'나\' 쪽의 행동이 모두 들어갔어요.'};
+        if(p||n) return {s:3,lv:'y',msg:'한 인물만 썼어요. 두 인물의 말과 행동을 모두 쓰세요.'};
+        return {s:0,lv:'r',msg:'관계가 행동에 미친 영향이 드러나지 않았어요.'};
+      } }
+   ]},
+ { id:13, cat:'write', title:'세트 2 · 「사랑손님과 어머니」 (B형)', srcs:['b2','c2'],
+   prompt:'작품이 오늘날 어떤 의미를 가지는지, 자신의 생각을 까닭과 함께 쓰시오.',
+   conds:['작품의 주제를, 어머니가 거절한 까닭을 근거로 밝힐 것.',
+          '<자료>와 작품을 비교하여, 달라진 점과 여전히 남아 있는 점을 쓸 것.',
+          '이에 대한 자신의 생각을 까닭과 함께 쓸 것.',
+          '한 문단으로 쓸 것.'],
+   slots:[
+    { label:'① 주제', ph:'작품이 보여 주는 것을, 어머니가 거절한 까닭을 근거로 쓰세요.', pts:5,
+      keys:['시선','포기'],
+      grade(t){
+        const u = t.replace(/옥희(의|가바라본|가본)(시선|눈|시점)/g,'#');   // '옥희의 시선으로 서술' = 시점, 사회의 시선 아님
+        const a = anyOf(u,['시선','남들의눈','남의눈','체면','관습','편견','부정적의식','부정적인식','부정적으로보는','부정적인시선','손가락질','수군']);
+        const b = anyOf(u,['거절','포기','받아들이지않','받아들이지못','단념','떠나보내']);
+        if(a&&b) return {s:5,msg:'사회의 시선과 어머니의 선택이 이어졌어요.'};
+        if(a||b) return {s:3,lv:'y',msg:'한 쪽만 들어갔어요. 시선(체면)과 어머니의 선택을 이어서 쓰세요.'};
+        return {s:0,lv:'r',msg:'작품이 보여 주는 것이 드러나지 않았어요.'};
+      } },
+    { label:'② 비교', ph:'오늘날 달라진 점과, 그런데도 남아 있는 점을 쓰세요.', pts:5,
+      keys:['오늘날','여전'],
+      grade(t){
+        const a = anyOf(t,['오늘날','요즘','지금','현재']);
+        const b = anyOf(t,['그런데도','여전','아직','남아']);
+        if(a&&b) return {s:5,msg:'달라진 점과 남아 있는 점이 모두 드러났어요.'};
+        if(a&&!b) return {s:3,lv:'y',msg:'대조 표지가 없어요. "그런데도 …은 여전히 남아 있다"를 붙여 보세요.'};
+        if(!a&&b) return {s:3,lv:'y',msg:'오늘날을 가리키는 말이 없어요. "오늘날"을 넣어 보세요.'};
+        return {s:0,lv:'r',msg:'오늘날과의 비교가 없어요.'};
+      } },
+    { label:'③ 생각', ph:'자신의 생각과 까닭을 쓰세요.', pts:5, byForm:1,
+      keys:['때문이다'],
+      grade(t){
+        const cause = anyOf(t,['때문','왜냐하면','까닭은','이유는','까닭이다','이유이다','이유다']) || CAUSE_GIE.test(t);
+        if(cause) return {s:5,msg:'까닭을 밝히는 표지가 있어요. 생각의 내용은 사람마다 달라도 됩니다.'};
+        if(/해야\s*한다[.!]?$/.test(t.trim())) return {s:1,lv:'r',msg:'⚠ "급식 교훈"이에요. 어떤 작품에나 쓸 수 있는 문장 대신, 왜 그렇게 생각하는지를 쓰세요.'};
+        return {s:2,lv:'y',msg:'까닭이 없어요. "…기 때문이다", "왜냐하면 …"을 붙이세요.'};
+      } }
+   ]}
+];
+
+/* 모든 칸 공통 형식 점검 — 감점 아님(경고만). 단 의문문 종결은 오답 */
+function formWarn(t){
+  const w=[], s=t.trim();
+  if(/\?\s*$/.test(s))                    w.push({fatal:1,m:'의문문으로 끝났어요. 답안은 묻는 말이 아니라 답하는 말로 씁니다.'});
+  if(s.replace(/\s/g,'').length<15)       w.push({m:'너무 짧아요. 한 문장으로 완성해 보세요.'});
+  if(/(때문에|해서|하는)\s*$/.test(s))     w.push({m:'문장이 끝나지 않았어요.'});
+  if(/(요|습니다|입니다)[.!]?\s*$/.test(s)) w.push({m:'답안은 \'-다\'로 써요.'});
+  if(/(^|\n)\s*\d\s*[.)]/.test(s)||/\n/.test(s)) w.push({m:'조건이 \'한 문단\'일 때는 번호를 매기거나 줄을 나누지 않아요.'});
+  return w;
+}
+
+/* ══════════════════════════════════════════════════════════
+   점수 체계
+   ══════════════════════════════════════════════════════════ */
+const S1_BASE = 5, S2_BASE = 10, S3_BASE = 15;
+const BASE_TOTAL = S1.length*S1_BASE + S2.length*S2_BASE + S3.length*S3_BASE;   // 100
+const COMBO_MAX  = S1.length >= 5 ? 10 + 10*(S1.length-4) : 0;                   // 50 (1단계에만)
+const MAX_TOTAL  = BASE_TOTAL + COMBO_MAX;                                       // 150
+const STAGES = [
+ { n:1, name:'조건 사냥',    items:S1, base:S1_BASE, goal:'조건이 무엇을 요구하는지 판별한다' },
+ { n:2, name:'키워드 사냥',  items:S2, base:S2_BASE, goal:'답안에 반드시 들어갈 키워드를 고른다' },
+ { n:3, name:'한 문단 쓰기', items:S3, base:S3_BASE, goal:'조건에 맞게 한 문단으로 쓴다' }
+];
+const ALL = [].concat(S1,S2,S3);
+const ITEM_BY_ID = {}; ALL.forEach(q=>ITEM_BY_ID[q.id]=q);
+function baseOf(q){ return q.cat==='keyword'?S2_BASE : q.cat==='write'?S3_BASE : S1_BASE; }
+function comboBonus(streak){ return streak>=5?10 : streak>=3?5 : 0; }
+
+/* ══════════════════════════════════════════════════════════
+   상태
+   ══════════════════════════════════════════════════════════ */
+const R = {};   // id → {first, got, tries, picked, texts, detail, played}
+const S = { stage:0, list:[], i:0, score:0, streak:0, best:0, t0:0, elapsed:0, playedStages:[] };
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const norm = s => String(s).replace(/\s/g,'');
+function shuffle(a){ const r=a.slice(); for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];} return r; }
+
+
+/* ══════════════════════════════════════════════════════════
+   사운드 · 연출
+   ══════════════════════════════════════════════════════════ */
+let AC=null;
+const RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function tone(f,d,t,v,at){ try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+ const o=AC.createOscillator(),g=AC.createGain(); o.type=t||'sine'; o.frequency.value=f;
+ const st=AC.currentTime+(at||0);
+ g.gain.setValueAtTime(v||.13,st); g.gain.exponentialRampToValueAtTime(.001,st+d);
+ o.connect(g); g.connect(AC.destination); o.start(st); o.stop(st+d);}catch(e){} }
+function noise(d,v,at){ try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+ const n=Math.floor(AC.sampleRate*d), b=AC.createBuffer(1,n,AC.sampleRate), c=b.getChannelData(0);
+ for(let i=0;i<n;i++) c[i]=(Math.random()*2-1)*(1-i/n);
+ const s=AC.createBufferSource(), g=AC.createGain(); s.buffer=b;
+ g.gain.value=v||.07; s.connect(g); g.connect(AC.destination); s.start(AC.currentTime+(at||0));}catch(e){} }
+const sOK   = ()=>[523,659,784,1047].forEach((f,i)=>tone(f,.09,'sine',.12,i*.07));
+const sNO   = ()=>{tone(300,.14,'sawtooth',.09); tone(180,.26,'sawtooth',.08,.1);};
+const sPart = ()=>{tone(523,.1,'triangle',.11); tone(622,.16,'triangle',.1,.09);};
+const sFan  = ()=>{[523,659,784,988,1319].forEach((f,i)=>tone(f,.16,'square',.09,i*.09)); noise(.5,.06,.2); noise(.4,.05,.45);};
+
+const fx=$('fx'), fxc=fx.getContext('2d');
+let parts=[], fxRun=false;
+function fxSize(){ fx.width=innerWidth; fx.height=innerHeight; }
+addEventListener('resize',fxSize); fxSize();
+function burst(n,emoji){
+  if(RM) return;
+  const cx=innerWidth/2, cy=innerHeight*0.45;
+  const cols=['#2E9B79','#f59e0b','#fbbf24','#38bdf8','#fb7185','#c084fc','#4ade80'];
+  for(let i=0;i<n;i++) parts.push({
+    x:cx+(Math.random()-.5)*120, y:cy+(Math.random()-.5)*60,
+    vx:(Math.random()-.5)*13, vy:-7-Math.random()*9,
+    r:Math.random()*Math.PI, vr:(Math.random()-.5)*.3,
+    w:5+Math.random()*7, h:9+Math.random()*7,
+    c:cols[i%cols.length], e:emoji&&Math.random()<.35?emoji[Math.floor(Math.random()*emoji.length)]:null, a:1 });
+  if(!fxRun){ fxRun=true; fx.style.display='block'; requestAnimationFrame(fxTick); }
+}
+function fxTick(){
+  fxc.clearRect(0,0,fx.width,fx.height);
+  parts=parts.filter(p=>p.a>0.02 && p.y<fx.height+60);
+  parts.forEach(p=>{
+    p.vy+=0.38; p.x+=p.vx; p.y+=p.vy; p.r+=p.vr; p.a-=0.008;
+    fxc.save(); fxc.globalAlpha=Math.max(0,p.a); fxc.translate(p.x,p.y); fxc.rotate(p.r);
+    if(p.e){ fxc.font='20px sans-serif'; fxc.fillText(p.e,-10,0); }
+    else { fxc.fillStyle=p.c; fxc.fillRect(-p.w/2,-p.h/2,p.w,p.h); }
+    fxc.restore();
+  });
+  if(parts.length) requestAnimationFrame(fxTick);
+  else { fxRun=false; fx.style.display='none'; fxc.clearRect(0,0,fx.width,fx.height); }
+}
+let bnTimer=null, bnOpen=false;
+function banner(o){
+  const b=$('banner');
+  clearTimeout(bnTimer); b.classList.remove('out');
+  $('bnBig').textContent=o.big||'';
+  $('bnBig').className='big'+(o.rainbow?' rb':'');
+  $('bnMsg').textContent=o.msg||'';
+  const g=$('bnGain'); g.textContent='';
+  b.style.display='block'; $('dim').style.display='block';
+  b.classList.remove('show'); void b.offsetWidth; b.classList.add('show');
+  bnOpen=true;
+  if(o.gain>0){
+    let v=0; const step=Math.max(1,Math.round(o.gain/16));
+    const t=setInterval(()=>{ v=Math.min(o.gain,v+step); g.textContent='+'+v; if(v>=o.gain)clearInterval(t); },28);
+  }
+  if(o.glow&&!RM){ document.body.classList.add('glow'); setTimeout(()=>document.body.classList.remove('glow'),950); }
+  if(o.confetti) burst(o.confetti,o.emoji);
+  bnTimer=setTimeout(closeBanner,o.hold||1000);
+}
+function closeBanner(){
+  const b=$('banner'); if(!bnOpen) return;
+  bnOpen=false; b.classList.add('out');
+  setTimeout(()=>{ b.style.display='none'; b.classList.remove('out','show'); $('dim').style.display='none'; },340);
+}
+function comboHud(){
+  const el=$('comboHud'); el.textContent='🔥 '+S.streak;
+  el.classList.remove('pulse'); void el.offsetWidth; el.classList.add('pulse');
+}
+
+/* ══════════════════════════════════════════════════════════
+   화면 전환
+   ══════════════════════════════════════════════════════════ */
+function show(id){ ['start','play','end'].forEach(k=>$(k).classList.toggle('on',k===id)); scrollTo(0,0); }
+function closeModal(id){ $(id).classList.remove('on'); }
+
+/* 시작 화면 유형 목록 */
+$('typeList').innerHTML = Object.keys(CATEGORIES).map(k=>{
+  const c=CATEGORIES[k];
+  return '<div class="tcard"><b>'+c.icon+' '+esc(c.label)+'</b><span>'+esc(c.desc)+'</span></div>';
+}).join('');
+$('maxLabel').textContent = MAX_TOTAL;
+document.querySelectorAll('.endMax').forEach(e=>e.textContent=MAX_TOTAL);
+
+/* ══════════════════════════════════════════════════════════
+   단계 시작 (앱스크립트 래퍼)
+   ══════════════════════════════════════════════════════════ */
+let pendingStage = 1;
+if(IS_ONLINE){
+  $('privacyOffline').style.display='none';
+  $('privacyOnline').style.display='block';
+  const ep=$('endPrivacy');
+  if(ep) ep.textContent='학습 결과는 담당 선생님의 학습 관리 시스템에 자동 전송됩니다. 이름과 소감은 리포트 이미지(JPG) 생성에도 사용됩니다.';
+}
+async function doLogin(){
+  const idVal=$('loginId').value.trim(), nameVal=$('loginName').value.trim(), msg=$('loginMsg');
+  if(!/^\d{5}$/.test(idVal)){msg.textContent='학번은 5자리 숫자여야 합니다.';return;}
+  if(!nameVal){msg.textContent='이름을 입력하세요.';return;}
+  msg.textContent=''; $('loginBtn').style.display='none'; $('loginSpinner').style.display='block';
+  const result=await verifyStudent(idVal,nameVal);
+  $('loginBtn').style.display='block'; $('loginSpinner').style.display='none';
+  if(result.status==='ok'){
+    STUDENT={id:idVal,name:nameVal,className:result.className||'',verified:true};
+    $('loginOverlay').style.display='none';
+    notifyGameStart(STUDENT.id,STUDENT.name,STUDENT.className);
+    doStartStage(pendingStage);
+  } else { msg.textContent=result.message||'인증에 실패했습니다.'; }
+}
+function startStage(n){
+  if(IS_ONLINE&&!STUDENT.verified){pendingStage=n;$('loginOverlay').style.display='flex';$('loginId').focus();return;}
+  if(IS_ONLINE&&STUDENT.verified){notifyGameStart(STUDENT.id,STUDENT.name,STUDENT.className);}
+  doStartStage(n);
+}
+function doStartStage(n){
+  const st=STAGES[n-1];
+  S.stage=n; S.streak=0;
+  S.list = n===3 ? st.items.slice() : shuffle(st.items);   // 3단계는 A형→B형 순서 유지
+  S.i=0;
+  if(S.playedStages.indexOf(n)<0) S.playedStages.push(n);
+  st.items.forEach(q=>{ if(!R[q.id]) R[q.id]={tries:0,got:0,first:0,done:false,played:true};
+                        else R[q.id].played=true; });
+  if(!S.t0) S.t0=Date.now();
+  $('bandGoal').textContent='· '+st.goal;
+  show('play'); render();
+}
+function retryStage(){
+  STAGES[S.stage-1].items.forEach(q=>{ const r=R[q.id]; if(r){ S.score=Math.max(0,S.score-r.got); delete R[q.id]; } });
+  doStartStage(S.stage);
+}
+function nextStage(){ if(S.stage<STAGES.length) startStage(S.stage+1); }
+function toStart(){ show('start'); }
+
+/* ══════════════════════════════════════════════════════════
+   렌더
+   ══════════════════════════════════════════════════════════ */
+function hud(){
+  $('bandProg').textContent=(S.i+1)+' / '+S.list.length+' · '+S.score+'점';
+  $('comboHud').textContent='🔥 '+S.streak;
+}
+function srcBody(s,marked){
+  let b=esc(s.text);
+  if(marked&&s.marks) s.marks.forEach(m=>{ b=b.split(esc(m)).join('<mark>'+esc(m)+'</mark>'); });
+  return b.replace(/\n/g,'<br>');
+}
+function srcBox(k,act){
+  const s=SOURCES[k];
+  if(!s.text) return '<div class="src ph'+(act?' act':'')+'"><b>'+esc(s.label)+' — 교사 입력 예정</b><br>'+esc(s.role||'')+'</div>';
+  return '<div class="src'+(act?' act':'')+'" data-k="'+k+'">'+
+    '<div class="srch"><span><b>'+esc(s.label)+'</b> <span class="from">'+esc(s.src||'')+'</span></span>'+
+    '<button type="button" class="srcT" onclick="toggleSrc(this)">전문 펼치기 ▾</button></div>'+
+    (s.caution?'<div class="srcc">⚠ '+esc(s.caution)+'</div>':'')+
+    (s.note?'<div class="srcn">'+esc(s.note)+'</div>':'')+
+    '<div class="srcb">'+srcBody(s,false)+'</div></div>';
+}
+function srcHtml(keys){
+  const ks=(keys||[]).filter(k=>SOURCES[k]);
+  if(!ks.length) return '';
+  if(ks.length===1) return srcBox(ks[0],true).replace('class="src','style="margin-bottom:11px" class="src');
+  return '<div class="srcwrap"><div class="srctabs">'+
+    ks.map((k,i)=>'<button type="button" class="stab'+(i?'':' on')+'" onclick="srcTab(this,'+i+')">'+esc(SOURCES[k].tab||SOURCES[k].label)+'</button>').join('')+
+    '</div>'+ks.map((k,i)=>srcBox(k,i===0)).join('')+'</div>';
+}
+function srcTab(btn,i){
+  const w=btn.closest('.srcwrap');
+  w.querySelectorAll('.stab').forEach((b,k)=>b.classList.toggle('on',k===i));
+  w.querySelectorAll('.src').forEach((el,k)=>el.classList.toggle('act',k===i));
+}
+function toggleSrc(btn){
+  const el=btn.closest('.src'), on=el.classList.toggle('open');
+  btn.textContent = on ? '접기 ▴' : '전문 펼치기 ▾';
+}
+function markSrcs(){
+  document.querySelectorAll('.src[data-k]').forEach(el=>{
+    const s=SOURCES[el.dataset.k]; if(!s||!s.text||el.dataset.marked) return;
+    el.dataset.marked='1'; el.classList.add('open');
+    el.querySelector('.srcb').innerHTML=srcBody(s,true);
+    const t=el.querySelector('.srcT'); if(t) t.textContent='접기 ▴';
+  });
+}
+function condsHtml(q){
+  if(!q.conds||!q.conds.length) return '';
+  return '<div class="conds"><b>조건</b><ol>'+q.conds.map(c=>'<li>'+esc(c)+'</li>').join('')+'</ol></div>';
+}
+function render(){
+  const q=S.list[S.i], r=R[q.id];
+  hud();
+  $('bar') && ($('bar').style.width='');
+  const body=$('stageBody');
+  const prog='<div class="bar"><i style="width:'+((S.i)/S.list.length*100)+'%"></i></div>';
+  const hide = (q.cat!=='keyword'&&q.cat!=='write'&&!r.done);   // 유형이 정답을 암시하지 않도록
+  const tag='<span class="tag" id="typeTag"'+(hide?' style="display:none"':'')+'>'+CATEGORIES[q.cat].icon+' '+esc(CATEGORIES[q.cat].label)+'</span>';
+  if(q.cat==='keyword') body.innerHTML=prog+renderKeyword(q,r,tag);
+  else if(q.cat==='write') body.innerHTML=prog+renderWrite(q,r,tag);
+  else body.innerHTML=prog+renderPick(q,r,tag);
+  if(q.cat==='keyword'&&r.done) paintKeyword(q,r);
+  if(q.cat==='write'&&r.detail) paintWrite(q,r);
+  if(q.cat!=='keyword'&&q.cat!=='write'&&r.done) paintPick(q,r);
+  body.scrollTop=0;
+}
+
+/* ── 1단계 선택형 ── */
+function renderPick(q,r,tag){
+  if(!r.order) r.order=shuffle(q.opts.map((_,i)=>i));
+  return '<div class="qcard">'+tag+
+   (q.cond?'<div class="cond"><b>조건</b> &nbsp;'+esc(q.cond)+'</div>':'')+
+   '<div class="ask">'+q.ask+'</div>'+
+   '<div class="opts" id="opts">'+r.order.map((oi,k)=>
+     '<button class="opt" data-oi="'+oi+'" onclick="pick('+oi+')"><span class="n">'+'①②③④⑤'[k]+'</span><span>'+esc(q.opts[oi].t)+'</span></button>').join('')+
+   '</div><div id="fb"></div></div>';
+}
+function paintPick(q,r){
+  document.querySelectorAll('#opts .opt').forEach(b=>{
+    const oi=+b.dataset.oi; b.disabled=true; b.classList.add('lock');
+    if(q.opts[oi].ok){ b.classList.add('ok'); b.insertAdjacentHTML('beforeend','<span class="mark">✅</span>'); }
+    else if(r.picked===oi){ b.classList.add('no'); b.insertAdjacentHTML('beforeend','<span class="mark">❌</span>'); }
+  });
+  if($('typeTag')) $('typeTag').style.display='';
+  $('fb').innerHTML='<div class="sol"><b>'+(r.got>0?'✅ '+r.got+'점':'❌ 0점')+'</b> &nbsp;'+esc(q.detail||'')+'</div>'+navTip();
+}
+function pick(oi){
+  const q=S.list[S.i], r=R[q.id];
+  if(r.done) return;
+  const ok=!!q.opts[oi].ok;
+  r.tries++;
+  if(ok){
+    const first=r.tries===1;
+    const base=first?S1_BASE:Math.round(S1_BASE/2);
+    let bonus=0;
+    if(first){ S.streak++; S.best=Math.max(S.best,S.streak); bonus=comboBonus(S.streak); }
+    else S.streak=0;
+    r.got=base+bonus; r.first=first?S1_BASE:0; r.done=true; r.graded=true; r.picked=oi;
+    S.score+=r.got;
+    comboHud(); paintPick(q,r); hud();
+    const milestone = first && (S.streak===3 || (S.streak>=5 && S.streak%5===0));
+    if(milestone){
+      sFan();
+      const big = S.streak===3?'3콤보! 🔥' : S.streak<=10?S.streak+'콤보! 🎉🎊' : '🌟 '+S.streak+'연속! 최고예요';
+      banner({big, rainbow:S.streak>=5, gain:r.got, msg:'정답! 연속 보너스가 붙었어요',
+              confetti:S.streak===3?16:Math.min(40,16+S.streak*2), emoji:S.streak===3?['🔥','✨']:['🎉','🎊','⭐','✨'],
+              glow:S.streak>=5, hold:1200});
+    } else {
+      sOK();
+      banner({big:'정답!', gain:r.got, confetti:first?26:0, hold:900});
+    }
+  } else if(r.tries===1){
+    sNO(); S.streak=0; comboHud(); r.firstPick=oi;
+    const b=[...document.querySelectorAll('#opts .opt')].find(e=>+e.dataset.oi===oi);
+    b.classList.add('no'); b.insertAdjacentHTML('beforeend','<span class="mark">❌</span>');
+    const card=document.querySelector('.qcard');
+    card.classList.add('shake'); setTimeout(()=>card.classList.remove('shake'),400);
+    $('fb').innerHTML='<div class="hint"><b>💡 힌트</b> &nbsp;'+esc(q.hint||'')+
+      '<br><span style="font-size:12.5px">한 번 더 고를 수 있어요. 맞히면 '+Math.round(S1_BASE/2)+'점입니다. (Enter · Space)</span></div>';
+  } else {
+    sNO(); r.got=0; r.first=0; r.done=true; r.graded=true; r.picked=oi; S.streak=0; comboHud();
+    paintPick(q,r); hud();
+    banner({big:'오답', msg:'해설을 읽고 넘어가요', hold:850});
+  }
+}
+
+/* ── 2단계 키워드 사냥 ── */
+function renderKeyword(q,r,tag){
+  if(!r.order) r.order=shuffle(q.cards.map((_,i)=>i));
+  if(!r.sel) r.sel=[];
+  return '<div class="qcard">'+tag+
+   '<div class="cond"><b>문항</b> &nbsp;'+esc(q.prompt)+'</div>'+
+   condsHtml(q)+
+   srcHtml(q.srcs)+
+   '<div class="ask">답안에 <b>반드시 들어가야 할 말</b>을 모두 고르세요. <span style="font-weight:400;font-size:13.5px;color:var(--ink2)">필수를 모두 고르면 10점, 하나 빠질 때마다 −3점, 함정을 고르면 −3점</span></div>'+
+   '<div class="cards" id="cards">'+r.order.map(ci=>{
+     const c=q.cards[ci], on=r.sel.indexOf(ci)>=0;
+     return '<button class="card'+(on?' sel':'')+'" data-ci="'+ci+'" onclick="toggleCard('+ci+')"><span class="ck">'+(on?'☑':'☐')+'</span><span>'+esc(c.t)+'</span></button>';
+   }).join('')+'</div>'+
+   '<div class="rowbtn"><button class="btn" id="subBtn" onclick="gradeKeyword()">채점하기 (<span id="selN">'+r.sel.length+'</span>장 선택)</button></div>'+
+   '<div id="fb"></div></div>';
+}
+function toggleCard(ci){
+  const q=S.list[S.i], r=R[q.id]; if(r.done) return;
+  const k=r.sel.indexOf(ci); if(k>=0) r.sel.splice(k,1); else r.sel.push(ci);
+  const b=[...document.querySelectorAll('#cards .card')].find(e=>+e.dataset.ci===ci);
+  const on=r.sel.indexOf(ci)>=0;
+  b.classList.toggle('sel',on); b.querySelector('.ck').textContent=on?'☑':'☐';
+  if($('selN')) $('selN').textContent=r.sel.length;
+}
+function scoreKeyword(q,sel){
+  const req=q.cards.map((c,i)=>c.req?i:-1).filter(i=>i>=0);
+  const miss=req.filter(i=>sel.indexOf(i)<0);
+  const trap=sel.filter(i=>!q.cards[i].req);
+  return { s:Math.max(0,S2_BASE-3*miss.length-3*trap.length), miss, trap, req };
+}
+function gradeKeyword(){
+  const q=S.list[S.i], r=R[q.id]; if(r.done) return;
+  if(!r.sel.length){ $('fb').innerHTML='<div class="hint"><b>💡</b> 카드를 한 장 이상 골라 주세요.</div>'; return; }
+  r.tries++;
+  const g=scoreKeyword(q,r.sel);
+  if(r.tries===1){
+    r.first=g.s; r.res=g; r.graded=true;
+    if(g.s<S2_BASE){
+      sPart(); S.streak=0; comboHud();
+      paintKeyword(q,r,true);
+      $('subBtn').innerHTML='다시 채점하기 (<span id="selN">'+r.sel.length+'</span>장 선택)';
+      $('fb').insertAdjacentHTML('afterbegin','<div class="hint"><b>💡 다시 한 번</b> 빠진 카드는 주황, 잘못 고른 카드는 빨강입니다. 고쳐서 다시 채점하면 절반 점수를 받습니다.</div>');
+      return;
+    }
+    r.got=g.s; r.done=true; r.res=g;
+    S.score+=r.got; sOK(); paintKeyword(q,r); hud();
+    banner({big:'정답!', gain:r.got, confetti:26, hold:900});
+    return;
+  }
+  const half=Math.round(g.s/2);
+  r.got=Math.max(r.first,half); r.done=true; r.res=g;
+  S.score+=r.got; hud();
+  if(g.s===S2_BASE){ sPart(); banner({big:'다시 풀어 정답', gain:r.got, msg:'절반 점수를 받았어요', hold:900}); }
+  else { sNO(); banner({big:'부분 정답', msg:r.got+'점 / '+S2_BASE+'점', hold:850}); }
+  paintKeyword(q,r);
+}
+function paintKeyword(q,r,retry){
+  const g=r.res||scoreKeyword(q,r.sel);
+  document.querySelectorAll('#cards .card').forEach(b=>{
+    const ci=+b.dataset.ci, c=q.cards[ci];
+    b.classList.remove('rOk','rMiss','rTrap');
+    if(!retry) b.disabled=true;
+    if(c.req && r.sel.indexOf(ci)>=0){ b.classList.add('rOk'); b.querySelector('.ck').textContent='✅'; }
+    else if(c.req){ b.classList.add('rMiss'); b.querySelector('.ck').textContent='➕'; }
+    else if(r.sel.indexOf(ci)>=0){ b.classList.add('rTrap'); b.querySelector('.ck').textContent='❌'; }
+  });
+  if(!retry && $('subBtn')){ $('subBtn').disabled=true; $('subBtn').textContent='채점 완료'; markSrcs(); }
+  const lines=[];
+  if(g.miss.length) lines.push('<b style="color:var(--warn)">➕ 빠뜨린 필수 키워드</b><br>'+g.miss.map(i=>'· '+esc(q.cards[i].t)+' — '+esc(q.cards[i].why||'')).join('<br>'));
+  if(g.trap.length) lines.push('<b style="color:var(--ng)">❌ 함정을 골랐어요</b><br>'+g.trap.map(i=>'· '+esc(q.cards[i].t)+' — '+esc(q.cards[i].why||'')).join('<br>'));
+  if(!lines.length) lines.push('<b>✅ 필수 키워드를 모두 찾았어요.</b>');
+  const shown = retry ? (r.first||0) : r.got;
+  $('fb').innerHTML='<div class="sol"><b>'+(retry?'1차 채점 ':'')+shown+'점 / '+S2_BASE+'점</b><br>'+lines.join('<br><br>')+'</div>'+(retry?'':navTip());
+}
+
+/* ── 3단계 한 문단 쓰기 ── */
+function renderWrite(q,r,tag){
+  if(!r.texts) r.texts=q.slots.map(()=>'');
+  return '<div class="qcard">'+tag+
+   '<div class="cond"><b>문항</b> &nbsp;'+esc(q.prompt)+'</div>'+
+   condsHtml(q)+
+   srcHtml(q.srcs)+
+   '<div class="ask">칸마다 한 문장씩 쓰세요. 칸을 이어 읽으면 한 문단이 됩니다. <span style="font-weight:400;font-size:13.5px;color:var(--ink2)">고쳐 쓰기에는 감점이 없습니다</span></div>'+
+   '<div class="slots">'+q.slots.map((sl,k)=>
+     '<div class="slot"><label for="ta'+k+'">'+esc(sl.label)+'<span class="pt" id="pt'+k+'">'+sl.pts+'점</span></label>'+
+     '<textarea id="ta'+k+'" maxlength="220" placeholder="'+esc(sl.ph)+'">'+esc(r.texts[k])+'</textarea>'+
+     '<div class="fb" id="sf'+k+'"></div></div>').join('')+'</div>'+
+   '<div class="rowbtn"><button class="btn" onclick="gradeWrite()">채점하기</button>'+
+   '<button class="btn sec" onclick="clearWrite()">지우고 다시 쓰기</button></div>'+
+   '<div id="fb"></div></div>';
+}
+function clearWrite(){
+  const q=S.list[S.i], r=R[q.id];
+  r.texts=q.slots.map(()=>''); render();
+}
+function gradeWrite(){
+  const q=S.list[S.i], r=R[q.id];
+  const texts=q.slots.map((_,k)=>$('ta'+k).value);
+  if(texts.some(t=>!t.trim())){ $('fb').innerHTML='<div class="hint"><b>💡</b> 모든 칸을 채운 뒤 채점해 주세요.</div>'; return; }
+  r.texts=texts; r.tries++;
+  const det=q.slots.map((sl,k)=>{
+    const t=norm(texts[k]);
+    const w=formWarn(texts[k]);
+    if(w.some(x=>x.fatal)) return {s:0,lv:'r',msg:w.find(x=>x.fatal).m,warn:[]};
+    const g=sl.grade(t);
+    return {s:g.s, lv:g.lv||'g', msg:g.msg, warn:w.map(x=>x.m)};
+  });
+  const got=det.reduce((a,x)=>a+x.s,0);
+  if(r.tries===1) r.first=got;
+  if(got>r.got){ S.score+=got-r.got; r.got=got; }
+  r.detail=det; r.done=true; r.graded=true;
+  paintWrite(q,r); hud();
+  if(got===S3_BASE){ sOK(); banner({big:'완성!', gain:got, confetti:30, hold:950}); }
+  else if(got>=Math.round(S3_BASE*0.6)){ sPart(); banner({big:'부분 정답', msg:got+'점 / '+S3_BASE+'점', hold:850}); }
+  else { sNO(); banner({big:'다시 살펴봐요', msg:got+'점 / '+S3_BASE+'점', hold:850}); }
+  S.streak=0; comboHud();
+}
+function paintWrite(q,r){
+  q.slots.forEach((sl,k)=>{
+    const d=r.detail[k]; if(!d) return;
+    const cls=d.s===sl.pts?'g':(d.lv==='r'?'r':'y');
+    $('pt'+k).textContent=d.s+' / '+sl.pts+'점';
+    $('pt'+k).style.color=cls==='g'?'#15803d':(cls==='r'?'var(--ng)':'var(--warn)');
+    const icon=cls==='g'?'✅':(cls==='r'?'❌':'◐');
+    $('sf'+k).className='fb '+cls;
+    $('sf'+k).innerHTML=icon+' '+esc(d.msg||'')+(d.warn&&d.warn.length?'<br>⚠ '+d.warn.map(esc).join(' / '):'');
+  });
+  markSrcs();
+  $('fb').innerHTML='<div class="sol"><b>'+r.got+'점 / '+S3_BASE+'점</b><br>'+
+    '칸을 고쳐 쓰고 다시 채점할 수 있어요. 점수는 가장 높은 결과로 남습니다.</div>'+navTip();
+}
+function navTip(){ return '<div style="font-size:12.5px;color:var(--ink2);margin-top:9px">Enter · Space · → 를 누르면 다음으로 넘어갑니다.</div>'; }
+
+/* ══════════════════════════════════════════════════════════
+   이동
+   ══════════════════════════════════════════════════════════ */
+function finalizePending(){
+  const q=S.list[S.i], r=R[q.id]; if(!r||r.done) return;
+  if(q.cat==='keyword'){
+    if(r.tries>0){ r.got=r.first||0; r.done=true; r.graded=true; S.score+=r.got; hud(); }
+  } else if(q.cat!=='write'){
+    if(r.tries===1){ r.got=0; r.first=0; r.done=true; r.graded=true; r.picked=(r.firstPick!=null?r.firstPick:null); S.streak=0; comboHud(); }
+  }
+}
+function goNext(){
+  if(bnOpen){ closeBanner(); }
+  finalizePending();
+  if(S.i>=S.list.length-1){ finish(); return; }
+  S.i++; render();
+}
+function goPrev(){ finalizePending(); if(S.i>0){ S.i--; render(); } }
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){ document.querySelectorAll('.modal.on').forEach(m=>m.classList.remove('on')); return; }
+  if(!$('play').classList.contains('on')) return;
+  const tag=(document.activeElement&&document.activeElement.tagName)||'';
+  if(tag==='TEXTAREA'||tag==='INPUT') return;
+  if(e.key==='Enter'||e.key===' '||e.key==='ArrowRight'){
+    e.preventDefault();
+    if(bnOpen){ closeBanner(); goNext(); return; }
+    const q=S.list[S.i], r=R[q.id];
+    if(q.cat!=='keyword'&&q.cat!=='write'&&!r.done&&r.tries===1) return;  // 오답 후 재시도 대기
+    goNext();
+  } else if(e.key==='ArrowLeft'){ e.preventDefault(); goPrev(); }
+});
+
+/* ══════════════════════════════════════════════════════════
+   리포트 계산
+   ══════════════════════════════════════════════════════════ */
+function stats(){
+  const graded=[], skipped=[], notYet=[];
+  ALL.forEach(q=>{ const r=R[q.id];
+    if(r&&r.graded) graded.push(q); else if(r&&r.played) skipped.push(q); else notYet.push(q); });
+  let firstSum=0, baseSum=0, fullFirst=0, retryOk=0, wrong=0;
+  graded.forEach(q=>{ const r=R[q.id], b=baseOf(q);
+    firstSum+=r.first; baseSum+=b;
+    if(r.first===b) fullFirst++; else if(r.got>0) retryOk++; else wrong++; });
+  const rate = baseSum? Math.round(firstSum/baseSum*100) : 0;
+  const byCat={};
+  Object.keys(CATEGORIES).forEach(k=>byCat[k]={got:0,max:0,n:0});
+  graded.forEach(q=>{ const r=R[q.id], b=baseOf(q);
+    byCat[q.cat].got+=r.first; byCat[q.cat].max+=b; byCat[q.cat].n++; });
+  const cats=Object.keys(byCat).filter(k=>byCat[k].n>=2).map(k=>({k,...byCat[k],pct:Math.round(byCat[k].got/byCat[k].max*100)}));
+  const good=cats.filter(c=>c.pct===100);
+  const weak=cats.filter(c=>c.pct<50);
+  let firstStudy=null;
+  if(wrong+retryOk>0 && cats.length){
+    const sorted=cats.filter(c=>c.pct<100).sort((a,b)=>(b.max-b.got)-(a.max-a.got) || a.pct-b.pct || b.max-a.max);
+    firstStudy=sorted[0]||null;
+  }
+  const allLow = cats.length>0 && cats.every(c=>c.pct<50);
+  const verdict = rate>=95?'완벽해요!' : rate>=85?'아주 잘했어요' : rate>=70?'잘하고 있어요' : rate>=50?'기본은 잡혔어요' : '다시 한 번 도전해요';
+  return {graded,skipped,notYet,firstSum,baseSum,rate,fullFirst,retryOk,wrong,cats,good,weak,firstStudy,allLow,verdict};
+}
+function eraseHtml(){
+  const sets=S3.filter(q=>R[q.id]&&R[q.id].done);
+  if(!sets.length) return '';
+  let out='';
+  sets.forEach(q=>{
+    const r=R[q.id];
+    const all=r.texts.join(' ');
+    const keys=[]; q.slots.forEach(sl=>sl.keys.forEach(k=>keys.push(k)));
+    const found=keys.filter(k=>has(norm(all),norm(k)));
+    const left=keys.filter(k=>!has(norm(all),norm(k)));
+    let ans=q.slots.map((sl,k)=>esc(r.texts[k])).join(' ');
+    found.forEach(k=>{ ans=ans.split(esc(k)).join('<mark>'+esc(k)+'</mark>'); });
+    out+='<div class="erase"><h3>✂ 키워드 지우기 — '+esc(q.title)+'</h3>'+
+      '<div class="ans">'+ans+'</div>'+
+      '<div class="chips">'+keys.map(k=>'<span class="chip'+(found.indexOf(k)>=0?' ok':'')+'">'+esc(k)+'</span>').join('')+'</div>'+
+      (left.length?'<div class="left"><b>이 말들이 빠졌어요</b> — '+left.map(esc).join(' · ')+'</div>'
+                  :'<div class="left" style="color:#15803d"><b>키워드를 모두 담았어요.</b></div>')+
+      '</div>';
+  });
+  out+='<div class="notice">길게 쓴다고 점수가 오르지 않아요. 짧아도 키워드가 들어 있으면 점수가 나옵니다.</div>';
+  return out;
+}
+
+/* ══════════════════════════════════════════════════════════
+   종료 화면
+   ══════════════════════════════════════════════════════════ */
+function finish(){
+  closeBanner();
+  S.elapsed=Date.now()-(S.t0||Date.now());
+  const st=stats();
+  $('endStageBadge').textContent=S.stage+'단계 '+STAGES[S.stage-1].name;
+  $('endScore').textContent=S.score;
+  $('endVerdict').innerHTML=
+    (st.skipped.length?'<div style="color:var(--warn);font-size:14px;font-weight:700;margin-bottom:4px">끝까지 풀지 않았어요 (이 단계에서 '+st.skipped.length+'문항 안 풀었어요)</div>':'')+
+    esc(st.verdict)+
+    (st.notYet.length?'<div style="color:var(--ink2);font-size:13px;font-weight:500;margin-top:4px">아직 풀지 않은 단계가 있어요 ('+st.notYet.length+'문항)</div>':'');
+  const mm=Math.floor(S.elapsed/60000), ss=Math.round(S.elapsed%60000/1000);
+  $('endStats').innerHTML=[
+   ['정답률',st.rate+'%'],['첫 시도 만점',st.fullFirst+'문항'],['다시 풀어 맞힘',st.retryOk+'문항'],
+   ['못 맞힘',st.wrong+'문항'],['미응답',st.skipped.length+'문항'],['최고 콤보',S.best],
+   ['소요 시간',mm+'분 '+ss+'초']
+  ].map(([l,v])=>'<div class="stat"><b>'+esc(String(v))+'</b><span>'+l+'</span></div>').join('');
+  $('eraseArea').innerHTML=eraseHtml();
+
+  let tr='<h3>📊 유형별 학습 진단</h3>';
+  if(!st.cats.length) tr+='<p>진단할 만큼 문항을 풀지 않았어요. 한 단계를 끝까지 풀어 보세요.</p>';
+  else {
+    tr+='<p><b>잘하는 유형</b> — '+(st.good.length?st.good.map(c=>esc(CATEGORIES[c.k].label)+' '+c.n+'/'+c.n).join(' · '):'아직 없어요')+'</p>';
+    tr+='<p><b>보완이 필요한 유형</b> — '+(st.weak.length?st.weak.map(c=>esc(CATEGORIES[c.k].label)+' '+c.got+'/'+c.max+'점').join(' · '):'없어요')+'</p>';
+    if(st.allLow) tr+='<p style="margin-top:7px"><b>가장 먼저 공부할 것</b><br>유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.</p>';
+    else if(st.firstStudy) tr+='<p style="margin-top:7px"><b>가장 먼저 공부할 것 — '+esc(CATEGORIES[st.firstStudy.k].label)+'</b><br>'+esc(CATEGORIES[st.firstStudy.k].tip)+'</p>';
+    else tr+='<p style="margin-top:7px"><b>가장 먼저 공부할 것</b><br>약점이 보이지 않아요. 다음 단계에 도전해 보세요.</p>';
+  }
+  tr+='<p style="margin-top:8px;font-size:12.5px;color:var(--ink2)"><b>[9국05-05]</b> 작품에 반영된 사회·문화적 상황을 이해하며 작품을 감상한다.</p>';
+  $('typeReport').innerHTML=tr;
+
+  const hasNext=S.stage<STAGES.length;
+  const bn=$('btnNextStage'), br=$('btnRetry');
+  bn.style.display=hasNext?'':'none';
+  bn.className=hasNext?'btn':'btn sec';
+  br.className=hasNext?'btn sec':'btn';
+
+  // ── 연동 모드: 결과 전송 ──
+  if(IS_ONLINE&&STUDENT.verified){
+    const nameInput=$('inName'); nameInput.value=STUDENT.name; nameInput.readOnly=true; nameInput.style.background='#f0f6f3';
+    const wrongItems=st.graded.filter(q=>R[q.id].first<baseOf(q)).map(q=>q.id).join(',');
+    submitResult({
+      studentId:STUDENT.id, studentName:STUDENT.name, className:STUDENT.className,
+      stage:S.stage, totalQuestions:ALL.length, answeredCount:st.graded.length, skippedCount:st.skipped.length,
+      correctCount:st.fullFirst, accuracy:st.rate, score:S.score, maxScore:MAX_TOTAL,
+      bestCombo:S.best, elapsedSeconds:Math.round(S.elapsed/1000), wrongItems:wrongItems, reflection:''
+    }).then(res=>{
+      const el=document.createElement('div');
+      el.style.cssText='margin-top:8px;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:600;text-align:center;';
+      if(res.status==='ok'){ el.style.background='#e8f5e9'; el.style.color='#2e7d32'; el.textContent='✅ 결과가 선생님께 전송되었습니다.'; }
+      else { el.style.background='#ffebee'; el.style.color='#c62828';
+        el.innerHTML='❌ 전송 실패 <button onclick="this.parentElement.remove();finish();" style="margin-left:8px;padding:4px 12px;border:1px solid #c62828;border-radius:6px;background:#fff;color:#c62828;cursor:pointer;font-size:12px;">재전송</button>'; }
+      const p=$('endPrivacy'); if(p) p.before(el);
+    });
+  }
+  show('end');
+}
+
+/* ── 오늘 나온 문제 모두 보기 ── */
+function openReview(){
+  const played=ALL.filter(q=>R[q.id]&&R[q.id].graded);
+  $('reviewBody').innerHTML = played.length? played.map(q=>{
+    let a='', d='';
+    if(q.cat==='keyword'){ a=q.cards.filter(c=>c.req).map(c=>c.t).join(' · '); d='함정: '+q.cards.filter(c=>!c.req).map(c=>c.t).join(' · '); }
+    else if(q.cat==='write'){ a=q.slots.map(s=>s.label+' '+s.keys.join('·')).join(' / '); d=q.prompt; }
+    else { a=q.opts.filter(o=>o.ok).map(o=>o.t).join(''); d=q.detail||''; }
+    return '<div class="rv"><div class="t">'+CATEGORIES[q.cat].icon+' '+esc(CATEGORIES[q.cat].label)+'</div>'+
+      esc(q.cond||q.prompt||String(q.ask).replace(/<[^>]+>/g,' '))+
+      '<br><span class="a">정답 · 필수</span> '+esc(a)+'<br><span class="d">'+esc(d)+'</span></div>';
+  }).join('') : '<p>이번 판에 채점된 문항이 없습니다.</p>';
+  $('reviewModal').classList.add('on');
+}
+
+/* ══════════════════════════════════════════════════════════
+   마스코트 길게 누르기 → 교사용 엑셀
+   ══════════════════════════════════════════════════════════ */
+(function(){
+  const m=$('mascot'); if(!m) return;
+  let timer=null;
+  const start=e=>{ e.preventDefault(); timer=setTimeout(()=>{ timer=null; $('teacherModal').classList.add('on'); },2000); };
+  const cancel=()=>{ if(timer){ clearTimeout(timer); timer=null; } };
+  m.addEventListener('pointerdown',start);
+  ['pointerup','pointerleave','pointercancel'].forEach(ev=>m.addEventListener(ev,cancel));
+  m.addEventListener('contextmenu',e=>e.preventDefault());
+})();
+function xmlEsc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function sheet(name,rows){
+  return '<Worksheet ss:Name="'+xmlEsc(name)+'"><Table>'+rows.map(r=>'<Row>'+r.map(c=>
+    '<Cell><Data ss:Type="String">'+xmlEsc(c==null?'':c)+'</Data></Cell>').join('')+'</Row>').join('')+'</Table></Worksheet>';
+}
+function dlTeacherXls(){
+  closeModal('teacherModal');
+  const r1=[['원본 id','유형','문제(조건·예문)','정답','해설']];
+  S1.forEach(q=>r1.push([q.id,CATEGORIES[q.cat].label,(q.cond?'[조건] '+q.cond+' / ':'')+String(q.ask).replace(/<[^>]+>/g,' '),
+    q.opts.filter(o=>o.ok).map(o=>o.t).join(''),q.detail||'']));
+  const r2=[['원본 id','유형','문항','조건','자료','필수 키워드','함정 카드','채점 규칙']];
+  S2.forEach(q=>r2.push([q.id,CATEGORIES[q.cat].label,q.prompt,
+    (q.conds||[]).map((c,i)=>(i+1)+') '+c).join(' '),
+    (q.srcs||[]).map(k=>SOURCES[k]?SOURCES[k].label:k).join(' '),
+    q.cards.filter(c=>c.req).map(c=>c.t).join(' | '),
+    q.cards.filter(c=>!c.req).map(c=>c.t).join(' | '),
+    '필수 전부+함정 없음 10점 / 누락 −3 / 함정 −3 (최저 0)']));
+  const r3=[['원본 id','유형','문항','조건','칸','지시문','배점','채점 키워드']];
+  S3.forEach(q=>q.slots.forEach((sl,i)=>r3.push([q.id,CATEGORIES[q.cat].label,
+    i===0?q.prompt:'', i===0?(q.conds||[]).map((c,k)=>(k+1)+') '+c).join(' '):'',
+    sl.label,sl.ph,sl.pts,sl.keys.join(' | ')])));
+  const r5=[['자료 키','표기','출처','근거 문장(형광펜)','전문']];
+  Object.keys(SOURCES).forEach(k=>{ const s=SOURCES[k];
+    r5.push([k,s.label,s.src||'',(s.marks||[]).join(' | '),s.text||'(미입력)']); });
+  const r4=[['유형 코드','유형명','설명','출제 수','배점 합','학습 조언(tip)']];
+  Object.keys(CATEGORIES).forEach(k=>{
+    const qs=ALL.filter(q=>q.cat===k);
+    r4.push([k,CATEGORIES[k].label,CATEGORIES[k].desc,qs.length,qs.reduce((a,q)=>a+baseOf(q),0),CATEGORIES[k].tip]);
+  });
+  r4.push([]);
+  r4.push(['성취기준','[9국05-05] 작품에 반영된 사회·문화적 상황을 이해하며 작품을 감상한다.']);
+  r4.push(['배점 규칙','1단계 5점×8 / 2단계 10점×3 / 3단계 15점×2 = 기본 100점 + 1단계 콤보 보너스 '+COMBO_MAX+'점 = 만점 '+MAX_TOTAL+'점']);
+  r4.push(['총 문항 수',ALL.length]);
+  r4.push(['크레딧','제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com · 최종 수정 '+MOD_DATE]);
+  const xml='<?xml version="1.0" encoding="UTF-8"?>\n<?mso-application progid="Excel.Sheet"?>\n'+
+   '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">'+
+   sheet('1단계 조건사냥',r1)+sheet('2단계 키워드사냥',r2)+sheet('3단계 한문단쓰기',r3)+sheet('자료 원문',r5)+sheet('유형별 요약',r4)+'</Workbook>';
+  const a=document.createElement('a');
+  a.href='data:application/vnd.ms-excel;charset=utf-8,'+encodeURIComponent(xml);
+  a.download='L202_조건사냥꾼_학습데이터목록_'+ymd()+'.xls'; a.click();
+}
+function ymd(){ const d=new Date(),p=n=>String(n).padStart(2,'0');
+ return d.getFullYear()+p(d.getMonth()+1)+p(d.getDate()); }
+function stampFull(){ const d=new Date(),p=n=>String(n).padStart(2,'0');
+ return d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'_'+p(d.getHours())+p(d.getMinutes()); }
+function dateStr(){ const d=new Date(),p=n=>String(n).padStart(2,'0');
+ return d.getFullYear()+'.'+p(d.getMonth()+1)+'.'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes()); }
+
+/* ══════════════════════════════════════════════════════════
+   JPG 산출물
+   ══════════════════════════════════════════════════════════ */
+const CF='"Malgun Gothic","맑은 고딕","Apple SD Gothic Neo",sans-serif';
+const PRIV_OFF='본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다. 입력한 이름과 소감은 기기 안에서 리포트 이미지를 만드는 데만 쓰입니다.';
+const PRIV_ON ='학습 결과(학번·이름·점수·오답 정보·소감)는 담당 선생님의 학습 관리용 스프레드시트에 전송·저장됩니다. 학습 지도 목적으로만 사용되며 제3자에게 제공되지 않습니다.';
+function txt(c,s,x,y,w,lh,paint){
+  const words=String(s).split(' '); let line='';
+  const put=t=>{ if(paint) c.fillText(t,x,y); y+=lh; };
+  for(let i=0;i<words.length;i++){
+    const test=line?line+' '+words[i]:words[i];
+    if(c.measureText(test).width>w&&line){ put(line); line=words[i]; } else line=test;
+    while(c.measureText(line).width>w){
+      let cut=line.length; while(cut>1&&c.measureText(line.slice(0,cut)).width>w) cut--;
+      put(line.slice(0,cut)); line=line.slice(cut);
+    }
+  }
+  if(line) put(line);
+  return y;
+}
+function needName(){
+  const n=$('inName').value.trim();
+  if(!n){ alert('학생 이름을 입력해야 이미지를 만들 수 있어요.'); $('inName').focus(); return null; }
+  return n;
+}
+function saveJpg(cv,name){
+  const a=document.createElement('a'); a.href=cv.toDataURL('image/jpeg',0.92); a.download=name; a.click();
+}
+function head(c,W,title,sub){
+  c.fillStyle='#0F6E56'; c.fillRect(0,0,W,86);
+  c.fillStyle='#fff'; c.font='700 25px '+CF; c.fillText(title,36,42);
+  c.font='400 13.5px '+CF; c.fillStyle='#BEE3D6'; c.fillText(sub,36,68);
+}
+function foot(c,W,H){
+  c.fillStyle='#8aa8a0'; c.font='400 11.5px '+CF;
+  let y=H-46;
+  y=txt(c,'🔒 '+(IS_ONLINE?PRIV_ON:PRIV_OFF),36,y,W-72,15,true);
+  c.fillText('제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com · 최종 수정 '+MOD_DATE,36,H-16);
+}
+function dlWrong(){
+  const nm=needName(); if(!nm) return;
+  const st=stats();
+  const bad=st.graded.filter(q=>R[q.id].first<baseOf(q));
+  const W=960;
+  const rects=[];
+  const build=(c,paint)=>{
+    let y=170;
+    if(paint){
+      head(c,W,'오답노트 — 조건 사냥꾼','문학 · 서논술형 답안 쓰기 · '+S.stage+'단계 '+STAGES[S.stage-1].name);
+      c.fillStyle='#0F6E56'; c.font='700 15px '+CF;
+      c.fillText(nm+'  ·  '+dateStr()+'  ·  '+S.score+' / '+MAX_TOTAL+'점  ·  정답률 '+st.rate+'%',36,116);
+      c.fillStyle='#5b6b70'; c.font='400 13px '+CF;
+      c.fillText('첫 시도 정답 '+st.fullFirst+' · 다시 풀어 맞힘 '+st.retryOk+' · 못 맞힘 '+st.wrong+' · 미응답 '+st.skipped.length,36,140);
+    }
+    if(!bad.length){
+      if(paint){ c.fillStyle='#15803d'; c.font='700 18px '+CF; c.fillText('틀린 문항이 없습니다. 훌륭해요!',40,y+16); }
+      return y+64;
+    }
+    bad.forEach(q=>{
+      const r=R[q.id], y0=y;
+      if(paint){ c.fillStyle='#2E9B79'; c.font='700 13.5px '+CF;
+        c.fillText('['+CATEGORIES[q.cat].label+']  '+r.got+' / '+baseOf(q)+'점',40,y); }
+      y+=22; c.font='400 13.5px '+CF;
+      const L=(s,col,lh)=>{ c.fillStyle=col; y=txt(c,s,40,y,W-96,lh||20,paint); };
+      if(q.cat==='keyword'){
+        L('문항: '+q.prompt,'#333');
+        L('필수 키워드: '+q.cards.filter(cc=>cc.req).map(cc=>cc.t).join(' · '),'#15803d');
+        const g=r.res||{miss:[],trap:[]};
+        if(g.miss.length) L('빠뜨린 키워드: '+g.miss.map(i=>q.cards[i].t).join(' · '),'#dc2626');
+        if(g.trap.length) L('잘못 고른 함정: '+g.trap.map(i=>q.cards[i].t).join(' · '),'#dc2626');
+        L('해설: '+q.cards.filter(cc=>!cc.req).slice(0,1).map(cc=>cc.why).join(' '),'#5b6b70',19);
+      } else if(q.cat==='write'){
+        L('문항: '+q.prompt,'#333');
+        q.slots.forEach((sl,k)=>{
+          const d=r.detail?r.detail[k]:null; if(!d||d.s===sl.pts) return;
+          L(sl.label+' 내가 쓴 답: '+(r.texts[k]||'—'),'#dc2626',19);
+          L('   → '+(d.msg||'')+'  (채점 키워드: '+sl.keys.join(' · ')+')','#5b6b70',19);
+        });
+      } else {
+        L('문제: '+(q.cond?'[조건] '+q.cond+'  ':'')+String(q.ask).replace(/<[^>]+>/g,' ').replace(/\s+/g,' '),'#333');
+        const fp = r.firstPick!=null ? q.opts[r.firstPick].t : (r.picked!=null ? q.opts[r.picked].t : '무응답');
+        L((r.got>0?'첫 시도에 고른 답(오답): ':'내가 고른 답: ')+fp,'#dc2626');
+        L('정답: '+q.opts.filter(o=>o.ok).map(o=>o.t).join('')+(r.got>0?'  — 다시 풀어 맞혔어요':''),'#15803d');
+        L('해설: '+(q.detail||''),'#5b6b70',19);
+      }
+      if(!paint) rects.push([28,y0-19,W-56,(y-y0)+12]);
+      y+=28;
+    });
+    return y;
+  };
+  const sc=document.createElement('canvas'); sc.width=W; sc.height=24000;
+  const H=Math.max(420, build(sc.getContext('2d'),false)+78);
+  const cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+  const c=cv.getContext('2d');
+  c.fillStyle='#fff'; c.fillRect(0,0,W,H);
+  rects.forEach(r=>{ c.fillStyle='#F4FBF8'; c.fillRect(r[0],r[1],r[2],r[3]);
+                     c.fillStyle='#2E9B79'; c.fillRect(r[0],r[1],4,r[3]); });
+  build(c,true); foot(c,W,H);
+  saveJpg(cv,nm+'_오답노트_'+S.stage+'단계'+STAGES[S.stage-1].name+'_'+stampFull()+'.jpg');
+}
+function dlReport(){
+  const nm=needName(); if(!nm) return;
+  const refl=$('inRefl').value.trim();
+  const st=stats();
+  const W=960;
+  const build=(c,paint)=>{
+    let y=0;
+    if(paint){
+      c.fillStyle='#fff'; c.fillRect(0,0,W,c.canvas.height);
+      head(c,W,'학습 결과 분석 리포트','조건 사냥꾼 · 문학 · '+S.stage+'단계 '+STAGES[S.stage-1].name);
+      c.fillStyle='#0F6E56'; c.font='700 17px '+CF; c.fillText(nm,36,118);
+      c.fillStyle='#5b6b70'; c.font='400 13.5px '+CF; c.fillText(dateStr(),36,142);
+      c.fillStyle='#2E9B79'; c.font='700 40px '+CF; c.fillText(S.score+' 점',W-250,132);
+      c.fillStyle='#8aa8a0'; c.font='400 13.5px '+CF; c.fillText(MAX_TOTAL+'점 만점 · 정답률 '+st.rate+'%',W-250,154);
+    }
+    y=186;
+    const mm=Math.floor(S.elapsed/60000), ss=Math.round(S.elapsed%60000/1000);
+    const cells=[['정답률',st.rate+'%'],['첫 시도 정답',st.fullFirst+''],['다시 풀어 맞힘',st.retryOk+''],
+                 ['못 맞힘',st.wrong+''],['미응답',st.skipped.length+''],['최고 콤보',S.best+''],['소요 시간',mm+'분 '+ss+'초']];
+    if(paint){
+      const bw=(W-72)/cells.length;
+      cells.forEach((cc,i)=>{
+        const x=36+bw*i;
+        c.fillStyle='#F2FBF7'; c.fillRect(x,y,bw-6,54);
+        c.fillStyle='#0F6E56'; c.font='700 17px '+CF; c.textAlign='center'; c.fillText(cc[1],x+(bw-6)/2,y+26);
+        c.fillStyle='#5b6b70'; c.font='400 11.5px '+CF; c.fillText(cc[0],x+(bw-6)/2,y+44);
+        c.textAlign='left';
+      });
+    }
+    y+=76;
+    if(paint){ c.fillStyle='#0F6E56'; c.font='700 16px '+CF;
+      c.fillText('총평 — '+st.verdict+(st.skipped.length?'  (끝까지 풀지 않았어요 · '+st.skipped.length+'문항 남음)':''),36,y); }
+    y+=30;
+    const box=(title,body,bg,fg)=>{
+      c.font='400 13.5px '+CF;
+      const inner=[]; let h=0;
+      const probe=document.createElement('canvas').getContext('2d'); probe.font='400 13.5px '+CF;
+      h=txt(probe,body,0,0,W-96,20,false);
+      if(paint){ c.fillStyle=bg; c.fillRect(28,y-6,W-56,h+40);
+        c.fillStyle=fg; c.font='700 14px '+CF; c.fillText(title,40,y+14);
+        c.fillStyle='#333'; c.font='400 13.5px '+CF; txt(c,body,40,y+36,W-96,20,true); }
+      y+=h+50;
+    };
+    if(st.cats.length){
+      box('잘하는 유형', st.good.length?st.good.map(cc=>CATEGORIES[cc.k].label+' '+cc.n+'/'+cc.n).join('   ·   '):'아직 없어요. 한 유형이라도 전부 맞히는 것을 목표로 해 보세요.','#F0FDF4','#15803d');
+      box('보완이 필요한 유형', st.weak.length?st.weak.map(cc=>CATEGORIES[cc.k].label+' '+cc.got+'/'+cc.max+'점').join('   ·   '):'없어요. 고르게 잘했습니다.','#FEF2F2','#dc2626');
+      const t = st.allLow ? '유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.'
+              : st.firstStudy ? CATEGORIES[st.firstStudy.k].label+' — '+CATEGORIES[st.firstStudy.k].tip
+              : '약점이 보이지 않아요. 다음 단계에 도전해 보세요.';
+      box('가장 먼저 공부할 것', t, '#FFFBEB','#b45309');
+    } else {
+      box('진단','진단할 만큼 문항을 풀지 않았어요. 한 단계를 끝까지 풀어 보세요.','#FFFBEB','#b45309');
+    }
+    if(refl) box('학습 소감', refl, '#F2FBF7','#0F6E56');
+    if(paint){ c.fillStyle='#5b6b70'; c.font='400 12px '+CF;
+      y=txt(c,'성취기준 [9국05-05] 작품에 반영된 사회·문화적 상황을 이해하며 작품을 감상한다.',36,y,W-72,18,true); }
+    else y+=20;
+    return y;
+  };
+  const sc=document.createElement('canvas'); sc.width=W; sc.height=20000;
+  const H=Math.max(560, build(sc.getContext('2d'),false)+78);
+  const cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+  const c=cv.getContext('2d'); build(c,true); foot(c,W,H);
+  saveJpg(cv,nm+'_학습리포트_'+S.stage+'단계'+STAGES[S.stage-1].name+'_'+stampFull()+'.jpg');
+}
+
+</script>
+</body>
+</html>
