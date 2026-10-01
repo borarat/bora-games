@@ -1,7 +1,10 @@
 <!DOCTYPE html>
-<!-- 리모델링 2026.10.01 01:05 (0차 야간)
-     채점: 쉬움 모드의 틀린 선택(정답 단어가 아닌 글자 묶음)을 다음에 찾은 단어의 문항 오답으로 기록
-           → 정답률·오답 목록·결과 전송에 반영. 보통·도전 모드와 쉬움 모드의 다른 규칙은 그대로 -->
+<!-- 리모델링 2026.10.01 (0차 야간 01:05 · 교사 답변 반영 11:50)
+     채점: 쉬움 모드의 틀린 선택(정답 단어가 아닌 두 칸 이상 글자 묶음)을 다음에 찾은 단어의 문항 오답으로 기록
+           → 정답률·오답 목록·결과 전송에 반영. 보통·도전 모드와 쉬움 모드의 다른 규칙은 그대로
+     교사 답변 반영(2026.10.01): 한 칸 선택·이미 찾은 단어 다시 고르기는 감점·오답 없음,
+           다시 하기 때 글자판 처리기 중복 수정, 보통·도전·숨은 메시지 단계에서 글자판 선택 무시,
+           드래그를 칸 틈·글자판 밖에서 놓아도 마지막 칸 기준으로 처리 -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -327,7 +330,7 @@
 
       <div class="creator">
         <span class="nm">제작 · 보라라샘</span> · 전주서신중학교 교사 · siaawase@gmail.com<br>
-        제작일 2026.05.31 · <span id="lastMod">최종 수정 2026.10.01 01:05</span>
+        제작일 2026.05.31 · <span id="lastMod">최종 수정 2026.10.01 11:50</span>
       </div>
 
       <div class="privacy" id="privacyOffline">
@@ -437,7 +440,7 @@
             <button class="btn sec" onclick="goStart()">시작화면으로</button>
           </div>
           <div class="fc-priv" id="endPrivacy">입력하신 이름과 소감은 서버에 저장되지 않으며,<br>리포트 이미지(JPG) 생성용으로만 쓰입니다.</div>
-          <div class="end-credit">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.05.31 · <span id="lastMod2">최종 수정 2026.10.01 01:05</span></div>
+          <div class="end-credit">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.05.31 · <span id="lastMod2">최종 수정 2026.10.01 11:50</span></div>
         </div>
       </div>
     </div>
@@ -449,7 +452,7 @@
 <script>
 /* ===== 기본 정보 ===== */
 const MADE_DATE = "2026.05.31";
-const LAST_MOD  = "2026.10.01 01:05";
+const LAST_MOD  = "2026.10.01 11:50";
 const ACHIEVE   = "(2022) [9국05-05] 작품에 반영된 사회·문화적 상황을 이해하며 작품을 감상한다.";
 const GAME_TITLE= "꺼삐딴 리 정리 퍼즐";
 const PRIVACY_OFF = "입력하신 이름과 소감은 서버에 저장되지 않으며, 리포트 이미지(JPG) 생성용으로만 쓰입니다.";
@@ -668,7 +671,8 @@ function buildGrid(){
     d.dataset.r=r; d.dataset.c=c; if(GRID[r][c]==="★") d.classList.add("star");
     g.appendChild(d);
   }
-  if(!isTyping()) attachSelection(g);
+  attachSelection(g); // 선택 처리기는 처음 한 번만 붙인다 (다시 하기 때 겹쳐 붙던 문제 수정)
+  resetSelection();
 }
 
 /* ===== CLUES ===== */
@@ -715,27 +719,36 @@ function cellsEqualSet(sel,word){
   const s=new Set(sel.map(x=>x[0]+","+x[1]));
   return word.cells.every(x=>s.has(x[0]+","+x[1]));
 }
+let selBound=false, resetSelection=()=>{};
+// 쉬움 모드에서만, 퍼즐을 푸는 중에만 글자판 선택을 받는다 (보통·도전, 숨은 메시지 단계, 종료 후에는 무시)
+const selectionOn=()=>!isTyping() && !gameOver && solvedClues.size<TOTAL;
 function attachSelection(g){
-  let anchor=null,dragging=false,dragStart=null,moved=false;
+  if(selBound) return; selBound=true;
+  let anchor=null,dragging=false,dragStart=null,moved=false,lastCell=null;
+  resetSelection=()=>{anchor=null;dragging=false;dragStart=null;moved=false;lastCell=null;};
   const cellAt=t=>{const el=t&&t.closest&&t.closest(".cell");return (el&&g.contains(el))?[+el.dataset.r,+el.dataset.c]:null;};
   const clearSel=()=>document.querySelectorAll(".cell.sel").forEach(e=>e.classList.remove("sel"));
   const paint=cs=>{clearSel();cs.forEach(([r,c])=>cellEl(r,c).classList.add("sel"));};
-  g.addEventListener("pointerdown",e=>{if(gameOver)return;const cell=cellAt(e.target);if(!cell)return;dragStart=cell;dragging=true;moved=false;g.setPointerCapture(e.pointerId);});
+  g.addEventListener("pointerdown",e=>{if(!selectionOn())return;const cell=cellAt(e.target);if(!cell)return;dragStart=cell;lastCell=cell;dragging=true;moved=false;g.setPointerCapture(e.pointerId);});
   g.addEventListener("pointermove",e=>{if(!dragging)return;const cell=cellAt(document.elementFromPoint(e.clientX,e.clientY));if(!cell)return;
-    if(cell[0]!==dragStart[0]||cell[1]!==dragStart[1])moved=true;const line=lineCells(dragStart,cell);if(line)paint(line);});
-  g.addEventListener("pointerup",e=>{if(!dragging)return;dragging=false;
-    const endCell=cellAt(document.elementFromPoint(e.clientX,e.clientY))||dragStart;
+    lastCell=cell;if(cell[0]!==dragStart[0]||cell[1]!==dragStart[1])moved=true;const line=lineCells(dragStart,cell);if(line)paint(line);});
+  g.addEventListener("pointerup",e=>{if(!dragging)return;dragging=false;if(!selectionOn()){clearSel();anchor=null;return;}
+    // 칸 사이 틈이나 글자판 밖에서 손을 떼도 마지막으로 지난 칸을 끝 칸으로 쓴다
+    const endCell=cellAt(document.elementFromPoint(e.clientX,e.clientY))||lastCell||dragStart;
     if(moved){const line=lineCells(dragStart,endCell);clearSel();anchor=null;if(line)evaluate(line);}
     else{ if(!anchor){anchor=dragStart;cellEl(anchor[0],anchor[1]).classList.add("sel");}
       else{const line=lineCells(anchor,dragStart);clearSel();if(line)evaluate(line);anchor=null;} }});
+  g.addEventListener("pointercancel",()=>{ if(!dragging) return; dragging=false; clearSel(); anchor=null; });
 }
 function evaluate(sel){
+  // 한 칸만 고른 것(같은 칸 두 번 탭, 글자판 밖에서 놓기 등)은 실수로 보고 선택만 취소한다. 한 글자 정답은 없다
+  if(sel.length<2) return;
   const match=WORDS.find(w=>!solvedWords.has(w.word)&&cellsEqualSet(sel,w));
   if(match){ solveWord(match); }
   else{
-    // 이미 찾은 정답 단어를 다시 고른 것은 틀린 선택으로 세지 않는다 (감점은 기존대로)
-    const again=WORDS.some(w=>solvedWords.has(w.word)&&cellsEqualSet(sel,w));
-    if(!again) easyPendingWrong++;
+    // 이미 찾은 정답 단어를 다시 고른 것은 틀린 것이 아니므로 감점·오답 기록 없이 알려만 준다
+    if(WORDS.some(w=>solvedWords.has(w.word)&&cellsEqualSet(sel,w))){ showToast("info","이미 찾은 단어","다른 단어를 찾아보세요"); return; }
+    easyPendingWrong++;
     penalizeWrong("그 자리에는 정답이 없어요");
     sel.forEach(([r,c])=>{const el=cellEl(r,c);if(!el.classList.contains("found"))el.classList.add("bad");});
     setTimeout(()=>document.querySelectorAll(".cell.bad").forEach(e=>e.classList.remove("bad")),420); }
