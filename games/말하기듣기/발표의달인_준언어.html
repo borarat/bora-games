@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <!-- 리모델링 기록
-  2026.10.01 15:00 6차: #17 판정 대상을 시선 부분만으로 좁힘(쉼은 준언어라고 해설), #3·#30 '목소리를 높이다'→'목소리를 크게'로 통일, 답하기 전 Enter·Space·→로 넘어가던 버그 수정
+  2026.10.01 15:00 6차: #17 판정 대상을 시선 부분만으로 좁힘(쉼은 준언어라고 해설), #3·#30 '목소리를 높이다'→'목소리를 크게'로 통일, 답하기 전 Enter·Space·→로 넘어가던 버그 수정, '잠시 기다렸다가'를 준언어 문항 #40으로 추가(2단계 19문항)
 -->
 <head>
 <meta charset="UTF-8">
@@ -259,7 +259,7 @@ textarea.inF{resize:vertical;min-height:38px;font-size:.86rem}
     <div class="stgT">🎯 단계를 선택하세요</div>
     <div class="stgs">
       <button class="stgB" onclick="startStage(0)">1단계 · 개념<span class="stgS">11문항 · 190점 만점</span></button>
-      <button class="stgB" onclick="startStage(1)">2단계 · 발표문 구분<span class="stgS">18문항 · 330점 만점</span></button>
+      <button class="stgB" onclick="startStage(1)">2단계 · 발표문 구분<span class="stgS">19문항 · 350점 만점</span></button>
       <button class="stgB" onclick="startStage(2)">3단계 · 상황 적용<span class="stgS">10문항 · 170점 만점</span></button>
     </div>
     <div class="note" id="privacyOffline">
@@ -454,7 +454,7 @@ const PRES=`<div class="txtT">📄 김지후의 발표 — 「반려 식물 기�
 <span class="secL">❸ 반려 식물을 기를 때 알아 두어야 할 점</span>
 <span class="expr" data-e="6">(청중을 천천히 둘러보며)</span> 자, 이제 초록빛의 친구들에게 관심이 좀 생기시나요?<br><br>
 <span class="expr" data-e="7">(힘을 주어 조금 더 큰 목소리로)</span> 그렇다면 지금부터 더 집중해 주세요. <span class="elli">(…)</span><br><br>
-식물을 돌볼 때 가장 중요한 세 가지가 무엇인지 아시나요? <span class="expr" data-e="8">(청중의 반응을 확인하며</span> <span class="expr">잠시 기다렸다가)</span> 바로 '물', '햇빛', '흙'입니다. <span class="elli">(…)</span><br><br>
+식물을 돌볼 때 가장 중요한 세 가지가 무엇인지 아시나요? <span class="expr" data-e="8">(청중의 반응을 확인하며</span> <span class="expr" data-e="11">잠시 기다렸다가)</span> 바로 '물', '햇빛', '흙'입니다. <span class="elli">(…)</span><br><br>
 <span class="expr" data-e="9">(청중을 둘러보며)</span> 여러분도 초록빛 친구들을 길러 보면 어떨까요? 이상 발표를 마칩니다. 감사합니다. <span class="expr" data-e="10">(고개를 숙여 인사하고, 자리로 들어간다.)</span>`;
 
 /* ───── 문항 데이터 ───── */
@@ -495,9 +495,9 @@ const STAGES=[
  choices:['발표 시간을 줄일 수 있다.','원고를 외우지 않아도 된다.','내용이 더 생생하게 전달되고 청중의 이해를 돕는다.','시각 자료를 따로 준비하지 않아도 된다.'],
  answer:2,detail:'✅ 생생한 전달 — 말의 내용에 목소리와 몸짓·표정이 더해지면 뜻이 또렷해지고 청중이 집중하게 돼요. 표현을 더한다고 발표 시간이 줄거나 자료가 필요 없어지는 것은 아니에요.'}
 ],
-/* ══ 2단계 · 발표문 구분 (18문항) ══ */
+/* ══ 2단계 · 발표문 구분 (19문항) ══ */
 [
-/* 발표문 속 표현 7문항 */
+/* 발표문 속 표현 8문항 */
 {id:12,cat:'dist',type:'binary',exprIdx:0,highlight:'바른 자세로 서서 청중과 눈을 마주치며',answer:'비언어적',
  detail:'🙋 비언어적 표현 — "바른 자세"(자세)와 "눈을 마주치며"(시선)가 함께 쓰였어요. 둘 다 몸으로 드러나는 신체적 요소예요.'},
 {id:13,cat:'dist',type:'binary',exprIdx:1,highlight:'화면 속 사진을 가리키며',answer:'비언어적',
@@ -510,6 +510,8 @@ const STAGES=[
  detail:'🗣️ 준언어적 표현 — "큰 목소리로"는 목소리의 크기를 조절하는 것이에요. 중요한 내용을 강조할 때 쓰는 대표적인 준언어적 표현이에요.'},
 {id:17,cat:'dist',type:'binary',exprIdx:8,highlight:'청중의 반응을 확인하며',answer:'비언어적',
  detail:'🙋 비언어적 표현 — "청중의 반응을 확인하며"는 청중을 살피는 시선이에요. 바로 뒤의 "잠시 기다렸다가"는 말을 멈추는 쉼이라 준언어적 표현이에요. 이 괄호 안에는 비언어적 표현과 준언어적 표현이 함께 들어 있어요.'},
+{id:40,cat:'dist',type:'binary',exprIdx:11,highlight:'잠시 기다렸다가',answer:'준언어적',
+ detail:'🗣️ 준언어적 표현 — "잠시 기다렸다가"는 질문 뒤에 말을 멈추는 쉼이에요. 쉼은 말하기의 흐름을 조절하는 것이라 준언어적 표현이에요. 바로 앞의 "청중의 반응을 확인하며"(시선)는 비언어적 표현이에요.'},
 {id:18,cat:'dist',type:'binary',exprIdx:10,highlight:'고개를 숙여 인사하고, 자리로 들어간다.',answer:'비언어적',
  detail:'🙋 비언어적 표현 — "고개를 숙여 인사"는 몸짓이자 자세예요. 발표를 정중하게 마무리하는 동작이에요.'},
 /* 발표 지시문 카드 11문항 */
