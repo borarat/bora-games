@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<!-- 리모델링 2026.10.01 03:01 (1차 야간)
+     피드백: 짝이 맞으면 한 줄 설명(조음 위치 카드의 '소리 나는 방법' 문구, ㅇ은 받침 [ŋ] 메모)
+     채점: 격려 문구 기준을 지침 5-2 표(95/85/70/50%)로
+     연동: wrongItems를 원본 id(교사용 엑셀의 id)로 전송
+     2026.10.01 13:00 성취기준: 2022 [9국04-01]에 2015 [9국04-02] 병기 (교사 확인) -->
 <html lang="ko">
 <head>
 <meta charset="utf-8"/>
@@ -177,7 +182,7 @@ button{font-family:var(--font)}
     </div>
    </div>
 
-   <div class="std"><b>성취기준</b>[9국04-01] 국어의 음운 체계와 문자 체계를 이해하고 국어생활에 활용한다.</div>
+   <div class="std"><b>성취기준</b>[9국04-01](2022 개정) 국어의 음운 체계와 문자 체계를 이해하고 국어생활에 활용한다.<br>[9국04-02](2015 개정) 음운의 체계를 알고 그 특성을 이해한다.</div>
 
    <div class="two">
     <div class="box">
@@ -187,7 +192,7 @@ button{font-family:var(--font)}
       <li><b>자음 카드 1장</b>과 그 자음이 나는 <b>위치 카드 1장</b>을 고르면 짝이 맞아요.</li>
       <li>짝이 맞으면 카드가 열린 채로 남고, 틀리면 다시 덮여요.</li>
       <li>19쌍을 모두 찾으면 게임이 끝나요.</li>
-      <li><b>👀 전체 보기</b>는 한 판에 한 번, 7초 동안 쓸 수 있어요.</li>
+      <li><b>👀 전체 보기</b>는 몇 번이든 쓸 수 있어요. 한 번 누르면 7초 동안 모든 카드가 보여요.</li>
      </ul>
      <div class="score-rule">
       <b>점수</b> 짝 맞춤 +10점 · 3~4연속 +5점 추가 · 5연속부터 +10점 추가<br>
@@ -204,7 +209,7 @@ button{font-family:var(--font)}
 
    <div class="credit">
     제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-    제작일 2025.11.06 · <span id="lastMod">최종 수정 2026.09.17 22:03</span>
+    제작일 2025.11.06 · <span id="lastMod">최종 수정 2026.10.01 13:00</span>
    </div>
 
    <div class="privacy" id="privacyOffline">
@@ -256,7 +261,7 @@ button{font-family:var(--font)}
      <div class="pill">⏱️ <b id="timer">00:00</b></div>
     </div>
     <div class="controls">
-     <button class="btn sec" id="btnReveal">👀 전체 보기 (1회)</button>
+     <button class="btn sec" id="btnReveal">👀 전체 보기</button>
      <button class="btn sec" id="btnRestart">🔄 처음부터</button>
      <button class="btn" id="btnEnd">🏁 게임 끝내기</button>
     </div>
@@ -317,7 +322,7 @@ button{font-family:var(--font)}
 
 <script>
 const MADE_DATE = '2025.11.06';
-const LAST_MOD = '2026.09.17 22:03';
+const LAST_MOD = '2026.10.01 13:00';
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -365,7 +370,11 @@ const $ = id => document.getElementById(id);
 // ═══════════════════════════════════════════
 // 학습 데이터
 // ═══════════════════════════════════════════
-const STANDARD = { code: '[9국04-01]', text: '국어의 음운 체계와 문자 체계를 이해하고 국어생활에 활용한다.' };
+const STANDARDS = [
+  { code: '[9국04-01]', year: '2022', text: '국어의 음운 체계와 문자 체계를 이해하고 국어생활에 활용한다.' },
+  { code: '[9국04-02]', year: '2015', text: '음운의 체계를 알고 그 특성을 이해한다.' }
+];
+const STD_LINE = STANDARDS.map(s => `${s.code}(${s.year} 개정) ${s.text}`).join('  ·  ');
 const PLACES = {
   lips:   { label: '입술소리',       line1: '입술',       cons: ['ㅁ','ㅂ','ㅃ','ㅍ'],
             how: '두 입술이 닿았다 떨어지며 나는 소리' },
@@ -379,6 +388,9 @@ const PLACES = {
             how: '목청 사이에서 나는 소리' }
 };
 const PAIR_TOTAL = Object.values(PLACES).reduce((s,p)=>s+p.cons.length,0); // 19
+// 원본 id: PLACES 순서대로 1~19 (교사용 엑셀의 id, 앱스크립트 wrongItems에 같은 번호를 쓴다)
+const CONS_ID = {};
+Object.values(PLACES).forEach(p=>p.cons.forEach(c=>{ CONS_ID[c]=Object.keys(CONS_ID).length+1; }));
 
 // ═══════════════════════════════════════════
 // 점수 규칙
@@ -623,7 +635,8 @@ function onFlip(el){
       const pts=BASE+comboBonus(S.combo); S.score+=pts;
       [A,B].forEach(x=>x.classList.add('match'));
       const cons=a.kind==='cons'?a:b;
-      setTip(`✅ 정답! <b>${cons.label}</b>${josaEun(cons.label)} <b>${PLACES[cons.group].label}</b>예요.`,'good');
+      const pl=PLACES[cons.group];
+      setTip(`✅ 정답! <b>${cons.label}</b>${josaEun(cons.label)} <b>${pl.label}</b>예요. ${pl.how}예요.${cons.label==='ㅇ'&&pl.note?` (${pl.note})`:''}`,'good');
       if(S.combo>=2) pulseHud();
       celebrate(S.combo,pts);
       S.opened=[]; S.locked=false; updateHud();
@@ -662,15 +675,15 @@ function doStartGame(){
   S.active=true; S.startTime=Date.now();
   S.timer=setInterval(()=>{ if(S.active) $('timer').textContent=fmt(elapsedSec()); },1000);
   $('timer').textContent='00:00';
-  $('btnReveal').disabled=false; $('btnReveal').textContent='👀 전체 보기 (1회)';
+  $('btnReveal').disabled=false; $('btnReveal').textContent='👀 전체 보기';
   setTip('💡 자음 카드 1장과 위치 카드 1장을 골라 짝을 지어 보세요.');
   show('game');
   render(); updateHud();
 }
 
 function revealAll(){
-  if(!S.active||S.revealUsed||S.locked) return;
-  S.revealUsed=true; S.locked=true;
+  if(!S.active||S.locked) return;
+  S.revealUsed=true; S.revealCount=(S.revealCount||0)+1; S.locked=true;
   $('btnReveal').disabled=true;
   const cards=[...document.querySelectorAll('.card')];
   cards.forEach(c=>c.classList.remove('selected'));
@@ -678,18 +691,18 @@ function revealAll(){
   cards.forEach(c=>c.dataset.state='open');
   const g=GEN;
   let sec=7; $('btnReveal').textContent=`👀 ${sec}초`;
-  const it=setInterval(()=>{ if(g!==GEN){ clearInterval(it); return; } sec--; $('btnReveal').textContent= sec>0?`👀 ${sec}초`:'👀 사용함'; if(sec<=0) clearInterval(it); },1000);
+  const it=setInterval(()=>{ if(g!==GEN){ clearInterval(it); return; } sec--; $('btnReveal').textContent= sec>0?`👀 ${sec}초`:'👀 전체 보기'; if(sec<=0) clearInterval(it); },1000);
   setTimeout(()=>{
     if(g!==GEN) return;
     cards.forEach(c=>{ if(!c.classList.contains('match')) c.dataset.state='closed'; });
-    if(S.active) S.locked=false;
+    if(S.active){ S.locked=false; $('btnReveal').disabled=false; $('btnReveal').textContent='👀 전체 보기'; }
   },7000);
 }
 
 function show(id){ ['start','game','end'].forEach(s=>$(s).classList.toggle('on',s===id)); window.scrollTo(0,0); }
 
 function verdictOf(acc){
-  // 메모리게임 기준표: 기억력·지식이 완벽한 경우에도 정확도는 약 65% 안팎이다
+  // 메모리형 기준 (교사 결정 2026.10.01): 처음 뒤집는 카드는 운이라 다 알아도 정확도는 약 65% 안팎이다
   if(acc>=60) return '완벽해요!';
   if(acc>=50) return '아주 잘했어요';
   if(acc>=40) return '잘하고 있어요';
@@ -697,10 +710,9 @@ function verdictOf(acc){
   return '다시 한 번 도전해요';
 }
 
-function confusionText(){
-  const seen=new Set(), out=[];
-  S.confusions.forEach(c=>{ const k=c.cons+'|'+c.wrong; if(!seen.has(k)){ seen.add(k); out.push(`${c.cons}(${PLACES[c.wrong].label})`); } });
-  return out.join(',');
+// 앱스크립트 wrongItems: 잘못 짝지은 자음의 원본 id (중복 없이, 오름차순)
+function wrongItemIds(){
+  return [...new Set(S.confusions.map(c=>CONS_ID[c.cons]))].sort((a,b)=>a-b).join(',');
 }
 
 function finish(){
@@ -737,7 +749,7 @@ function sendResult(){
     skippedCount:S.left,
     score:S.score,
     elapsedSeconds:elapsedSec(),
-    wrongItems:confusionText(),
+    wrongItems:wrongItemIds(),
     reflection:''
   }).then(res=>{
     const el=document.createElement('div');
@@ -810,14 +822,14 @@ function downloadTeacherXls(){
   const row=(arr,style)=>`<Row>${arr.map(v=>cell(v,style)).join('')}</Row>`;
   const tail=[
     [],
-    ['성취기준', `${STANDARD.code} ${STANDARD.text}`],
+    ['성취기준', STD_LINE],
     ['배점 규칙', `짝 맞춤 +${BASE}점 · 3~4연속 +5점 추가 · 5연속부터 +10점 추가 · 틀려도 감점 없음(연속만 끊김) · 만점 ${MAX_SCORE}점`],
     ['총 문항 수', `${PAIR_TOTAL}쌍 (카드 ${PAIR_TOTAL*2}장: 자음 ${PAIR_TOTAL}장 + 조음 위치 ${PAIR_TOTAL}장)`],
     ['크레딧', `제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com · 제작일 ${MADE_DATE} · 최종 수정 ${LAST_MOD}`]
   ];
-  let id=0;
+  let id;
   const s1=[row(['id','유형(조음 위치)','문제(자음 카드)','정답(짝이 되는 위치 카드)','해설'],'h')];
-  Object.values(PLACES).forEach(p=>p.cons.forEach(c=>{ id++; s1.push(row([id,p.label,c,p.label,`${c}${josaEun(c)} ${p.label}: ${p.how}${p.note&&c==='ㅇ'?' ('+p.note+')':''}`])); }));
+  Object.values(PLACES).forEach(p=>p.cons.forEach(c=>{ id=CONS_ID[c]; s1.push(row([id,p.label,c,p.label,`${c}${josaEun(c)} ${p.label}: ${p.how}${p.note&&c==='ㅇ'?' ('+p.note+')':''}`])); }));
   tail.forEach(t=>s1.push(row(t)));
   const s2=[row(['조음 위치','자음 수','자음','소리 나는 방법'],'h')];
   Object.values(PLACES).forEach(p=>s2.push(row([p.label,p.cons.length,p.cons.join(' '),p.how+(p.note?' ('+p.note+')':'')])));

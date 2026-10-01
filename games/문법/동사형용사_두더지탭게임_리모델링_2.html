@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<!-- 리모델링 2026.10.01 06:50 (3차 야간)
+     내용: 무게·두께 유형 tip의 '-고 있다' 판별 → '-는다/-ㄴ다' 판별 (교사 승인 문장, 다른 품사 게임과 같은 판별법)
+     채점: 잘못 탭 감점 −5 → −10 (맞힘 기본점과 같게, 지침 3-6 속도형)
+     화면: 모바일 등급 M1 유지(교사 결정 2026.10.01: 탭 조작이라 휴대폰에서도 사용). 정답률에 놓침 포함
+     2026.10.01 13:00 '게임 끝내기' 확인 단계 추가(지침 6-1): 화면 안 확인창이 떠 있는 동안 시간·두더지 멈춤, 취소·Esc면 이어서 -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -230,6 +235,9 @@ body.t-verb .pTgt .tgt{color:var(--verb);} body.t-adj .pTgt .tgt{color:var(--adj
 .modalHead{background:var(--accent); color:#fff; padding:11px 16px; font-weight:700; display:flex; justify-content:space-between; align-items:center;}
 .modalHead button{background:rgba(255,255,255,.22); color:#fff; border:none; border-radius:8px; min-height:36px; padding:0 12px; font-weight:700; cursor:pointer;}
 .modalBody{padding:12px 16px; overflow-y:auto;}
+.qmBody{padding:20px 16px; text-align:center; line-height:1.6;}
+.qmBody b{color:var(--dark); font-size:18px;}
+.qmBody .btnRow{margin-top:16px;}
 .modalBody h4{margin:10px 0 6px; color:var(--dark);}
 .rv{border-bottom:1px solid #f1eef8; padding:7px 0; font-size:14px; line-height:1.5; word-break:keep-all;}
 .rv b{font-size:15.5px;}
@@ -303,7 +311,7 @@ body.t-verb .pTgt .tgt{color:var(--verb);} body.t-adj .pTgt .tgt{color:var(--adj
       <div class="ruleChips">
        <div class="chip"><span class="k">정답</span><span class="v">✅ +10</span></div>
        <div class="chip"><span class="k">콤보 3~4 / 5+</span><span class="v">+5 / +10</span></div>
-       <div class="chip"><span class="k">잘못 탭</span><span class="v">❌ −5</span></div>
+       <div class="chip"><span class="k">잘못 탭</span><span class="v">❌ −10</span></div>
        <div class="chip"><span class="k">시간 · 생명</span><span class="v">3분 · ❤15</span></div>
       </div>
      </div>
@@ -338,7 +346,7 @@ body.t-verb .pTgt .tgt{color:var(--verb);} body.t-adj .pTgt .tgt{color:var(--adj
 
    <div class="credit">
     <span class="seg">제작 · 보라라샘</span> · <span class="seg">전주서신중학교 교사</span> · <span class="seg">siaawase@gmail.com</span><br>
-    <span class="seg">제작일 2026.06.03</span> · <span class="seg" id="lastMod">최종 수정 2026.09.15 22:03</span>
+    <span class="seg">제작일 2026.06.03</span> · <span class="seg" id="lastMod">최종 수정 2026.10.01 13:00</span>
    </div>
 
    <div class="privacy" id="privacyOffline">
@@ -425,7 +433,7 @@ body.t-verb .pTgt .tgt{color:var(--verb);} body.t-adj .pTgt .tgt{color:var(--adj
 
    <div class="credit">
     <span class="seg">제작 · 보라라샘</span> · <span class="seg">전주서신중학교 교사</span> · <span class="seg">siaawase@gmail.com</span><br>
-    <span class="seg">제작일 2026.06.03</span> · <span class="seg" id="lastMod2">최종 수정 2026.09.15 22:03</span>
+    <span class="seg">제작일 2026.06.03</span> · <span class="seg" id="lastMod2">최종 수정 2026.10.01 13:00</span>
    </div>
   </div>
  </div>
@@ -439,6 +447,15 @@ body.t-verb .pTgt .tgt{color:var(--verb);} body.t-adj .pTgt .tgt{color:var(--adj
  </div>
 </div>
 
+<div class="modal" id="quitModal" role="dialog" aria-modal="true" aria-labelledby="qmTitle">
+ <div class="modalCard" style="max-width:420px">
+  <div class="modalHead"><span id="qmTitle">⏹ 게임 끝내기</span></div>
+  <div class="qmBody">
+   <b>게임을 끝낼까요?</b><br>지금까지의 결과로 마무리돼요.
+   <div class="btnRow two"><button class="btn sec" id="qmNo">계속하기</button><button class="btn" id="qmYes">끝내기</button></div>
+  </div>
+ </div>
+</div>
 <div class="modal" id="reviewModal">
  <div class="modalCard">
   <div class="modalHead"><span>📖 오늘 나온 단어</span><button id="reviewClose">닫기 ✕</button></div>
@@ -451,7 +468,7 @@ body.t-verb .pTgt .tgt{color:var(--verb);} body.t-adj .pTgt .tgt{color:var(--adj
 
 <script>
 const MADE_DATE = "2026.06.03";
-const LAST_MOD = "2026.09.15 22:03";
+const LAST_MOD = "2026.10.01 13:00";
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -503,7 +520,7 @@ const CATEGORIES = {
   adj_size:   { cls:"형용사", label:"크기·길이·넓이", desc:"대상의 크기, 높이, 길이가 어떠한지 나타내는 말",
     tip:'"-는다"를 붙여 보세요. "작는다, 높는다"처럼 어색하면 상태를 말하는 형용사입니다.' },
   adj_weight: { cls:"형용사", label:"무게·두께", desc:"대상의 무게나 두께가 어떠한지 나타내는 말",
-    tip:'"-고 있다"를 붙여 보세요. "무겁고 있다"처럼 어색하면 진행할 수 없는 상태, 곧 형용사입니다.' },
+    tip:"'-는다/-ㄴ다'를 붙여 보세요. '먹는다'처럼 자연스러우면 동사, '예쁘는다'처럼 어색하면 형용사예요." },
   adj_sense:  { cls:"형용사", label:"온도·맛·소리", desc:"몸으로 느끼는 대상의 성질을 나타내는 말",
     tip:'느끼는 행동이 아니라 대상이 "어떠한지"를 말하는지 보세요. "뜨겁는다, 시끄럽는다"가 어색하면 형용사입니다.' },
   adj_speed:  { cls:"형용사", label:"빠르기", desc:"움직임이 어떠한지 나타내는 말",
@@ -593,7 +610,7 @@ const STAGES = [
   { n:3, key:"hard",   label:"고급", spawn:680,  visible:1150, maxActive:4 }
 ];
 const TIME_LIMIT = 180, MAX_LIVES = 15, TARGET_RATIO = 0.55;
-const BASE_POINT = 10, WRONG_PENALTY = 5, HOLES = 9;
+const BASE_POINT = 10, WRONG_PENALTY = 10, HOLES = 9;   // 잘못 탭 감점 = 맞힘 기본점 (지침 3-6 속도형)
 const KEYMAP = { KeyQ:0, KeyW:1, KeyE:2, KeyA:3, KeyS:4, KeyD:5, KeyZ:6, KeyX:7, KeyC:8,
   Numpad7:0, Numpad8:1, Numpad9:2, Numpad4:3, Numpad5:4, Numpad6:5, Numpad1:6, Numpad2:7, Numpad3:8 };
 const KEYCAPS = ["Q","W","E","A","S","D","Z","X","C"];
@@ -739,12 +756,14 @@ function runGame(){
   updateHUD();
   show("playScreen");
   spawnTimer = setInterval(spawn, cfg.spawn);
+  S.lastTickAt = Date.now();
   gameTimer = setInterval(tick, 1000);
   spawn(); setTimeout(spawn, 200); if(cfg.maxActive >= 3) setTimeout(spawn, 400);
 }
 
 function tick(){
   if(!S || S.endAt) return;
+  S.lastTickAt = Date.now();
   S.time--;
   if(S.time <= 0){ S.time = 0; updateHUD(); endGame("time"); return; }
   updateHUD();
@@ -774,7 +793,7 @@ function drawWord(cls){
 }
 
 function spawn(){
-  if(!S || S.endAt) return;
+  if(!S || S.endAt || S.paused) return;
   const free = []; let act = 0;
   holeData.forEach((h,i) => { if(h.active) act++; else free.push(i); });
   if(act >= S.cfg.maxActive || !free.length) return;
@@ -788,6 +807,7 @@ function spawn(){
   S.appear[w.cat] = (S.appear[w.cat]||0) + 1;
   if(!S.seen.includes(w.id)) S.seen.push(w.id);
   sndPop();
+  h.hideAt = Date.now() + S.cfg.visible;
   h.hideTO = setTimeout(() => hideMole(idx, false), S.cfg.visible);
 }
 
@@ -908,7 +928,48 @@ function comboFx(c){
 }
 
 $("muteBtn").addEventListener("click", () => { muted = !muted; $("muteBtn").textContent = muted ? "🔇 소리" : "🔊 소리"; });
-$("quitBtn").addEventListener("click", () => endGame("quit"));
+// 게임 끝내기: 한 번 확인한 뒤 끝낸다 (지침 6-1). 확인창이 떠 있는 동안에는 시간과 두더지를 멈춘다
+function askQuit(){
+  if(!S || S.endAt || S.paused) return;
+  const now = Date.now();
+  S.paused = true; S.pauseAt = now;
+  clearInterval(spawnTimer); clearInterval(gameTimer); clearTimeout(gameTimer);
+  S.moleRest = holeData.map(h => {
+    if(!h.active || !h.hideTO) return null;
+    clearTimeout(h.hideTO); h.hideTO = null;
+    return Math.max(0, (h.hideAt || now) - now);
+  });
+  $("quitModal").classList.add("active"); $("qmNo").focus();
+}
+function quitCancel(){
+  if(!S || !S.paused) return;
+  $("quitModal").classList.remove("active");
+  S.paused = false;
+  const now = S.pauseAt, t = Date.now();
+  S.startAt += t - now;  // 확인창이 떠 있던 시간은 소요 시간에서 뺀다
+  holeData.forEach((h, i) => {
+    const r = S.moleRest[i];
+    if(r === null || r === undefined || !h.active) return;
+    h.hideAt = t + r;
+    h.hideTO = setTimeout(() => hideMole(i, false), r);
+  });
+  spawnTimer = setInterval(spawn, S.cfg.spawn);
+  // 멈추기 전 1초 가운데 남은 부분부터 다시 센다 (끝내기→취소를 반복해 시간을 버는 일이 없게)
+  const tickRest = Math.max(0, 1000 - (now - (S.lastTickAt || now)));
+  S.lastTickAt = t - (1000 - tickRest);
+  gameTimer = setTimeout(() => { tick(); if(S && !S.endAt && !S.paused) gameTimer = setInterval(tick, 1000); }, tickRest);
+  if(document.activeElement) document.activeElement.blur();
+}
+function quitConfirm(){
+  if(!S || !S.paused) return;
+  $("quitModal").classList.remove("active");
+  S.startAt += Date.now() - S.pauseAt; S.paused = false;
+  endGame("quit");
+}
+$("quitBtn").addEventListener("click", askQuit);
+$("qmNo").addEventListener("click", quitCancel);
+$("qmYes").addEventListener("click", quitConfirm);
+$("quitModal").addEventListener("click", e => { if(e.target.id === "quitModal") quitCancel(); });
 
 /* ═══════════ 분석 ═══════════ */
 function gradeText(rate){
@@ -920,7 +981,9 @@ function gradeText(rate){
 }
 function analyze(){
   const taps = S.correct + S.wrong;
-  const rate = taps ? Math.round(S.correct / taps * 100) : null;
+  const missedN = S.missedLog.reduce((a,b)=>a+b.count,0);
+  const denom = taps + missedN;   // 정답률 = 맞힘 ÷ (맞힘 + 잘못 탭 + 놓침) — 교사 결정 2026.10.01 (놓침은 감점 없음)
+  const rate = denom ? Math.round(S.correct / denom * 100) : null;
   const nonTargetCats = Object.keys(CATEGORIES).filter(k => CATEGORIES[k].cls === S.other);
   const targetCats = Object.keys(CATEGORIES).filter(k => CATEGORIES[k].cls === S.target);
   const rows = nonTargetCats.map(k => {
@@ -1210,7 +1273,7 @@ $("dlReportBtn").addEventListener("click", () => {
     d.ops.push({ t:"text", s:String(s[1]), font:CF("bold",26), color:"#3C3489", x:cx+16, y:cy+64 });
   });
   d.y += 82*2 + 10 + 12;
-  d.text("👀 놓친 목표 단어 " + S.missedLog.reduce((a,b)=>a+b.count,0) + "회 (감점 없음, 정답률에 넣지 않음)", { size:14, color:"#92400e", gap:10 });
+  d.text("👀 놓친 목표 단어 " + S.missedLog.reduce((a,b)=>a+b.count,0) + "회 (감점 없음, 정답률에는 넣음)", { size:14, color:"#92400e", gap:10 });
 
   d.box(X, BW, "#3C3489", null, 16, () => d.text((A.unfinished ? A.unfinished + " · " : "") + "총평: " + A.verdict, { size:21, weight:"bold", color:"#ffffff", x:X+20, maxW:BW-40 }));
   d.y += 14;
@@ -1261,7 +1324,7 @@ function downloadTeacherXls(){
   const foot = [
     xRow([]),
     xRow(["성취기준", "[" + STANDARD.code + "] " + STANDARD.text]),
-    xRow(["배점 규칙", "바르게 탭 +10 · 3~4콤보 +5 · 5콤보 이상 +10 · 잘못 탭 −5(0점 하한, 생명 −1) · 놓침 감점 없음"]),
+    xRow(["배점 규칙", "바르게 탭 +10 · 3~4콤보 +5 · 5콤보 이상 +10 · 잘못 탭 −10(0점 하한, 생명 −1) · 놓침 감점 없음"]),
     xRow(["총 단어 수", WORDS.length + "개 (동사 " + WORDS.filter(w=>w.cls==="동사").length + " · 형용사 " + WORDS.filter(w=>w.cls==="형용사").length + ")"]),
     xRow(["크레딧", CREDIT_LINE + " · 제작일 " + MADE_DATE + " · 최종 수정 " + LAST_MOD])
   ];
@@ -1297,6 +1360,7 @@ document.addEventListener("keydown", e => {
     if(e.key === "Enter" || e.key === " " || e.code === "Space"){ e.preventDefault(); confirmBanner(); }
     return;
   }
+  if(S && S.paused){ if(e.key === "Escape"){ e.preventDefault(); quitCancel(); } return; }
   if($("reviewModal").classList.contains("active") && e.key === "Escape"){ $("reviewModal").classList.remove("active"); return; }
   if($("playScreen").classList.contains("active") && S && !S.endAt && e.code in KEYMAP){
     e.preventDefault(); onTap(KEYMAP[e.code]);
