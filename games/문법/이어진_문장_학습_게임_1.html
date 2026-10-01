@@ -1,5 +1,12 @@
 <!DOCTYPE html>
 <html lang="ko">
+<!-- 리모델링 2026.10.01 21:00 (9차) — 게임 코드 G304 부여(옛 코드 없음)
+     문항: '-고 = 대등' 단정 해설 고침(나열의 -고는 대등, 시간 순서의 -고는 종속 — 교사 결정), 2단계 9번 선택만 남는 문장으로, 3단계 10번 '밤을 새우니 오늘 졸리다' → '날이 추우니 옷을 두껍게 입어라'
+     채점: 1단계 빈칸 붙임표·괄호·공백 정규화('-고'도 정답), 6번 '먹었고' 인정 / 점수 v3(+10·−5·콤보 +5/+10, 단계 만점 170)
+     기록: 게임 종료 시 미응답 따로, 총평은 첫 시도 정답률, 결과·리포트·오답노트·전송이 한 함수(calcStats), 소감 선택, 입력 이벤트 중복 제거
+     표준: 앱스크립트 연동, 키보드(채점 후 Enter·Space·→), 게임 종료 확인, 성취기준 (2015) 9국04-06 / (2022) 9국04-04
+     2026.10.01 23:50 교사 결정: 시간 순서 '-고'(종속-시간) 문항 3개 추가 — 2단계 11·12번, 3단계 11번. 2단계 종속 세부 유형에 '시간' 추가.
+       문항 수가 단계마다 달라져(10/12/11) 문항 수·만점(170/210/190)을 모두 문항 배열 길이로 계산 -->
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
@@ -144,6 +151,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .feedback.show{display:flex}
 .feedback.correct{background:var(--green-l);border:1.5px solid var(--green-m);color:#3a8f60}
 .feedback.wrong{background:var(--red-l);border:1.5px solid var(--red-m);color:#c05050}
+@keyframes spin{to{transform:rotate(360deg)}}
 @keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 .feedback-icon{font-size:1.3rem;flex-shrink:0}
 .feedback-text{flex:1;line-height:1.5}
@@ -174,12 +182,13 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .complete-right{text-align:center}
 .final-score{font-size:2.6rem;font-weight:900;color:var(--primary);line-height:1;margin-bottom:3px}
 .final-score-label{color:var(--muted);font-size:.85rem;margin-bottom:10px}
-.stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(64px,1fr));gap:7px}
 .stat-box{border-radius:10px;padding:8px 5px;text-align:center}
 .stat-val{font-size:1.3rem;font-weight:900}
 .stat-lbl{font-size:.75rem;color:var(--muted);margin-top:2px}
 .stat-box.s-correct{background:var(--green-l)}.stat-box.s-correct .stat-val{color:#3a8f60}
 .stat-box.s-wrong{background:var(--red-l)}.stat-box.s-wrong .stat-val{color:#c05050}
+.stat-box.s-skip{background:var(--yellow-l)}.stat-box.s-skip .stat-val{color:var(--yellow)}
 .stat-box.s-combo{background:var(--orange-l)}.stat-box.s-combo .stat-val{color:var(--orange)}
 
 /* 이름/소감 입력 */
@@ -237,7 +246,7 @@ textarea.report-input{height:60px;resize:vertical}
     </div>
   </div>
 
-  <div class="standard-box">📋 성취기준 [9국04-06] 문장의 짜임과 양상을 탐구하고 활용한다.</div>
+  <div class="standard-box">📋 성취기준<br>(2015) [9국04-06] 문장의 짜임과 양상을 탐구하고 활용한다.<br>(2022) [9국04-04] 문장의 짜임을 이해하고 표현 효과를 고려하여 문장을 구성한다.</div>
 
   <div class="how-to-play">
     <div class="how-title">🎮 게임 방법</div>
@@ -249,16 +258,18 @@ textarea.report-input{height:60px;resize:vertical}
   </div>
 
   <div class="concept-grid">
-    <div class="concept-item"><div class="concept-icon">📝</div><div class="concept-info"><div class="ci-title" style="color:#5b8fd4">대등 — 나열</div><div class="ci-desc">-고 (앞뒤 절을 나란히)</div></div></div>
+    <div class="concept-item"><div class="concept-icon">📝</div><div class="concept-info"><div class="ci-title" style="color:#5b8fd4">대등 — 나열</div><div class="ci-desc">-고 (앞뒤 절을 나란히) · 시간 순서의 -고는 종속</div></div></div>
     <div class="concept-item"><div class="concept-icon">⚖️</div><div class="concept-info"><div class="ci-title" style="color:#4a9f90">대등 — 대조</div><div class="ci-desc">-지만, -(으)나</div></div></div>
     <div class="concept-item"><div class="concept-icon">🔀</div><div class="concept-info"><div class="ci-title" style="color:#d4875b">대등 — 선택</div><div class="ci-desc">-거나, -든지</div></div></div>
     <div class="concept-item"><div class="concept-icon">💡</div><div class="concept-info"><div class="ci-title" style="color:#c8a020">종속 — 원인</div><div class="ci-desc">-아서/-어서, -(으)니</div></div></div>
     <div class="concept-item"><div class="concept-icon">❓</div><div class="concept-info"><div class="ci-title" style="color:#7c5cbf">종속 — 조건</div><div class="ci-desc">-(으)면, -거든</div></div></div>
     <div class="concept-item"><div class="concept-icon">🎯</div><div class="concept-info"><div class="ci-title" style="color:#d45b5b">종속 — 목적·의도</div><div class="ci-desc">-(으)러, -(으)려고</div></div></div>
+    <div class="concept-item"><div class="concept-icon">⏩</div><div class="concept-info"><div class="ci-title" style="color:#5b6fd4">종속 — 시간</div><div class="ci-desc">-고 (먼저 한 일 → 나중 한 일, 앞뒤를 바꾸면 뜻이 달라짐)</div></div></div>
   </div>
 
   <div class="score-info">
-    정답 <strong>+100점</strong> · 오답 <strong>−30점</strong>(0점 하한) · 3연속 정답 <strong>+50 보너스</strong> · 5연속 정답 <strong>+100 보너스</strong>
+    정답 <strong>+10점</strong> · 오답 <strong>−5점</strong>(0점 하한) · 연속 정답 3·4번째 <strong>+5</strong>, 5번째부터 <strong>+10</strong> · 단계 만점 <strong><span id="max-score-info">1단계 170 · 2단계 210 · 3단계 190</span>점</strong><br>
+    ⌨️ 채점이 끝나면 Enter · Space · → 로 다음 문제, ← 로 이전 문제
   </div>
 
   <div class="stage-section">
@@ -270,13 +281,31 @@ textarea.report-input{height:60px;resize:vertical}
     </div>
   </div>
 
-  <div class="credit-box">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2025.08.12 · Made with Claude</div>
+  <div class="credit-box">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2025.08.12 · 최종 수정 2026.10.01 23:50 · Made with Claude · 게임 코드 G304</div>
 </div>
 
-<div class="privacy-box">
+<div class="privacy-box" id="privacyOffline">
   <strong>🔒 개인정보 보호 안내</strong><br>
   본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다. 게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.
 </div>
+<div class="privacy-box" id="privacyOnline" style="display:none">
+  <strong>🔒 개인정보 보호 안내</strong><br>
+  본 게임의 학습 결과(학번, 이름, 점수, 오답 정보, 학습 소감)는 담당 선생님의 학습 관리용 스프레드시트에 안전하게 전송·저장됩니다.<br>
+  수집된 정보는 학습 지도 목적으로만 사용되며, 제3자에게 제공되지 않습니다.
+</div>
+</div>
+
+<div id="loginOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;justify-content:center;align-items:center">
+ <div style="background:#fff;border-radius:20px;padding:32px;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center">
+  <div style="font-size:36px;margin-bottom:8px">🔑</div>
+  <h2 style="font-size:20px;margin-bottom:4px;color:var(--text)">학생 인증</h2>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:20px">학번과 이름을 입력하면 게임을 시작할 수 있어요.</p>
+  <div style="text-align:left;margin-bottom:12px"><label style="font-size:13px;font-weight:700;color:var(--text)">학번 (5자리)</label><input id="loginId" type="text" maxlength="5" inputmode="numeric" placeholder="예: 30101" style="width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-size:16px;margin-top:4px;box-sizing:border-box"></div>
+  <div style="text-align:left;margin-bottom:16px"><label style="font-size:13px;font-weight:700;color:var(--text)">이름</label><input id="loginName" type="text" maxlength="10" placeholder="예: 김민준" style="width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-size:16px;margin-top:4px;box-sizing:border-box"></div>
+  <div id="loginMsg" style="font-size:13px;color:var(--red);min-height:20px;margin-bottom:12px"></div>
+  <button id="loginBtn" onclick="doLogin()" style="width:100%;padding:12px;background:var(--primary);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit">확인</button>
+  <div id="loginSpinner" style="display:none;margin-top:12px"><div style="width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto"></div></div>
+ </div>
 </div>
 
 <!-- ===== 게임 화면 ===== -->
@@ -317,10 +346,12 @@ textarea.report-input{height:60px;resize:vertical}
       <div class="final-score" id="final-score">0</div>
       <div class="final-score-label" id="final-score-label">최종 점수</div>
       <div class="stats-grid">
-        <div class="stat-box s-correct"><div class="stat-val" id="stat-correct">0</div><div class="stat-lbl">정답</div></div>
-        <div class="stat-box s-wrong"><div class="stat-val" id="stat-wrong">0</div><div class="stat-lbl">오답</div></div>
+        <div class="stat-box s-correct"><div class="stat-val" id="stat-correct">0</div><div class="stat-lbl">첫 시도 정답</div></div>
+        <div class="stat-box s-wrong"><div class="stat-val" id="stat-wrong">0</div><div class="stat-lbl">못 맞힘</div></div>
+        <div class="stat-box s-skip"><div class="stat-val" id="stat-skip">0</div><div class="stat-lbl">미응답</div></div>
         <div class="stat-box s-combo"><div class="stat-val" id="stat-combo">0</div><div class="stat-lbl">최고 콤보</div></div>
       </div>
+      <div class="final-score-label" id="stat-rate" style="margin-top:8px"></div>
     </div>
   </div>
 
@@ -328,8 +359,8 @@ textarea.report-input{height:60px;resize:vertical}
     <label for="inp-name">✏️ 이름</label>
     <input class="report-input" id="inp-name" type="text" placeholder="이름을 입력하세요" maxlength="20"/>
     <label for="inp-comment">💬 학습 소감</label>
-    <textarea class="report-input" id="inp-comment" placeholder="오늘 학습 소감을 적어 보세요"></textarea>
-    <div class="report-privacy">🔒 입력하신 이름과 소감은 서버에 저장되지 않으며, 리포트 이미지(JPG) 생성용으로만 쓰입니다.</div>
+    <textarea class="report-input" id="inp-comment" placeholder="(선택) 오늘 학습 소감을 적어 보세요"></textarea>
+    <div class="report-privacy" id="endPrivacy">🔒 입력하신 이름과 소감은 서버에 저장되지 않으며, 리포트 이미지(JPG) 생성용으로만 쓰입니다. 소감은 쓰지 않아도 저장할 수 있어요.</div>
     <div class="complete-btns">
       <button class="dl-btn btn-note" id="btn-note" onclick="downloadWrongNote()" disabled>📋 오답노트 저장</button>
       <button class="dl-btn btn-report" id="btn-report" onclick="downloadReport()" disabled>📊 리포트 저장</button>
@@ -348,6 +379,52 @@ textarea.report-input{height:60px;resize:vertical}
 <div class="ingame-credit" id="ingame-credit">제작 · 보라라샘 / 2025.08.12</div>
 
 <script>
+/* ===== Apps Script 연동 설정 ===== */
+const MADE_DATE='2025.08.12', MOD_DATE='2026.10.01 23:50';
+const GAME_CONFIG = {
+  gameCode: "G304",
+  gameName: "이어진 문장 만들기",
+  webAppUrl: "https://script.google.com/macros/s/AKfycbzgq9yT5svpFzeFwW5p2pWOpL-lKpj5_RldoJejFT1EOk1Osjcf6hDx85jGQzvr5rU0ww/exec"
+};
+const params = new URLSearchParams(location.search);
+const TEACHER_KEY = params.get("key");
+const IS_ONLINE = !!TEACHER_KEY;
+let STUDENT = { id: "", name: "", className: "", verified: false };
+let pendingStage = 0;
+
+async function verifyStudent(studentId, studentName) {
+  if (!IS_ONLINE) return { status: "ok" };
+  try {
+    const res = await fetch(GAME_CONFIG.webAppUrl, {
+      method: "POST", headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ action: "verify", teacherKey: TEACHER_KEY, studentId, studentName })
+    });
+    return await res.json();
+  } catch (e) { return { status: "error", message: "서버에 연결할 수 없습니다. 인터넷 연결을 확인해주세요." }; }
+}
+function notifyGameStart(studentId, studentName, className) {
+  if (!IS_ONLINE) return;
+  fetch(GAME_CONFIG.webAppUrl, {
+    method: "POST", headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify({ action: "start", teacherKey: TEACHER_KEY, gameCode: GAME_CONFIG.gameCode, studentId, studentName, className })
+  }).catch(() => {});
+}
+async function submitResult(resultData) {
+  if (!IS_ONLINE) return { status: "ok" };
+  try {
+    const res = await fetch(GAME_CONFIG.webAppUrl, {
+      method: "POST", headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ action: "submit", teacherKey: TEACHER_KEY, gameCode: GAME_CONFIG.gameCode, gameName: GAME_CONFIG.gameName, ...resultData })
+    });
+    return await res.json();
+  } catch (e) { return { status: "error", message: "결과 전송에 실패했습니다." }; }
+}
+
+/* ===== 점수 규칙 (지침 5-1·5-4) ===== */
+const BASE=10, PENALTY=5;
+function comboBonus(c){return c>=5?10:c>=3?5:0}
+function stageMax(n){return n*BASE+(n>=4?10+10*(n-4):n===3?5:0)}
+
 /* ===== 데이터 ===== */
 const STAGES = [
 // ── 1단계: 문장 만들기 (B안 5문제 + A안 5문제) ──
@@ -368,7 +445,7 @@ const STAGES = [
    display:'맛있는 음식을 먹____ 식당에 갔다.',blank:'으러',
    subtype:'종속-목적',detail:'연결 어미 "-(으)러"로 앞 절이 뒤 절의 목적이 되도록 이었어요.',src:'창작'},
   {id:6,type:'A',sent1:'나는 밥을 먹다',sent2:'동생은 빵을 먹었다',emi:'-고',
-   answer:'나는 밥을 먹고 동생은 빵을 먹었다.',altAnswers:['나는 밥을 먹고 동생은 빵을 먹었다','나는 밥을 먹고, 동생은 빵을 먹었다.','나는 밥을 먹고, 동생은 빵을 먹었다'],
+   answer:'나는 밥을 먹고 동생은 빵을 먹었다.',altAnswers:['나는 밥을 먹고 동생은 빵을 먹었다','나는 밥을 먹고, 동생은 빵을 먹었다.','나는 밥을 먹고, 동생은 빵을 먹었다','나는 밥을 먹었고 동생은 빵을 먹었다'],
    subtype:'대등-나열',detail:'연결 어미 "-고"로 두 행동을 나열했어요. "먹다"의 어간 "먹" + "-고" = "먹고"예요.',src:'창작'},
   {id:7,type:'A',sent1:'날씨가 맑다',sent2:'기분이 좋아졌다',emi:'-아서',
    answer:'날씨가 맑아서 기분이 좋아졌다.',altAnswers:['날씨가 맑아서 기분이 좋아졌다','날씨가 맑아서, 기분이 좋아졌다.','날씨가 맑아서, 기분이 좋아졌다'],
@@ -386,7 +463,7 @@ const STAGES = [
 // ── 2단계: 유형 판별 (2단 선택) ──
 [
   {id:1,sentence:'하늘이 맑고 바람이 시원하다.',emiHighlight:'-고',step1:'대등',step2:'나열',
-   detail:'"-고"는 앞뒤 절을 나란히 늘어놓는 대등적 연결 어미(나열)예요.',src:'창작'},
+   detail:'이 문장의 "-고"는 "하늘이 맑다"와 "바람이 시원하다"를 나란히 늘어놓는 나열이라 대등적으로 이어진 문장이에요. 앞뒤 절을 바꿔도("바람이 시원하고 하늘이 맑다") 뜻이 같아요. 시간 순서의 "-고"(밥을 먹고 학교에 갔다)는 종속적으로 이어진 문장이에요.',src:'창작'},
   {id:2,sentence:'윤지는 웃었지만 민서는 울었다.',emiHighlight:'-지만',step1:'대등',step2:'대조',
    detail:'"-지만"은 앞뒤 절의 내용이 서로 반대되는 대등적 연결 어미(대조)예요.',src:'📘교과서'},
   {id:3,sentence:'주말에 영화를 보거나 책을 읽겠다.',emiHighlight:'-거나',step1:'대등',step2:'선택',
@@ -401,10 +478,14 @@ const STAGES = [
    detail:'"-(으)나"는 앞뒤 절의 내용이 대립하는 대등적 연결 어미(대조)예요.',src:'창작'},
   {id:8,sentence:'시간이 없어서 택시를 탔다.',emiHighlight:'-어서',step1:'종속',step2:'원인',
    detail:'"-어서"는 앞 절이 뒤 절의 원인이 되는 종속적 연결 어미(원인)예요.',src:'창작'},
-  {id:9,sentence:'축구를 하든지 농구를 하든지 마음대로 해라.',emiHighlight:'-든지',step1:'대등',step2:'선택',
-   detail:'"-든지"는 둘 중 어느 것이든 상관없다는 대등적 연결 어미(선택)예요.',src:'창작'},
+  {id:9,sentence:'축구를 하든지 농구를 하든지 해라.',emiHighlight:'-든지',step1:'대등',step2:'선택',
+   detail:'"-든지"는 축구와 농구 가운데 하나를 고르게 하는 대등적 연결 어미(선택)예요. 앞뒤 절을 바꿔도("농구를 하든지 축구를 하든지 해라") 뜻이 같아요.',src:'창작'},
   {id:10,sentence:'친구를 만나려고 카페에 갔다.',emiHighlight:'-(으)려고',step1:'종속',step2:'목적',
-   detail:'"-(으)려고"는 앞 절이 뒤 절의 목적이 되는 종속적 연결 어미(목적·의도)예요.',src:'창작'}
+   detail:'"-(으)려고"는 앞 절이 뒤 절의 목적이 되는 종속적 연결 어미(목적·의도)예요.',src:'창작'},
+  {id:11,sentence:'아침을 먹고 학교에 갔다.',emiHighlight:'-고',step1:'종속',step2:'시간',
+   detail:'아침을 먼저 먹고 그다음에 학교에 간 시간 순서예요. 앞뒤를 바꾸면("학교에 가고 아침을 먹었다") 일의 순서가 달라져 뜻이 바뀌므로 종속적으로 이어진 문장이에요. 1번 "하늘이 맑고 바람이 시원하다"는 바꿔도 뜻이 같아서 대등이에요.',src:'창작'},
+  {id:12,sentence:'손을 씻고 밥을 먹었다.',emiHighlight:'-고',step1:'종속',step2:'시간',
+   detail:'손을 씻은 다음에 밥을 먹은 시간 순서예요. "밥을 먹고 손을 씻었다"로 바꾸면 무엇을 먼저 했는지가 달라져 뜻이 바뀌어요. 그래서 같은 "-고"라도 종속적으로 이어진 문장이에요.',src:'창작'}
 ],
 // ── 3단계: 연결 어미 고르기 ──
 [
@@ -435,9 +516,12 @@ const STAGES = [
   {id:9,sent1:'비가 오다',sent2:'우산을 가져가거라',reqType:'종속-조건',
    options:['-거든','-아서','-고','-거나'],answer:'-거든',
    result:'비가 오거든 우산을 가져가거라.',detail:'앞 절이 뒤 절의 조건이므로 "-거든"이 알맞아요.',src:'창작'},
-  {id:10,sent1:'밤을 새우다',sent2:'오늘 졸리다',reqType:'종속-원인',
+  {id:10,sent1:'날이 춥다',sent2:'옷을 두껍게 입어라',reqType:'종속-원인',
    options:['-(으)니','-고','-(으)면','-거나'],answer:'-(으)니',
-   result:'밤을 새우니 오늘 졸리다.',detail:'앞 절이 뒤 절의 원인이므로 "-(으)니"가 알맞아요.',src:'창작'}
+   result:'날이 추우니 옷을 두껍게 입어라.',detail:'날이 추운 것이 옷을 두껍게 입으라는 까닭(원인)이므로 "-(으)니"가 알맞아요. "춥다" → "추우니"로 활용해요.',src:'창작'},
+  {id:11,sent1:'숙제를 끝내다',sent2:'놀이터에 나갔다',reqType:'종속-시간',
+   options:['-고','-지만','-거나','-(으)면'],answer:'-고',
+   result:'숙제를 끝내고 놀이터에 나갔다.',detail:'숙제를 끝낸 다음에 놀이터에 나간 시간 순서이므로 "-고"가 알맞아요. 앞뒤를 바꾸면("놀이터에 나가고 숙제를 끝냈다") 순서가 달라져 뜻이 바뀌니 종속이에요. 1번처럼 나열하는 "-고"(노래를 부르고 춤을 춘다)는 대등이에요.',src:'창작'}
 ]
 ];
 
@@ -458,12 +542,33 @@ function playCombo(){try{const c=getACtx();[523,659,784,1047].forEach((f,i)=>{co
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
 
 /* ===== 게임 시작 ===== */
+async function doLogin(){
+  const idVal=document.getElementById('loginId').value.trim();
+  const nameVal=document.getElementById('loginName').value.trim();
+  const msg=document.getElementById('loginMsg');
+  if(!idVal||idVal.length!==5||!/^\d{5}$/.test(idVal)){msg.textContent='학번은 5자리 숫자여야 합니다.';return;}
+  if(!nameVal){msg.textContent='이름을 입력하세요.';return;}
+  msg.textContent='';document.getElementById('loginBtn').style.display='none';document.getElementById('loginSpinner').style.display='block';
+  const result=await verifyStudent(idVal,nameVal);
+  document.getElementById('loginBtn').style.display='block';document.getElementById('loginSpinner').style.display='none';
+  if(result.status==='ok'){
+    STUDENT={id:idVal,name:nameVal,className:result.className||'',verified:true};
+    document.getElementById('loginOverlay').style.display='none';
+    notifyGameStart(STUDENT.id,STUDENT.name,STUDENT.className);
+    doStartGame(pendingStage);
+  } else { msg.textContent=result.message||'인증에 실패했습니다.'; }
+}
 function startGame(si){
+  if(IS_ONLINE&&!STUDENT.verified){pendingStage=si;document.getElementById('loginOverlay').style.display='flex';document.getElementById('loginId').focus();return;}
+  if(IS_ONLINE&&STUDENT.verified){notifyGameStart(STUDENT.id,STUDENT.name,STUDENT.className);}
+  doStartGame(si);
+}
+function doStartGame(si){
   currentStage=si;
   questions=STAGES[si];
   current=0;score=0;combo=0;maxCombo=0;correctCount=0;wrongCount=0;
-  answered=new Array(10).fill(null);
-  userAnswers=new Array(10).fill('');
+  answered=new Array(questions.length).fill(null);
+  userAnswers=new Array(questions.length).fill('');
   gameStartTime=new Date();
   document.getElementById('score-val').textContent='0';
   document.getElementById('combo-badge').classList.add('hidden');
@@ -477,8 +582,8 @@ function startGame(si){
 /* ===== 문제 렌더링 ===== */
 function renderQuestion(){
   const q=questions[current];
-  document.getElementById('progress-label').textContent=`${STAGE_NAMES[currentStage]} · 문제 ${current+1} / 10`;
-  document.getElementById('progress-fill').style.width=`${((current+1)/10)*100}%`;
+  document.getElementById('progress-label').textContent=`${STAGE_NAMES[currentStage]} · 문제 ${current+1} / ${questions.length}`;
+  document.getElementById('progress-fill').style.width=`${((current+1)/questions.length)*100}%`;
 
   const qCard=document.getElementById('question-card');
   const iArea=document.getElementById('input-area');
@@ -495,7 +600,7 @@ function renderQuestion(){
   }
 
   document.getElementById('prev-btn').disabled=(current===0);
-  document.getElementById('next-btn').disabled=(current>=9);
+  document.getElementById('next-btn').disabled=(current>=questions.length-1);
 }
 
 /* ── 1단계 렌더링 ── */
@@ -555,9 +660,9 @@ function renderStage2(q,qCard,iArea){
   // step2 영역
   if(step1Correct||done){
     const isD=q.step1==='대등';
-    const opts=isD?['나열','대조','선택']:['원인','조건','목적'];
+    const opts=isD?['나열','대조','선택']:['원인','조건','목적','시간'];
     iHTML+=`<div class="step-label" style="margin-top:12px">2단계: 세부 유형은?</div>`;
-    iHTML+=`<div class="step-btns three-col">`;
+    iHTML+=`<div class="step-btns ${isD?'three-col':'two-col'}" id="s2-step2">`;
     opts.forEach(o=>{
       const isAns=o===q.step2;
       const picked=done&&userAnswers[current].step2===o;
@@ -618,13 +723,17 @@ function submitStage1(){
   let isCorrect=false;
 
   if(q.type==='B'){
-    isCorrect=(val===q.blank);
+    // 붙임표·괄호·공백·끝 마침표 차이로 오답이 되지 않게 ('-고'도 '고'와 같이) — 지침 3-6
+    const nb=s=>s.replace(/[\s\-‐–—~()（）.。]/g,'');
+    // '-(으)면'처럼 (으)를 괄호로 쓴 답도 인정: 괄호만 지운 것('으면')과 '(으)'를 통째로 지운 것('면') 둘 다 비교
+    isCorrect=(nb(val)===nb(q.blank))||(nb(val.replace(/[(（]으[)）]/g,''))===nb(q.blank));
     userAnswers[current]=val;
     const bd=document.getElementById('blank-display');
     if(bd)bd.textContent=val;
   } else {
-    const normalize=s=>s.replace(/[\s.,!?。，、]/g,'');
-    const nVal=normalize(val);
+    // 띄어쓰기·마침표·쉼표만 무시한다. 물음표·느낌표로 끝나면 오답 (지침 3-6)
+    const normalize=s=>s.replace(/[\s.,。，、]/g,'');
+    const nVal=/[?？!！]\s*$/.test(val)?'\u0000':normalize(val);
     const candidates=[q.answer,...(q.altAnswers||[])];
     isCorrect=candidates.some(c=>normalize(c)===nVal);
     userAnswers[current]=val;
@@ -674,21 +783,22 @@ function processAnswer(isCorrect,q){
   answered[current]=isCorrect;
   if(isCorrect){
     combo++;if(combo>maxCombo)maxCombo=combo;correctCount++;
-    const bonus=combo>=5?100:combo>=3?50:0;
-    score+=100+bonus;
-    if(combo>=3){playCombo();showToast(`🔥 ${combo}콤보! +${100+bonus}점`)}
+    const bonus=comboBonus(combo);
+    score+=BASE+bonus;
+    if(combo>=3){playCombo();showToast(`🔥 ${combo}콤보! +${BASE+bonus}점`)}
     else playCorrect();
     if(combo>=2){document.getElementById('combo-badge').classList.remove('hidden');document.getElementById('combo-val').textContent=combo}
-    showFeedback(true,`정답! +${100+(combo>=5?100:combo>=3?50:0)}점${combo>=3?' (콤보 보너스!)':''}`);
+    var fbMsg=`정답! +${BASE+bonus}점${bonus?' (콤보 보너스!)':''}`;
   } else {
-    combo=0;wrongCount++;score=Math.max(0,score-30);
+    combo=0;wrongCount++;score=Math.max(0,score-PENALTY);
     document.getElementById('combo-badge').classList.add('hidden');
     playWrong();
-    showFeedback(false,'틀렸어요! −30점');
+    var fbMsg=`틀렸어요! −${PENALTY}점`;
   }
   document.getElementById('score-val').textContent=score;
+  renderQuestion(); // 먼저 잠긴 상태로 다시 그린 뒤
+  showFeedback(isCorrect,fbMsg); // 방금 채점한 점수 문구를 덮어쓴다 (복원 문구 '이미 맞힌 문제'가 남지 않게)
   showDetail(q);
-  renderQuestion(); // re-render with disabled state
 
   // 전부 답했으면 자동 종료
   if(answered.every(a=>a!=null))setTimeout(()=>showComplete(),1500);
@@ -721,14 +831,55 @@ function restoreFeedback(q){
 /* ===== 내비게이션 ===== */
 function navigate(dir){
   const n=current+dir;
-  if(n<0||n>9)return;
+  if(n<0||n>=questions.length)return;
   current=n;renderQuestion();
 }
 
 function finishGame(){
-  // 미답 문제 오답 처리
-  for(let i=0;i<10;i++){if(answered[i]==null){answered[i]=false;wrongCount++}}
+  if(!confirm('게임을 끝낼까요? 풀지 않은 문제는 미응답으로 기록됩니다.'))return;
+  // 풀지 않은 문제는 오답이 아니라 미응답으로 남긴다 (지침 5-3)
   showComplete();
+}
+
+/* ===== 결과 계산 — 결과 화면·리포트·오답노트·전송이 모두 이 함수를 쓴다 (지침 5-5) ===== */
+function typeKey(q){return currentStage===0?q.subtype:currentStage===1?(q.step1+'-'+q.step2):q.reqType}
+function calcStats(){
+  const S={total:questions.length,first:0,miss:0,skipped:0,graded:0,rate:0,byType:{},max:stageMax(questions.length)};
+  questions.forEach((q,i)=>{
+    const k=typeKey(q);
+    if(!S.byType[k])S.byType[k]={graded:0,first:0,total:0};
+    const t=S.byType[k];t.total++;
+    if(answered[i]==null){S.skipped++;return}
+    S.graded++;t.graded++;
+    if(answered[i]){S.first++;t.first++}else S.miss++;
+  });
+  S.rate=S.graded?Math.round(S.first/S.graded*100):0;
+  return S;
+}
+function verdict(S){
+  if(!S.graded)return{emoji:'📝',title:'풀어 본 문제가 없어요'};
+  const r=S.first/S.graded;
+  let v=r>=.95?{emoji:'🏆',title:'완벽해요!'}:r>=.85?{emoji:'🎉',title:'아주 잘했어요'}:r>=.7?{emoji:'😊',title:'잘하고 있어요'}:r>=.5?{emoji:'🙂',title:'기본은 잡혔어요'}:{emoji:'💪',title:'다시 한 번 도전해요'};
+  if(S.skipped)v={emoji:v.emoji,title:`끝까지 풀지 않았어요 (${S.skipped}문항 남음) · ${v.title}`};
+  return v;
+}
+function sendResult(){
+  const S=calcStats();
+  const wrongItems=questions.filter((q,i)=>answered[i]===false).map(q=>q.id).join(',');
+  submitResult({
+    studentId:STUDENT.id,studentName:STUDENT.name,className:STUDENT.className,
+    totalQuestions:S.total,correctCount:S.first,score:score,
+    elapsedSeconds:gameStartTime?Math.round((Date.now()-gameStartTime)/1000):0,
+    answeredCount:S.graded,skippedCount:S.skipped,stage:currentStage+1,
+    wrongItems:wrongItems,reflection:''
+  }).then(res=>{
+    const old=document.getElementById('sendMsg');if(old)old.remove();
+    const el=document.createElement('div');el.id='sendMsg';
+    el.style.cssText='margin-top:8px;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:600;text-align:center;';
+    if(res.status==='ok'){el.style.background='#e8f5e9';el.style.color='#2e7d32';el.textContent='✅ 결과가 선생님께 전송되었습니다.';}
+    else{el.style.background='#ffebee';el.style.color='#c62828';el.innerHTML='❌ 전송 실패 <button onclick="sendResult()" style="margin-left:8px;padding:4px 12px;border:1px solid #c62828;border-radius:6px;background:#fff;color:#c62828;cursor:pointer;font-size:12px;">재전송</button>';}
+    const p=document.getElementById('endPrivacy');if(p)p.after(el);
+  });
 }
 
 /* ===== 종료 화면 ===== */
@@ -738,31 +889,34 @@ function showComplete(){
   const cs=document.getElementById('complete-screen');
   cs.classList.add('show');
 
-  const maxScore=10*100+100+50; // 10문제 전부 맞히면 combo 보너스 포함 최대
+  const S=calcStats();
   document.getElementById('final-score').textContent=score+'점';
-  document.getElementById('final-score-label').textContent=`${STAGE_NAMES[currentStage]} 최종 점수`;
-  document.getElementById('stat-correct').textContent=correctCount;
-  document.getElementById('stat-wrong').textContent=wrongCount;
+  document.getElementById('final-score-label').textContent=`${STAGE_NAMES[currentStage]} 최종 점수 (만점 ${S.max}점)`;
+  document.getElementById('stat-correct').textContent=S.first;
+  document.getElementById('stat-wrong').textContent=S.miss;
+  document.getElementById('stat-skip').textContent=S.skipped;
   document.getElementById('stat-combo').textContent=maxCombo;
+  document.getElementById('stat-rate').textContent=S.graded?`첫 시도 정답률 ${S.rate}% (${S.first}/${S.graded})`:'';
 
-  const ratio=correctCount/10;
-  document.getElementById('complete-emoji').textContent=ratio>=.9?'🏆':ratio>=.7?'🎉':ratio>=.5?'😊':'💪';
-  document.getElementById('complete-title').textContent=ratio>=.9?'완벽해요!':ratio>=.7?'잘 했어요!':ratio>=.5?'절반 이상!':'다시 도전!';
+  const V=verdict(S);
+  document.getElementById('complete-emoji').textContent=V.emoji;
+  document.getElementById('complete-title').textContent=V.title;
 
-  // 오답 목록
-  const wrongList=questions.filter((_,i)=>answered[i]===false);
+  // 못 맞힌 문제 + 미응답 목록
+  const wrongList=questions.map((q,i)=>({q,i})).filter(x=>answered[x.i]!==true);
   const reportEl=document.getElementById('wrong-report');
   reportEl.innerHTML='';
-  if(!wrongList.length){
-    reportEl.innerHTML='<div style="text-align:center;padding:14px;background:var(--green-l);border-radius:10px;color:#3a8f60;font-weight:900">🎊 모든 문제를 맞혔어요! 완벽해요!</div>';
+  if(!S.graded){
+    reportEl.innerHTML='<div style="text-align:center;padding:14px;background:var(--orange-l);border-radius:10px;color:#a0602a;font-weight:900">풀어 본 문제가 없어요.</div>';
+  } else if(!wrongList.length){
+    reportEl.innerHTML='<div style="text-align:center;padding:14px;background:var(--green-l);border-radius:10px;color:#3a8f60;font-weight:900">🎊 틀리거나 남긴 문제가 없어요!</div>';
   } else {
     const t=document.createElement('div');t.className='wrong-report-title';
-    t.innerHTML=`❌ 틀린 문제 다시 보기 <span style="font-size:.8rem;font-weight:400;color:var(--muted)">(${wrongList.length}문제)</span>`;
+    t.innerHTML=`❌ 못 맞힌 문제 · 미응답 다시 보기 <span style="font-size:.8rem;font-weight:400;color:var(--muted)">(못 맞힘 ${S.miss} · 미응답 ${S.skipped})</span>`;
     reportEl.appendChild(t);
-    wrongList.forEach((q,qi)=>{
-      const idx=questions.indexOf(q);
+    wrongList.forEach(({q,i:idx})=>{
       const item=document.createElement('div');item.className='wrong-item';
-      let myAns=userAnswers[idx]||'미입력';
+      let myAns=answered[idx]==null?'미응답':(userAnswers[idx]||'미입력');
       if(typeof myAns==='object')myAns=`${myAns.step1||'?'} → ${myAns.step2||'?'}`;
       let correctAns='';
       if(currentStage===0)correctAns=q.type==='B'?q.blank:q.answer;
@@ -775,17 +929,20 @@ function showComplete(){
     });
   }
 
-  // 이름/소감 체크 → 다운로드 버튼 활성화
+  // 연동 모드: 이름 고정 + 결과 전송
+  const old=document.getElementById('sendMsg');if(old)old.remove();
+  if(IS_ONLINE&&STUDENT.verified){
+    const nI=document.getElementById('inp-name');nI.value=STUDENT.name;nI.readOnly=true;nI.style.background='#f0ede5';
+    sendResult();
+  }
+  // 이름 체크 → 다운로드 버튼 활성화 (입력 이벤트는 처음 한 번만 붙인다 — 아래 초기화 코드)
   updateDlButtons();
-  document.getElementById('inp-name').addEventListener('input',updateDlButtons);
-  document.getElementById('inp-comment').addEventListener('input',updateDlButtons);
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function updateDlButtons(){
-  const hasName=document.getElementById('inp-name').value.trim().length>0;
-  const hasComment=document.getElementById('inp-comment').value.trim().length>0;
-  const ok=hasName&&hasComment;
+  // 소감은 선택 — 이름만 있으면 저장할 수 있다
+  const ok=document.getElementById('inp-name').value.trim().length>0;
   document.getElementById('btn-note').disabled=!ok;
   document.getElementById('btn-report').disabled=!ok;
 }
@@ -796,7 +953,8 @@ function downloadWrongNote(){
   const now=new Date();
   const dateStr=`${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
 
-  const wrongList=questions.filter((_,i)=>answered[i]===false);
+  const S=calcStats();
+  const wrongList=questions.filter((_,i)=>answered[i]!==true);
   const W=800;
   const lineH=22;
   const headerH=120;
@@ -813,22 +971,25 @@ function downloadWrongNote(){
   ctx.fillText(`📋 오답노트 — ${STAGE_SHORT[currentStage]}`,40,60);
   ctx.font='14px sans-serif';ctx.fillStyle='#8888aa';
   ctx.fillText(`${name} · ${dateStr}`,40,85);
-  ctx.fillText(`점수: ${score}점 · 정답 ${correctCount} · 오답 ${wrongCount}`,40,105);
+  ctx.fillText(`점수: ${score}점 / ${S.max}점 · 첫 시도 정답 ${S.first} · 못 맞힘 ${S.miss} · 미응답 ${S.skipped}`,40,105);
 
   let y=headerH+10;
-  if(wrongList.length===0){
+  if(!S.graded){
+    ctx.fillStyle='#a0602a';ctx.font='bold 16px sans-serif';
+    ctx.fillText('풀어 본 문제가 없어요.',40,y+20);
+  } else if(wrongList.length===0){
     ctx.fillStyle='#3a8f60';ctx.font='bold 16px sans-serif';
-    ctx.fillText('🎊 모든 문제를 맞혔어요!',40,y+20);
+    ctx.fillText('🎊 틀리거나 남긴 문제가 없어요!',40,y+20);
   } else {
     wrongList.forEach(q=>{
       const idx=questions.indexOf(q);
       ctx.fillStyle='#fde8e8';roundRect(ctx,30,y,W-60,perItem-12,10);ctx.fill();
       ctx.fillStyle='#c05050';ctx.font='bold 13px sans-serif';
-      ctx.fillText(`${q.id}번`,42,y+20);
+      ctx.fillText(`${q.id}번 · ${typeKey(q)}${answered[idx]==null?' · 미응답':''}`,42,y+20);
       ctx.fillStyle='#3a3a5c';ctx.font='13px sans-serif';
       const qText=currentStage===0?`${q.sent1} + ${q.sent2} (${q.emi})`:currentStage===1?q.sentence:`${q.sent1} + ${q.sent2} [${q.reqType}]`;
       wrapText(ctx,qText,42,y+40,W-100,lineH);
-      let myAns=userAnswers[idx]||'미입력';
+      let myAns=answered[idx]==null?'미응답':(userAnswers[idx]||'미입력');
       if(typeof myAns==='object')myAns=`${myAns.step1||'?'} → ${myAns.step2||'?'}`;
       let correctAns=currentStage===0?(q.type==='B'?q.blank:q.answer):currentStage===1?`${q.step1} → ${q.step2}`:q.answer;
       ctx.fillStyle='#c05050';ctx.font='12px sans-serif';
@@ -857,13 +1018,8 @@ function downloadReport(){
   const elapsed=gameStartTime?Math.round((now-gameStartTime)/60000):0;
 
   // 유형별 분석
-  const typeMap={};
-  questions.forEach((q,i)=>{
-    const key=currentStage===0?q.subtype:currentStage===1?(q.step1+'-'+q.step2):q.reqType;
-    if(!typeMap[key])typeMap[key]={correct:0,total:0};
-    typeMap[key].total++;
-    if(answered[i])typeMap[key].correct++;
-  });
+  const S=calcStats(),typeMap={};
+  Object.keys(S.byType).forEach(k=>{typeMap[k]={correct:S.byType[k].first,total:S.byType[k].graded}});
 
   const W=800,H=620;
   const canvas=document.createElement('canvas');
@@ -882,12 +1038,15 @@ function downloadReport(){
   ctx.fillStyle='#7c5cbf';ctx.font='bold 48px sans-serif';
   ctx.fillText(`${score}점`,W-200,80);
   ctx.fillStyle='#8888aa';ctx.font='13px sans-serif';
-  ctx.fillText(`정답 ${correctCount} / 오답 ${wrongCount} / 최고콤보 ${maxCombo}`,W-280,100);
+  ctx.textAlign='right';
+  ctx.fillText(`만점 ${S.max}점 · 첫 시도 정답 ${S.first} · 못 맞힘 ${S.miss} · 미응답 ${S.skipped} · 최고콤보 ${maxCombo}`,W-40,100);
+  ctx.fillText(S.graded?`첫 시도 정답률 ${S.rate}% · ${verdict(S).title}`:'풀어 본 문제가 없어요',W-40,118);
+  ctx.textAlign='left';
 
   // 유형별 바 차트
-  let y=130;
+  let y=148;
   ctx.fillStyle='#3a3a5c';ctx.font='bold 15px sans-serif';
-  ctx.fillText('📈 유형별 정답률',40,y);y+=10;
+  ctx.fillText('📈 유형별 첫 시도 정답률 (미응답 제외)',40,y);y+=10;
   const types=Object.keys(typeMap);
   const barW=400,barH=24;
   const strongTypes=[],weakTypes=[];
@@ -903,7 +1062,8 @@ function downloadReport(){
     ctx.fillStyle=pct>=0.8?'#5baf7e':pct>=0.5?'#c8a020':'#d45b5b';
     if(pct>0){roundRect(ctx,180,y,barW*pct,barH,6);ctx.fill();}
     ctx.fillStyle='#3a3a5c';ctx.font='bold 12px sans-serif';
-    ctx.fillText(`${d.correct}/${d.total} (${Math.round(pct*100)}%)`,barW+195,y+16);
+    ctx.fillText(d.total?`${d.correct}/${d.total} (${Math.round(pct*100)}%)`:'미응답',barW+195,y+16);
+    if(!d.total)return;
     if(pct>=0.8)strongTypes.push(t);
     else if(pct<0.5)weakTypes.push(t);
   });
@@ -924,7 +1084,7 @@ function downloadReport(){
   ctx.fillStyle='#7c5cbf';ctx.font='bold 14px sans-serif';
   ctx.fillText('💬 학습 소감',40,y);
   ctx.fillStyle='#3a3a5c';ctx.font='13px sans-serif';
-  wrapText(ctx,comment,40,y+22,W-80,20);
+  wrapText(ctx,comment||'(소감 없음)',40,y+22,W-80,20);
 
   ctx.fillStyle='#8888aa';ctx.font='11px sans-serif';
   ctx.fillText('제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com',40,H-30);
@@ -962,6 +1122,31 @@ function restartGame(){
   document.getElementById('complete-screen').classList.remove('show');
   startGame(currentStage);
 }
+
+/* ===== 초기화 (한 번만) ===== */
+document.getElementById('inp-name').addEventListener('input',updateDlButtons);
+document.getElementById('inp-comment').addEventListener('input',updateDlButtons);
+document.getElementById('max-score-info').textContent=STAGES.map((st,i)=>`${i+1}단계 ${stageMax(st.length)}`).join(' · ');
+if(IS_ONLINE){
+  document.getElementById('privacyOffline').style.display='none';
+  document.getElementById('privacyOnline').style.display='block';
+  const ep=document.getElementById('endPrivacy');
+  if(ep)ep.textContent='학습 결과는 담당 선생님의 학습 관리 시스템에 자동 전송됩니다. 이름과 소감은 리포트 이미지(JPG) 생성에도 사용됩니다.';
+}
+
+/* ===== 키보드 (지침 6-1) — 게임 중에만, 채점이 끝난 문제에서만 다음으로 ===== */
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('game-area').classList.contains('show'))return;
+  const tg=e.target&&e.target.tagName;
+  if(tg==='INPUT'||tg==='TEXTAREA')return;   // 1단계 입력칸의 Enter는 제출
+  if(e.key==='Enter'||e.key===' '||e.key==='ArrowRight'){
+    e.preventDefault();
+    if(answered[current]!=null&&current<questions.length-1){current++;renderQuestion()}
+  } else if(e.key==='ArrowLeft'){
+    e.preventDefault();
+    if(current>0){current--;renderQuestion()}
+  }
+});
 </script>
 </body>
 </html>
