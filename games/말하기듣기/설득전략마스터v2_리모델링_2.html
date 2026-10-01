@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
+<!-- 리모델링 기록
+  2026.10.01 15:00 6차: 킹 연설 교과서 해설문을 채점(밑줄)에서 빼고 '연설 배경'으로 분리(#21 삭제), #25 해설에 판단 근거 추가(#25·#26은 교사 결정으로 교과서 판정 유지), "우리 반뿐 아니라" 맞춤법, 답하기 전 →키로 넘어가던 버그 수정 (3단계 9문항)
+-->
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -70,6 +73,7 @@ body{font-family:'Noto Sans KR','Malgun Gothic','맑은 고딕',sans-serif;backg
 .sp-s{font-size:11.5px;color:var(--ink2);text-align:right;margin-bottom:8px}
 .sp-b{font-size:14px;line-height:1.95;word-break:keep-all;border-top:1px solid var(--line);padding-top:10px}
 .sp-b p{margin-bottom:10px;text-indent:1em}
+.sp-note{display:block;text-indent:0;font-size:12.5px;line-height:1.7;color:var(--ink2);background:#FFF6E0;border-radius:8px;padding:8px 10px}
 mark.hl{background:linear-gradient(180deg,transparent 55%,rgba(245,138,46,.30) 55%);border-bottom:2.5px solid var(--accent);font-weight:700;color:var(--ink)}
 .qcard{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:#fff;display:flex;flex-direction:column;gap:10px}
 .qtag{display:inline-block;font-size:12px;font-weight:700;color:var(--ink);background:#FFF4E0;border-radius:8px;padding:3px 10px}
@@ -233,7 +237,7 @@ mark.hl{background:linear-gradient(180deg,transparent 55%,rgba(245,138,46,.30) 5
      <div class="stages">
       <button class="sbtn s1" onclick="startStage(0)">1단계 · 기본 개념<small>10문항 · 170점 만점</small></button>
       <button class="sbtn s2" onclick="startStage(1)">2단계 · 연설문 기본<small>10문항 · 170점 만점</small></button>
-      <button class="sbtn s3" onclick="startStage(2)">3단계 · 연설문 심화<small>10문항 · 170점 만점</small></button>
+      <button class="sbtn s3" onclick="startStage(2)">3단계 · 연설문 심화<small>9문항 · 150점 만점</small></button>
       <button class="sbtn s4" onclick="startStage(3)">4단계 · 심화 적용<small>10문항 · 170점 만점</small></button>
      </div>
     </div>
@@ -253,7 +257,7 @@ mark.hl{background:linear-gradient(180deg,transparent 55%,rgba(245,138,46,.30) 5
 
   <div class="credit">
    제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-   제작일 2026.07.16 · <span id="lastMod">최종 수정 2026.09.18 09:10</span>
+   제작일 2026.07.16 · <span id="lastMod">최종 수정 2026.10.01 15:00</span>
   </div>
 
  </div></div>
@@ -385,7 +389,7 @@ mark.hl{background:linear-gradient(180deg,transparent 55%,rgba(245,138,46,.30) 5
 
 <script>
 function $(id){return document.getElementById(id)}
-const MADE_DATE='2026.07.16', LAST_MOD='2026.09.18 09:10';
+const MADE_DATE='2026.07.16', LAST_MOD='2026.10.01 15:00';
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -450,7 +454,7 @@ const CATEGORIES={
 /* ══════════ 연설문 ══════════ */
 const SP={
 maejum:{title:'매점 설치를 건의하는 연설',author:'최정은 (OO중학교 학생회장)',src:'출처: 15개정 비상교육(김진수)',
- body:`OO 중학교 관계자 여러분, 안녕하세요? {{11}}저는 이 학교의 학생회장, '최정은'이라고 합니다{{/11}}. 오전 수업 중, {{13}}우리 반 뿐 여기저기에서 '꼬르륵' 소리가 울려 퍼지지만, 우리는 하염없이 점심시간만 기다립니다{{/13}}. 왜냐하면 우리의 배를 채워 줄 매점이 없기 때문입니다.
+ body:`OO 중학교 관계자 여러분, 안녕하세요? {{11}}저는 이 학교의 학생회장, '최정은'이라고 합니다{{/11}}. 오전 수업 중, {{13}}우리 반뿐 아니라 여기저기에서 '꼬르륵' 소리가 울려 퍼지지만, 우리는 하염없이 점심시간만 기다립니다{{/13}}. 왜냐하면 우리의 배를 채워 줄 매점이 없기 때문입니다.
 
 저는 우리 학교에 매점이 꼭 필요하다고 생각합니다. 매점이 있으면 아침을 거르고 오는 학생들은 간단한 식사를 할 수 있고, 성장기에 필요한 영양분을 보충할 수 있습니다. 또한 {{12}}배가 고플 때에는 집중력이 떨어진다는 연구 결과도 있습니다{{/12}}. 매점을 이용하여 허기를 채우면 우리의 집중력도 높아질 것입니다.
 
@@ -478,7 +482,7 @@ aram:{title:'행복이 넘치는 학교를 만들겠습니다',author:'정아람
 
 행복이 넘치는 학교를 만들 기호 1번 정아람! 여러분의 선택이 후회로 남지 않도록 최선을 다하겠습니다. 감사합니다.`},
 king:{title:'나에게는 꿈이 있습니다',author:'마틴 루서 킹',src:'출처: 15개정 천재교육(박영목)',
- body:`{{21}}마틴 루서 킹은 인종에 따라 버스 안 좌석을 구분해서 앉게 하는 정책에 반대하며 1955년 5만여 명의 시민들과 함께 '몽고메리 버스 타기 거부 운동'을 벌였다. 이 운동을 통해 흑인 인권 운동의 지도자로 이름을 알린 마틴 루서 킹은 이후 비폭력 정신을 바탕으로 한 흑인 인권 운동을 이끌었다.{{/21}}
+ body:`<span class="sp-note">📌 연설 배경 (교과서 설명) — 마틴 루서 킹은 인종에 따라 버스 안 좌석을 구분해서 앉게 하는 정책에 반대하며 1955년 5만여 명의 시민들과 함께 '몽고메리 버스 타기 거부 운동'을 벌였다. 이 운동을 통해 흑인 인권 운동의 지도자로 이름을 알린 마틴 루서 킹은 이후 비폭력 정신을 바탕으로 한 흑인 인권 운동을 이끌었다.</span>
 
 나에게는 꿈이 있습니다. 언젠가 이 나라가 {{22}}'모든 인간은 평등하게 태어났다는 사실을 우리는 자명한 진리로 받아들인다.'라는 이 나라 건국 신조의 참뜻을 되새기며{{/22}} 살아가리라는 꿈입니다.
 
@@ -534,11 +538,10 @@ const STAGES=[
 {id:20,sid:'aram',cat:'감성적',type:'mc3',answer:'감성적',detail:'우산·난로·빛·바람 등 따뜻한 비유로 청중의 마음을 움직이고 있습니다.'}
 ],
 [
-{id:21,sid:'king',cat:'인성적',type:'mc3',answer:'인성적',detail:'인권 운동에 오랫동안 헌신해 온 경험이 화자의 신뢰성을 높이므로 인성적 설득 전략입니다.'},
 {id:22,sid:'king',cat:'이성적',type:'short',answer:'이성적',detail:'건국 신조라는 공인된 역사적 원칙을 근거로 제시하여 논리적으로 설득하고 있습니다.'},
 {id:23,sid:'king',cat:'감성적',type:'mc3',answer:'감성적',detail:'감동적인 문구의 반복과 평등한 세상의 생생한 묘사로 청중의 마음을 움직이고 있습니다.'},
 {id:24,sid:'yuna',cat:'이성적',type:'mc3',answer:'이성적',detail:'메달 수(14개)와 순위(82개국 중 7위)라는 구체적 수치를 제시하고 있습니다.'},
-{id:25,sid:'yuna',cat:'감성적',type:'short',answer:'감성적',detail:'어린 시절의 꿈 이야기를 진솔하게 들려주어 청중의 공감과 감동을 이끌어내고 있습니다.'},
+{id:25,sid:'yuna',cat:'감성적',type:'short',answer:'감성적',detail:'어린 시절의 꿈 이야기를 진솔하게 들려주어 청중의 공감과 감동을 이끌어내고 있습니다. 화자의 자격이나 전문성을 내세우는 부분이 아니라, 꿈 이야기로 청중의 마음을 움직이는 부분이므로 감성적 설득 전략으로 봅니다.'},
 {id:26,sid:'rowling',cat:'인성적',type:'mc3',answer:'인성적',detail:'화자가 자신의 실패 경험을 솔직하게 밝혀 "이 사람의 말이니 믿을 수 있다"는 신뢰를 주고 있습니다.'},
 {id:27,sid:'rowling',cat:'인성적',type:'short',answer:'인성적',detail:'국제 사면 위원회에서 근무한 전문적 경력이 화자의 신뢰성을 높이므로 인성적 설득 전략입니다.'},
 {id:28,sid:'rowling',cat:'감성적',type:'mc3',answer:'감성적',detail:'타인의 고통에 공감하라는 호소로 청중의 감정을 움직이고 있습니다.'},
@@ -854,7 +857,8 @@ document.addEventListener('keydown',e=>{
   if($('dim').classList.contains('on')){closeBanner();
    if(S.idx<S.qs.length-1)go(1); return}
   if(st.status==='pending'){retryQ();return}
-  if(e.key==='ArrowRight'||st.status!==null)go(1);
+  if(st.status!==null)go(1);
+  else if(e.key==='ArrowRight')toast('먼저 답을 골라 주세요.');
  }
  if(e.key==='ArrowLeft'){e.preventDefault();go(-1)}
 });

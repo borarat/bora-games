@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+<!-- 리모델링 2026.10.01 15:00 (6차): 재도전은 그대로 두고, 점수는 한 문항(1단계 문항·2단계 문장·3단계 카드)에 한 번만 주도록 안전장치 추가 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -337,7 +338,7 @@ h1{font-size:clamp(28px,4vw,40px); font-weight:700; margin:0 0 6px; letter-spaci
 
     <div class="maker">
      <b>제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com</b><br>
-     제작일 2026.06.17 · <span id="lastMod">최종 수정 2026.09.19 14:40</span>
+     제작일 2026.06.17 · <span id="lastMod">최종 수정 2026.10.01 15:00</span>
     </div>
 
     <div class="privacy" id="privacyOffline">
@@ -426,7 +427,7 @@ h1{font-size:clamp(28px,4vw,40px); font-weight:700; margin:0 0 6px; letter-spaci
 
 <script>
 const MADE_DATE = '2026.06.17';
-const LAST_MOD  = '2026.09.19 14:40';
+const LAST_MOD  = '2026.10.01 15:00';
 const STD_CODE  = '[9국02-05]';
 const STD_TEXT  = '글에 사용된 다양한 설명 방법과 논증 방법을 파악하고, 그 타당성을 평가하며 읽는다.';
 
@@ -760,14 +761,14 @@ function clearFx(){ fxParts=[]; const g=fx.getContext('2d'); g.clearRect(0,0,fx.
 ========================================================= */
 const Game = {
   stage:1, idx:0, score:0, combo:0, maxCombo:0, items:[], wrong:[], wrongIds:new Set(),
-  answered:0, firstRight:0, retryRight:0, catStat:{}, startAt:0, elapsed:0, maxScore:170,
+  answered:0, firstRight:0, retryRight:0, catStat:{}, startAt:0, elapsed:0, maxScore:170, scored:new Set(),
   $:(id)=>document.getElementById(id),
   show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on')); Game.$(id).classList.add('on'); window.scrollTo(0,0); },
 
   begin(stage){
     ac(); hideBanner(); clearFx();
     Game.stage=stage; Game.idx=0; Game.score=0; Game.combo=0; Game.maxCombo=0;
-    Game.wrong=[]; Game.wrongIds=new Set(); Game.answered=0; Game.firstRight=0; Game.retryRight=0;
+    Game.wrong=[]; Game.wrongIds=new Set(); Game.answered=0; Game.firstRight=0; Game.retryRight=0; Game.scored=new Set();
     Game.catStat={}; Game.startAt=Date.now(); Game.elapsed=0;
     Game.maxScore=maxScoreOf(STAGES[stage-1].units);
     if(stage===1) Game.items=shuffle(STAGE1).map(d=>({d, done:false, ok:false, tries:0, picked:null}));
@@ -787,8 +788,10 @@ const Game = {
     if(Game.combo>=2){ h.classList.add('on','pulse'); setTimeout(()=>h.classList.remove('pulse'),330); }
     else h.classList.remove('on');
   },
-  /* 첫 시도 정답 → 콤보·보너스 / 재시도 정답 → 기본점 절반, 콤보 복구 없음 */
-  award(firstTry,cat,big){
+  /* 첫 시도 정답 → 콤보·보너스 / 재시도 정답 → 기본점 절반, 콤보 복구 없음
+     unit: 채점 단위 열쇠. 한 단위에는 점수를 한 번만 준다 (재도전은 허용) */
+  award(firstTry,cat,big,unit){
+    if(unit!=null){ if(Game.scored.has(unit)) return 0; Game.scored.add(unit); }
     let pts;
     if(firstTry){
       Game.combo++; Game.maxCombo=Math.max(Game.maxCombo,Game.combo);
@@ -850,7 +853,7 @@ const Game = {
     if(i===d.ans){
       it.done=true; it.ok=true; it.picked=i;
       Game.$('op'+i).classList.add('correct','pop');
-      Game.award(it.tries===1, d.cat, true);
+      Game.award(it.tries===1, d.cat, true, 's1:'+d.id);
       if(it.tries>1) Game.addWrong(d.id,d.cat,stripTags(d.q),ansTextMC(d),d.exp);
       Game.lockQ();
       const hb=Game.$('hb'); hb.className='hintbox done show'; hb.innerHTML=`✅ <b>정답!</b> ${d.exp}`;
@@ -866,7 +869,7 @@ const Game = {
     if(matchSH(inp.value,d)){
       it.done=true; it.ok=true; it.picked=inp.value;
       inp.classList.add('ok'); inp.disabled=true;
-      Game.award(it.tries===1, d.cat, true);
+      Game.award(it.tries===1, d.cat, true, 's1:'+d.id);
       if(it.tries>1) Game.addWrong(d.id,d.cat,stripTags(d.q),ansTextSH(d),d.exp);
       const hb=Game.$('hb'); hb.className='hintbox done show'; hb.innerHTML=`✅ <b>정답!</b> ${d.exp}`;
     } else {
@@ -921,11 +924,12 @@ const Game = {
     const it=Game.items[Game.idx], d=it.d;
     if(it.selSeg==null){ const h=Game.$('s2h'); if(h) h.textContent='먼저 위에서 문장을 하나 눌러 주세요.'; return; }
     const i=it.selSeg, st=it.segState[i], s=d.seg[i];
+    if(st.done){ it.selSeg=null; return; }
     st.tries++;
     if(k===s.e){
       st.done=true; it.selSeg=null;
       const allDone=it.segState.every(x=>x.done);
-      Game.award(st.tries===1, s.e, allDone);
+      Game.award(st.tries===1, s.e, allDone, 's2:'+d.ttl+':'+i);
       if(st.tries>1) Game.addWrong(s.id, s.e, `[${d.ttl}] ${s.t}`, `${EL[s.e].lab}`, `${EL[s.e].lab} — ${EL[s.e].def}`);
       if(allDone) SFX.done();
       Game.renderText();
@@ -980,6 +984,7 @@ const Game = {
     if(it.selCard==null) return;
     const ci=it.selCard, card=d.cards[ci], key=tier+'_'+slot;
     if(it.placed[key]!=null) return;
+    if(Object.values(it.placed).includes(ci)){ it.selCard=null; return; }
     let ok=false, reason='tier';
     if(card.tier!==tier){ ok=false; reason='tier'; }
     else if(tier==='주장'){ ok=true; }
@@ -992,7 +997,7 @@ const Game = {
     if(ok){
       it.placed[key]=ci; it.selCard=null;
       const allDone = Object.keys(it.placed).length===d.cards.length;
-      Game.award(!it.everWrong.has(ci), card.tier, allDone);
+      Game.award(!it.everWrong.has(ci), card.tier, allDone, 's3:'+d.ttl+':'+ci);
       if(allDone){ it.done=true; it._fb=null; SFX.done(); } else it._fb='ok';
       Game.renderTower();
     } else {
