@@ -7,19 +7,20 @@
      표준: 앱스크립트 연동, 키보드(채점 후 Enter·Space·→), 게임 종료 확인, 성취기준 (2015) 9국04-06 / (2022) 9국04-04
      2026.10.01 23:50 교사 결정: 시간 순서 '-고'(종속-시간) 문항 3개 추가 — 2단계 11·12번, 3단계 11번. 2단계 종속 세부 유형에 '시간' 추가.
        문항 수가 단계마다 달라져(10/12/11) 문항 수·만점(170/210/190)을 모두 문항 배열 길이로 계산
-     리모델링 2026.10.02 15:55 (10차, 화면 표준 v3 맞춤 — 문항 문구·정답·채점 방식은 바꾸지 않음)
-     이름: '이어진 문장 학습 게임'으로 통일(교사 결정 2026.10.02) — 화면·탭·시트 전송 이름·사이트 목록
+     리모델링 2026.10.02 16:20 (10차, 화면 표준 v3 맞춤 — 문항 문구·정답·채점 방식은 바꾸지 않음)
+     이름: '이어진문장 학습 게임'으로 통일(교사 결정 2026.10.02) — 화면·탭·시트 전송 이름·사이트 목록
      화면: 영역 헤더 띠(시작 M2 / 문제 화면 학습 목표·문항·점수), 투명 배경 마스코트, 제목 이모지 삭제, 크레딧 표준 두 줄, 개인정보 안내를 카드 안으로, 우측 하단 표기 가운뎃점, color-scheme, 문제 화면 글자 키움, 휴대폰에서도 이전·다음·끝내기 버튼 보이게
      테마층: '다리 놓기'(시작 화면 그림 — 앞 절·뒤 절을 잇는 연결 어미), 보조색 쪽빛 #3F5FA8
      기능: 교사용 학습 데이터 엑셀('최종 수정' 클릭), 종료 화면 '다음 단계로'·'오늘 나온 문제 모두 보기', 정답·콤보 배너, 틀린 문제 목록에 해설
      산출물: 오답노트·리포트 JPG 표준 구성(유형 라벨, 해설, 성취기준·개인정보 꼬리말, 2문항 이상 유형만 판정, 가장 먼저 공부할 것, 파일명에 단계·날짜·시각)
-     설계 2026.10.02 15:55: 단계 안에서 문항 순서를 매번 섞음(교사 결정)
-     화면 2026.10.02 15:55: 시작 화면 유형 표를 왼쪽 대등 3개 · 오른쪽 종속 4개로 나누고 열 머리말을 붙임(교사 요청)
-     문항·채점 2026.10.02 15:55: 33문항에 힌트 추가(교사 승인 '이대로'), 다시 풀기 1회 — 1단계 직접 쓰기·2단계 2차 세부 유형·3단계 4지선다. 2단계 1차(대등/종속, 보기 2개)는 바로 공개. 다시 풀어 맞히면 +5, 콤보 없음, 정답률에서 빼고 따로 셈 -->
+     설계 2026.10.02 16:20: 단계 안에서 문항 순서를 매번 섞음(교사 결정)
+     화면 2026.10.02 16:20: 시작 화면 유형 표를 왼쪽 대등 3개 · 오른쪽 종속 4개로 나누고 열 머리말을 붙임(교사 요청)
+     표기·문구 2026.10.02 16:20: 비상 2학년 교과서·3학년 지도서(3-1)에 맞춤 — '이어진문장' 붙여 씀(교사 승인), 판별 문구 '뜻이 같다/달라진다' → '의미가 (크게) 달라지지 않는다 / 달라지거나 어색해진다', 2단계 나열 힌트에 판별 질문 추가
+     문항·채점 2026.10.02 16:20: 33문항에 힌트 추가(교사 승인 '이대로'), 다시 풀기 1회 — 1단계 직접 쓰기·2단계 2차 세부 유형·3단계 4지선다. 2단계 1차(대등/종속, 보기 2개)는 바로 공개. 다시 풀어 맞히면 +5, 콤보 없음, 정답률에서 빼고 따로 셈 -->
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>이어진 문장 학습 게임 · 보라라샘</title>
+<title>이어진문장 학습 게임 · 보라라샘</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet"/>
 <style>
 html{color-scheme:light}
@@ -334,7 +335,7 @@ textarea.report-input{height:60px;resize:vertical}
   <div class="start-header">
     <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAACxCAMAAAAyLeWLAAAB/lBMVEUAAABMNSXZ1s7hupPcto7alVnNxba4uryMqcKptsLQiEyTp7jTmmfXpXTkwZxGLBvipW3i2snLeDWcscPUrIR8osLnx6NqSDBNMR7FvbLb0b2telCoq6vGxsb7+vqth2eHm6ivpJaMZ0rhmlvgnWGLeGm2g1ipmozGfUJtWEjTgTySlpVaRDS2lHXo6OeVhXbk4dl0UjmdsL6+wL1ELiDFbCd4mraGWDe8wcLGxsaXc1Z4ZVZ8oL77+vo6JhhiPSWoq6uTjIa4urzZ1s6DXELwsnh6bWK8dTuSYzwIBQUbFRNuOBZ3Qh3groDi0rsqHRdMNSWcoJuvpJbFvbLi2sl1nsKSlpWzajKptsLawZ7Nxbbo6OdtWEiLeGmpmowxIyF7c2l+lJ2BTSeTjIa2WBG8YhyjbUXd4eLk4dk8MS1ELiBlT0B4ZVaVhXaTp7imf2GvpJbAZh3An4De3+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADGtm7NAAAAgHRSTlMA///////////////////////////////////////////////////////////////////////////c////3P//3P/c3P///////////////9z/3Nzc/9z/3P/c3Nzc3P/////c/////9z/3P/c3Nz/oP///wAAAAAAAAAAAAAAAKaTQcIAABeqSURBVHja7VwHd+JItl4kUUpVKCAjhMjYYINxTh2me3q6e3vyvNnZ3dmcw8vx/5/z7r1VEghjLLfp3XPeebVjaANWffrud0PdKvYHP/j/sa3xC5Ml7cmrSdLRnvxdAPwjm+wdVPIRH+wN/sZAnhwfVJpepTi8SnzMPvqbQdg79C4q68fhr/8mED5+VvEqm8bBJx8cw68r9w7v4DcfFMJP72EhG3u//GAQXv+wHIRKpXn4iw+E4buDshhwfCBFxg/BUPnnD4Hhk8oD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" alt="보라라샘" alt="보라라샘" style="height:90px;border-radius:12px"/>
     <div class="start-titles">
-      <div class="game-title">이어진 문장 학습 게임</div>
+      <div class="game-title">이어진문장 학습 게임</div>
       <div class="game-subtitle">두 홑문장을 연결 어미로 이어서 하나의 문장을 완성해 보세요.</div>
     </div>
     <svg class="keyArt" viewBox="0 0 300 124" aria-hidden="true" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-weight="700" text-anchor="middle">
@@ -355,22 +356,22 @@ textarea.report-input{height:60px;resize:vertical}
     <div class="how-title">🎮 게임 방법</div>
     <div class="how-content">
       <strong>1단계</strong> — 두 홑문장과 연결 어미가 주어지면, 빈칸을 채우거나 완성된 문장을 직접 써 보세요.<br>
-      <strong>2단계</strong> — 완성된 이어진 문장을 보고, 대등/종속 → 세부 유형을 순서대로 골라요.<br>
-      <strong>3단계</strong> — 이어진 문장의 종류에 맞는 연결 어미를 보기에서 골라요.
+      <strong>2단계</strong> — 완성된 이어진문장을 보고, 대등/종속 → 세부 유형을 순서대로 골라요.<br>
+      <strong>3단계</strong> — 이어진문장의 종류에 맞는 연결 어미를 보기에서 골라요.
     </div>
   </div>
 
   <div class="concept-grid">
-   <div class="ccol"><div class="chead">대등적으로 이어진 문장 <span>앞뒤 절을 바꿔도 뜻이 같다</span></div>
-      <div class="concept-item"><div class="concept-icon">📝</div><div class="concept-info"><div class="ci-title" style="color:#5b8fd4">대등 — 나열</div><div class="ci-desc">-고 (앞뒤 절을 나란히) · 시간 순서의 -고는 종속</div></div></div>
+   <div class="ccol"><div class="chead">대등적으로 이어진문장 <span>앞뒤 절을 바꿔도 의미가 크게 달라지지 않는다</span></div>
+      <div class="concept-item"><div class="concept-icon">📝</div><div class="concept-info"><div class="ci-title" style="color:#5b8fd4">대등 — 나열</div><div class="ci-desc">-고, -(으)며 (앞뒤 절을 나란히) · 시간 순서의 -고는 종속</div></div></div>
       <div class="concept-item"><div class="concept-icon">⚖️</div><div class="concept-info"><div class="ci-title" style="color:#4a9f90">대등 — 대조</div><div class="ci-desc">-지만, -(으)나</div></div></div>
       <div class="concept-item"><div class="concept-icon">🔀</div><div class="concept-info"><div class="ci-title" style="color:#d4875b">대등 — 선택</div><div class="ci-desc">-거나, -든지</div></div></div>
    </div>
-   <div class="ccol"><div class="chead">종속적으로 이어진 문장 <span>앞뒤 절을 바꾸면 뜻이 달라진다</span></div>
+   <div class="ccol"><div class="chead">종속적으로 이어진문장 <span>앞뒤 절을 바꾸면 의미가 달라지거나 어색해진다</span></div>
       <div class="concept-item"><div class="concept-icon">💡</div><div class="concept-info"><div class="ci-title" style="color:#c8a020">종속 — 원인</div><div class="ci-desc">-아서/-어서, -(으)니</div></div></div>
       <div class="concept-item"><div class="concept-icon">❓</div><div class="concept-info"><div class="ci-title" style="color:#7c5cbf">종속 — 조건</div><div class="ci-desc">-(으)면, -거든</div></div></div>
       <div class="concept-item"><div class="concept-icon">🎯</div><div class="concept-info"><div class="ci-title" style="color:#d45b5b">종속 — 목적·의도</div><div class="ci-desc">-(으)러, -(으)려고</div></div></div>
-      <div class="concept-item"><div class="concept-icon">⏩</div><div class="concept-info"><div class="ci-title" style="color:#5b6fd4">종속 — 시간</div><div class="ci-desc">-고 (먼저 한 일 → 나중 한 일, 앞뒤를 바꾸면 뜻이 달라짐)</div></div></div>
+      <div class="concept-item"><div class="concept-icon">⏩</div><div class="concept-info"><div class="ci-title" style="color:#5b6fd4">종속 — 시간</div><div class="ci-desc">-고 (먼저 한 일 → 나중 한 일, 앞뒤를 바꾸면 의미가 달라짐)</div></div></div>
    </div>
   </div>
 
@@ -388,7 +389,7 @@ textarea.report-input{height:60px;resize:vertical}
     </div>
   </div>
 
-  <div class="credit-box">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2025.08.12 · <span id="lastMod">최종 수정 2026.10.02 15:55</span></div>
+  <div class="credit-box">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2025.08.12 · <span id="lastMod">최종 수정 2026.10.02 16:20</span></div>
 <div class="privacy-box" id="privacyOffline">
   <strong>🔒 개인정보 보호 안내</strong><br>
   본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다. 게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.
@@ -443,7 +444,7 @@ textarea.report-input{height:60px;resize:vertical}
     <div class="complete-left">
       <div class="complete-emoji" id="complete-emoji">🎉</div>
       <div class="complete-title" id="complete-title">학습 완료!</div>
-      <div class="complete-desc">이어진 문장의 구조를 잘 이해했나요?<br>아직 어렵다면 다시 한 번 도전해 보세요!</div>
+      <div class="complete-desc">이어진문장의 구조를 잘 이해했나요?<br>아직 어렵다면 다시 한 번 도전해 보세요!</div>
     </div>
     <div class="complete-right">
       <div class="final-score" id="final-score">0</div>
@@ -485,10 +486,10 @@ textarea.report-input{height:60px;resize:vertical}
 
 <script>
 /* ===== Apps Script 연동 설정 ===== */
-const MADE_DATE='2025.08.12', MOD_DATE='2026.10.02 15:55';
+const MADE_DATE='2025.08.12', MOD_DATE='2026.10.02 16:20';
 const GAME_CONFIG = {
   gameCode: "G304",
-  gameName: "이어진 문장 학습 게임",
+  gameName: "이어진문장 학습 게임",
   webAppUrl: "https://script.google.com/macros/s/AKfycbzgq9yT5svpFzeFwW5p2pWOpL-lKpj5_RldoJejFT1EOk1Osjcf6hDx85jGQzvr5rU0ww/exec"
 };
 const params = new URLSearchParams(location.search);
@@ -567,8 +568,8 @@ const STAGES = [
 ],
 // ── 2단계: 유형 판별 (2단 선택) ──
 [
-  {id:1,hint:"두 절의 순서를 바꿔 읽어 보세요. 두 내용이 서로 맞서나요, 그냥 나란히 놓였나요?",sentence:'하늘이 맑고 바람이 시원하다.',emiHighlight:'-고',step1:'대등',step2:'나열',
-   detail:'이 문장의 "-고"는 "하늘이 맑다"와 "바람이 시원하다"를 나란히 늘어놓는 나열이라 대등적으로 이어진 문장이에요. 앞뒤 절을 바꿔도("바람이 시원하고 하늘이 맑다") 뜻이 같아요. 시간 순서의 "-고"(밥을 먹고 학교에 갔다)는 종속적으로 이어진 문장이에요.',src:'창작'},
+  {id:1,hint:"두 절의 순서를 바꿔 읽어 보세요. 의미가 크게 달라지나요? 두 내용이 서로 맞서나요, 그냥 나란히 놓였나요?",sentence:'하늘이 맑고 바람이 시원하다.',emiHighlight:'-고',step1:'대등',step2:'나열',
+   detail:'이 문장의 "-고"는 "하늘이 맑다"와 "바람이 시원하다"를 나란히 늘어놓는 나열이라 대등적으로 이어진문장이에요. 앞뒤 절을 바꿔도("바람이 시원하고 하늘이 맑다") 의미가 달라지지 않아요. 시간 순서의 "-고"(밥을 먹고 학교에 갔다)는 종속적으로 이어진문장이에요.',src:'창작'},
   {id:2,hint:"앞 절과 뒤 절을 비교해 보세요. 비슷한 내용을 늘어놓았나요, 서로 맞서는 내용인가요?",sentence:'윤지는 웃었지만 민서는 울었다.',emiHighlight:'-지만',step1:'대등',step2:'대조',
    detail:'"-지만"은 앞뒤 절의 내용이 서로 반대되는 대등적 연결 어미(대조)예요.',src:'📘교과서'},
   {id:3,hint:"이 문장대로 하면 두 가지를 다 하나요, 하나만 하나요?",sentence:'주말에 영화를 보거나 책을 읽겠다.',emiHighlight:'-거나',step1:'대등',step2:'선택',
@@ -584,13 +585,13 @@ const STAGES = [
   {id:8,hint:"뒤 절에 \"왜?\"라고 물어 보세요. 앞 절이 그 답이 되나요?",sentence:'시간이 없어서 택시를 탔다.',emiHighlight:'-어서',step1:'종속',step2:'원인',
    detail:'"-어서"는 앞 절이 뒤 절의 원인이 되는 종속적 연결 어미(원인)예요.',src:'창작'},
   {id:9,hint:"이 문장대로 하면 두 가지를 다 하나요, 하나만 하나요?",sentence:'축구를 하든지 농구를 하든지 해라.',emiHighlight:'-든지',step1:'대등',step2:'선택',
-   detail:'"-든지"는 축구와 농구 가운데 하나를 고르게 하는 대등적 연결 어미(선택)예요. 앞뒤 절을 바꿔도("농구를 하든지 축구를 하든지 해라") 뜻이 같아요.',src:'창작'},
+   detail:'"-든지"는 축구와 농구 가운데 하나를 고르게 하는 대등적 연결 어미(선택)예요. 앞뒤 절을 바꿔도("농구를 하든지 축구를 하든지 해라") 의미가 달라지지 않아요.',src:'창작'},
   {id:10,hint:"뒤 절의 행동에 \"무엇을 하려고?\"라고 물어 보세요. 앞 절이 그 답이 되나요?",sentence:'친구를 만나려고 카페에 갔다.',emiHighlight:'-(으)려고',step1:'종속',step2:'목적',
    detail:'"-(으)려고"는 앞 절이 뒤 절의 목적이 되는 종속적 연결 어미(목적·의도)예요.',src:'창작'},
-  {id:11,hint:"두 일 가운데 무엇이 먼저 일어났나요? 순서를 바꿔 읽으면 뜻이 달라지나요?",sentence:'아침을 먹고 학교에 갔다.',emiHighlight:'-고',step1:'종속',step2:'시간',
-   detail:'아침을 먼저 먹고 그다음에 학교에 간 시간 순서예요. 앞뒤를 바꾸면("학교에 가고 아침을 먹었다") 일의 순서가 달라져 뜻이 바뀌므로 종속적으로 이어진 문장이에요. 1번 "하늘이 맑고 바람이 시원하다"는 바꿔도 뜻이 같아서 대등이에요.',src:'창작'},
-  {id:12,hint:"두 일 가운데 무엇이 먼저 일어났나요? 순서를 바꿔 읽으면 뜻이 달라지나요?",sentence:'손을 씻고 밥을 먹었다.',emiHighlight:'-고',step1:'종속',step2:'시간',
-   detail:'손을 씻은 다음에 밥을 먹은 시간 순서예요. "밥을 먹고 손을 씻었다"로 바꾸면 무엇을 먼저 했는지가 달라져 뜻이 바뀌어요. 그래서 같은 "-고"라도 종속적으로 이어진 문장이에요.',src:'창작'}
+  {id:11,hint:"두 일 가운데 무엇이 먼저 일어났나요? 순서를 바꿔 읽으면 의미가 달라지나요?",sentence:'아침을 먹고 학교에 갔다.',emiHighlight:'-고',step1:'종속',step2:'시간',
+   detail:'아침을 먼저 먹고 그다음에 학교에 간 시간 순서예요. 앞뒤를 바꾸면("학교에 가고 아침을 먹었다") 일의 순서가 달라져 의미가 바뀌므로 종속적으로 이어진문장이에요. 1번 "하늘이 맑고 바람이 시원하다"는 바꿔도 의미가 달라지지 않아서 대등이에요.',src:'창작'},
+  {id:12,hint:"두 일 가운데 무엇이 먼저 일어났나요? 순서를 바꿔 읽으면 의미가 달라지나요?",sentence:'손을 씻고 밥을 먹었다.',emiHighlight:'-고',step1:'종속',step2:'시간',
+   detail:'손을 씻은 다음에 밥을 먹은 시간 순서예요. "밥을 먹고 손을 씻었다"로 바꾸면 무엇을 먼저 했는지가 달라져 의미가 바뀌어요. 그래서 같은 "-고"라도 종속적으로 이어진문장이에요.',src:'창작'}
 ],
 // ── 3단계: 연결 어미 고르기 ──
 [
@@ -626,23 +627,23 @@ const STAGES = [
    result:'날이 추우니 옷을 두껍게 입어라.',detail:'날이 추운 것이 옷을 두껍게 입으라는 까닭(원인)이므로 "-(으)니"가 알맞아요. "춥다" → "추우니"로 활용해요.',src:'창작'},
   {id:11,hint:"숙제를 끝낸 다음에 놀이터에 나갔어요. 앞의 일이 먼저 일어났음을 나타내는 어미를 찾아보세요.",sent1:'숙제를 끝내다',sent2:'놀이터에 나갔다',reqType:'종속-시간',
    options:['-고','-지만','-거나','-(으)면'],answer:'-고',
-   result:'숙제를 끝내고 놀이터에 나갔다.',detail:'숙제를 끝낸 다음에 놀이터에 나간 시간 순서이므로 "-고"가 알맞아요. 앞뒤를 바꾸면("놀이터에 나가고 숙제를 끝냈다") 순서가 달라져 뜻이 바뀌니 종속이에요. 1번처럼 나열하는 "-고"(노래를 부르고 춤을 춘다)는 대등이에요.',src:'창작'}
+   result:'숙제를 끝내고 놀이터에 나갔다.',detail:'숙제를 끝낸 다음에 놀이터에 나간 시간 순서이므로 "-고"가 알맞아요. 앞뒤를 바꾸면("놀이터에 나가고 숙제를 끝냈다") 순서가 달라져 의미가 바뀌니 종속이에요. 1번처럼 나열하는 "-고"(노래를 부르고 춤을 춘다)는 대등이에요.',src:'창작'}
 ]
 ];
 
 const STAGE_NAMES = ['1단계 · 문장 만들기','2단계 · 유형 판별','3단계 · 어미 고르기'];
 const STAGE_TAG = ['1단계문장만들기','2단계유형판별','3단계어미고르기'];
 const STD_TEXT='(2015) [9국04-06] 문장의 짜임과 양상을 탐구하고 활용한다. · (2022) [9국04-04] 문장의 짜임을 이해하고 표현 효과를 고려하여 문장을 구성한다.';
-const GOALS=['두 홑문장을 연결 어미로 이어 문장을 만든다','이어진 문장의 종류를 판단한다','관계에 맞는 연결 어미를 고른다'];
+const GOALS=['두 홑문장을 연결 어미로 이어 문장을 만든다','이어진문장의 종류를 판단한다','관계에 맞는 연결 어미를 고른다'];
 // 유형별 학습 조언 — 판단하는 방법 (지침 4-3) ※ 2026.10.02 새로 씀, 교사 검토 필요
 const TIPS={
- '대등-나열':'대등-나열 — 앞뒤 절의 순서를 바꿔 보세요. 뜻이 그대로이고 두 일을 나란히 늘어놓은 것이면 나열입니다.',
- '대등-대조':'대등-대조 — 앞 절과 뒤 절이 서로 반대되는 내용인지 보세요. 앞뒤를 바꿔도 뜻이 유지되면 대등입니다.',
+ '대등-나열':'대등-나열 — 앞뒤 절의 순서를 바꿔 보세요. 의미가 달라지지 않고 두 일을 나란히 늘어놓은 것이면 나열입니다.',
+ '대등-대조':'대등-대조 — 앞 절과 뒤 절이 서로 반대되는 내용인지 보세요. 앞뒤를 바꿔도 의미가 크게 달라지지 않으면 대등입니다.',
  '대등-선택':'대등-선택 — 두 절 가운데 하나를 고르는 뜻인지 보세요.',
  '종속-원인':'종속-원인 — 뒤 절에 "왜?"라고 물어 보세요. 앞 절이 그 답이 되면 원인입니다.',
  '종속-조건':'종속-조건 — 앞 절이 "만약 ~라면"의 가정인지 보세요. 앞 절이 이루어져야 뒤 절이 일어납니다.',
  '종속-목적':'종속-목적 — 뒤 절의 행동에 "무엇을 하려고?"라고 물어 보세요. 앞 절이 그 답이 되면 목적입니다.',
- '종속-시간':'종속-시간 — 앞 절의 일이 먼저 일어나고 뒤 절의 일이 나중에 일어나는지 보세요. 앞뒤를 바꾸면 뜻이 달라지면 종속입니다.'
+ '종속-시간':'종속-시간 — 앞 절의 일이 먼저 일어나고 뒤 절의 일이 나중에 일어나는지 보세요. 앞뒤를 바꾸면 의미가 달라지면 종속입니다.'
 };
 let tLast=0,endAt=null;
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
@@ -750,7 +751,7 @@ function renderStage1(q,qCard,iArea){
       if(inp2)inp2.addEventListener('keydown',e=>{if(e.key==='Enter')submitStage1()});
     }
   } else {
-    iArea.innerHTML=`<div class="text-input-wrap"><label>완성된 이어진 문장을 입력하세요</label><input class="text-input" id="ans-input" type="text" placeholder="두 문장을 이어 쓰세요" ${answered[current]!=null||pend[current]===1?'disabled':''}/>
+    iArea.innerHTML=`<div class="text-input-wrap"><label>완성된 이어진문장을 입력하세요</label><input class="text-input" id="ans-input" type="text" placeholder="두 문장을 이어 쓰세요" ${answered[current]!=null||pend[current]===1?'disabled':''}/>
     <button class="submit-btn" id="submit-btn" onclick="submitStage1()" ${answered[current]!=null||pend[current]===1?'disabled':''}>제출</button></div>`;
     if(answered[current]==null&&pend[current]!==1){
       setTimeout(()=>{const inp=document.getElementById('ans-input');if(inp)inp.focus()},100);
@@ -764,7 +765,7 @@ function renderStage1(q,qCard,iArea){
 function renderStage2(q,qCard,iArea){
   let qHTML=`<span class="q-num">${q.id}번</span>`;
   qHTML+=`<span class="q-type-badge type-select">유형 판별</span>`;
-  qHTML+=`<div class="q-instruction">아래 이어진 문장의 <strong>종류</strong>를 고르세요.</div>`;
+  qHTML+=`<div class="q-instruction">아래 이어진문장의 <strong>종류</strong>를 고르세요.</div>`;
   qHTML+=`<div class="q-full-sentence">${q.sentence}</div>`;
   qHTML+=`<div style="text-align:center;font-size:.85rem;color:var(--muted)">연결 어미: <strong style="color:var(--primary)">${q.emiHighlight}</strong></div>`;
   qCard.innerHTML=qHTML;
@@ -775,10 +776,10 @@ function renderStage2(q,qCard,iArea){
   const step1Correct=step1Done&&userAnswers[current].step1===q.step1;
 
   let iHTML=`<div class="step-select-wrap">`;
-  iHTML+=`<div class="step-label">1단계: 이어진 문장의 종류는?</div>`;
+  iHTML+=`<div class="step-label">1단계: 이어진문장의 종류는?</div>`;
   iHTML+=`<div class="step-btns two-col">`;
-  iHTML+=`<button class="step-btn" id="s2-dae" onclick="selectStep1('대등')" ${done||step1Done?'disabled':''}>${done&&q.step1==='대등'?'✅ ':step1Done&&userAnswers[current].step1==='대등'&&!step1Correct?'❌ ':''}대등하게 이어진 문장</button>`;
-  iHTML+=`<button class="step-btn" id="s2-jong" onclick="selectStep1('종속')" ${done||step1Done?'disabled':''}>${done&&q.step1==='종속'?'✅ ':step1Done&&userAnswers[current].step1==='종속'&&!step1Correct?'❌ ':''}종속적으로 이어진 문장</button>`;
+  iHTML+=`<button class="step-btn" id="s2-dae" onclick="selectStep1('대등')" ${done||step1Done?'disabled':''}>${done&&q.step1==='대등'?'✅ ':step1Done&&userAnswers[current].step1==='대등'&&!step1Correct?'❌ ':''}대등하게 이어진문장</button>`;
+  iHTML+=`<button class="step-btn" id="s2-jong" onclick="selectStep1('종속')" ${done||step1Done?'disabled':''}>${done&&q.step1==='종속'?'✅ ':step1Done&&userAnswers[current].step1==='종속'&&!step1Correct?'❌ ':''}종속적으로 이어진문장</button>`;
   iHTML+=`</div>`;
 
   // step2 영역
