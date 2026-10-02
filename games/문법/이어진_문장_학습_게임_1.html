@@ -7,14 +7,15 @@
      표준: 앱스크립트 연동, 키보드(채점 후 Enter·Space·→), 게임 종료 확인, 성취기준 (2015) 9국04-06 / (2022) 9국04-04
      2026.10.01 23:50 교사 결정: 시간 순서 '-고'(종속-시간) 문항 3개 추가 — 2단계 11·12번, 3단계 11번. 2단계 종속 세부 유형에 '시간' 추가.
        문항 수가 단계마다 달라져(10/12/11) 문항 수·만점(170/210/190)을 모두 문항 배열 길이로 계산
-     리모델링 2026.10.02 15:51 (10차, 화면 표준 v3 맞춤 — 문항 문구·정답·채점 방식은 바꾸지 않음)
+     리모델링 2026.10.02 15:55 (10차, 화면 표준 v3 맞춤 — 문항 문구·정답·채점 방식은 바꾸지 않음)
      이름: '이어진 문장 학습 게임'으로 통일(교사 결정 2026.10.02) — 화면·탭·시트 전송 이름·사이트 목록
      화면: 영역 헤더 띠(시작 M2 / 문제 화면 학습 목표·문항·점수), 투명 배경 마스코트, 제목 이모지 삭제, 크레딧 표준 두 줄, 개인정보 안내를 카드 안으로, 우측 하단 표기 가운뎃점, color-scheme, 문제 화면 글자 키움, 휴대폰에서도 이전·다음·끝내기 버튼 보이게
      테마층: '다리 놓기'(시작 화면 그림 — 앞 절·뒤 절을 잇는 연결 어미), 보조색 쪽빛 #3F5FA8
      기능: 교사용 학습 데이터 엑셀('최종 수정' 클릭), 종료 화면 '다음 단계로'·'오늘 나온 문제 모두 보기', 정답·콤보 배너, 틀린 문제 목록에 해설
      산출물: 오답노트·리포트 JPG 표준 구성(유형 라벨, 해설, 성취기준·개인정보 꼬리말, 2문항 이상 유형만 판정, 가장 먼저 공부할 것, 파일명에 단계·날짜·시각)
-     설계 2026.10.02 15:51: 단계 안에서 문항 순서를 매번 섞음(교사 결정)
-     문항·채점 2026.10.02 15:51: 33문항에 힌트 추가(교사 승인 '이대로'), 다시 풀기 1회 — 1단계 직접 쓰기·2단계 2차 세부 유형·3단계 4지선다. 2단계 1차(대등/종속, 보기 2개)는 바로 공개. 다시 풀어 맞히면 +5, 콤보 없음, 정답률에서 빼고 따로 셈 -->
+     설계 2026.10.02 15:55: 단계 안에서 문항 순서를 매번 섞음(교사 결정)
+     화면 2026.10.02 15:55: 시작 화면 유형 표를 왼쪽 대등 3개 · 오른쪽 종속 4개로 나누고 열 머리말을 붙임(교사 요청)
+     문항·채점 2026.10.02 15:55: 33문항에 힌트 추가(교사 승인 '이대로'), 다시 풀기 1회 — 1단계 직접 쓰기·2단계 2차 세부 유형·3단계 4지선다. 2단계 1차(대등/종속, 보기 2개)는 바로 공개. 다시 풀어 맞히면 +5, 콤보 없음, 정답률에서 빼고 따로 셈 -->
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -57,8 +58,11 @@ body{font-family:'Noto Sans KR','Malgun Gothic','맑은 고딕',sans-serif;backg
 
 .concept-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px}
 .concept-item{padding:9px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
-.concept-item:nth-child(odd){border-right:1px solid var(--border)}
-.concept-item:nth-last-child(-n+2){border-bottom:none}
+.concept-item:last-child{border-bottom:none}
+.ccol{display:flex;flex-direction:column}
+.ccol+.ccol{border-left:1px solid var(--border)}
+.chead{padding:8px 14px;background:#f8f6ff;border-bottom:1px solid var(--border);font-size:.9rem;font-weight:700;color:var(--text)}
+.chead span{font-weight:400;font-size:.78rem;color:var(--muted);margin-left:6px}
 .concept-icon{font-size:1.1rem;flex-shrink:0}
 .concept-info .ci-title{font-size:.85rem;font-weight:700}
 .concept-info .ci-desc{font-size:.75rem;color:var(--muted)}
@@ -240,7 +244,7 @@ textarea.report-input{height:60px;resize:vertical}
   .sIn{padding:40px 16px 18px}
   .stage-btns{grid-template-columns:1fr}
   .concept-grid{grid-template-columns:1fr}
-  .concept-item:nth-child(odd){border-right:none}
+  .ccol+.ccol{border-left:none;border-top:1px solid var(--border)}
   .complete-top{grid-template-columns:1fr}
 }
 
@@ -357,13 +361,17 @@ textarea.report-input{height:60px;resize:vertical}
   </div>
 
   <div class="concept-grid">
-    <div class="concept-item"><div class="concept-icon">📝</div><div class="concept-info"><div class="ci-title" style="color:#5b8fd4">대등 — 나열</div><div class="ci-desc">-고 (앞뒤 절을 나란히) · 시간 순서의 -고는 종속</div></div></div>
-    <div class="concept-item"><div class="concept-icon">⚖️</div><div class="concept-info"><div class="ci-title" style="color:#4a9f90">대등 — 대조</div><div class="ci-desc">-지만, -(으)나</div></div></div>
-    <div class="concept-item"><div class="concept-icon">🔀</div><div class="concept-info"><div class="ci-title" style="color:#d4875b">대등 — 선택</div><div class="ci-desc">-거나, -든지</div></div></div>
-    <div class="concept-item"><div class="concept-icon">💡</div><div class="concept-info"><div class="ci-title" style="color:#c8a020">종속 — 원인</div><div class="ci-desc">-아서/-어서, -(으)니</div></div></div>
-    <div class="concept-item"><div class="concept-icon">❓</div><div class="concept-info"><div class="ci-title" style="color:#7c5cbf">종속 — 조건</div><div class="ci-desc">-(으)면, -거든</div></div></div>
-    <div class="concept-item"><div class="concept-icon">🎯</div><div class="concept-info"><div class="ci-title" style="color:#d45b5b">종속 — 목적·의도</div><div class="ci-desc">-(으)러, -(으)려고</div></div></div>
-    <div class="concept-item"><div class="concept-icon">⏩</div><div class="concept-info"><div class="ci-title" style="color:#5b6fd4">종속 — 시간</div><div class="ci-desc">-고 (먼저 한 일 → 나중 한 일, 앞뒤를 바꾸면 뜻이 달라짐)</div></div></div>
+   <div class="ccol"><div class="chead">대등적으로 이어진 문장 <span>앞뒤 절을 바꿔도 뜻이 같다</span></div>
+      <div class="concept-item"><div class="concept-icon">📝</div><div class="concept-info"><div class="ci-title" style="color:#5b8fd4">대등 — 나열</div><div class="ci-desc">-고 (앞뒤 절을 나란히) · 시간 순서의 -고는 종속</div></div></div>
+      <div class="concept-item"><div class="concept-icon">⚖️</div><div class="concept-info"><div class="ci-title" style="color:#4a9f90">대등 — 대조</div><div class="ci-desc">-지만, -(으)나</div></div></div>
+      <div class="concept-item"><div class="concept-icon">🔀</div><div class="concept-info"><div class="ci-title" style="color:#d4875b">대등 — 선택</div><div class="ci-desc">-거나, -든지</div></div></div>
+   </div>
+   <div class="ccol"><div class="chead">종속적으로 이어진 문장 <span>앞뒤 절을 바꾸면 뜻이 달라진다</span></div>
+      <div class="concept-item"><div class="concept-icon">💡</div><div class="concept-info"><div class="ci-title" style="color:#c8a020">종속 — 원인</div><div class="ci-desc">-아서/-어서, -(으)니</div></div></div>
+      <div class="concept-item"><div class="concept-icon">❓</div><div class="concept-info"><div class="ci-title" style="color:#7c5cbf">종속 — 조건</div><div class="ci-desc">-(으)면, -거든</div></div></div>
+      <div class="concept-item"><div class="concept-icon">🎯</div><div class="concept-info"><div class="ci-title" style="color:#d45b5b">종속 — 목적·의도</div><div class="ci-desc">-(으)러, -(으)려고</div></div></div>
+      <div class="concept-item"><div class="concept-icon">⏩</div><div class="concept-info"><div class="ci-title" style="color:#5b6fd4">종속 — 시간</div><div class="ci-desc">-고 (먼저 한 일 → 나중 한 일, 앞뒤를 바꾸면 뜻이 달라짐)</div></div></div>
+   </div>
   </div>
 
   <div class="score-info">
@@ -380,7 +388,7 @@ textarea.report-input{height:60px;resize:vertical}
     </div>
   </div>
 
-  <div class="credit-box">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2025.08.12 · <span id="lastMod">최종 수정 2026.10.02 15:51</span></div>
+  <div class="credit-box">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2025.08.12 · <span id="lastMod">최종 수정 2026.10.02 15:55</span></div>
 <div class="privacy-box" id="privacyOffline">
   <strong>🔒 개인정보 보호 안내</strong><br>
   본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다. 게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.
@@ -477,7 +485,7 @@ textarea.report-input{height:60px;resize:vertical}
 
 <script>
 /* ===== Apps Script 연동 설정 ===== */
-const MADE_DATE='2025.08.12', MOD_DATE='2026.10.02 15:51';
+const MADE_DATE='2025.08.12', MOD_DATE='2026.10.02 15:55';
 const GAME_CONFIG = {
   gameCode: "G304",
   gameName: "이어진 문장 학습 게임",
