@@ -7,13 +7,14 @@
      표준: 앱스크립트 연동, 키보드(채점 후 Enter·Space·→), 게임 종료 확인, 성취기준 (2015) 9국04-06 / (2022) 9국04-04
      2026.10.01 23:50 교사 결정: 시간 순서 '-고'(종속-시간) 문항 3개 추가 — 2단계 11·12번, 3단계 11번. 2단계 종속 세부 유형에 '시간' 추가.
        문항 수가 단계마다 달라져(10/12/11) 문항 수·만점(170/210/190)을 모두 문항 배열 길이로 계산
-     리모델링 2026.10.02 15:43 (10차, 화면 표준 v3 맞춤 — 문항 문구·정답·채점 방식은 바꾸지 않음)
+     리모델링 2026.10.02 15:47 (10차, 화면 표준 v3 맞춤 — 문항 문구·정답·채점 방식은 바꾸지 않음)
      이름: '이어진 문장 학습 게임'으로 통일(교사 결정 2026.10.02) — 화면·탭·시트 전송 이름·사이트 목록
      화면: 영역 헤더 띠(시작 M2 / 문제 화면 학습 목표·문항·점수), 투명 배경 마스코트, 제목 이모지 삭제, 크레딧 표준 두 줄, 개인정보 안내를 카드 안으로, 우측 하단 표기 가운뎃점, color-scheme, 문제 화면 글자 키움, 휴대폰에서도 이전·다음·끝내기 버튼 보이게
      테마층: '다리 놓기'(시작 화면 그림 — 앞 절·뒤 절을 잇는 연결 어미), 보조색 쪽빛 #3F5FA8
      기능: 교사용 학습 데이터 엑셀('최종 수정' 클릭), 종료 화면 '다음 단계로'·'오늘 나온 문제 모두 보기', 정답·콤보 배너, 틀린 문제 목록에 해설
      산출물: 오답노트·리포트 JPG 표준 구성(유형 라벨, 해설, 성취기준·개인정보 꼬리말, 2문항 이상 유형만 판정, 가장 먼저 공부할 것, 파일명에 단계·날짜·시각)
-     보류(교사 결정 대기): 문항 순서 섞기, 3지 이상 문항의 힌트·다시 풀기 -->
+     설계 2026.10.02 15:47: 단계 안에서 문항 순서를 매번 섞음(교사 결정)
+     보류: 3지 이상 문항의 힌트·다시 풀기 — 힌트 초안 교사 검토 중 -->
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -373,7 +374,7 @@ textarea.report-input{height:60px;resize:vertical}
     </div>
   </div>
 
-  <div class="credit-box">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2025.08.12 · <span id="lastMod">최종 수정 2026.10.02 15:43</span></div>
+  <div class="credit-box">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2025.08.12 · <span id="lastMod">최종 수정 2026.10.02 15:47</span></div>
 <div class="privacy-box" id="privacyOffline">
   <strong>🔒 개인정보 보호 안내</strong><br>
   본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다. 게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.
@@ -467,7 +468,7 @@ textarea.report-input{height:60px;resize:vertical}
 
 <script>
 /* ===== Apps Script 연동 설정 ===== */
-const MADE_DATE='2025.08.12', MOD_DATE='2026.10.02 15:43';
+const MADE_DATE='2025.08.12', MOD_DATE='2026.10.02 15:47';
 const GAME_CONFIG = {
   gameCode: "G304",
   gameName: "이어진 문장 학습 게임",
@@ -627,6 +628,7 @@ const TIPS={
  '종속-시간':'종속-시간 — 앞 절의 일이 먼저 일어나고 뒤 절의 일이 나중에 일어나는지 보세요. 앞뒤를 바꾸면 뜻이 달라지면 종속입니다.'
 };
 let tLast=0,endAt=null;
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function pad(n){return String(n).padStart(2,'0')}
 function fmtDT(d){return `${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`}
 function fileDT(d){return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}`}
@@ -669,7 +671,7 @@ function startGame(si){
 }
 function doStartGame(si){
   currentStage=si;
-  questions=STAGES[si];
+  questions=shuffle(STAGES[si]);
   current=0;score=0;combo=0;maxCombo=0;correctCount=0;wrongCount=0;
   answered=new Array(questions.length).fill(null);
   userAnswers=new Array(questions.length).fill('');
