@@ -5,7 +5,9 @@
      힌트: 합성어 tip을 교사 승인 문장으로, 합성어 힌트를 "실질적인 뜻을 나타내는가" 기준으로
      채점: 4단계에서 틀린 적이 있으면 1과정 끝과 문항 끝 모두 '정답!' 대신 재시도 배너(색종이·광선 없음). 점수·기록은 원래도 재시도 정답
      버그: 채점 전 → 키로 문항이 넘어가던 것 막음 (지침 6-1)
-     2026.10.01 13:00 재시도 배너를 모든 단계로: 틀린 뒤 다시 풀어 맞히면 0~3단계도 '정답!'·색종이 대신 작은 재시도 배너 (첫 시도 정답은 그대로 큰 배너) -->
+     2026.10.01 13:00 재시도 배너를 모든 단계로: 틀린 뒤 다시 풀어 맞히면 0~3단계도 '정답!'·색종이 대신 작은 재시도 배너 (첫 시도 정답은 그대로 큰 배너) 
+     화면 2026.10.02 14:11: 게임 테마층 '낱말 블록과 퍼즐'(CSS 끝 블록 + 시작 화면 SVG). 문항·채점·로직 변경 없음
+-->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -271,6 +273,18 @@ body.glow::after{content:'';position:fixed;inset:0;pointer-events:none;box-shado
   .rays{display:none}
   .bn{animation:none}
 }
+
+/* ═══ 게임 테마층 · 낱말 블록과 퍼즐 (2026.10.02) ═══
+   G 단어 형성 게임 공통 그림 언어: 어근 = 네모 블록, 접사 = 퍼즐 조각('-' 쪽에만 이음매).
+   영역 팔레트(문법)·헤더 띠·정답/오답 색·플레이 화면은 그대로. 이 블록과 시작 화면 SVG를 지우면 원래 모습. */
+:root{--th:#C9A227;--th-soft:#F6E7B0;--th-ink:#7A5C0A}
+.keyArt{flex:0 0 auto;height:118px;width:auto}
+@media (max-width:860px){.keyArt{display:none}}
+.titlebox .keyArt{margin-left:auto}
+/* 단계 번호 = 블록(위에 돌기 두 개) */
+.stbtn .no{position:relative;border-radius:4px;margin-top:4px}
+.stbtn .no:before{content:'';position:absolute;left:7px;right:7px;top:-4px;height:4px;background:radial-gradient(circle at 25% 100%,var(--ac) 3px,transparent 3.5px),radial-gradient(circle at 75% 100%,var(--ac) 3px,transparent 3.5px)}
+.std{border-left:4px solid var(--th)}
 </style>
 </head>
 <body>
@@ -286,6 +300,15 @@ body.glow::after{content:'';position:fixed;inset:0;pointer-events:none;box-shado
      <h1>단어의 짜임 컵스</h1>
      <p>형태소부터 단어의 종류까지, 카드를 알맞은 컵에 넣어 보세요.</p>
     </div>
+    <svg class="keyArt" viewBox="0 0 320 124" aria-hidden="true" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-weight="700" text-anchor="middle">
+     <g font-size="12" fill="#3C3489" text-anchor="start"><text x="0" y="40">합성어</text><text x="0" y="101">파생어</text></g>
+     <g fill="#7C5CBF"><rect x="68" y="16" width="8" height="5" rx="1"/><rect x="88" y="16" width="8" height="5" rx="1"/><rect x="120" y="16" width="8" height="5" rx="1"/><rect x="146" y="16" width="8" height="5" rx="1"/><rect x="204" y="16" width="8" height="5" rx="1"/><rect x="224" y="16" width="8" height="5" rx="1"/><rect x="256" y="16" width="8" height="5" rx="1"/><rect x="282" y="16" width="8" height="5" rx="1"/><rect x="118" y="77" width="8" height="5" rx="1"/><rect x="138" y="77" width="8" height="5" rx="1"/><rect x="204" y="77" width="8" height="5" rx="1"/><rect x="224" y="77" width="8" height="5" rx="1"/></g>
+     <g fill="#fff" stroke="#7C5CBF" stroke-width="2"><rect x="60" y="21" width="44" height="32" rx="4"/><rect x="104" y="21" width="64" height="32" rx="4"/><rect x="196" y="21" width="44" height="32" rx="4"/><rect x="240" y="21" width="64" height="32" rx="4"/><rect x="112" y="82" width="44" height="32" rx="4"/><rect x="196" y="82" width="44" height="32" rx="4"/></g>
+     <g fill="#F6E7B0" stroke="#C9A227" stroke-width="2"><rect x="60" y="82" width="52" height="32" rx="4"/><circle cx="118" cy="98" r="8"/><rect x="240" y="82" width="64" height="32" rx="4"/><circle cx="234" cy="98" r="8"/></g>
+     <g fill="#F6E7B0"><rect x="105" y="91" width="9" height="14"/><rect x="238" y="91" width="9" height="14"/></g>
+     <g font-size="15" fill="#3C3489"><text x="82" y="42">눈</text><text x="136" y="42">사람</text><text x="218" y="42">돌</text><text x="272" y="42">다리</text><text x="134" y="103">손</text><text x="218" y="103">멋</text></g>
+     <g font-size="15" fill="#7A5C0A"><text x="84" y="103">맨-</text><text x="274" y="103">-쟁이</text></g>
+    </svg>
    </div>
    <button class="btn quick" onclick="startStage(0)">▶ 0단계부터 시작하기</button>
    <div class="cols">
@@ -314,7 +337,7 @@ body.glow::after{content:'';position:fixed;inset:0;pointer-events:none;box-shado
    </div>
    <div class="credit">
     제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-    제작일 2025.09.05 · <span id="lastMod">최종 수정 2026.10.01 13:00</span>
+    제작일 2025.09.05 · <span id="lastMod">최종 수정 2026.10.02 14:11</span>
    </div>
    <div class="privacy" id="privacyOffline">
     <b>🔒 개인정보 보호 안내</b><br>
@@ -441,7 +464,7 @@ body.glow::after{content:'';position:fixed;inset:0;pointer-events:none;box-shado
 
 <script>
 const MADE_DATE = '2025.09.05';
-const LAST_MOD = '2026.10.01 13:00';
+const LAST_MOD = '2026.10.02 14:11';
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
 // ═══════════════════════════════════════════
