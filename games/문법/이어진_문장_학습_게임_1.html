@@ -7,14 +7,14 @@
      표준: 앱스크립트 연동, 키보드(채점 후 Enter·Space·→), 게임 종료 확인, 성취기준 (2015) 9국04-06 / (2022) 9국04-04
      2026.10.01 23:50 교사 결정: 시간 순서 '-고'(종속-시간) 문항 3개 추가 — 2단계 11·12번, 3단계 11번. 2단계 종속 세부 유형에 '시간' 추가.
        문항 수가 단계마다 달라져(10/12/11) 문항 수·만점(170/210/190)을 모두 문항 배열 길이로 계산
-     리모델링 2026.10.02 15:47 (10차, 화면 표준 v3 맞춤 — 문항 문구·정답·채점 방식은 바꾸지 않음)
+     리모델링 2026.10.02 15:51 (10차, 화면 표준 v3 맞춤 — 문항 문구·정답·채점 방식은 바꾸지 않음)
      이름: '이어진 문장 학습 게임'으로 통일(교사 결정 2026.10.02) — 화면·탭·시트 전송 이름·사이트 목록
      화면: 영역 헤더 띠(시작 M2 / 문제 화면 학습 목표·문항·점수), 투명 배경 마스코트, 제목 이모지 삭제, 크레딧 표준 두 줄, 개인정보 안내를 카드 안으로, 우측 하단 표기 가운뎃점, color-scheme, 문제 화면 글자 키움, 휴대폰에서도 이전·다음·끝내기 버튼 보이게
      테마층: '다리 놓기'(시작 화면 그림 — 앞 절·뒤 절을 잇는 연결 어미), 보조색 쪽빛 #3F5FA8
      기능: 교사용 학습 데이터 엑셀('최종 수정' 클릭), 종료 화면 '다음 단계로'·'오늘 나온 문제 모두 보기', 정답·콤보 배너, 틀린 문제 목록에 해설
      산출물: 오답노트·리포트 JPG 표준 구성(유형 라벨, 해설, 성취기준·개인정보 꼬리말, 2문항 이상 유형만 판정, 가장 먼저 공부할 것, 파일명에 단계·날짜·시각)
-     설계 2026.10.02 15:47: 단계 안에서 문항 순서를 매번 섞음(교사 결정)
-     보류: 3지 이상 문항의 힌트·다시 풀기 — 힌트 초안 교사 검토 중 -->
+     설계 2026.10.02 15:51: 단계 안에서 문항 순서를 매번 섞음(교사 결정)
+     문항·채점 2026.10.02 15:51: 33문항에 힌트 추가(교사 승인 '이대로'), 다시 풀기 1회 — 1단계 직접 쓰기·2단계 2차 세부 유형·3단계 4지선다. 2단계 1차(대등/종속, 보기 2개)는 바로 공개. 다시 풀어 맞히면 +5, 콤보 없음, 정답률에서 빼고 따로 셈 -->
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -86,7 +86,7 @@ body{font-family:'Noto Sans KR','Malgun Gothic','맑은 고딕',sans-serif;backg
 
 /* ===== 게임 화면 ===== */
 #game-area{display:none;position:relative;z-index:10;width:100%;max-width:1100px;padding:12px 16px 20px}
-#game-area.show{display:grid;grid-template-columns:1fr 90px;grid-template-areas:"progress progress""question sidebar""input sidebar""feedback sidebar""detail sidebar";gap:8px;align-items:start}
+#game-area.show{display:grid;grid-template-columns:1fr 90px;grid-template-areas:"progress progress""question sidebar""input sidebar""feedback sidebar""hint sidebar""detail sidebar""retry sidebar";gap:8px;align-items:start}
 
 .progress-wrap{grid-area:progress;background:var(--card);border-radius:12px;padding:0;border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden}
 .progress-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:4px}
@@ -234,7 +234,7 @@ textarea.report-input{height:60px;resize:vertical}
 #toast.show{opacity:1}
 
 @media(max-width:700px){
-  #game-area.show{grid-template-columns:1fr;grid-template-areas:"progress""question""input""feedback""detail""sidebar"}
+  #game-area.show{grid-template-columns:1fr;grid-template-areas:"progress""question""input""feedback""hint""detail""retry""sidebar"}
   .nav-sidebar{flex-direction:row;position:static}
   .nav-sidebar .nav-btn{flex:1;min-height:44px}
   .sIn{padding:40px 16px 18px}
@@ -302,6 +302,12 @@ textarea.report-input{height:60px;resize:vertical}
 .rv .tg{font-size:.75rem;color:#fff;background:var(--primary);border-radius:999px;padding:1px 8px;margin-right:6px}
 .rv .a{color:#3a8f60;font-weight:700}
 .rv .d{color:#64748b;font-size:.85rem}
+.hint-box{grid-area:hint;display:none;background:#fff0e0;border:1.5px solid #f8d4a8;border-radius:12px;padding:11px 16px;font-size:1.02rem;line-height:1.6;color:#8a5a20}
+.hint-box.show{display:block}
+.hint-box strong{color:#c07020}
+.retry-btn{grid-area:retry;display:none;background:#fff0e0;border:1.5px solid #f8d4a8;border-radius:10px;padding:10px 16px;font-family:inherit;font-size:1rem;font-weight:700;color:#c06020;cursor:pointer;min-height:44px}
+.retry-btn.show{display:block}
+.retry-btn:hover{background:#ffd8b8}
 /* ═══ 게임 테마층 · 다리 놓기 (2026.10.02) ═══
    연결 어미 = 앞 절과 뒤 절을 잇는 다리. 보조색 쪽빛 #3F5FA8. 영역 팔레트·헤더 띠·정답/오답 색은 그대로. 이 블록과 시작 화면 SVG를 지우면 원래 모습 */
 :root{--th:#3F5FA8;--th-soft:#E3EAF8}
@@ -361,7 +367,7 @@ textarea.report-input{height:60px;resize:vertical}
   </div>
 
   <div class="score-info">
-    정답 <strong>+10점</strong> · 오답 <strong>−5점</strong>(0점 하한) · 연속 정답 3·4번째 <strong>+5</strong>, 5번째부터 <strong>+10</strong> · 단계 만점 <strong><span id="max-score-info">1단계 170 · 2단계 210 · 3단계 190</span>점</strong><br>
+    정답 <strong>+10점</strong> · 오답 <strong>−5점</strong>(0점 하한) · 연속 정답 3·4번째 <strong>+5</strong>, 5번째부터 <strong>+10</strong> · 틀리면 힌트를 보고 한 번 더 풀 수 있고, 다시 풀어 맞히면 <strong>+5</strong>(2단계 1차 대등/종속 질문은 바로 정답 공개) · 단계 만점 <strong><span id="max-score-info">1단계 170 · 2단계 210 · 3단계 190</span>점</strong><br>
     ⌨️ 채점이 끝나면 Enter · Space · → 로 다음 문제, ← 로 이전 문제
   </div>
 
@@ -374,7 +380,7 @@ textarea.report-input{height:60px;resize:vertical}
     </div>
   </div>
 
-  <div class="credit-box">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2025.08.12 · <span id="lastMod">최종 수정 2026.10.02 15:47</span></div>
+  <div class="credit-box">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2025.08.12 · <span id="lastMod">최종 수정 2026.10.02 15:51</span></div>
 <div class="privacy-box" id="privacyOffline">
   <strong>🔒 개인정보 보호 안내</strong><br>
   본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다. 게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.
@@ -411,7 +417,9 @@ textarea.report-input{height:60px;resize:vertical}
   <div class="question-card" id="question-card"></div>
   <div class="input-area" id="input-area"></div>
   <div class="feedback" id="feedback"><div class="feedback-icon" id="fb-icon"></div><div class="feedback-text" id="fb-msg"></div></div>
+  <div class="hint-box" id="hint-box"></div>
   <div class="feedback-detail" id="feedback-detail"></div>
+  <button class="retry-btn" id="retry-btn" onclick="doRetry()">↺ 다시 풀기</button>
 
   <div class="nav-sidebar">
     <button class="nav-btn" id="prev-btn" onclick="navigate(-1)" disabled>◀ 이전<br>문제</button>
@@ -434,6 +442,7 @@ textarea.report-input{height:60px;resize:vertical}
       <div class="final-score-label" id="final-score-label">최종 점수</div>
       <div class="stats-grid">
         <div class="stat-box s-correct"><div class="stat-val" id="stat-correct">0</div><div class="stat-lbl">첫 시도 정답</div></div>
+        <div class="stat-box s-correct"><div class="stat-val" id="stat-retry">0</div><div class="stat-lbl">다시 풀어 맞힘</div></div>
         <div class="stat-box s-wrong"><div class="stat-val" id="stat-wrong">0</div><div class="stat-lbl">못 맞힘</div></div>
         <div class="stat-box s-skip"><div class="stat-val" id="stat-skip">0</div><div class="stat-lbl">미응답</div></div>
         <div class="stat-box s-combo"><div class="stat-val" id="stat-combo">0</div><div class="stat-lbl">최고 콤보</div></div>
@@ -468,7 +477,7 @@ textarea.report-input{height:60px;resize:vertical}
 
 <script>
 /* ===== Apps Script 연동 설정 ===== */
-const MADE_DATE='2025.08.12', MOD_DATE='2026.10.02 15:47';
+const MADE_DATE='2025.08.12', MOD_DATE='2026.10.02 15:51';
 const GAME_CONFIG = {
   gameCode: "G304",
   gameName: "이어진 문장 학습 게임",
@@ -509,7 +518,7 @@ async function submitResult(resultData) {
 }
 
 /* ===== 점수 규칙 (지침 5-1·5-4) ===== */
-const BASE=10, PENALTY=5;
+const BASE=10, PENALTY=5, RETRY_PT=5;
 function comboBonus(c){return c>=5?10:c>=3?5:0}
 function stageMax(n){return n*BASE+(n>=4?10+10*(n-4):n===3?5:0)}
 
@@ -517,97 +526,97 @@ function stageMax(n){return n*BASE+(n>=4?10+10*(n-4):n===3?5:0)}
 const STAGES = [
 // ── 1단계: 문장 만들기 (B안 5문제 + A안 5문제) ──
 [
-  {id:1,type:'B',sent1:'인생은 짧다',sent2:'예술은 길다',emi:'-고',
+  {id:1,hint:"'짧다'에서 '-다'를 떼면 어간 '짧-'이 남아요. 빈칸에는 그 뒤에 붙는 연결 어미만 쓰세요.",type:'B',sent1:'인생은 짧다',sent2:'예술은 길다',emi:'-고',
    display:'인생은 짧____ 예술은 길다.',blank:'고',
    subtype:'대등-나열',detail:'연결 어미 "-고"로 두 문장을 대등하게 나열했어요. 앞뒤 절의 순서를 바꿔도 의미가 달라지지 않아요.',src:'📘교과서'},
-  {id:2,type:'B',sent1:'길이 너무 좁다',sent2:'차가 못 지나간다',emi:'-아서',
+  {id:2,hint:"'-아서'와 '-어서'는 어간의 모음에 따라 골라 써요. '좁-'의 모음은 'ㅗ'예요. 어느 쪽이 어울릴까요?",type:'B',sent1:'길이 너무 좁다',sent2:'차가 못 지나간다',emi:'-아서',
    display:'길이 너무 좁____ 차가 못 지나간다.',blank:'아서',
    subtype:'종속-원인',detail:'연결 어미 "-아서"로 앞 절(원인)과 뒤 절(결과)을 종속적으로 이었어요.',src:'📘교과서'},
-  {id:3,type:'B',sent1:'형은 축구를 좋아한다',sent2:'동생은 야구를 좋아한다',emi:'-지만',
+  {id:3,hint:"'좋아하다'에서 '-다'만 떼고, 남은 '좋아하-' 뒤에 연결 어미를 그대로 붙여 보세요.",type:'B',sent1:'형은 축구를 좋아한다',sent2:'동생은 야구를 좋아한다',emi:'-지만',
    display:'형은 축구를 좋아하____ 동생은 야구를 좋아한다.',blank:'지만',
    subtype:'대등-대조',detail:'연결 어미 "-지만"으로 앞뒤 절의 내용을 대조했어요.',src:'창작'},
-  {id:4,type:'B',sent1:'내일 비가 온다',sent2:'소풍을 취소하겠다',emi:'-(으)면',
+  {id:4,hint:"'-(으)면'의 '(으)'는 어간에 받침이 있을 때만 들어가요. '오-'에는 받침이 있나요?",type:'B',sent1:'내일 비가 온다',sent2:'소풍을 취소하겠다',emi:'-(으)면',
    display:'내일 비가 오____ 소풍을 취소하겠다.',blank:'면',
    subtype:'종속-조건',detail:'연결 어미 "-(으)면"으로 앞 절이 뒤 절의 조건이 되도록 이었어요.',src:'창작'},
-  {id:5,type:'B',sent1:'맛있는 음식을 먹다',sent2:'식당에 갔다',emi:'-(으)러',
+  {id:5,hint:"'-(으)러'의 '(으)'는 받침 뒤에서 들어가요. '먹-'에는 받침이 있나요?",type:'B',sent1:'맛있는 음식을 먹다',sent2:'식당에 갔다',emi:'-(으)러',
    display:'맛있는 음식을 먹____ 식당에 갔다.',blank:'으러',
    subtype:'종속-목적',detail:'연결 어미 "-(으)러"로 앞 절이 뒤 절의 목적이 되도록 이었어요.',src:'창작'},
-  {id:6,type:'A',sent1:'나는 밥을 먹다',sent2:'동생은 빵을 먹었다',emi:'-고',
+  {id:6,hint:"앞 문장의 어간 '먹-'에 '-고'를 붙여 앞 절을 만들고, 뒤 문장은 그대로 이어 쓰세요.",type:'A',sent1:'나는 밥을 먹다',sent2:'동생은 빵을 먹었다',emi:'-고',
    answer:'나는 밥을 먹고 동생은 빵을 먹었다.',altAnswers:['나는 밥을 먹고 동생은 빵을 먹었다','나는 밥을 먹고, 동생은 빵을 먹었다.','나는 밥을 먹고, 동생은 빵을 먹었다','나는 밥을 먹었고 동생은 빵을 먹었다'],
    subtype:'대등-나열',detail:'연결 어미 "-고"로 두 행동을 나열했어요. "먹다"의 어간 "먹" + "-고" = "먹고"예요.',src:'창작'},
-  {id:7,type:'A',sent1:'날씨가 맑다',sent2:'기분이 좋아졌다',emi:'-아서',
+  {id:7,hint:"'맑-'의 모음은 'ㅏ'예요. '-아서'와 '-어서' 가운데 무엇을 붙일까요? 뒤 문장은 그대로 이어 쓰세요.",type:'A',sent1:'날씨가 맑다',sent2:'기분이 좋아졌다',emi:'-아서',
    answer:'날씨가 맑아서 기분이 좋아졌다.',altAnswers:['날씨가 맑아서 기분이 좋아졌다','날씨가 맑아서, 기분이 좋아졌다.','날씨가 맑아서, 기분이 좋아졌다'],
    subtype:'종속-원인',detail:'"맑다"의 어간 "맑" + "-아서" = "맑아서"로, 앞 절이 원인이 되어요.',src:'창작'},
-  {id:8,type:'A',sent1:'주말에 영화를 보다',sent2:'책을 읽겠다',emi:'-거나',
+  {id:8,hint:"앞 문장의 어간 '보-'에 '-거나'를 붙이고, 뒤 문장은 그대로 이어 쓰세요.",type:'A',sent1:'주말에 영화를 보다',sent2:'책을 읽겠다',emi:'-거나',
    answer:'주말에 영화를 보거나 책을 읽겠다.',altAnswers:['주말에 영화를 보거나 책을 읽겠다','주말에 영화를 보거나, 책을 읽겠다.','주말에 영화를 보거나, 책을 읽겠다'],
    subtype:'대등-선택',detail:'"보다"의 어간 "보" + "-거나" = "보거나"로, 둘 중 하나를 선택하는 의미예요.',src:'창작'},
-  {id:9,type:'A',sent1:'친구를 만나다',sent2:'학교에 일찍 갔다',emi:'-(으)려고',
+  {id:9,hint:"'-(으)려고'의 '(으)'는 받침 뒤에서만 들어가요. '만나-'에는 받침이 있나요?",type:'A',sent1:'친구를 만나다',sent2:'학교에 일찍 갔다',emi:'-(으)려고',
    answer:'친구를 만나려고 학교에 일찍 갔다.',altAnswers:['친구를 만나려고 학교에 일찍 갔다','친구를 만나려고, 학교에 일찍 갔다.','친구를 만나려고, 학교에 일찍 갔다'],
    subtype:'종속-목적',detail:'"만나다"의 어간 "만나" + "-(으)려고" = "만나려고"로, 앞 절이 뒤 절의 목적이에요.',src:'창작'},
-  {id:10,type:'A',sent1:'산이 높다',sent2:'골짜기가 깊다',emi:'-(으)면',
+  {id:10,hint:"'높-'에는 받침이 있어요. '-(으)면'에서 '(으)'를 넣어야 할까요?",type:'A',sent1:'산이 높다',sent2:'골짜기가 깊다',emi:'-(으)면',
    answer:'산이 높으면 골짜기가 깊다.',altAnswers:['산이 높으면 골짜기가 깊다','산이 높으면, 골짜기가 깊다.','산이 높으면, 골짜기가 깊다'],
    subtype:'종속-조건',detail:'"높다"의 어간 "높" + "-(으)면" = "높으면"으로, 앞 절이 조건이 되어요.',src:'📘교과서'}
 ],
 // ── 2단계: 유형 판별 (2단 선택) ──
 [
-  {id:1,sentence:'하늘이 맑고 바람이 시원하다.',emiHighlight:'-고',step1:'대등',step2:'나열',
+  {id:1,hint:"두 절의 순서를 바꿔 읽어 보세요. 두 내용이 서로 맞서나요, 그냥 나란히 놓였나요?",sentence:'하늘이 맑고 바람이 시원하다.',emiHighlight:'-고',step1:'대등',step2:'나열',
    detail:'이 문장의 "-고"는 "하늘이 맑다"와 "바람이 시원하다"를 나란히 늘어놓는 나열이라 대등적으로 이어진 문장이에요. 앞뒤 절을 바꿔도("바람이 시원하고 하늘이 맑다") 뜻이 같아요. 시간 순서의 "-고"(밥을 먹고 학교에 갔다)는 종속적으로 이어진 문장이에요.',src:'창작'},
-  {id:2,sentence:'윤지는 웃었지만 민서는 울었다.',emiHighlight:'-지만',step1:'대등',step2:'대조',
+  {id:2,hint:"앞 절과 뒤 절을 비교해 보세요. 비슷한 내용을 늘어놓았나요, 서로 맞서는 내용인가요?",sentence:'윤지는 웃었지만 민서는 울었다.',emiHighlight:'-지만',step1:'대등',step2:'대조',
    detail:'"-지만"은 앞뒤 절의 내용이 서로 반대되는 대등적 연결 어미(대조)예요.',src:'📘교과서'},
-  {id:3,sentence:'주말에 영화를 보거나 책을 읽겠다.',emiHighlight:'-거나',step1:'대등',step2:'선택',
+  {id:3,hint:"이 문장대로 하면 두 가지를 다 하나요, 하나만 하나요?",sentence:'주말에 영화를 보거나 책을 읽겠다.',emiHighlight:'-거나',step1:'대등',step2:'선택',
    detail:'"-거나"는 둘 중 하나를 선택하는 대등적 연결 어미(선택)예요.',src:'창작'},
-  {id:4,sentence:'공원에 놀이기구가 많아서 동생의 기분이 좋다.',emiHighlight:'-아서',step1:'종속',step2:'원인',
+  {id:4,hint:"뒤 절에 \"왜?\"라고 물어 보세요. 앞 절이 그 답이 되나요?",sentence:'공원에 놀이기구가 많아서 동생의 기분이 좋다.',emiHighlight:'-아서',step1:'종속',step2:'원인',
    detail:'"-아서"는 앞 절이 뒤 절의 원인이 되는 종속적 연결 어미(원인)예요.',src:'📘교과서'},
-  {id:5,sentence:'산이 높으면 골짜기가 깊다.',emiHighlight:'-(으)면',step1:'종속',step2:'조건',
+  {id:5,hint:"앞 절 앞에 '만약'을 넣어 읽어 보세요. 말이 자연스러운가요?",sentence:'산이 높으면 골짜기가 깊다.',emiHighlight:'-(으)면',step1:'종속',step2:'조건',
    detail:'"-(으)면"은 앞 절이 뒤 절의 조건이 되는 종속적 연결 어미(조건)예요.',src:'📘교과서'},
-  {id:6,sentence:'도서관에 책을 빌리러 갔다.',emiHighlight:'-(으)러',step1:'종속',step2:'목적',
+  {id:6,hint:"뒤 절의 행동에 \"무엇을 하려고?\"라고 물어 보세요. 앞 절이 그 답이 되나요?",sentence:'도서관에 책을 빌리러 갔다.',emiHighlight:'-(으)러',step1:'종속',step2:'목적',
    detail:'"-(으)러"는 앞 절이 뒤 절의 목적이 되는 종속적 연결 어미(목적)예요.',src:'창작'},
-  {id:7,sentence:'비가 많이 왔으나 행사는 취소되지 않았다.',emiHighlight:'-(으)나',step1:'대등',step2:'대조',
+  {id:7,hint:"앞 절과 뒤 절을 비교해 보세요. 비슷한 내용을 늘어놓았나요, 서로 맞서는 내용인가요?",sentence:'비가 많이 왔으나 행사는 취소되지 않았다.',emiHighlight:'-(으)나',step1:'대등',step2:'대조',
    detail:'"-(으)나"는 앞뒤 절의 내용이 대립하는 대등적 연결 어미(대조)예요.',src:'창작'},
-  {id:8,sentence:'시간이 없어서 택시를 탔다.',emiHighlight:'-어서',step1:'종속',step2:'원인',
+  {id:8,hint:"뒤 절에 \"왜?\"라고 물어 보세요. 앞 절이 그 답이 되나요?",sentence:'시간이 없어서 택시를 탔다.',emiHighlight:'-어서',step1:'종속',step2:'원인',
    detail:'"-어서"는 앞 절이 뒤 절의 원인이 되는 종속적 연결 어미(원인)예요.',src:'창작'},
-  {id:9,sentence:'축구를 하든지 농구를 하든지 해라.',emiHighlight:'-든지',step1:'대등',step2:'선택',
+  {id:9,hint:"이 문장대로 하면 두 가지를 다 하나요, 하나만 하나요?",sentence:'축구를 하든지 농구를 하든지 해라.',emiHighlight:'-든지',step1:'대등',step2:'선택',
    detail:'"-든지"는 축구와 농구 가운데 하나를 고르게 하는 대등적 연결 어미(선택)예요. 앞뒤 절을 바꿔도("농구를 하든지 축구를 하든지 해라") 뜻이 같아요.',src:'창작'},
-  {id:10,sentence:'친구를 만나려고 카페에 갔다.',emiHighlight:'-(으)려고',step1:'종속',step2:'목적',
+  {id:10,hint:"뒤 절의 행동에 \"무엇을 하려고?\"라고 물어 보세요. 앞 절이 그 답이 되나요?",sentence:'친구를 만나려고 카페에 갔다.',emiHighlight:'-(으)려고',step1:'종속',step2:'목적',
    detail:'"-(으)려고"는 앞 절이 뒤 절의 목적이 되는 종속적 연결 어미(목적·의도)예요.',src:'창작'},
-  {id:11,sentence:'아침을 먹고 학교에 갔다.',emiHighlight:'-고',step1:'종속',step2:'시간',
+  {id:11,hint:"두 일 가운데 무엇이 먼저 일어났나요? 순서를 바꿔 읽으면 뜻이 달라지나요?",sentence:'아침을 먹고 학교에 갔다.',emiHighlight:'-고',step1:'종속',step2:'시간',
    detail:'아침을 먼저 먹고 그다음에 학교에 간 시간 순서예요. 앞뒤를 바꾸면("학교에 가고 아침을 먹었다") 일의 순서가 달라져 뜻이 바뀌므로 종속적으로 이어진 문장이에요. 1번 "하늘이 맑고 바람이 시원하다"는 바꿔도 뜻이 같아서 대등이에요.',src:'창작'},
-  {id:12,sentence:'손을 씻고 밥을 먹었다.',emiHighlight:'-고',step1:'종속',step2:'시간',
+  {id:12,hint:"두 일 가운데 무엇이 먼저 일어났나요? 순서를 바꿔 읽으면 뜻이 달라지나요?",sentence:'손을 씻고 밥을 먹었다.',emiHighlight:'-고',step1:'종속',step2:'시간',
    detail:'손을 씻은 다음에 밥을 먹은 시간 순서예요. "밥을 먹고 손을 씻었다"로 바꾸면 무엇을 먼저 했는지가 달라져 뜻이 바뀌어요. 그래서 같은 "-고"라도 종속적으로 이어진 문장이에요.',src:'창작'}
 ],
 // ── 3단계: 연결 어미 고르기 ──
 [
-  {id:1,sent1:'나는 노래를 부르다',sent2:'친구는 춤을 추다',reqType:'대등-나열',
+  {id:1,hint:"보기를 하나씩 넣어 읽어 보세요. 두 일을 나란히 늘어놓기만 하는 어미는 무엇인가요?",sent1:'나는 노래를 부르다',sent2:'친구는 춤을 추다',reqType:'대등-나열',
    options:['-고','-지만','-(으)면','-아서'],answer:'-고',
    result:'나는 노래를 부르고 친구는 춤을 춘다.',detail:'두 동작을 나란히 나열하려면 "-고"가 알맞아요.',src:'창작'},
-  {id:2,sent1:'오늘은 덥다',sent2:'어제는 추웠다',reqType:'대등-대조',
+  {id:2,hint:"'덥다'와 '추웠다'는 서로 맞서는 내용이에요. 맞서는 두 내용을 잇는 어미를 찾아보세요.",sent1:'오늘은 덥다',sent2:'어제는 추웠다',reqType:'대등-대조',
    options:['-고','-지만','-거나','-아서'],answer:'-지만',
    result:'오늘은 덥지만 어제는 추웠다.',detail:'앞뒤 절이 반대 내용이므로 대조의 "-지만"이 알맞아요.',src:'창작'},
-  {id:3,sent1:'점심에 짜장면을 먹다',sent2:'짬뽕을 먹다',reqType:'대등-선택',
+  {id:3,hint:"둘 다 먹나요, 하나만 고르나요? 둘 중 하나를 고르는 뜻의 어미를 찾아보세요.",sent1:'점심에 짜장면을 먹다',sent2:'짬뽕을 먹다',reqType:'대등-선택',
    options:['-고','-거나','-지만','-(으)면'],answer:'-거나',
    result:'점심에 짜장면을 먹거나 짬뽕을 먹자.',detail:'둘 중 하나를 선택하는 의미이므로 "-거나"가 알맞아요.',src:'창작'},
-  {id:4,sent1:'길이 막히다',sent2:'회의에 늦었다',reqType:'종속-원인',
+  {id:4,hint:"회의에 늦은 까닭이 앞 절에 있어요. 까닭을 나타내는 어미를 넣어 읽어 보세요.",sent1:'길이 막히다',sent2:'회의에 늦었다',reqType:'종속-원인',
    options:['-고','-아서','-(으)면','-거나'],answer:'-아서',
    result:'길이 막혀서 회의에 늦었다.',detail:'앞 절이 뒤 절의 원인이므로 "-아서"가 알맞아요. "막히다" → "막혀서"로 활용해요.',src:'창작'},
-  {id:5,sent1:'열심히 연습하다',sent2:'실력이 늘 것이다',reqType:'종속-조건',
+  {id:5,hint:"\"만약 열심히 연습한다면\"이라는 뜻이에요. 가정을 나타내는 어미는 무엇인가요?",sent1:'열심히 연습하다',sent2:'실력이 늘 것이다',reqType:'종속-조건',
    options:['-아서','-(으)면','-지만','-(으)러'],answer:'-(으)면',
    result:'열심히 연습하면 실력이 늘 것이다.',detail:'앞 절이 뒤 절의 조건이므로 "-(으)면"이 알맞아요.',src:'창작'},
-  {id:6,sent1:'우체국에 소포를 보내다',sent2:'나갔다',reqType:'종속-목적',
+  {id:6,hint:"나간 목적이 앞 절에 있어요. 목적을 나타내는 어미를 넣어 읽어 보세요.",sent1:'우체국에 소포를 보내다',sent2:'나갔다',reqType:'종속-목적',
    options:['-(으)러','-고','-아서','-(으)면'],answer:'-(으)러',
    result:'우체국에 소포를 보내러 나갔다.',detail:'앞 절이 뒤 절의 목적이므로 "-(으)러"가 알맞아요.',src:'창작'},
-  {id:7,sent1:'형은 키가 크다',sent2:'동생은 키가 작다',reqType:'대등-대조',
+  {id:7,hint:"'크다'와 '작다'는 서로 맞서는 내용이에요. 맞서는 두 내용을 잇는 어미를 찾아보세요.",sent1:'형은 키가 크다',sent2:'동생은 키가 작다',reqType:'대등-대조',
    options:['-고','-(으)나','-(으)면','-아서'],answer:'-(으)나',
    result:'형은 키가 크나 동생은 키가 작다.',detail:'앞뒤 절이 대립하므로 대조의 "-(으)나"가 알맞아요.',src:'창작'},
-  {id:8,sent1:'선물을 사다',sent2:'백화점에 갔다',reqType:'종속-목적',
+  {id:8,hint:"백화점에 간 목적이 앞 절에 있어요. 목적·의도를 나타내는 어미를 찾아보세요.",sent1:'선물을 사다',sent2:'백화점에 갔다',reqType:'종속-목적',
    options:['-(으)려고','-고','-아서','-지만'],answer:'-(으)려고',
    result:'선물을 사려고 백화점에 갔다.',detail:'앞 절이 뒤 절의 목적이므로 "-(으)려고"가 알맞아요.',src:'창작'},
-  {id:9,sent1:'비가 오다',sent2:'우산을 가져가거라',reqType:'종속-조건',
+  {id:9,hint:"\"만약 비가 온다면\"이라는 뜻이에요. 보기 가운데 조건을 나타내는 어미를 찾아보세요.",sent1:'비가 오다',sent2:'우산을 가져가거라',reqType:'종속-조건',
    options:['-거든','-아서','-고','-거나'],answer:'-거든',
    result:'비가 오거든 우산을 가져가거라.',detail:'앞 절이 뒤 절의 조건이므로 "-거든"이 알맞아요.',src:'창작'},
-  {id:10,sent1:'날이 춥다',sent2:'옷을 두껍게 입어라',reqType:'종속-원인',
+  {id:10,hint:"옷을 두껍게 입으라고 하는 까닭이 앞 절에 있어요. 까닭을 나타내는 어미를 찾아보세요.",sent1:'날이 춥다',sent2:'옷을 두껍게 입어라',reqType:'종속-원인',
    options:['-(으)니','-고','-(으)면','-거나'],answer:'-(으)니',
    result:'날이 추우니 옷을 두껍게 입어라.',detail:'날이 추운 것이 옷을 두껍게 입으라는 까닭(원인)이므로 "-(으)니"가 알맞아요. "춥다" → "추우니"로 활용해요.',src:'창작'},
-  {id:11,sent1:'숙제를 끝내다',sent2:'놀이터에 나갔다',reqType:'종속-시간',
+  {id:11,hint:"숙제를 끝낸 다음에 놀이터에 나갔어요. 앞의 일이 먼저 일어났음을 나타내는 어미를 찾아보세요.",sent1:'숙제를 끝내다',sent2:'놀이터에 나갔다',reqType:'종속-시간',
    options:['-고','-지만','-거나','-(으)면'],answer:'-고',
    result:'숙제를 끝내고 놀이터에 나갔다.',detail:'숙제를 끝낸 다음에 놀이터에 나간 시간 순서이므로 "-고"가 알맞아요. 앞뒤를 바꾸면("놀이터에 나가고 숙제를 끝냈다") 순서가 달라져 뜻이 바뀌니 종속이에요. 1번처럼 나열하는 "-고"(노래를 부르고 춤을 춘다)는 대등이에요.',src:'창작'}
 ]
@@ -636,6 +645,7 @@ function fmtDur(sec){const m=Math.floor(sec/60),x=sec%60;return m?`${m}분 ${x}�
 
 let questions=[], current=0, score=0, combo=0, maxCombo=0, correctCount=0, wrongCount=0;
 let answered=[], userAnswers=[], currentStage=0;
+let pend=[]; // 1 = 한 번 틀려 '다시 풀기' 대기, 2 = 다시 푸는 중. answered: null 미완료 / true 첫 시도 정답 / 'r' 다시 풀어 맞힘 / false 못 맞힘
 let gameStartTime=null;
 
 /* ===== Audio ===== */
@@ -673,7 +683,7 @@ function doStartGame(si){
   currentStage=si;
   questions=shuffle(STAGES[si]);
   current=0;score=0;combo=0;maxCombo=0;correctCount=0;wrongCount=0;
-  answered=new Array(questions.length).fill(null);
+  answered=new Array(questions.length).fill(null);pend=new Array(questions.length).fill(0);
   userAnswers=new Array(questions.length).fill('');
   gameStartTime=new Date();tLast=0;endAt=null;
   document.getElementById('combo-badge').classList.add('hidden');
@@ -701,7 +711,7 @@ function renderQuestion(){
   else renderStage3(q,qCard,iArea);
 
   // 이미 답한 문제면 피드백 복원
-  if(answered[current]!=null){
+  if(answered[current]!=null||pend[current]===1){
     restoreFeedback(q);
   }
 
@@ -724,17 +734,17 @@ function renderStage1(q,qCard,iArea){
   qCard.innerHTML=qHTML;
 
   if(isB){
-    iArea.innerHTML=`<div class="text-input-wrap"><label>연결 어미를 입력하세요</label><input class="text-input" id="ans-input" type="text" placeholder="예: 고, 아서, 으면 …" maxlength="10" ${answered[current]!=null?'disabled':''}/>
-    <button class="submit-btn" id="submit-btn" onclick="submitStage1()" ${answered[current]!=null?'disabled':''}>제출</button></div>`;
-    if(answered[current]==null){
+    iArea.innerHTML=`<div class="text-input-wrap"><label>연결 어미를 입력하세요</label><input class="text-input" id="ans-input" type="text" placeholder="예: 고, 아서, 으면 …" maxlength="10" ${answered[current]!=null||pend[current]===1?'disabled':''}/>
+    <button class="submit-btn" id="submit-btn" onclick="submitStage1()" ${answered[current]!=null||pend[current]===1?'disabled':''}>제출</button></div>`;
+    if(answered[current]==null&&pend[current]!==1){
       setTimeout(()=>{const inp=document.getElementById('ans-input');if(inp)inp.focus()},100);
       const inp2=document.getElementById('ans-input');
       if(inp2)inp2.addEventListener('keydown',e=>{if(e.key==='Enter')submitStage1()});
     }
   } else {
-    iArea.innerHTML=`<div class="text-input-wrap"><label>완성된 이어진 문장을 입력하세요</label><input class="text-input" id="ans-input" type="text" placeholder="두 문장을 이어 쓰세요" ${answered[current]!=null?'disabled':''}/>
-    <button class="submit-btn" id="submit-btn" onclick="submitStage1()" ${answered[current]!=null?'disabled':''}>제출</button></div>`;
-    if(answered[current]==null){
+    iArea.innerHTML=`<div class="text-input-wrap"><label>완성된 이어진 문장을 입력하세요</label><input class="text-input" id="ans-input" type="text" placeholder="두 문장을 이어 쓰세요" ${answered[current]!=null||pend[current]===1?'disabled':''}/>
+    <button class="submit-btn" id="submit-btn" onclick="submitStage1()" ${answered[current]!=null||pend[current]===1?'disabled':''}>제출</button></div>`;
+    if(answered[current]==null&&pend[current]!==1){
       setTimeout(()=>{const inp=document.getElementById('ans-input');if(inp)inp.focus()},100);
       const inp2=document.getElementById('ans-input');
       if(inp2)inp2.addEventListener('keydown',e=>{if(e.key==='Enter')submitStage1()});
@@ -771,11 +781,11 @@ function renderStage2(q,qCard,iArea){
     iHTML+=`<div class="step-btns ${isD?'three-col':'two-col'}" id="s2-step2">`;
     opts.forEach(o=>{
       const isAns=o===q.step2;
-      const picked=done&&userAnswers[current].step2===o;
+      const lock=done||pend[current]===1,picked=lock&&userAnswers[current].step2===o;
       let cls='step-btn';
       if(done&&isAns)cls+=' correct-choice';
-      else if(done&&picked&&!isAns)cls+=' wrong-choice';
-      iHTML+=`<button class="${cls}" onclick="selectStep2('${o}')" ${done?'disabled':''}>${o}</button>`;
+      else if(lock&&picked&&!isAns)cls+=' wrong-choice';
+      iHTML+=`<button class="${cls}" onclick="selectStep2('${o}')" ${lock?'disabled':''}>${o}</button>`;
     });
     iHTML+=`</div>`;
   }
@@ -805,13 +815,13 @@ function renderStage3(q,qCard,iArea){
   qHTML+=`<div style="text-align:center;margin-top:4px;font-size:.88rem;color:var(--primary);font-weight:700">→ ${q.reqType}</div>`;
   qCard.innerHTML=qHTML;
 
-  const done=answered[current]!=null;
+  const done=answered[current]!=null,lock=done||pend[current]===1;
   let iHTML=`<div class="emi-select-wrap"><div class="step-label">알맞은 연결 어미를 고르세요</div><div class="emi-btns">`;
   q.options.forEach(o=>{
     let cls='emi-btn';
     if(done&&o===q.answer)cls+=' correct-choice';
-    else if(done&&o===userAnswers[current]&&o!==q.answer)cls+=' wrong-choice';
-    iHTML+=`<button class="${cls}" onclick="selectEmi('${o}')" ${done?'disabled':''}>${o}</button>`;
+    else if(lock&&o===userAnswers[current]&&o!==q.answer)cls+=' wrong-choice';
+    iHTML+=`<button class="${cls}" onclick="selectEmi('${o}')" ${lock?'disabled':''}>${o}</button>`;
   });
   iHTML+=`</div></div>`;
   iArea.innerHTML=iHTML;
@@ -819,7 +829,7 @@ function renderStage3(q,qCard,iArea){
 
 /* ===== 1단계 제출 ===== */
 function submitStage1(){
-  if(answered[current]!=null)return;
+  if(answered[current]!=null||pend[current]===1)return;
   const inp=document.getElementById('ans-input');
   if(!inp)return;
   const val=inp.value.trim();
@@ -847,12 +857,12 @@ function submitStage1(){
 
   inp.disabled=true;
   document.getElementById('submit-btn').disabled=true;
-  processAnswer(isCorrect,q);
+  processAnswer(isCorrect,q,true);
 }
 
 /* ===== 2단계 step1 선택 ===== */
 function selectStep1(choice){
-  if(answered[current]!=null)return;
+  if(answered[current]!=null||pend[current])return;
   const q=questions[current];
   if(!userAnswers[current])userAnswers[current]={};
   userAnswers[current].step1=choice;
@@ -864,49 +874,61 @@ function selectStep1(choice){
   } else {
     // 1차 오답 → 바로 오답 처리
     userAnswers[current].step2='';
-    processAnswer(false,q);
+    processAnswer(false,q,false); // 보기 2개 — 다시 풀기 없이 바로 공개 (지침 3-6)
   }
 }
 
 /* ===== 2단계 step2 선택 ===== */
 function selectStep2(choice){
-  if(answered[current]!=null)return;
+  if(answered[current]!=null||pend[current]===1)return;
   const q=questions[current];
   userAnswers[current].step2=choice;
-  processAnswer(choice===q.step2,q);
+  processAnswer(choice===q.step2,q,true);
 }
 
 /* ===== 3단계 어미 선택 ===== */
 function selectEmi(choice){
-  if(answered[current]!=null)return;
+  if(answered[current]!=null||pend[current]===1)return;
   const q=questions[current];
   userAnswers[current]=choice;
-  processAnswer(choice===q.answer,q);
+  processAnswer(choice===q.answer,q,true);
 }
 
-/* ===== 공통 채점 ===== */
-function processAnswer(isCorrect,q){
-  answered[current]=isCorrect;tLast=Date.now();
-  if(isCorrect){
+/* ===== 공통 채점 — 첫 시도 / 다시 풀기 (지침 5-1, 3-6) ===== */
+function processAnswer(isCorrect,q,canRetry){
+  const i=current,isR=pend[i]===2;tLast=Date.now();
+  let fbMsg,ok=isCorrect;
+  if(isCorrect&&!isR){
+    answered[i]=true;pend[i]=0;
     combo++;if(combo>maxCombo)maxCombo=combo;correctCount++;
-    const bonus=comboBonus(combo);
-    score+=BASE+bonus;
+    const bonus=comboBonus(combo);score+=BASE+bonus;
     if(combo>=2){const cb=document.getElementById('combo-badge');cb.classList.remove('hidden');document.getElementById('combo-val').textContent=combo;cb.classList.remove('pulse');void cb.offsetWidth;cb.classList.add('pulse')}
-    var fbMsg=`정답! +${BASE+bonus}점${bonus?' · 연속 보너스 +'+bonus:''}`;
+    fbMsg=`정답! +${BASE+bonus}점${bonus?' · 연속 보너스 +'+bonus:''}`;
+  } else if(isCorrect){
+    answered[i]='r';pend[i]=0;score+=RETRY_PT;playCorrect();
+    fbMsg=`다시 풀어 맞혔어요! +${RETRY_PT}점`;
   } else {
-    combo=0;wrongCount++;score=Math.max(0,score-PENALTY);
-    document.getElementById('combo-badge').classList.add('hidden');
+    if(!isR){combo=0;wrongCount++;score=Math.max(0,score-PENALTY);document.getElementById('combo-badge').classList.add('hidden')}
     playWrong();
-    var fbMsg=`틀렸어요! −${PENALTY}점`;
+    if(!isR&&canRetry){pend[i]=1;fbMsg=`틀렸어요! −${PENALTY}점 — 힌트를 보고 다시 풀어 보세요. (Enter)`}
+    else{answered[i]=false;pend[i]=0;fbMsg=isR?'다시 틀렸어요 — 정답과 해설을 확인하세요.':`틀렸어요! −${PENALTY}점 — 정답과 해설을 확인하세요.`}
   }
-  renderQuestion(); // 먼저 잠긴 상태로 다시 그린 뒤
-  showFeedback(isCorrect,fbMsg);
-  if(isCorrect)celebrate(combo,BASE+comboBonus(combo)); // 방금 채점한 점수 문구를 덮어쓴다 (복원 문구 '이미 맞힌 문제'가 남지 않게)
-  showDetail(q);
-
-  // 전부 답했으면 자동 종료
+  renderQuestion(); // 잠긴 상태로 다시 그린 뒤 방금 채점한 문구로 덮어쓴다
+  showFeedback(ok,fbMsg);
+  if(answered[i]===true)celebrate(combo,BASE+comboBonus(combo));
+  else if(answered[i]==='r')showBanner('small',`다시 풀어 맞힘 +${RETRY_PT}`,'',900);
+  if(pend[i]===1){showHint(q);document.getElementById('retry-btn').classList.add('show')}
+  else showDetail(q);
   if(answered.every(a=>a!=null))setTimeout(()=>showComplete(),1500);
 }
+function doRetry(){
+  const i=current;if(pend[i]!==1)return;
+  pend[i]=2;
+  if(currentStage===1&&userAnswers[i])userAnswers[i].step2='';else userAnswers[i]='';
+  renderQuestion();
+  const inp=document.getElementById('ans-input');if(inp){inp.value='';setTimeout(()=>inp.focus(),60)}
+}
+function showHint(q){const e=document.getElementById('hint-box');e.innerHTML=`<strong>💡 힌트</strong> ${q.hint}`;e.classList.add('show')}
 
 function updBand(){document.getElementById('bandR').textContent=`${currentStage+1}단계 · 문항 ${current+1} / ${questions.length} · ${score}점`}
 function showFeedback(correct,msg){
@@ -917,6 +939,8 @@ function showFeedback(correct,msg){
 }
 function hideFeedback(){
   document.getElementById('feedback').className='feedback';
+  document.getElementById('hint-box').className='hint-box';
+  document.getElementById('retry-btn').classList.remove('show');
   document.getElementById('feedback-detail').className='feedback-detail';
   document.getElementById('feedback-detail').innerHTML='';
 }
@@ -929,7 +953,10 @@ function showDetail(q){
   el.classList.add('show');
 }
 function restoreFeedback(q){
-  showFeedback(answered[current],answered[current]?'정답! (이미 맞힌 문제)':'틀렸어요!');
+  const a=answered[current];
+  if(pend[current]===1){showFeedback(false,'틀렸어요 — 힌트를 보고 다시 풀어 보세요. (Enter)');showHint(q);document.getElementById('retry-btn').classList.add('show');return}
+  if(a==null)return;
+  showFeedback(a!==false,a===true?'정답! (이미 맞힌 문제)':a==='r'?'다시 풀어 맞힌 문제':'못 맞힌 문제');
   showDetail(q);
 }
 
@@ -942,21 +969,22 @@ function navigate(dir){
 
 function finishGame(){
   if(!confirm('게임을 끝낼까요? 풀지 않은 문제는 미응답으로 기록됩니다.'))return;
-  // 풀지 않은 문제는 오답이 아니라 미응답으로 남긴다 (지침 5-3)
+  // 풀지 않은 문제는 오답이 아니라 미응답으로 남긴다 (지침 5-3). 한 번 틀리고 다시 풀지 않은 문제는 '못 맞힘'으로 확정
+  answered=answered.map((a,i)=>a==null&&pend[i]?false:a);pend=pend.map(()=>0);
   showComplete();
 }
 
 /* ===== 결과 계산 — 결과 화면·리포트·오답노트·전송이 모두 이 함수를 쓴다 (지침 5-5) ===== */
 function typeKey(q){return currentStage===0?q.subtype:currentStage===1?(q.step1+'-'+q.step2):q.reqType}
 function calcStats(){
-  const S={total:questions.length,first:0,miss:0,skipped:0,graded:0,rate:0,byType:{},max:stageMax(questions.length)};
+  const S={total:questions.length,first:0,retryOk:0,miss:0,skipped:0,graded:0,rate:0,byType:{},max:stageMax(questions.length)};
   questions.forEach((q,i)=>{
     const k=typeKey(q);
     if(!S.byType[k])S.byType[k]={graded:0,first:0,total:0};
     const t=S.byType[k];t.total++;
     if(answered[i]==null){S.skipped++;return}
     S.graded++;t.graded++;
-    if(answered[i]){S.first++;t.first++}else S.miss++;
+    if(answered[i]===true){S.first++;t.first++}else if(answered[i]==='r')S.retryOk++;else S.miss++;
   });
   S.rate=S.graded?Math.round(S.first/S.graded*100):0;
   return S;
@@ -970,7 +998,7 @@ function verdict(S){
 }
 function sendResult(){
   const S=calcStats();
-  const wrongItems=questions.filter((q,i)=>answered[i]===false).map(q=>q.id).join(',');
+  const wrongItems=questions.filter((q,i)=>answered[i]!=null&&answered[i]!==true).map(q=>q.id).join(',');
   submitResult({
     studentId:STUDENT.id,studentName:STUDENT.name,className:STUDENT.className,
     totalQuestions:S.total,correctCount:S.first,score:score,
@@ -1003,6 +1031,7 @@ function showComplete(){
   document.getElementById('final-score').textContent=score+'점';
   document.getElementById('final-score-label').textContent=`${STAGE_NAMES[currentStage]} 최종 점수 (만점 ${S.max}점)`;
   document.getElementById('stat-correct').textContent=S.first;
+  document.getElementById('stat-retry').textContent=S.retryOk;
   document.getElementById('stat-wrong').textContent=S.miss;
   document.getElementById('stat-skip').textContent=S.skipped;
   document.getElementById('stat-combo').textContent=maxCombo;
@@ -1013,7 +1042,7 @@ function showComplete(){
   document.getElementById('complete-title').textContent=V.title;
 
   // 못 맞힌 문제 + 미응답 목록
-  const wrongList=questions.map((q,i)=>({q,i})).filter(x=>answered[x.i]!==true);
+  const wrongList=questions.map((q,i)=>({q,i})).filter(x=>answered[x.i]!==true&&answered[x.i]!=='r');
   const reportEl=document.getElementById('wrong-report');
   reportEl.innerHTML='';
   if(!S.graded){
@@ -1081,10 +1110,10 @@ function ansText(q){return currentStage===0?(q.type==='B'?`${q.emi} → ${q.disp
 function myText(i){let a=userAnswers[i];if(a&&typeof a==='object')a=`${a.step1||'?'} → ${a.step2||'(고르지 않음)'}`;return a||'미입력'}
 function downloadWrongNote(){
   const nm=document.getElementById('inp-name').value.trim();if(!nm){document.getElementById('inp-name').focus();return}
-  const S=calcStats(),d=endAt||new Date(),wl=questions.map((q,i)=>({q,i})).filter(x=>answered[x.i]!==true);
+  const S=calcStats(),d=endAt||new Date(),wl=questions.map((q,i)=>({q,i})).filter(x=>answered[x.i]!==true&&answered[x.i]!=='r');
   const B=[{t:`📝 오답노트 — ${GAME_CONFIG.gameName} · ${STAGE_NAMES[currentStage]}`,f:`bold 20px ${FF}`,lh:28,c:'#5a3d9e',gap:4},
     {t:`이름 ${nm} · 완료 ${fmtDT(d)} · 점수 ${score}점 / 만점 ${S.max}점`,f:`14px ${FF}`,lh:20},
-    {t:`첫 시도 정답 ${S.first} · 못 맞힘 ${S.miss} · 미응답 ${S.skipped}`,f:`14px ${FF}`,lh:20,gap:10}];
+    {t:`첫 시도 정답 ${S.first} · 다시 풀어 맞힘 ${S.retryOk} · 못 맞힘 ${S.miss} · 미응답 ${S.skipped}`,f:`14px ${FF}`,lh:20,gap:10}];
   if(!S.graded)B.push({t:'풀어 본 문제가 없어요.',f:`bold 16px ${FF}`,lh:24,c:'#c06020',rule:1});
   else if(!wl.length)B.push({t:'🎊 틀리거나 남긴 문제가 없어요! 다음 단계에 도전해 보세요.',f:`bold 16px ${FF}`,lh:24,c:'#3a8f60',rule:1});
   else wl.forEach(({q,i})=>{
@@ -1108,7 +1137,7 @@ function downloadReport(){
   if(!S.graded)B.push({t:'풀어 본 문제가 없어요.',f:`bold 18px ${FF}`,lh:26,c:'#c06020',rule:1});
   else{
     B.push({t:`${score}점 / 만점 ${S.max}점`,f:`bold 30px ${FF}`,lh:38,c:'#7c5cbf',rule:1});
-    B.push({t:`첫 시도 정답 ${S.first} · 못 맞힘 ${S.miss} · 미응답 ${S.skipped} · 최고 콤보 ${maxCombo} · 걸린 시간 ${fmtDur(el)}`,f:`14px ${FF}`,lh:20});
+    B.push({t:`첫 시도 정답 ${S.first} · 다시 풀어 맞힘 ${S.retryOk} · 못 맞힘 ${S.miss} · 미응답 ${S.skipped} · 최고 콤보 ${maxCombo} · 걸린 시간 ${fmtDur(el)}`,f:`14px ${FF}`,lh:20});
     B.push({t:`첫 시도 정답률 ${S.rate}% (${S.first}/${S.graded}) — ${verdict(S).title}`,f:`bold 15px ${FF}`,lh:22,gap:8});
     const cats=Object.keys(S.byType).filter(k=>S.byType[k].graded>=2),rate=k=>S.byType[k].first/S.byType[k].graded;
     const lab=k=>`${k} ${S.byType[k].first}/${S.byType[k].graded}`,good=cats.filter(k=>rate(k)===1),weak=cats.filter(k=>rate(k)<.5);
@@ -1117,7 +1146,7 @@ function downloadReport(){
       B.push({t:`⚠️ 보완이 필요한 유형  ${weak.length?weak.map(lab).join(' · '):'—'}`,f:`bold 14px ${FF}`,lh:21,c:'#c05050',gap:6})}
     const miss=k=>S.byType[k].graded-S.byType[k].first;
     const cand=cats.filter(k=>miss(k)>0).sort((a,b)=>miss(b)-miss(a)||rate(a)-rate(b)||S.byType[b].graded-S.byType[a].graded);
-    if(S.miss===0)B.push({t:'약점이 보이지 않아요. 다음 단계에 도전해 보세요.',f:`bold 14px ${FF}`,lh:21,c:'#3a8f60',gap:6});
+    if(S.miss+S.retryOk===0)B.push({t:'약점이 보이지 않아요. 다음 단계에 도전해 보세요.',f:`bold 14px ${FF}`,lh:21,c:'#3a8f60',gap:6});
     else if(cand.length){B.push({t:'🎯 가장 먼저 공부할 것',f:`bold 14px ${FF}`,lh:21,c:'#5a3d9e'});B.push({t:TIPS[cand[0]]||cand[0],f:`14px ${FF}`,lh:21,gap:6})}
   }
   if(cm){B.push({t:'💬 학습 소감',f:`bold 14px ${FF}`,lh:21,rule:1});B.push({t:cm,f:`14px ${FF}`,lh:21,c:'#5b5670',gap:6})}
@@ -1146,7 +1175,7 @@ function dropEmoji(set,n){for(let i=0;i<n;i++){const e=document.createElement('d
 function sfxFan(){try{const c=getACtx();[523,659,784,1047,1319].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.type='triangle';o.frequency.value=f;o.connect(g);g.connect(c.destination);g.gain.setValueAtTime(.12,c.currentTime+i*.09);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+i*.09+.25);o.start(c.currentTime+i*.09);o.stop(c.currentTime+i*.09+.26)});
   const len=c.sampleRate*.25,buf=c.createBuffer(1,len,c.sampleRate),d=buf.getChannelData(0);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*(1-i/len);const src=c.createBufferSource(),g2=c.createGain();g2.gain.value=.05;src.buffer=buf;src.connect(g2);g2.connect(c.destination);src.start(c.currentTime+.45)}catch(e){}}
 /* ===== 오늘 나온 문제 (이번 판 출제분) ===== */
-function openToday(){const st=a=>a===true?'맞힘':a==null?'미응답':'못 맞힘';
+function openToday(){const st=a=>a===true?'맞힘':a==='r'?'다시 풀어 맞힘':a==null?'미응답':'못 맞힘';
   document.getElementById('todayList').innerHTML=questions.map((q,i)=>`<div class="rv"><span class="tg">${typeKey(q)}</span>${st(answered[i])}<div>${qText(q)}</div><div class="a">✅ 정답: ${ansText(q)}</div><div class="d">${q.detail}</div></div>`).join('');
   document.getElementById('mToday').classList.add('on')}
 function closeToday(){document.getElementById('mToday').classList.remove('on')}
@@ -1155,18 +1184,18 @@ function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 function downloadTeacherXls(){
   const row=(cells,th)=>'<tr>'+cells.map(x=>`<${th?'th':'td'} style="mso-number-format:'\\@';vertical-align:top">${esc(x)}</${th?'th':'td'}>`).join('')+'</tr>';
   let h='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8"></head><body><table border="1">';
-  h+=row(['원본 id','단계','유형','문항 형식','문제(예문)','정답(인정 답)','오답 보기','해설','출처 표기'],1);
+  h+=row(['원본 id','단계','유형','문항 형식','문제(예문)','정답(인정 답)','오답 보기','해설','힌트','출처 표기'],1);
   STAGES.forEach((Q,si)=>Q.forEach(q=>{
     let ty,fm,txt,ans,wr='—';
     if(si===0){ty=q.subtype;fm=q.type==='B'?'빈칸 쓰기':'전체 문장 쓰기';txt=`${q.sent1} + ${q.sent2} (연결 어미 ${q.emi})`+(q.type==='B'?` / ${q.display}`:'');ans=q.type==='B'?q.blank:[q.answer,...(q.altAnswers||[])].join(' / ')}
     else if(si===1){ty=q.step1+'-'+q.step2;fm='2단계 선택';txt=`${q.sentence} (연결 어미 ${q.emiHighlight})`;ans=`${q.step1} → ${q.step2}`;wr=(q.step1==='대등'?['나열','대조','선택']:['원인','조건','목적','시간']).filter(o=>o!==q.step2).join(', ')}
     else{ty=q.reqType;fm='객관식';txt=`${q.sent1} + ${q.sent2} [${q.reqType}]`;ans=`${q.answer} → ${q.result||''}`;wr=q.options.filter(o=>o!==q.answer).join(', ')}
-    h+=row([q.id,STAGE_NAMES[si],ty,fm,txt,ans,wr,q.detail,q.src||'']);
+    h+=row([q.id,STAGE_NAMES[si],ty,fm,txt,ans,wr,q.detail,q.hint||'',q.src||'']);
   }));
   h+='</table><br><table border="1">'+row(['단계','유형','문항 수'],1);
   STAGES.forEach((Q,si)=>{const c={};Q.forEach(q=>{const k=si===0?q.subtype:si===1?q.step1+'-'+q.step2:q.reqType;c[k]=(c[k]||0)+1});Object.keys(c).forEach(k=>h+=row([STAGE_NAMES[si],k,c[k]]))});
   const tot=STAGES.reduce((a,q)=>a+q.length,0);
-  h+='</table><br><table border="1">'+row(['성취기준',STD_TEXT])+row(['배점',`첫 시도 정답 ${BASE}점 · 오답 −${PENALTY}점(0점 하한) · 3~4번째 연속 +5 · 5번째부터 +10 · 다시 풀기 없음 · 만점 ${STAGES.map(q=>stageMax(q.length)).join('/')}점`])+row(['총문항 수',`${tot}문항 (단계별 ${STAGES.map(q=>q.length).join('/')})`])+row(['크레딧',`${CREDIT} · 제작일 ${MADE_DATE} · 최종 수정 ${MOD_DATE}`])+'</table></body></html>';
+  h+='</table><br><table border="1">'+row(['성취기준',STD_TEXT])+row(['배점',`첫 시도 정답 ${BASE}점 · 오답 −${PENALTY}점(0점 하한) · 3~4번째 연속 +5 · 5번째부터 +10 · 다시 풀어 맞힘 ${RETRY_PT}점(보기 3개 이상·직접 쓰기 문항 1회, 2단계 1차 질문은 바로 공개) · 만점 ${STAGES.map(q=>stageMax(q.length)).join('/')}점`])+row(['총문항 수',`${tot}문항 (단계별 ${STAGES.map(q=>q.length).join('/')})`])+row(['크레딧',`${CREDIT} · 제작일 ${MADE_DATE} · 최종 수정 ${MOD_DATE}`])+'</table></body></html>';
   const d=new Date(),blob=new Blob(['\ufeff'+h],{type:'application/vnd.ms-excel'}),a=document.createElement('a');
   a.href=URL.createObjectURL(blob);a.download=`G304_이어진문장학습게임_학습데이터목록_${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}.xls`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 }
@@ -1205,7 +1234,8 @@ document.addEventListener('keydown',e=>{
   if(tg==='INPUT'||tg==='TEXTAREA')return;   // 1단계 입력칸의 Enter는 제출
   if(e.key==='Enter'||e.key===' '||e.key==='ArrowRight'){
     e.preventDefault();
-    if(answered[current]!=null&&current<questions.length-1){current++;renderQuestion()}
+    if(pend[current]===1)doRetry();
+    else if(answered[current]!=null&&current<questions.length-1){current++;renderQuestion()}
   } else if(e.key==='ArrowLeft'){
     e.preventDefault();
     if(current>0){current--;renderQuestion()}
