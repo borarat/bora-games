@@ -4,7 +4,9 @@
      채점: 잘못 탭 감점 −5 → −10 (맞힘 득점과 같게, 지침 3-6 속도형). 놓친 목표 모음 감점(−5)은 그대로
      화면: 시작 화면에 ㅚ·ㅟ 이중 모음 발음 허용 안내 한 줄, '게임 끝내기' 확인 단계(확인창이 떠 있는 동안 시간·두더지 멈춤)
      2026.10.01 13:00 안내: ㅚ·ㅟ 문구를 '단모음으로 발음하는 것이 원칙이지만, 이중 모음으로 발음할 수도 있어요'로
-     2026.10.01 13:00 '게임 끝내기' 확인을 브라우저 confirm() 대신 화면 안 확인창으로 (떠 있는 동안 시간·두더지 멈춤, 계속하기·Esc면 이어서) -->
+     2026.10.01 13:00 '게임 끝내기' 확인을 브라우저 confirm() 대신 화면 안 확인창으로 (떠 있는 동안 시간·두더지 멈춤, 계속하기·Esc면 이어서) 
+     화면 2026.10.05 02:10: 게임 테마층 '두더지 굴 모음 지도'(시작 화면 그림, 모음 사각도). 문항·채점·로직 변경 없음
+-->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -283,6 +285,11 @@ body.playing{overflow:hidden;}
   @keyframes fadeOnly{0%{opacity:0; transform:translateX(-50%)}20%,80%{opacity:1; transform:translateX(-50%)}100%{opacity:0; transform:translateX(-50%)}}
   .mole.miss{animation:none;}
 }
+
+/* ═══ 게임 테마층 · 두더지 굴 모음 지도 (2026.10.05) ═══
+   단모음 게임 공통 그림 언어 = 모음 사각도(혀의 앞뒤 × 높낮이). 영역 팔레트·헤더 띠·플레이 화면은 그대로. 이 블록과 시작 화면 SVG를 지우면 원래 모습 */
+.titleWrap .keyArt{flex:0 0 auto;height:126px;width:auto;margin-left:18px}
+@media (max-width:860px){.titleWrap .keyArt{display:none}}
 </style>
 </head>
 <body>
@@ -298,6 +305,19 @@ body.playing{overflow:hidden;}
      <h1 class="title">단모음 구별 두더지 탭</h1>
      <div class="subtitle">🦔 목표 모음 두더지만 골라 잡기</div>
     </div>
+    <svg class="keyArt" viewBox="0 0 300 130" aria-hidden="true" font-family="'Noto Sans KR','Malgun Gothic',sans-serif">
+      <rect width="300" height="130" rx="14" fill="#EEF5E1"/>
+      <path d="M0 116q40-8 80 0t80 0 80 0 60 0V130H0Z" fill="#DCEBC6"/>
+      <g font-size="13" font-weight="700" fill="#4B3420"><ellipse cx="60" cy="38" rx="17" ry="7" fill="#C9A77A"/><ellipse cx="60" cy="37" rx="13" ry="5" fill="#5A3E22"/><text x="60" y="29" text-anchor="middle">ㅣ</text><ellipse cx="104" cy="38" rx="17" ry="7" fill="#C9A77A"/><ellipse cx="104" cy="37" rx="13" ry="5" fill="#5A3E22"/><text x="104" y="29" text-anchor="middle">ㅟ</text><ellipse cx="186" cy="38" rx="17" ry="7" fill="#C9A77A"/><ellipse cx="186" cy="37" rx="13" ry="5" fill="#5A3E22"/><text x="186" y="29" text-anchor="middle">ㅡ</text><ellipse cx="232" cy="38" rx="17" ry="7" fill="#C9A77A"/><ellipse cx="232" cy="37" rx="13" ry="5" fill="#5A3E22"/><text x="232" y="29" text-anchor="middle">ㅜ</text><ellipse cx="70" cy="72" rx="17" ry="7" fill="#C9A77A"/><ellipse cx="70" cy="71" rx="13" ry="5" fill="#5A3E22"/><text x="70" y="63" text-anchor="middle">ㅔ</text><ellipse cx="112" cy="72" rx="17" ry="7" fill="#C9A77A"/><ellipse cx="112" cy="71" rx="13" ry="5" fill="#5A3E22"/><text x="112" y="63" text-anchor="middle">ㅚ</text><ellipse cx="186" cy="72" rx="17" ry="7" fill="#C9A77A"/><ellipse cx="186" cy="71" rx="13" ry="5" fill="#5A3E22"/><text x="186" y="63" text-anchor="middle">ㅓ</text><ellipse cx="80" cy="106" rx="17" ry="7" fill="#C9A77A"/><ellipse cx="80" cy="105" rx="13" ry="5" fill="#5A3E22"/><text x="80" y="97" text-anchor="middle">ㅐ</text><ellipse cx="186" cy="106" rx="17" ry="7" fill="#C9A77A"/><ellipse cx="186" cy="105" rx="13" ry="5" fill="#5A3E22"/><text x="186" y="97" text-anchor="middle">ㅏ</text></g>
+      <g font-size="13" font-weight="700"><ellipse cx="232" cy="72" rx="17" ry="7" fill="#C9A77A"/>
+      <path d="M220 72V54a12 12 0 0 1 24 0V72Z" fill="#8A5A3B"/>
+      <ellipse cx="232" cy="71" rx="13" ry="4" fill="#5A3E22" opacity=".35"/>
+      <circle cx="227.5" cy="52" r="1.8" fill="#231508"/><circle cx="236.5" cy="52" r="1.8" fill="#231508"/>
+      <ellipse cx="232" cy="57" rx="3.6" ry="2.6" fill="#E07B39"/>
+      <rect x="242" y="36" width="22" height="20" rx="4" fill="#fff" stroke="#E07B39" stroke-width="2"/><path d="M246 56l-3 6" stroke="#8A5A3B" stroke-width="2"/>
+      <text x="253" y="51" text-anchor="middle" fill="#B5531B">ㅗ</text></g>
+      <g font-size="9.5" fill="#6B7F55"><text x="10" y="36">높</text><text x="10" y="106">낮</text><text x="118" y="124">앞 ← 혀 → 뒤</text></g>
+    </svg>
    </div>
 
    <div class="startGrid">
@@ -373,7 +393,7 @@ body.playing{overflow:hidden;}
 
    <div class="credit">
     <span class="seg">제작 · 보라라샘</span> · <span class="seg">전주서신중학교 교사</span> · <span class="seg">siaawase@gmail.com</span><br>
-    <span class="seg">제작일 2026.08.13</span> · <span class="seg" id="lastMod">최종 수정 2026.10.01 13:00</span>
+    <span class="seg">제작일 2026.08.13</span> · <span class="seg" id="lastMod">최종 수정 2026.10.05 02:10</span>
    </div>
 
    <div class="privacy" id="privacyOffline">
@@ -461,7 +481,7 @@ body.playing{overflow:hidden;}
 
    <div class="credit">
     <span class="seg">제작 · 보라라샘</span> · <span class="seg">전주서신중학교 교사</span> · <span class="seg">siaawase@gmail.com</span><br>
-    <span class="seg">제작일 2026.08.13</span> · <span class="seg" id="lastMod2">최종 수정 2026.10.01 13:00</span>
+    <span class="seg">제작일 2026.08.13</span> · <span class="seg" id="lastMod2">최종 수정 2026.10.05 02:10</span>
    </div>
   </div>
  </div>
@@ -496,7 +516,7 @@ body.playing{overflow:hidden;}
 
 <script>
 const MADE_DATE = "2026.08.13";
-const LAST_MOD = "2026.10.01 13:00";
+const LAST_MOD = "2026.10.05 02:10";
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정

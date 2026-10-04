@@ -6,7 +6,9 @@
      화면: 시작 화면에 ㅚ·ㅟ 이중 모음 발음 허용 안내 한 줄, '게임 끝내기' 확인 단계
      2026.10.01 13:00 안내: ㅚ·ㅟ 문구를 '단모음으로 발음하는 것이 원칙이지만, 이중 모음으로 발음할 수도 있어요'로
      2026.10.01 13:00 채점: 리포트 '모음별 정답'도 전체 정답률과 같은 기준(그냥 통과시킨 비목표는 정답 아님)
-     2026.10.01 13:00 '게임 끝내기' 확인을 브라우저 confirm() 대신 화면 안 확인창으로 (떠 있는 동안 멈춤, 계속하기·Esc면 이어서) -->
+     2026.10.01 13:00 '게임 끝내기' 확인을 브라우저 confirm() 대신 화면 안 확인창으로 (떠 있는 동안 멈춤, 계속하기·Esc면 이어서) 
+     화면 2026.10.05 02:10: 게임 테마층 '밤하늘 모음 별자리'(시작 화면 그림, 모음 사각도). 문항·채점·로직 변경 없음
+-->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -183,6 +185,11 @@ details.vtable summary{cursor:pointer;font-size:.9rem;font-weight:700;color:var(
 @media(max-width:900px){.start-grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:600px){.band .goal-text{display:none}.end-top,.analysis,.inputs{grid-template-columns:1fr}.rules{grid-template-columns:1fr}.controls{grid-template-columns:1fr 1.5fr 1fr}.ctrl.small,.ctrl.quit{grid-column:span 1}}
 @media(prefers-reduced-motion:reduce){.arena.shake,.combo-banner.c5.show{animation:none}.emoji-drop{display:none}}
+
+/* ═══ 게임 테마층 · 밤하늘 모음 별자리 (2026.10.05) ═══
+   단모음 게임 공통 그림 언어 = 모음 사각도(혀의 앞뒤 × 높낮이). 영역 팔레트·헤더 띠·플레이 화면은 그대로. 이 블록과 시작 화면 SVG를 지우면 원래 모습 */
+.title-row .keyArt{flex:0 0 auto;height:126px;width:auto;margin-left:18px}
+@media (max-width:860px){.title-row .keyArt{display:none}}
 </style>
 </head>
 <body>
@@ -199,6 +206,12 @@ details.vtable summary{cursor:pointer;font-size:.9rem;font-weight:700;color:var(
         <div class="game-title">🚀 단모음 갤러그</div>
         <div class="game-subtitle">목표에 해당하는 단모음만 골라 격추하며 단모음 체계를 익혀요</div>
       </div>
+    <svg class="keyArt" viewBox="0 0 300 130" aria-hidden="true" font-family="'Noto Sans KR','Malgun Gothic',sans-serif">
+      <rect width="300" height="130" rx="14" fill="#1B1F3B"/><circle cx="173" cy="25" r="1" fill="#fff" opacity="0.7"/><circle cx="32" cy="15" r="1.3" fill="#fff" opacity="0.35"/><circle cx="195" cy="80" r="0.8" fill="#fff" opacity="0.7"/><circle cx="117" cy="10" r="0.8" fill="#fff" opacity="0.5"/><circle cx="222" cy="14" r="0.8" fill="#fff" opacity="0.35"/><circle cx="290" cy="60" r="0.8" fill="#fff" opacity="0.7"/><circle cx="71" cy="34" r="1.3" fill="#fff" opacity="0.7"/><circle cx="39" cy="79" r="1.3" fill="#fff" opacity="0.5"/><circle cx="33" cy="34" r="0.8" fill="#fff" opacity="0.7"/><circle cx="76" cy="43" r="1" fill="#fff" opacity="0.35"/><circle cx="284" cy="21" r="1.3" fill="#fff" opacity="0.5"/><circle cx="100" cy="19" r="1.3" fill="#fff" opacity="0.7"/><circle cx="104" cy="53" r="0.8" fill="#fff" opacity="0.7"/><circle cx="40" cy="78" r="0.8" fill="#fff" opacity="0.7"/><circle cx="113" cy="69" r="1.3" fill="#fff" opacity="0.7"/><circle cx="226" cy="105" r="1" fill="#fff" opacity="0.5"/><circle cx="240" cy="52" r="1" fill="#fff" opacity="0.35"/><circle cx="100" cy="95" r="0.8" fill="#fff" opacity="0.35"/><circle cx="161" cy="73" r="1" fill="#fff" opacity="0.5"/><circle cx="237" cy="42" r="1.3" fill="#fff" opacity="0.35"/><circle cx="68" cy="71" r="1" fill="#fff" opacity="0.35"/><circle cx="183" cy="25" r="1" fill="#fff" opacity="0.5"/><circle cx="28" cy="91" r="0.8" fill="#fff" opacity="0.7"/><circle cx="168" cy="49" r="1.3" fill="#fff" opacity="0.5"/><circle cx="262" cy="80" r="1" fill="#fff" opacity="0.35"/><circle cx="55" cy="40" r="1" fill="#fff" opacity="0.7"/><circle cx="41" cy="13" r="1.3" fill="#fff" opacity="0.7"/><circle cx="166" cy="88" r="1.3" fill="#fff" opacity="0.7"/><circle cx="236" cy="42" r="1.3" fill="#fff" opacity="0.5"/><circle cx="185" cy="8" r="1" fill="#fff" opacity="0.5"/><circle cx="94" cy="84" r="0.8" fill="#fff" opacity="0.5"/><circle cx="38" cy="33" r="1" fill="#fff" opacity="0.35"/><circle cx="134" cy="56" r="1" fill="#fff" opacity="0.5"/><circle cx="49" cy="27" r="1" fill="#fff" opacity="0.5"/>
+      <g stroke="#F5C842" stroke-width="1.3" opacity=".55"><line x1="60" y1="32" x2="70" y2="66"/><line x1="70" y1="66" x2="80" y2="100"/><line x1="104" y1="32" x2="112" y2="66"/><line x1="186" y1="32" x2="186" y2="66"/><line x1="186" y1="66" x2="186" y2="100"/><line x1="232" y1="32" x2="232" y2="66"/><line x1="60" y1="32" x2="104" y2="32"/><line x1="186" y1="32" x2="232" y2="32"/><line x1="70" y1="66" x2="112" y2="66"/><line x1="186" y1="66" x2="232" y2="66"/></g>
+      <g font-size="14" font-weight="700" fill="#fff"><circle cx="60" cy="32" r="4.2" fill="#F5C842"/><text x="69" y="37">ㅣ</text><circle cx="104" cy="32" r="4.2" fill="#F5C842"/><text x="113" y="37">ㅟ</text><circle cx="186" cy="32" r="4.2" fill="#F5C842"/><text x="195" y="37">ㅡ</text><circle cx="232" cy="32" r="4.2" fill="#F5C842"/><text x="241" y="37">ㅜ</text><circle cx="70" cy="66" r="4.2" fill="#F5C842"/><text x="79" y="71">ㅔ</text><circle cx="112" cy="66" r="4.2" fill="#F5C842"/><text x="121" y="71">ㅚ</text><circle cx="186" cy="66" r="4.2" fill="#F5C842"/><text x="195" y="71">ㅓ</text><circle cx="232" cy="66" r="4.2" fill="#F5C842"/><text x="241" y="71">ㅗ</text><circle cx="80" cy="100" r="4.2" fill="#F5C842"/><text x="89" y="105">ㅐ</text><circle cx="186" cy="100" r="4.2" fill="#F5C842"/><text x="195" y="105">ㅏ</text></g>
+      <g font-size="9.5" fill="#B9C0E8"><text x="10" y="35">높</text><text x="10" y="103">낮</text><text x="118" y="124">앞 ← 혀 → 뒤</text></g>
+    </svg>
     </div>
 
     <div class="m3-block hidden" id="m3Top" style="margin:0 0 16px"><b>💻 이 게임은 노트북에서 열어주세요</b><br>마우스로 조작하는 게임이라 휴대폰에서는 제대로 동작하지 않습니다.</div>
@@ -258,7 +271,7 @@ details.vtable summary{cursor:pointer;font-size:.9rem;font-weight:700;color:var(
 
     <div class="credit-box">
       제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-      제작일 2026.08.13 · <span id="lastMod">최종 수정 2026.10.01 13:00</span>
+      제작일 2026.08.13 · <span id="lastMod">최종 수정 2026.10.05 02:10</span>
     </div>
 
     <div class="privacy" id="privacyOffline">
@@ -391,7 +404,7 @@ details.vtable summary{cursor:pointer;font-size:.9rem;font-weight:700;color:var(
 
 <script>
 const MADE_DATE='2026.08.13';
-const LAST_MOD='2026.10.01 13:00';
+const LAST_MOD='2026.10.05 02:10';
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
