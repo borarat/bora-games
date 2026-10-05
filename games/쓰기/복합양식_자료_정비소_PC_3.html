@@ -4,7 +4,9 @@
      문항: 2단계 8번 CC0 보기 "저작권이 없는" → "저작권자가 권리를 포기한"
      문항: 2단계 3번 기사문 개요를 처음·중간·끝 → 표제·부제·전문·본문, 보기·해설 맞춤 (게임 코드 W201 유지)
      팁: 배치 판단 팁에 "(기사문이면 본문)" 추가
-     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이; 문제 화면의 이전·다음·끝내기 사이드바를 오른쪽으로 옮김(교사 요청, 넓은 화면만 — 모바일 배치는 그대로) -->
+     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이; 문제 화면의 이전·다음·끝내기 사이드바를 오른쪽으로 옮김(교사 요청, 넓은 화면만 — 모바일 배치는 그대로)
+     2026.10.05 23:55 문항: 1단계 1·7·9번의 누가 봐도 틀린 보기와 없는 용어(단순양식·순수양식)를 학생 오개념에서 나온 보기로 교체(교사 승인 2026.10.05)
+     2026.10.06 00:30 버그 검사(실제 입력): 이전·다음 버튼 클릭 뒤 Enter·Space로 답하기 전 넘어가던 문제, 다시 풀기가 끝없이 되던 것을 1회로(두 번 틀리면 정답·해설 공개), 모든 문항 채점 뒤 자동 종료, 풀어 본 문제가 없을 때 축하·정답률 문구 대신 '풀어 본 문제가 없어요', 오답 목록 '내 답'이 다시 풀어 맞힌 정답으로 바뀌던 것, 보기 글자 낱말 중간 줄바꿈 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -102,7 +104,7 @@ h1 .mark{color:var(--pt-deep)}
 .q{font-size:clamp(15px,1.5vw,17.5px);font-weight:700;line-height:1.55;margin-top:12px}
 .opts{display:grid;gap:8px;margin-top:12px}
 .opt{display:flex;gap:10px;align-items:flex-start;text-align:left;background:#fff;border:1.5px solid var(--line);
-  border-radius:12px;padding:12px 14px;font-size:14.5px;line-height:1.5;cursor:pointer;font-family:inherit;color:inherit;min-height:46px}
+  border-radius:12px;padding:12px 14px;font-size:14.5px;line-height:1.5;cursor:pointer;font-family:inherit;color:inherit;min-height:46px;word-break:keep-all}
 .opt:hover{border-color:var(--pt);background:var(--soft)}
 .opt .lt{color:var(--pt-deep);font-weight:700;flex-shrink:0}
 .opt.correct{border-color:var(--green);background:var(--green-soft)}
@@ -246,7 +248,7 @@ h1 .mark{color:var(--pt-deep)}
     <button class="start-go" id="startGo" disabled>학습 시작하기 ▶</button>
     <div class="credit">
       제작 · <b>보라라샘</b> · 전주서신중학교 교사 · siaawase@gmail.com<br>
-      제작일 2026.07.23 · <span id="lastMod">최종 수정 2026.10.05 03:00</span>
+      제작일 2026.07.23 · <span id="lastMod">최종 수정 2026.10.06 00:30</span>
     </div>
     <div class="privacy" id="privacyOffline">
       🔒 <b>개인정보 보호 안내</b><br>
@@ -369,7 +371,7 @@ h1 .mark{color:var(--pt-deep)}
 
 </div>
 <script>
-const MADE_DATE="2026.07.23", LAST_MOD="2026.10.05 03:00";
+const MADE_DATE="2026.07.23", LAST_MOD="2026.10.06 00:30";
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -441,7 +443,7 @@ const STAGES=[
  items:[
 {id:1,cat:"basic",
  q:"문자, 사진, 그림, 그래프, 표, 소리, 동영상 등 다양한 기호가 함께 어우러진 양식을 무엇이라고 할까요?",
- opts:["복합양식","단일양식","단순양식","순수양식"],answer:0,
+ opts:["복합양식","단일양식","시각 자료","인포그래픽"],answer:0,   // 단일양식: 반대 개념과 혼동 · 시각 자료: 그림·사진만 떠올림 · 인포그래픽: 복합양식 자료의 한 예를 개념 이름으로 착각
  hint:"문자 언어로만 이루어진 것은 '단일양식'이에요.",
  explain:"다양한 기호가 함께 어우러진 양식을 '복합양식'이라고 합니다. 문자 언어로만 이루어진 것은 '단일양식'이에요."},
 {id:2,cat:"basic",
@@ -471,7 +473,7 @@ const STAGES=[
  explain:"소리나 음악은 소리와 관련된 정보를 전달하거나 글의 분위기를 형성하는 역할을 합니다."},
 {id:7,cat:"caution",
  q:"복합양식 자료를 글쓰기에 활용하기 위해 선별할 때, 가장 먼저 확인해야 할 점은?",
- opts:["글의 목적과 주제에 맞는 자료인지 확인한다","자료의 크기가 충분히 큰지 확인한다","자료가 최근에 만들어진 것인지 확인한다","자료에 색깔이 화려한지 확인한다"],answer:0,
+ opts:["글의 목적과 주제에 맞는 자료인지 확인한다","되도록 많은 정보를 담은 자료인지 확인한다","자료가 최근에 만들어진 것인지 확인한다","독자의 눈길을 끌 만큼 화려하고 인상적인 자료인지 확인한다"],answer:0,   // 많을수록 좋다 · 최신이면 좋다 · 눈에 띄면 좋다는 오개념
  hint:"아무리 좋은 자료라도 글의 목적에 맞지 않으면 소용이 없어요.",
  explain:"복합양식 자료를 선별할 때는 글의 목적과 주제에 맞는 자료인지를 가장 먼저 확인해야 합니다."},
 {id:8,cat:"caution",
@@ -481,7 +483,7 @@ const STAGES=[
  explain:"자료의 출처가 신뢰할 만하고, 저작권에 위배되지 않는지 반드시 확인해야 합니다. 인터넷에 공개된 자료라도 출처를 밝혀야 해요."},
 {id:9,cat:"caution",
  q:"복합양식 자료를 선별할 때, 자료의 내용에서 반드시 확인해야 할 것은?",
- opts:["사실이 아니거나 과장, 축소, 왜곡된 내용이 없는지 확인한다","자료의 글자 크기가 충분히 큰지 확인한다","자료에 사용된 색깔이 다양한지 확인한다","자료의 분량이 충분히 많은지 확인한다"],answer:0,
+ opts:["사실이 아니거나 과장, 축소, 왜곡된 내용이 없는지 확인한다","내 주장을 뒷받침하는 내용만 담겨 있는지 확인한다","많은 사람이 공유하고 조회 수가 많은 자료인지 확인한다","자료의 분량이 충분히 많은지 확인한다"],answer:0,   // 확증 편향 · 인기=신뢰 · 많을수록 좋다는 오개념
  hint:"멋져 보여도 내용이 과장되었다면 쓸 수 없어요.",
  explain:"자료에 과장, 축소, 왜곡된 내용이 없는지 확인하는 것이 중요합니다. 사실에 근거한 정확한 자료를 선별해야 해요."},
 {id:10,cat:"struct",
@@ -563,6 +565,10 @@ function maxScore(n){return n*BASE+10+10*(n-4)}
 
 /* ═══ 상태 ═══ */
 const $=id=>document.getElementById(id);
+// 채점이 끝난 문항: 맞혔거나, 두 번 틀려 정답이 공개된 문항 (보기 4개 → 다시 풀기 1회, 지침 5-1)
+function isDone(a){return !!(a&&(a.ok||(a.tried&&a.tried.length>=2)))}
+let finTimer=null;
+function checkAllDone(){if(S.answered.every(isDone)){clearTimeout(finTimer);finTimer=setTimeout(()=>{if($("gameScreen").classList.contains("active"))finishStage()},1500)}}
 let S={stageIdx:0,items:[],order:[],idx:0,score:0,combo:0,maxCombo:0,answered:[],startTime:0,elapsed:0,max:0};
 
 /* ═══ 사운드 ═══ */
@@ -640,6 +646,7 @@ function startStage(n){
   doStartStage(n);
 }
 function doStartStage(n){
+  clearTimeout(finTimer);finTimer=null;
   const stage=STAGES[n];
   const order=stage.items.map((_,i)=>i);
   for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]];}
@@ -689,6 +696,10 @@ function renderQuestion(){
   $("feedback").style.display="none";$("feedback").innerHTML="";
   const rec=S.answered[S.idx];
   if(rec&&rec.ok){lockOpts();showOk(it,rec,true);}
+  else if(isDone(rec)){
+    rec.tried.forEach(orig=>{const di=sh.order.indexOf(orig);if(di>=0)markWrong(di)});
+    lockOpts();showReveal(it);
+  }
   else if(rec&&rec.tried&&rec.tried.length){
     rec.tried.forEach(orig=>{const di=sh.order.indexOf(orig);if(di>=0)markWrong(di)});
     const fb=$("feedback");fb.style.display="block";
@@ -702,7 +713,7 @@ function renderQuestion(){
 
 function choose(dispIdx){
   const it=S.items[S.idx],sh=getShuffled(S.idx);
-  if(S.answered[S.idx]&&S.answered[S.idx].ok)return;
+  if(isDone(S.answered[S.idx]))return;
   const origIdx=sh.order[dispIdx];
   if(dispIdx===sh.answerShuffled){
     const firstTry=!S.answered[S.idx];
@@ -712,7 +723,8 @@ function choose(dispIdx){
       bonus=S.combo>=5?10:(S.combo>=3?5:0);g=BASE+bonus;
     }else{g=Math.round(BASE/2);}
     S.score+=g;
-    S.answered[S.idx]={chosen:origIdx,ok:true,firstOk:firstTry};
+    const prev=S.answered[S.idx];
+    S.answered[S.idx]={chosen:origIdx,ok:true,firstOk:firstTry,tried:prev&&prev.tried?prev.tried:undefined};
     lockOpts();
     document.querySelectorAll("#opts .opt")[dispIdx].classList.add("correct");
     showOk(it,S.answered[S.idx],false,g);
@@ -722,6 +734,7 @@ function choose(dispIdx){
     else playSound(true);
     if(firstTry)cbCelebrate(S.combo,g);
     else cbShow('다시 풀어 맞힘','+'+g,'retry');
+    checkAllDone();
   }else{
     const rec=S.answered[S.idx];
     if(rec&&rec.tried&&rec.tried.indexOf(origIdx)>=0)return; // 이미 고른 오답 — 재감점 없음
@@ -729,11 +742,17 @@ function choose(dispIdx){
     if(!rec)S.answered[S.idx]={chosen:origIdx,ok:false,firstOk:false,tried:[origIdx]};
     else{rec.chosen=origIdx;(rec.tried=rec.tried||[]).push(origIdx);}
     markWrong(dispIdx);
-    const fb=$("feedback");fb.style.display="block";
-    fb.innerHTML='<div class="fb-hint"><b>❌ 다시 생각해 봐요.</b> '+it.hint+'<br><span style="font-size:12.5px;opacity:.85">다른 선택지를 눌러 다시 풀어 보세요. (Enter · Space)</span></div>';
     $("hintBtn").style.display="none";
     refreshMeters();
+    if(isDone(S.answered[S.idx])){lockOpts();showReveal(it);checkAllDone();return;}   // 두 번 틀림 → 정답·해설 공개
+    const fb=$("feedback");fb.style.display="block";
+    fb.innerHTML='<div class="fb-hint"><b>❌ 다시 생각해 봐요.</b> '+it.hint+'<br><span style="font-size:12.5px;opacity:.85">다른 선택지를 눌러 한 번 더 풀어 보세요. (Enter · Space)</span></div>';
   }
+}
+function showReveal(it){
+  const fb=$("feedback");fb.style.display="block";
+  fb.innerHTML='<div class="fb-hint"><b>❌ 아쉬워요. 정답: '+it.opts[it.answer]+'</b><br>'+it.explain+'<br><span style="font-size:12.5px;opacity:.85">다음 문항으로 넘어가세요. (Enter · Space · →)</span></div>';
+  $("hintBtn").style.display="none";
 }
 function markWrong(dispIdx){
   const el=document.querySelectorAll("#opts .opt")[dispIdx];
@@ -773,10 +792,13 @@ $("btnQuit").addEventListener("click",()=>{if(confirm("게임을 끝내고 결�
 document.addEventListener("keydown",e=>{
   if(!$("gameScreen").classList.contains("active"))return;
   if(e.key==="Enter"||e.key===" "||e.key==="ArrowRight"){
-    const rec=S.answered[S.idx];
-    if(cbShown()){e.preventDefault();hideBanner();if(rec&&rec.ok)goNext();return;}
-    if(rec&&rec.ok){e.preventDefault();goNext();}
-    else if(rec&&!rec.ok&&(e.key==="Enter"||e.key===" ")){e.preventDefault();renderQuestion();}
+    const tg=e.target,rec=S.answered[S.idx];
+    if(tg&&(tg.tagName==="INPUT"||tg.tagName==="TEXTAREA"))return;
+    if(e.key!=="ArrowRight"&&tg&&tg.closest&&tg.closest("#opts .opt")&&!isDone(rec))return;   // 보기에 포커스 → 그 보기를 고르는 기본 동작
+    e.preventDefault();   // 마우스로 누른 이전·다음 버튼에 포커스가 남아 Enter·Space로 다시 눌리던 문제(답하기 전 건너뜀) 막음
+    if(cbShown()){hideBanner();if(isDone(rec))goNext();return;}
+    if(isDone(rec))goNext();
+    else if(rec&&(e.key==="Enter"||e.key===" "))renderQuestion();
   }
 });
 
@@ -821,6 +843,7 @@ function analyze(){
 
 /* ═══ 종료 ═══ */
 function finishStage(){
+  clearTimeout(finTimer);finTimer=null;
   const stage=STAGES[S.stageIdx];
   S.elapsed=Date.now()-(S.startTime||Date.now());
   const sec=Math.round(S.elapsed/1000),mm=Math.floor(sec/60),ss=sec%60;
@@ -828,7 +851,7 @@ function finishStage(){
   $("endTitle").textContent=stage.ico+" "+stage.label+" — 정비 완료!";
   $("finalScore").textContent=S.score;
   document.querySelector("#finalScore").nextElementSibling.textContent="점수 / "+S.max;
-  $("finalAcc").textContent=st.acc+"%";
+  $("finalAcc").textContent=st.answered?st.acc+"%":"—";
   $("endBandRight").textContent=S.score+" / "+S.max+"점";
   const d=new Date();
   const dateStr=d.getFullYear()+"."+p2(d.getMonth()+1)+"."+p2(d.getDate())+" "+p2(d.getHours())+":"+p2(d.getMinutes());
@@ -841,9 +864,10 @@ function finishStage(){
   window._wrongs=wrongs;
   $("noteTitle").innerHTML='📒 오답노트 · <span style="color:var(--pt-deep)">'+stage.label+'</span>';
   const list=$("noteList");
-  if(wrongs.length===0)list.innerHTML='<div class="perfect">🎉 축하해요! 푼 문제를 모두 첫 시도에 맞혔어요.</div>';
+  if(!st.answered)list.innerHTML='<div class="perfect">📝 풀어 본 문제가 없어요.</div>';
+  else if(wrongs.length===0)list.innerHTML='<div class="perfect">🎉 축하해요! 푼 문제를 모두 첫 시도에 맞혔어요.</div>';
   else list.innerHTML=wrongs.map(({it,a})=>{
-    const ansTxt=it.opts[it.answer],chose=a&&a.chosen>=0?it.opts[a.chosen]:"(고르지 않음)";
+    const ansTxt=it.opts[it.answer],picks=a.tried&&a.tried.length?a.tried:(a.chosen>=0?[a.chosen]:[]),chose=picks.length?picks.map(i=>it.opts[i]).join(" → "):"(고르지 않음)";
     return '<div class="note-item"><span class="note-kind">'+CATEGORIES[it.cat].label+'</span><div class="nq">'+it.q+
       '</div><div class="na"><span style="color:var(--red)">❌ 내 답: '+chose+'</span><br><span class="co">✅ 정답: '+ansTxt+
       '</span></div><div class="ex">'+it.explain+'</div></div>';
@@ -879,6 +903,7 @@ function p2(n){return String(n).padStart(2,"0")}
 function buildReport(stage,st){
   const m=catStats(),an=analyze();
   let html='<div class="report-title">📊 학습 결과 분석 리포트 · '+stage.label+'</div>';
+  if(!st.answered){$("reportArea").innerHTML=html+'<div class="report-msg">📝 <b>풀어 본 문제가 없어요.</b><br>문제를 풀어 보면 결과를 알려 줄게요.</div>';return;}
   html+='<div style="font-size:13px;line-height:1.7;margin-bottom:8px">'+
     '최종 점수 <b>'+S.max+'점 만점에 '+S.score+'점</b> · 첫 시도 정답 '+st.firstOk+' · 다시 풀어 맞힘 '+st.retryOk+
     ' · 못 맞힘 '+st.missed+(st.skipped?' · 미응답 '+st.skipped+'문항':'')+
@@ -959,7 +984,8 @@ function downloadNote(){
   const H=140+(wrongs.length?body:70)+70;cv.width=W;cv.height=H;
   headFoot(ctx,W,H,"📒 복합양식 자료 정비소 — 오답노트",name);
   let y=124;
-  if(!wrongs.length){ctx.fillStyle="#2f9e57";ctx.font="bold 18px system-ui";ctx.fillText("🎉 푼 문제를 모두 첫 시도에 맞혔어요!",pad,y+30);}
+  if(!stats().answered){ctx.fillStyle="#993556";ctx.font="bold 18px system-ui";ctx.fillText("📝 풀어 본 문제가 없어요.",pad,y+30);}
+  else if(!wrongs.length){ctx.fillStyle="#2f9e57";ctx.font="bold 18px system-ui";ctx.fillText("🎉 푼 문제를 모두 첫 시도에 맞혔어요!",pad,y+30);}
   else blocks.forEach(b=>{
     ctx.fillStyle="#ffffff";ctx.strokeStyle="#FAE4EC";ctx.fillRect(pad,y,W-2*pad,b.h);ctx.strokeRect(pad,y,W-2*pad,b.h);
     ctx.fillStyle="#d2483f";ctx.fillRect(pad,y,4,b.h);
@@ -984,6 +1010,14 @@ function downloadReportImg(){
   const tipLines=wrap(ctx,tipText,inner-20,"13.5px system-ui");
   const feelLines=feeling?wrap(ctx,feeling,inner-20,"13.5px system-ui"):[];
   const stdLines=wrap(ctx,"성취기준 "+STD_CODE+" "+STD_TEXT,inner,"12px system-ui");
+  if(!st.answered){   // 채점된 문항이 없으면 결과 대신 안내만 (지침 5-3)
+    cv.width=W;cv.height=270+stdLines.length*17;
+    headFoot(ctx,W,cv.height,"📊 복합양식 자료 정비소 — 학습 결과 분석 리포트",name);
+    let y=140;ctx.fillStyle="#993556";ctx.font="bold 18px system-ui";ctx.fillText("📝 풀어 본 문제가 없어요.",pad,y);y+=26;
+    ctx.fillStyle="#6f6470";ctx.font="13.5px system-ui";ctx.fillText("문제를 풀어 보면 결과를 알려 줄게요.",pad,y);y+=34;
+    ctx.fillStyle="#8a7f88";ctx.font="12px system-ui";stdLines.forEach(l=>{ctx.fillText(l,pad,y);y+=17});
+    save(cv,fname("학습리포트"));return;
+  }
   const H=150+70+rows.length*34+40+ (an.good.length?22:0) + (an.weak.length?22:0) +30+tipLines.length*20+
     (feelLines.length?30+feelLines.length*20:0)+stdLines.length*17+80;
   cv.width=W;cv.height=H;

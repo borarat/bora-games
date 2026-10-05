@@ -5,7 +5,8 @@
      용어: 비음 → 비음(콧소리), 유음 → 유음(흐름소리) (교과서 괄호 병기). 단답형은 비음·콧소리·비음(콧소리) 모두 인정
      해설: ㅇ 해설에 '첫소리 ㅇ은 소리가 없다' 안내 추가 (받침 발음 설명은 넣지 않음 — 교사 결정)
      2026.10.01 13:00 피드백: 오답 시 '정답은 ~이에요/예요' 조사를 받침 유무로 선택 · 단답형: 콧소리(비음)·흐름소리(유음)처럼 괄호 앞뒤를 바꾼 답도 인정
-     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 -->
+     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
+     2026.10.06 00:30 테마층(자음 우체국: 시작 화면 우편함 그림·보조색 먹 #3D3D4A) · 버그: 답하기 전 →로 건너뛰던 것 막음, '다음' 클릭 직후 Enter·Space로 단답형 문항이 건너뛰어지던 것 고침, 2단계(두 갈래) 다시 풀기 없앰(지침 3-6), 단답형 괄호 병기(예사소리(평음))·붙임표 인정, 채점 0개일 때 정답률 '—' -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -247,6 +248,14 @@ button{cursor:pointer}
   .stats{grid-template-columns:repeat(3,1fr)}
   #hud{top:48px}
 }
+/* ═══ 게임 테마층 · 자음 우체국 (2026.10.05) ═══
+   자음을 소리 나는 자리별 우편함에 나눠 넣는 우체국. 보조색 먹 #3D3D4A. 영역 팔레트·헤더 띠·정답/오답 색·흰 문제 카드·정답 카드는 그대로.
+   이 블록과 시작 화면 SVG를 지우면 원래 모습 */
+:root{--th:#3D3D4A;--th-soft:#ECECEF}
+.title-row .keyArt{margin-left:auto;flex:0 0 auto;height:126px;width:auto}
+@media (max-width:860px){.title-row .keyArt{display:none}}
+.box.how{border-left:4px solid var(--th)}
+.box.how h3{color:var(--th)}
 </style>
 </head>
 <body>
@@ -263,6 +272,14 @@ button{cursor:pointer}
       <div class="g-title">자음 체계 구분하기</div>
       <div class="g-sub">국어의 자음 19개를 소리 나는 위치·울림·방법·세기에 따라 나누어 봐요</div>
      </div>
+     <svg class="keyArt" viewBox="0 0 360 126" aria-hidden="true" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-weight="700" text-anchor="middle">
+      <rect x="4" y="4" width="352" height="118" rx="8" fill="#ECECEF" stroke="#3D3D4A" stroke-width="2.5"/>
+      <g fill="#fff" stroke="#3D3D4A" stroke-width="1.6"><rect x="12" y="12" width="63" height="36" rx="4"/><rect x="81" y="12" width="63" height="36" rx="4"/><rect x="150" y="12" width="63" height="36" rx="4"/><rect x="219" y="12" width="63" height="36" rx="4"/><rect x="288" y="12" width="63" height="36" rx="4"/></g>
+      <g font-size="11" fill="#3D3D4A"><text x="43.5" y="27">입술</text><text x="43.5" y="41">소리</text><text x="112.5" y="27">잇몸</text><text x="112.5" y="41">소리</text><text x="181.5" y="27">센입천장</text><text x="181.5" y="41">소리</text><text x="250.5" y="27">여린입천장</text><text x="250.5" y="41">소리</text><text x="319.5" y="27">목청</text><text x="319.5" y="41">소리</text></g>
+      <g fill="#fff" stroke="#3D3D4A" stroke-width="1.8"><rect x="12" y="54" width="63" height="60" rx="4"/><rect x="81" y="54" width="63" height="60" rx="4"/><rect x="150" y="54" width="63" height="60" rx="4"/><rect x="219" y="54" width="63" height="60" rx="4"/><rect x="288" y="54" width="63" height="60" rx="4"/></g>
+      <g fill="#3D3D4A"><rect x="22" y="63" width="43" height="6" rx="3"/><rect x="91" y="63" width="43" height="6" rx="3"/><rect x="160" y="63" width="43" height="6" rx="3"/><rect x="229" y="63" width="43" height="6" rx="3"/><rect x="298" y="63" width="43" height="6" rx="3"/></g>
+      <g fill="#ECECEF" stroke="#3D3D4A" stroke-width="1.4" stroke-linejoin="round"><path d="M28 80h31v22h-31zM28 80l15.5 11 15.5-11"/><path d="M97 80h31v22h-31zM97 80l15.5 11 15.5-11"/><path d="M166 80h31v22h-31zM166 80l15.5 11 15.5-11"/><path d="M235 80h31v22h-31zM235 80l15.5 11 15.5-11"/><path d="M304 80h31v22h-31zM304 80l15.5 11 15.5-11"/></g>
+     </svg>
     </div>
 
     <div class="start-grid">
@@ -278,6 +295,7 @@ button{cursor:pointer}
        <p><b>단답형</b>은 칸 이름을 직접 쓰고 Enter를 눌러요.</p>
        <p>단답형은 평음·격음·연구개음 같은 한자어 이름도 정답이에요.</p>
        <p>첫 시도 정답 <b>+10점</b>, 다시 풀어 맞히면 <b>+5점</b>이에요.</p>
+       <p>2단계(울림 여부)는 두 갈래라서 틀리면 바로 정답과 해설이 나와요.</p>
        <p>틀리면 <b>−10점</b>이고, 0점 아래로는 내려가지 않아요.</p>
        <p>첫 시도로 3연속 맞히면 <b>+5</b>, 5연속부터는 <b>+10</b> 콤보 보너스가 붙어요.</p>
        <p>정답 뒤에는 Enter · Space · → 로 다음 문제로 넘어가요.</p>
@@ -290,7 +308,7 @@ button{cursor:pointer}
     </div>
 
     <div class="start-foot">
-     <div class="credit">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.08.13 · <span id="lastMod">최종 수정 2026.10.05 03:00</span></div>
+     <div class="credit">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.08.13 · <span id="lastMod">최종 수정 2026.10.06 00:30</span></div>
      <div>
       <div class="privacy" id="privacyOffline">
        <b>🔒 개인정보 보호 안내</b><br>
@@ -437,7 +455,7 @@ button{cursor:pointer}
 
 <script>
 const MADE_DATE='2026.08.13';
-const LAST_MOD='2026.10.05 03:00';
+const LAST_MOD='2026.10.06 00:30';
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -602,14 +620,15 @@ function stagePool(si){
   });
 }
 function maxScore(n){let s=0;for(let i=1;i<=n;i++)s+=BASE+(i>=5?10:i>=3?5:0);return s}
-function norm(s){return String(s).replace(/（/g,'(').replace(/）/g,')').replace(/\s+/g,'')}
+function norm(s){return String(s).replace(/（/g,'(').replace(/）/g,')').replace(/[\s\-－]+/g,'')}  // 띄어쓰기·붙임표 무시
 function isAccepted(cat,raw){
   const t=String(raw).trim();
   if(/[?？]$/.test(t))return false;
   const C=CATEGORIES[cat];
-  const ok=[C.label,...C.syn];
-  ok.slice().forEach(x=>{const m=norm(x).match(/^(.+)\((.+)\)$/);if(m)ok.push(m[2]+'('+m[1]+')')});  // 괄호 앞뒤를 바꿔 쓴 답도 인정: 콧소리(비음)·흐름소리(유음)
-  return ok.map(norm).includes(norm(t));
+  const names=[...new Set([C.label,...C.syn].map(x=>norm(x).replace(/\(.*\)$/,'')))];  // 비음(콧소리) → 비음
+  const ok=[...names];
+  names.forEach(a=>names.forEach(b=>{if(a!==b)ok.push(a+'('+b+')')}));  // 두 이름을 괄호로 함께 쓴 답도 인정: 예사소리(평음)·평음(예사소리)·콧소리(비음)
+  return ok.includes(norm(t));
 }
 
 // ═══════════════════════════════════════════
@@ -750,8 +769,9 @@ function render(){
   if(graded(it.st)){$('detail').innerHTML='<b>📖 해설</b> · '+q.detail;$('detail').className='detail on'}
   $('btnPrev').disabled=S.cur===0;
   $('btnNext').innerHTML=S.cur===N-1?'결과<br>보기 ▶':'다음 ▶';
+  // 방금 누른 버튼(다음·이전 등)에 포커스가 남으면 Enter·Space가 그 버튼을 다시 눌러 문항을 건너뛴다 → 항상 먼저 놓는다
+  if(document.activeElement&&document.activeElement!==inp&&document.activeElement.blur)document.activeElement.blur();
   if(open&&isInp)setTimeout(()=>{if($('game').classList.contains('on'))inp.focus()},60);
-  else if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
 }
 function setFb(ok,t){$('fb').className='fb on '+(ok?'ok':'ng');$('fbIcon').textContent=ok?'✅':'❌';$('fbText').textContent=t}
 
@@ -789,7 +809,8 @@ function grade(ok){
     }
   }else{
     if(it.st===null){
-      it.st='wrong';S.combo=0;S.score=Math.max(0,S.score-PENALTY);
+      S.combo=0;S.score=Math.max(0,S.score-PENALTY);
+      it.st=STAGES[S.stage].cats.length>=3?'wrong':'fail';  // 두 갈래(2단계 울림 여부)는 다시 풀기 없이 바로 정답·해설 (지침 3-6)
     }else{
       it.st='fail';
     }
@@ -895,7 +916,7 @@ document.addEventListener('keydown',e=>{
     return;
   }
   if(it.type==='select'&&/^[1-9]$/.test(k)){const cats=STAGES[S.stage].cats,i=+k-1;if(i<cats.length){e.preventDefault();choose(cats[i])}return}
-  if(k==='ArrowRight'){e.preventDefault();goNext()}else if(k==='ArrowLeft'){e.preventDefault();goPrev()}
+  if(k==='ArrowLeft'){e.preventDefault();goPrev()}  // → 는 채점이 끝난 뒤에만 다음으로 (지침 6-1). 건너뛰기는 '다음' 버튼
 });
 
 // ═══════════════════════════════════════════
@@ -927,7 +948,7 @@ function finishGame(){
   $('resNote').textContent=c.skip>0?'끝까지 풀지 않았어요 ('+c.skip+'문항 남음)':'';
   $('resScore').textContent=S.score;$('resMax').textContent='/ 만점 '+S.max+'점';
   $('stFirst').textContent=c.first;$('stRetry').textContent=c.retry;$('stFail').textContent=c.fail;
-  $('stAcc').textContent=Math.round(c.acc*100)+'%';$('stCombo').textContent=S.maxCombo;$('stSkip').textContent=c.skip;
+  $('stAcc').textContent=c.graded?Math.round(c.acc*100)+'%':'—';$('stCombo').textContent=S.maxCombo;$('stSkip').textContent=c.skip;
   $('inDate').value=fmtDT(S.end);$('inTime').value=c.timeStr;
   const nm=$('inName');nm.readOnly=false;nm.style.background='';
   if(!nm.value)nm.value='';
@@ -1113,7 +1134,7 @@ function downloadReport(){
   let y=drawHeader(c,W,'📊 학습 결과 분석 리포트 · '+GAME_TITLE,stageTag()+'  ·  '+name+'  ·  '+fmtDT(S.end));
   y+=26;
   // 요약 수치
-  const boxes=[['최종 점수',S.score+' / '+S.max],['정답률',Math.round(c0.acc*100)+'%'],['첫 시도 정답',c0.first+'문항'],['다시 풀어 맞힘',c0.retry+'문항'],
+  const boxes=[['최종 점수',S.score+' / '+S.max],['정답률',c0.graded?Math.round(c0.acc*100)+'%':'—'],['첫 시도 정답',c0.first+'문항'],['다시 풀어 맞힘',c0.retry+'문항'],
                ['못 맞힘',c0.fail+'문항'],['미응답',c0.skip+'문항'],['최고 콤보',S.maxCombo+'연속'],['소요 시간',c0.timeStr]];
   const bw=(iw-3*12)/4,bh=70;
   boxes.forEach((b,i)=>{const bx=P+(i%4)*(bw+12),by=y+Math.floor(i/4)*(bh+12);c.fillStyle=i===0?'#7C5CBF':'#F7F3FC';roundBox(c,bx,by,bw,bh,12);c.fill();
@@ -1175,8 +1196,8 @@ function downloadTeacherXls(){
   const tail=[
     xRow([]),
     xRow(['성취기준','['+STD.code+'] '+STD.text],'b'),
-    xRow(['배점 규칙','첫 시도 정답 +10 · 다시 풀어 맞힘 +5 · 오답 −10(하한 0) · 콤보 3~4연속 +5, 5연속 이상 +10'],'b'),
-    xRow(['단답형 채점','공백 무시 · ?로 끝나면 오답 · 우리말 이름과 한자어 이름(동의어) 모두 인정'],'b'),
+    xRow(['배점 규칙','첫 시도 정답 +10 · 다시 풀어 맞힘 +5(2단계는 다시 풀기 없음) · 오답 −10(하한 0) · 콤보 3~4연속 +5, 5연속 이상 +10'],'b'),
+    xRow(['단답형 채점','공백·붙임표 무시 · ?로 끝나면 오답 · 우리말 이름과 한자어 이름(동의어) 모두 인정 · 예사소리(평음)처럼 괄호로 함께 쓴 답도 인정'],'b'),
     xRow(['총문항 수',totalQ+'문항 (단계별 '+STAGES.map((s,i)=>stagePool(i).length).join('/')+') · 만점 합계 '+totalMax+'점'],'b'),
     xRow(['크레딧',CREDIT1+' · '+CREDIT2+' · 게임 코드 '+GAME_CONFIG.gameCode],'b')
   ];

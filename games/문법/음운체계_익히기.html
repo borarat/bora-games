@@ -9,7 +9,8 @@
      성취기준: 2022 [9국04-01] · 2015 [9국04-02] (교사 확인)
      후속(2026.10.01 11:52, 교사 답변 반영): 4단계 이름·발문 '1음절 단어' → '1음절 글자'(톺·욀은 혼자 쓰는 단어가 아님), ㅚ·ㅟ 이중 모음 발음 허용 안내, 오답 문구 조사·띄어쓰기
      기록: 첫 시도 / 다시 풀어 맞힘 / 못 맞힘 / 미응답을 나눠 기록, 앱스크립트 연동, 교사용 엑셀('최종 수정' 클릭)
-     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 -->
+     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
+     2026.10.06 00:30 게임 테마층 · 설계실(시작 화면 설계 도면 그림·게임 방법 상자 청록 테두리) + 버그 수정: 1~3단계 카드·빈칸 빠른 두 번 클릭이 선택 취소·오답 2회로 기록되던 것, 풀어 본 문제가 없을 때 정답률 0% 대신 — 표시, 휴대폰 폭에서 4단계 자음 체계표 목청소리(ㅎ) 칸이 잘려 고를 수 없던 것 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -332,7 +333,16 @@ table.mt{border-collapse:collapse;width:100%}
   .bar-row{grid-template-columns:96px 1fr 40px}
   #end .inner{padding:18px 12px}
   #hud{top:48px}
+  .mini{overflow-x:auto} /* 좁은 화면: 4단계 자음 체계표 목청소리(ㅎ) 칸이 잘려 고를 수 없던 것 — 표 안에서 가로로 밀어 보기 */
 }
+/* ═══ 게임 테마층 · 설계실 (2026.10.05) ═══
+   펼친 설계 도면 위에서 체계표를 완성하는 설계실. 보조색 청록 #2A8C8C. 영역 팔레트·헤더 띠·정답/오답 색·흰 문제 카드·정답 카드는 그대로.
+   이 블록과 시작 화면 SVG를 지우면 원래 모습 */
+:root{--th:#2A8C8C;--th-soft:#E2F2F1}
+.title-row .keyArt{margin-left:auto;flex:0 0 auto;height:126px;width:auto}
+@media (max-width:860px){.title-row .keyArt{display:none}}
+.box.how{border-left:4px solid var(--th)}
+.box.how h3{color:#1F6464}
 </style>
 </head>
 <body>
@@ -349,6 +359,15 @@ table.mt{border-collapse:collapse;width:100%}
       <div class="g-title">음운 체계 익히기</div>
       <div class="g-sub">단모음·자음 체계표를 직접 완성하고, 음운 설명으로 글자를 완성해 보세요</div>
      </div>
+     <svg class="keyArt" viewBox="0 0 360 126" aria-hidden="true" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-weight="700" text-anchor="middle">
+      <rect x="4" y="6" width="320" height="114" rx="6" fill="#E2F2F1" stroke="#2A8C8C" stroke-width="2.5"/>
+      <g stroke="#2A8C8C" stroke-width="1" opacity=".22"><path d="M24 6v114M44 6v114M64 6v114M84 6v114M104 6v114M124 6v114M144 6v114M164 6v114M184 6v114M204 6v114M224 6v114M244 6v114M264 6v114M284 6v114M304 6v114"/><path d="M4 26h320M4 46h320M4 66h320M4 86h320M4 106h320"/></g>
+      <rect x="14" y="26" width="300" height="38" fill="#fff" stroke="#2A8C8C" stroke-width="1.8"/>
+      <path d="M74 26v38M134 26v38M194 26v38M254 26v38" stroke="#2A8C8C" stroke-width="1.5"/>
+      <g fill="none" stroke="#2A8C8C" stroke-width="1.3" stroke-dasharray="4 3" opacity=".75"><path d="M14 64v40h300v-40M14 84h300M74 64v40M134 64v40M194 64v40M254 64v40"/></g>
+      <g font-size="10.5" fill="#1F6464"><text x="44" y="42">입술</text><text x="44" y="56">소리</text><text x="104" y="42">잇몸</text><text x="104" y="56">소리</text><text x="164" y="42">센입천장</text><text x="164" y="56">소리</text><text x="224" y="42">여린입천장</text><text x="224" y="56">소리</text><text x="284" y="42">목청</text><text x="284" y="56">소리</text></g>
+      <g transform="translate(286 122)"><path d="M0 0h68v-62z" fill="#E2F2F1" fill-opacity=".85" stroke="#2A8C8C" stroke-width="2.2" stroke-linejoin="round"/><path d="M20 -8h36v-33z" fill="#fff" stroke="#2A8C8C" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 0v-5M16 0v-5M24 0v-5M32 0v-5M40 0v-5M48 0v-5M56 0v-5" stroke="#2A8C8C" stroke-width="1.2"/></g>
+     </svg>
     </div>
 
     <div class="start-grid">
@@ -376,7 +395,7 @@ table.mt{border-collapse:collapse;width:100%}
     </div>
 
     <div class="start-foot">
-     <div class="credit">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.07.29 · <span id="lastMod">최종 수정 2026.10.05 03:00</span></div>
+     <div class="credit">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.07.29 · <span id="lastMod">최종 수정 2026.10.06 00:30</span></div>
      <div>
       <div class="privacy" id="privacyOffline">
        <b>🔒 개인정보 보호 안내</b><br>
@@ -539,7 +558,7 @@ table.mt{border-collapse:collapse;width:100%}
 // 1. 설정
 // ═══════════════════════════════════════════
 const MADE_DATE='2026.07.29';
-const LAST_MOD='2026.10.05 03:00';
+const LAST_MOD='2026.10.06 00:30';
 const GAME_CONFIG = {
   gameCode: "G212",
   gameName: "음운 체계 익히기",
@@ -852,12 +871,12 @@ function renderPlace(){
   S.cards.forEach(card=>{
     const b=document.createElement('button');
     b.className='card'+(S.stage===1?' small':'')+(S.sel===card.id?' sel':'');
-    b.textContent=card.text;b.onclick=()=>{S.sel=S.sel===card.id?null:card.id;renderPlace()};
+    b.textContent=card.text;b.onclick=ev=>{if(ev.detail>1)return;S.sel=S.sel===card.id?null:card.id;renderPlace()}; // 빠른 두 번 클릭은 한 번으로
     box.appendChild(b);
   });
   if(!S.cards.length)box.innerHTML='<div class="cards-empty" style="grid-column:1/-1">모든 카드를 배치했습니다!</div>';
   $('chartBox').innerHTML=S.stage===2?consChartHTML():vowChartHTML();
-  $('chartBox').querySelectorAll('[data-slot]').forEach(el=>el.onclick=()=>slotClick(el.dataset.slot));
+  $('chartBox').querySelectorAll('[data-slot]').forEach(el=>el.onclick=ev=>{if(ev.detail>1)return;slotClick(el.dataset.slot)}); // 빠른 두 번 클릭이 오답 2회로 기록되지 않게
 }
 function vowChartHTML(){
   const lv1=S.stage===0,armed=S.sel?' armed':'';
@@ -1164,8 +1183,8 @@ function finishGame(){
   if(S.kind==='word'){$('resScoreRow').style.display='';$('resScore').textContent=S.score;$('resMax').textContent='/ 만점 '+W_MAX+'점'}
   else $('resScoreRow').style.display='none';
   const sb=S.kind==='place'?
-    [['ok',c.first,'첫 시도에 배치'],['',c.retry,'다시 시도해 배치'],['ng',c.fail,'틀린 뒤 못 배치'],['',Math.round(c.acc*100)+'%','정답률'],['ng',c.wrongTotal+'회','총 오답'],['skip',c.skip,'미응답']]:
-    [['ok',c.first,'첫 시도 정답'],['',c.retry,'다시 풀어 맞힘'],['ng',c.fail,'못 맞힘'],['',Math.round(c.acc*100)+'%','정답률'],['',S.maxCombo,'최고 콤보'],['skip',c.skip,'미응답']];
+    [['ok',c.first,'첫 시도에 배치'],['',c.retry,'다시 시도해 배치'],['ng',c.fail,'틀린 뒤 못 배치'],['',c.graded?Math.round(c.acc*100)+'%':'—','정답률'],['ng',c.wrongTotal+'회','총 오답'],['skip',c.skip,'미응답']]:
+    [['ok',c.first,'첫 시도 정답'],['',c.retry,'다시 풀어 맞힘'],['ng',c.fail,'못 맞힘'],['',c.graded?Math.round(c.acc*100)+'%':'—','정답률'],['',S.maxCombo,'최고 콤보'],['skip',c.skip,'미응답']];
   $('stats').innerHTML=sb.map(s=>'<div class="stat '+s[0]+'"><div class="v">'+s[1]+'</div><div class="l">'+s[2]+'</div></div>').join('');
   $('anal').innerHTML=analysisHTML(c);
   $('inDate').value=fmtDT(S.end);$('inTime').value=c.timeStr;
@@ -1365,8 +1384,8 @@ function downloadReport(){
   let y=drawHeader(c,W,'📊 학습 결과 분석 리포트 · '+GAME_TITLE,stageTag()+'  ·  '+name+'  ·  '+fmtDT(S.end));
   y+=26;
   const boxes=S.kind==='word'?
-    [['최종 점수',S.score+' / '+W_MAX],['정답률',Math.round(c0.acc*100)+'%'],['첫 시도 정답',c0.first+'문항'],['다시 풀어 맞힘',c0.retry+'문항'],['못 맞힘',c0.fail+'문항'],['미응답',c0.skip+'문항'],['최고 콤보',S.maxCombo+'연속'],['소요 시간',c0.timeStr]]:
-    [['배치 완료',(c0.first+c0.retry)+' / '+c0.total],['정답률',Math.round(c0.acc*100)+'%'],['첫 시도에 배치',c0.first+'장'],['다시 시도해 배치',c0.retry+'장'],['틀린 뒤 못 배치',c0.fail+'장'],['미응답',c0.skip+'장'],['총 오답',c0.wrongTotal+'회'],['소요 시간',c0.timeStr]];
+    [['최종 점수',S.score+' / '+W_MAX],['정답률',c0.graded?Math.round(c0.acc*100)+'%':'—'],['첫 시도 정답',c0.first+'문항'],['다시 풀어 맞힘',c0.retry+'문항'],['못 맞힘',c0.fail+'문항'],['미응답',c0.skip+'문항'],['최고 콤보',S.maxCombo+'연속'],['소요 시간',c0.timeStr]]:
+    [['배치 완료',(c0.first+c0.retry)+' / '+c0.total],['정답률',c0.graded?Math.round(c0.acc*100)+'%':'—'],['첫 시도에 배치',c0.first+'장'],['다시 시도해 배치',c0.retry+'장'],['틀린 뒤 못 배치',c0.fail+'장'],['미응답',c0.skip+'장'],['총 오답',c0.wrongTotal+'회'],['소요 시간',c0.timeStr]];
   const bw=(iw-3*12)/4,bh=70;
   boxes.forEach((b,i)=>{const bx=P+(i%4)*(bw+12),by=y+Math.floor(i/4)*(bh+12);c.fillStyle=i===0?'#7C5CBF':'#F7F3FC';roundBox(c,bx,by,bw,bh,12);c.fill();
     txt(c,b[1],bx+bw/2,by+34,'bold 22px',i===0?'#fff':'#3C3489','center');txt(c,b[0],bx+bw/2,by+58,'13px',i===0?'#efe9ff':'#6a6488','center')});

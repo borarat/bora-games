@@ -4,7 +4,8 @@
      채점: 격려 문구 기준을 지침 5-2 표(95/85/70/50%)로
      연동: wrongItems를 원본 id(교사용 엑셀의 id)로 전송
      2026.10.01 13:00 성취기준: 2022 [9국04-01]에 2015 [9국04-02] 병기 (교사 확인)
-     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 -->
+     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
+     2026.10.06 00:30 게임 테마층(발음 기관 지도 카드·쪽빛 #3F5FA8): 시작 화면 그림·안내 상자 테두리 / 버그: 한 번도 뒤집지 않고 끝내면 '풀어 본 문제가 없어요' 표시(지침 5-3) -->
 <html lang="ko">
 <head>
 <meta charset="utf-8"/>
@@ -152,6 +153,14 @@ button{font-family:var(--font)}
 .rv-table .note{display:block;font-size:12.5px;color:var(--ink2)}
 .confuse{margin-top:14px;background:var(--ngbg);border:1px solid #F5C2C2;border-radius:10px;padding:10px 14px;font-size:14px;line-height:1.7;color:#7f1d1d;text-align:left}
 .modal-close{margin-top:16px;text-align:center}
+/* ═══ 게임 테마층 · 발음 기관 지도 카드 (2026.10.05) ═══
+   조음 위치 다섯 칸을 앞→뒤(입술·잇몸·센입천장·여린입천장·목청)로 늘어놓은 카드 지도. 보조색 쪽빛 #3F5FA8.
+   영역 강조색(보라)·헤더 띠·정답/오답 색·카드 판·정답 카드(#cbn)는 그대로. 이 블록과 시작 화면 SVG를 지우면 원래 모습 */
+:root{--th:#3F5FA8;--th-soft:#E7ECF7}
+.hero .keyArt{margin-left:auto;flex:0 0 auto;height:126px;width:auto}
+@media (max-width:860px){.hero .keyArt{display:none}}
+.box{border-left:4px solid var(--th)}
+.box h3{color:var(--th)}
 </style>
 </head>
 <body>
@@ -167,6 +176,11 @@ button{font-family:var(--font)}
      <h1>음운체계 메모리게임</h1>
      <p>자음 카드와 조음 위치 카드를 짝지으며 국어의 자음 체계를 익혀요</p>
     </div>
+    <svg class="keyArt" viewBox="0 0 404 126" aria-hidden="true" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-weight="700" text-anchor="middle">
+     <g font-size="12.5" fill="#2C4580"><g transform="rotate(-5 45 54)"><rect x="8" y="14" width="74" height="80" rx="9" fill="#E7ECF7" stroke="#3F5FA8" stroke-width="2"/><text x="45" y="51">입술</text><text x="45" y="70">소리</text></g><g transform="rotate(-2 124 48)"><rect x="87" y="8" width="74" height="80" rx="9" fill="#E7ECF7" stroke="#3F5FA8" stroke-width="2"/><text x="124" y="45">잇몸</text><text x="124" y="64">소리</text></g><g transform="rotate(0 203 46)"><rect x="166" y="6" width="74" height="80" rx="9" fill="#E7ECF7" stroke="#3F5FA8" stroke-width="2"/><text x="203" y="43">센입천장</text><text x="203" y="62">소리</text></g><g transform="rotate(2 282 48)"><rect x="245" y="8" width="74" height="80" rx="9" fill="#E7ECF7" stroke="#3F5FA8" stroke-width="2"/><text x="282" y="45">여린입천장</text><text x="282" y="64">소리</text></g><g transform="rotate(5 361 54)"><rect x="324" y="14" width="74" height="80" rx="9" fill="#E7ECF7" stroke="#3F5FA8" stroke-width="2"/><text x="361" y="51">목청</text><text x="361" y="70">소리</text></g></g>
+     <g stroke="#3F5FA8" stroke-width="2" fill="none" stroke-linecap="round"><path d="M42 108H366"/><path d="M358 102l8 6-8 6"/></g>
+     <g font-size="11.5" fill="#3F5FA8"><text x="24" y="112">앞</text><text x="386" y="112">뒤</text></g>
+    </svg>
    </div>
 
    <div class="std"><b>성취기준</b>[9국04-01](2022 개정) 국어의 음운 체계와 문자 체계를 이해하고 국어생활에 활용한다.<br>[9국04-02](2015 개정) 음운의 체계를 알고 그 특성을 이해한다.</div>
@@ -196,7 +210,7 @@ button{font-family:var(--font)}
 
    <div class="credit">
     제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-    제작일 2025.11.06 · <span id="lastMod">최종 수정 2026.10.05 03:00</span>
+    제작일 2025.11.06 · <span id="lastMod">최종 수정 2026.10.06 00:30</span>
    </div>
 
    <div class="privacy" id="privacyOffline">
@@ -308,7 +322,7 @@ button{font-family:var(--font)}
 
 <script>
 const MADE_DATE = '2025.11.06';
-const LAST_MOD = '2026.10.05 03:00';
+const LAST_MOD = '2026.10.06 00:30';
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -634,7 +648,7 @@ function finish(){
   hideFx(); $('comboHud').style.display='none';
   const total=PAIR_TOTAL, right=S.hits, acc=S.moves?Math.round(S.hits/S.moves*100):0;
   $('endTitle').textContent = complete ? '🎉 19쌍을 모두 찾았어요!' : '🏁 게임을 끝냈어요';
-  $('endVerdict').textContent = S.moves>=5 ? verdictOf(acc) : '';
+  $('endVerdict').textContent = S.moves===0 ? '풀어 본 문제가 없어요' : (S.moves>=5 ? verdictOf(acc) : '');   // 지침 5-3: 한 번도 짝을 맞춰 보지 않았으면 칭찬 대신 안내
   $('endSkip').innerHTML = S.left>0 ? `<span class="skipnote">끝까지 풀지 않았어요 · 남은 짝 ${S.left}쌍</span>` : '';
   $('endScore').innerHTML=`${S.score}<small> / ${MAX_SCORE}</small>`;
   $('endPairs').innerHTML=`${right}<small> / ${total}</small>`;
