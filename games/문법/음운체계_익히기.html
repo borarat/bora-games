@@ -8,7 +8,8 @@
      용어: 교과서 표 용어(입술소리~목청소리, 비음(콧소리)·유음(흐름소리)·파열음·마찰음·파찰음)
      성취기준: 2022 [9국04-01] · 2015 [9국04-02] (교사 확인)
      후속(2026.10.01 11:52, 교사 답변 반영): 4단계 이름·발문 '1음절 단어' → '1음절 글자'(톺·욀은 혼자 쓰는 단어가 아님), ㅚ·ㅟ 이중 모음 발음 허용 안내, 오답 문구 조사·띄어쓰기
-     기록: 첫 시도 / 다시 풀어 맞힘 / 못 맞힘 / 미응답을 나눠 기록, 앱스크립트 연동, 교사용 엑셀('최종 수정' 클릭) -->
+     기록: 첫 시도 / 다시 풀어 맞힘 / 못 맞힘 / 미응답을 나눠 기록, 앱스크립트 연동, 교사용 엑셀('최종 수정' 클릭)
+     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -216,8 +217,6 @@ table.mt{border-collapse:collapse;width:100%}
 @keyframes pulse{0%{transform:scale(1)}40%{transform:scale(1.28)}100%{transform:scale(1)}}
 #ingameCredit{position:fixed;right:12px;bottom:8px;font-size:11px;color:#9c95b8;opacity:.7;pointer-events:none;z-index:3;display:none}
 #ingameCredit.on{display:block}
-#toast{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);z-index:8500;display:none;background:rgba(255,255,255,.96);border:2px solid var(--okline);color:var(--ok);font-size:24px;font-weight:700;padding:12px 30px;border-radius:18px;box-shadow:0 12px 40px rgba(40,20,90,.2);pointer-events:none}
-#toast.on{display:block;animation:pop .32s cubic-bezier(.34,1.56,.64,1) both}
 
 /* ── END ── */
 #end{padding:28px 0 60px}
@@ -284,35 +283,21 @@ table.mt{border-collapse:collapse;width:100%}
 .rv-h{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .rv-ch{font-size:20px;font-weight:700;color:var(--ink)}
 
-/* ── FX ── */
-#fx{position:fixed;inset:0;z-index:8000;display:none;align-items:center;justify-content:center;pointer-events:none}
-#fx.on{display:flex}
-.fx-dim{position:absolute;inset:0;background:radial-gradient(circle at center,rgba(0,0,0,.12) 0%,rgba(0,0,0,.25) 70%);animation:fadeIn .2s}
-.fx-rays{position:absolute;width:760px;height:760px;border-radius:50%;background:repeating-conic-gradient(from 0deg,rgba(255,215,90,.30) 0deg 10deg,rgba(255,215,90,0) 10deg 24deg);-webkit-mask:radial-gradient(circle,#000 18%,transparent 64%);mask:radial-gradient(circle,#000 18%,transparent 64%);animation:spin 7s linear infinite}
+/* ═══ 정답 배너 — 깔끔한 카드형 (2026.10.05 교사 결정) ═══
+   초록 카드 하나가 떴다가 약 1초 뒤 사라진다. 화면 어둡게·광선·이모지 낙하 없음.
+   3연속은 주황 카드, 5·10·15…연속에만 작은 색종이. 다시 풀어 맞힘은 작은 파란 카드 */
+#cbn{position:fixed;left:50%;top:44%;z-index:9000;pointer-events:none;opacity:0;transform:translate(-50%,-50%) scale(.6);padding:18px 48px;border-radius:20px;background:linear-gradient(135deg,#2f9e44,#69db7c);color:#fff;font-family:'Noto Sans KR','Malgun Gothic','맑은 고딕',sans-serif;font-size:clamp(28px,4vw,44px);font-weight:700;line-height:1.2;text-align:center;white-space:nowrap;box-shadow:0 14px 34px rgba(0,0,0,.25)}
+#cbn .s{display:block;font-size:.5em;font-weight:500;margin-top:4px}
+#cbn.show{animation:cbnPop 1.1s ease forwards}
+#cbn.combo{background:linear-gradient(135deg,#e8590c,#fab005)}
+#cbn.info{font-size:clamp(20px,2.6vw,30px);padding:14px 34px;background:linear-gradient(135deg,#6741d9,#9775fa)}
+#cbn.retry{font-size:clamp(20px,2.6vw,28px);padding:12px 30px;background:linear-gradient(135deg,#1c7ed6,#74c0fc)}
+@keyframes cbnPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}30%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(.92)}}
+#cbnFx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:8999}
+@media (prefers-reduced-motion:reduce){#cbn.show{animation:none!important;opacity:1!important;transform:translate(-50%,-50%)!important}}
+@keyframes cbnFade{0%,100%{opacity:0;transform:translate(-50%,-50%)}15%,80%{opacity:1;transform:translate(-50%,-50%)}}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.fx-banner{position:relative;text-align:center;padding:22px 46px;border-radius:24px;background:rgba(255,255,255,.93);box-shadow:0 20px 60px rgba(40,20,90,.35);animation:pop .36s cubic-bezier(.34,1.56,.64,1) both}
-@keyframes pop{0%{transform:scale(.3);opacity:0}65%{transform:scale(1.15);opacity:1}100%{transform:scale(1)}}
-#toast.on{animation:popT .32s cubic-bezier(.34,1.56,.64,1) both}
-@keyframes popT{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}65%{transform:translate(-50%,-50%) scale(1.12);opacity:1}100%{transform:translate(-50%,-50%) scale(1)}}
-.fx-title{font-size:clamp(46px,8vw,84px);font-weight:700;line-height:1.1;background:linear-gradient(180deg,#ffe27a 0%,#f5b300 50%,#d98a00 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 10px rgba(255,200,60,.65)) drop-shadow(0 2px 0 rgba(160,90,0,.35))}
-.fx-sub{font-size:17px;font-weight:700;color:var(--ink);margin-top:4px}
-.fx-pts{font-size:30px;font-weight:700;color:var(--accent);margin-top:2px}
-.fx-banner.small{padding:14px 30px}
-.fx-banner.small .fx-title{font-size:clamp(28px,4vw,40px);filter:none;background:none;color:var(--ok)}
-.fx-banner.c3 .fx-title{background:linear-gradient(180deg,#ffb46b,#ff7a1a 55%,#e14b00);-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 0 12px rgba(255,130,40,.6))}
-.fx-banner.c5 .fx-title{background:linear-gradient(90deg,#ff5f6d,#ffb347,#ffe53b,#3ddc84,#3fa7ff,#a36bff);-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 0 14px rgba(255,255,255,.9))}
-.fx-banner.c5{animation:pop .36s cubic-bezier(.34,1.56,.64,1) both,wobble .6s .36s}
-@keyframes wobble{0%,100%{transform:rotate(0)}25%{transform:rotate(-3deg) scale(1.03)}75%{transform:rotate(3deg) scale(1.03)}}
-.fx-sparks span{position:absolute;left:50%;top:50%;font-size:22px;animation:spark .8s ease-out forwards}
-@keyframes spark{0%{transform:translate(-50%,-50%) scale(.2);opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1);opacity:0}}
-#fxCanvas{position:fixed;inset:0;z-index:8001;pointer-events:none}
-#glow{position:fixed;inset:0;z-index:7999;pointer-events:none;display:none}
-#glow.on{display:block;animation:glow 1.2s ease-in-out 2}
-@keyframes glow{0%,100%{box-shadow:inset 0 0 0 0 rgba(163,107,255,0)}50%{box-shadow:inset 0 0 40px 10px rgba(163,107,255,.55)}}
-.rain{position:fixed;top:-40px;z-index:8002;font-size:28px;pointer-events:none;animation:fall linear forwards}
-@keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
-@media (prefers-reduced-motion:reduce){.fx-rays{animation:none;display:none}.fx-banner,.fx-banner.c5,#toast.on{animation:fadeIn .25s}#hud.pulse{animation:none}.clues.shake,.chart-wrap.shake{animation:none}.pbox.cur{animation:none}}
+@media (prefers-reduced-motion:reduce){#hud.pulse{animation:none}.clues.shake,.chart-wrap.shake{animation:none}.pbox.cur{animation:none}}
 
 /* ── RESPONSIVE ── */
 @media (max-width:1020px){
@@ -391,7 +376,7 @@ table.mt{border-collapse:collapse;width:100%}
     </div>
 
     <div class="start-foot">
-     <div class="credit">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.07.29 · <span id="lastMod">최종 수정 2026.10.01 11:52</span></div>
+     <div class="credit">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.07.29 · <span id="lastMod">최종 수정 2026.10.05 03:00</span></div>
      <div>
       <div class="privacy" id="privacyOffline">
        <b>🔒 개인정보 보호 안내</b><br>
@@ -546,18 +531,15 @@ table.mt{border-collapse:collapse;width:100%}
 </div>
 
 <div id="hud">🔥 <b id="hudN">0</b></div>
-<div id="toast"></div>
 <div id="ingameCredit">제작 · 보라라샘 · 2026.07.29</div>
-<div id="glow"></div>
-<div id="fx"><div class="fx-dim"></div><div class="fx-rays" id="fxRays"></div><div class="fx-banner" id="fxBanner"><div class="fx-title" id="fxTitle">정답!</div><div class="fx-sub" id="fxSub"></div><div class="fx-pts" id="fxPts"></div></div><div class="fx-sparks" id="fxSparks"></div></div>
-<canvas id="fxCanvas"></canvas>
+<div id="cbn"></div><canvas id="cbnFx"></canvas>
 
 <script>
 // ═══════════════════════════════════════════
 // 1. 설정
 // ═══════════════════════════════════════════
 const MADE_DATE='2026.07.29';
-const LAST_MOD='2026.10.01 11:52';
+const LAST_MOD='2026.10.05 03:00';
 const GAME_CONFIG = {
   gameCode: "G212",
   gameName: "음운 체계 익히기",
@@ -946,7 +928,7 @@ function slotClick(slot){
   else ok=!S.slotOf[slot]&&lSlotOK(card,slot);
   if(ok){
     S.placed[card.id]=slot;S.slotOf[slot]=card.text;S.cards=S.cards.filter(c=>c.id!==card.id);S.sel=null;S.lastGraded=new Date();
-    pMsg(true,'딩동댕! ✨');toast('✅ 정답!');sCorrect();
+    pMsg(true,'딩동댕! ✨');toast('정답!');sCorrect();
   }else{
     S.wrong[card.id]=(S.wrong[card.id]||0)+1;S.lastGraded=new Date();
     pMsg(false,['❌ 다시 한번 생각해 보세요! 💡','❌ 위치가 틀렸어요! 💡','❌ 위치를 다시 생각해 보세요! 💡'][S.stage]);
@@ -954,7 +936,6 @@ function slotClick(slot){
   }
   renderPlace();
   if(Object.keys(S.placed).length===S.all.length){
-    if(!RM){confetti(90);runParts()}
     clearTimeout(S.autoT);S.autoT=setTimeout(()=>{if(!S.done)finishGame()},2500);
   }
 }
@@ -1128,53 +1109,29 @@ function sFanfare(){try{[523,659,784,1047,1319].forEach((f,i)=>tone(f,i*.1,i===4
 // ═══════════════════════════════════════════
 // 연출 (정답 배너 · 콤보 배너 · 파티클)
 // ═══════════════════════════════════════════
-const RM=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-let fxT=null,fxCount=null,toastT=null;
-const cv=$('fxCanvas'),cx=cv.getContext('2d');let parts=[],raf=null;
-function sizeCv(){cv.width=innerWidth;cv.height=innerHeight}sizeCv();addEventListener('resize',sizeCv);
-function confetti(n){const cols=['#ffd23f','#ff6b6b','#4dabf7','#51cf66','#b197fc','#ff922b'];for(let i=0;i<n;i++)parts.push({x:innerWidth/2+(Math.random()-.5)*260,y:innerHeight/2-40,vx:(Math.random()-.5)*12,vy:-Math.random()*11-3,g:.35,r:Math.random()*6.28,vr:(Math.random()-.5)*.3,s:6+Math.random()*6,c:cols[i%cols.length],life:72})}
-function burst(x,y,n){const cols=['#ffd23f','#ff6b6b','#4dabf7','#51cf66','#b197fc','#ff922b','#fff'];for(let i=0;i<n;i++){const a=Math.random()*6.28,sp=3+Math.random()*7;parts.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,g:.12,r:0,vr:.2,s:3+Math.random()*4,c:cols[i%cols.length],life:60})}}
-function loop(){cx.clearRect(0,0,cv.width,cv.height);parts=parts.filter(p=>p.life>0);parts.forEach(p=>{p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;p.life--;cx.save();cx.globalAlpha=Math.min(1,p.life/20);cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/3,p.s,p.s*.66);cx.restore()});if(parts.length)raf=requestAnimationFrame(loop);else{raf=null;cx.clearRect(0,0,cv.width,cv.height)}}
-function runParts(){if(!raf)raf=requestAnimationFrame(loop)}
-function sparks(n){const box=$('fxSparks');box.innerHTML='';const em=['✨','⭐','🌟','💫'];for(let i=0;i<n;i++){const s=document.createElement('span');const a=(i/n)*6.28,d=170+Math.random()*70;s.style.setProperty('--dx',Math.cos(a)*d+'px');s.style.setProperty('--dy',Math.sin(a)*d*.7+'px');s.textContent=em[i%em.length];s.style.animationDelay=(Math.random()*.15)+'s';box.appendChild(s)}}
-function rain(emojis,n){for(let i=0;i<n;i++){const e=document.createElement('div');e.className='rain';e.textContent=emojis[i%emojis.length];e.style.left=(Math.random()*96)+'vw';e.style.animationDuration=(1.4+Math.random()*1.2)+'s';e.style.animationDelay=(Math.random()*.5)+'s';document.body.appendChild(e);setTimeout(()=>e.remove(),3200)}}
-function countUp(el,to){clearInterval(fxCount);let v=0;const step=Math.max(1,Math.ceil(to/10));el.textContent='+0점';fxCount=setInterval(()=>{v=Math.min(to,v+step);el.textContent='+'+v+'점';if(v>=to)clearInterval(fxCount)},35)}
-function showFx(kind,title,sub,pts,dur){
-  clearTimeout(fxT);
-  const b=$('fxBanner');b.className='fx-banner'+(kind==='c3'?' c3':kind==='c5'?' c5':kind==='small'?' small':'');
-  void b.offsetWidth;
-  $('fxTitle').textContent=title;$('fxSub').textContent=sub||'';
-  $('fxTitle').style.fontSize=kind==='big'?'clamp(52px,9vw,96px)':'';
-  $('fxRays').style.display=(RM||kind==='small')?'none':'';
-  $('fx').classList.add('on');countUp($('fxPts'),pts);
-  if(!RM&&kind!=='small')sparks(10);else $('fxSparks').innerHTML='';
-  fxT=setTimeout(hideFx,dur);
-}
-function hideFx(){clearTimeout(fxT);$('fx').classList.remove('on');$('fxSparks').innerHTML=''}
-function clearFx(){hideFx();parts=[];document.querySelectorAll('.rain').forEach(e=>e.remove());$('glow').classList.remove('on')}
-function toast(t){const e=$('toast');e.textContent=t;e.classList.remove('on');void e.offsetWidth;e.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove('on'),700)}
+/* ═══ 정답 배너 — 깔끔한 카드형 (2026.10.05 교사 결정) ═══
+   cbShow(큰 글자, 작은 글자, 종류) 종류: '' 정답(초록) · 'combo' 연속(주황) · 'retry' 다시 풀어 맞힘(파랑) · 'info' 단계 안내(보라)
+   cbCelebrate(연속 수, 얻은 점수) — 첫 시도 정답 때 부른다. 5·10·15…연속에만 작은 색종이 */
+let cbTimer=null,cbRun=0;
+function cbShow(main,sub,kind,ms){const b=document.getElementById('cbn');if(!b)return;b.className='';b.innerHTML='';b.appendChild(document.createTextNode(main));if(sub){const s=document.createElement('span');s.className='s';s.textContent=sub;b.appendChild(s)}void b.offsetWidth;b.style.animationDuration=(ms||1100)+'ms';b.className='show'+(kind?' '+kind:'');clearTimeout(cbTimer);cbTimer=setTimeout(cbHide,(ms||1100)+30)}
+function cbHide(){const b=document.getElementById('cbn');if(b)b.className='';clearTimeout(cbTimer);cbRun++;const cv=document.getElementById('cbnFx');if(cv)cv.getContext('2d').clearRect(0,0,cv.width,cv.height)}
+function cbShown(){const b=document.getElementById('cbn');return !!(b&&b.classList.contains('show'))}
+function cbConfetti(){if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;const cv=document.getElementById('cbnFx');if(!cv)return;const c=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;
+  const cols=['#2f9e44','#fab005','#e8590c','#7c5cbf','#1c7ed6'],ps=[],x0=innerWidth/2,y0=innerHeight*.44;
+  for(let i=0;i<28;i++)ps.push({x:x0,y:y0,vx:(Math.random()-.5)*10,vy:-Math.random()*8-3,s:4+Math.random()*4,c:cols[i%cols.length],r:Math.random()*6});
+  const run=++cbRun,t0=performance.now();(function f(t){if(run!==cbRun)return;c.clearRect(0,0,cv.width,cv.height);ps.forEach(p=>{p.vy+=.4;p.x+=p.vx;p.y+=p.vy;p.r+=.2;c.save();c.translate(p.x,p.y);c.rotate(p.r);c.fillStyle=p.c;c.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);c.restore()});if(t-t0<900)requestAnimationFrame(f);else c.clearRect(0,0,cv.width,cv.height)})(t0)}
+function cbCelebrate(n,pts){const sub=pts!=null&&pts!==''?'+'+pts:'';
+  if(n>=5&&n%5===0){cbShow(n+'연속 정답!',sub,'combo');cbConfetti()}
+  else if(n===3)cbShow('3연속 정답!',sub,'combo');
+  else cbShow('정답!',sub,'')}
+function hideFx(){cbHide()}
+function clearFx(){cbHide()}
+function toast(t){cbShow(t,'','',700)}
 function celebrate(pts,combo,isRetry){
   const milestone=combo===3||combo===5||(combo>=10&&combo%5===0);
-  if(isRetry&&!milestone){sCorrect();showFx('small','다시 풀어 맞힘','',pts,800);return}
-  if(!milestone){
-    sCorrect();showFx('ok','정답!','',pts,900);
-    if(!RM){confetti(48);runParts()}
-    return;
-  }
-  if(combo===3){
-    sCombo3();showFx('c3','3콤보! 🔥','정답! 3문제 연속',pts,1500);
-    if(!RM){burst(innerWidth*.25,innerHeight*.35,40);burst(innerWidth*.75,innerHeight*.35,40);runParts();rain(['🔥','✨'],12)}
-    return;
-  }
-  sFanfare();
-  const big=combo>=15;
-  showFx(big?'big':'c5',big?'🌟 '+combo+'연속! 최고예요':combo+'콤보! 🎉🎊','정답! '+combo+'문제 연속',pts,big?2000:1800);
-  if(!RM){
-    const shots=big?Math.min(8,4+Math.floor((combo-10)/5)):4;
-    for(let i=0;i<shots;i++)setTimeout(()=>{burst(innerWidth*(.15+.7*Math.random()),innerHeight*(.2+.35*Math.random()),50);runParts()},i*180);
-    rain(['🎉','🎊','🌟','✨'],big?28:20);
-    const g=$('glow');g.classList.remove('on');void g.offsetWidth;g.classList.add('on');
-  }
+  if(isRetry&&!milestone){sCorrect();cbShow('다시 풀어 맞힘','+'+pts,'retry',800);return}
+  if(!milestone)sCorrect();else if(combo===3)sCombo3();else sFanfare();
+  cbCelebrate(combo,pts);
 }
 function shakeWrong(){clearFx();sWrong();const c=$('clues');c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake')}
 

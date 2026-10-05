@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
-<!-- 리모델링 2026.10.01 15:00 (6차): 귀납 사례 2개 문항 4개를 사례 3개 이상으로, 귀납 tip '여러 사례'로, 2단계 2번 연역에 숨은 전제 보충 -->
+<!-- 리모델링 2026.10.01 15:00 (6차): 귀납 사례 2개 문항 4개를 사례 3개 이상으로, 귀납 tip '여러 사례'로, 2단계 2번 연역에 숨은 전제 보충
+     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 -->
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -604,23 +605,19 @@
   }
   .sub-btn:hover { background: var(--area-light); }
 
-  /* 배너 */
-  #banner {
-    position: fixed; inset: 0; z-index: 900; display: none; align-items: center; justify-content: center;
-    pointer-events: none; background: rgba(30,60,90,0.12); overflow: hidden;
-  }
-  #banner.show { display: flex; }
-  .banner-card {
-    position: relative; z-index: 2; background: #fff; border-radius: 22px; padding: 22px 46px; text-align: center;
-    box-shadow: 0 18px 50px rgba(30,70,120,0.28); border: 3px solid #5aa87a; animation: bannerPop 0.35s cubic-bezier(.2,1.4,.4,1);
-  }
-  .banner-card.combo { border-color: #f0956a; background: linear-gradient(135deg, #fff, #fff3ea); }
-  .banner-big { font-size: clamp(1.8rem, 1.2rem + 3vw, 2.8rem); font-weight: 900; color: #2e8b57; line-height: 1.2; }
-  .banner-card.combo .banner-big { color: #d06030; }
-  .banner-sub { margin-top: 6px; font-size: 1.05rem; font-weight: 700; color: var(--text); }
-  @keyframes bannerPop { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-  .confetti { position: absolute; top: -20px; width: 10px; height: 14px; border-radius: 2px; z-index: 1; animation: confettiFall linear forwards; }
-  @keyframes confettiFall { to { transform: translateY(110vh) rotate(720deg); } }
+/* ═══ 정답 배너 — 깔끔한 카드형 (2026.10.05 교사 결정) ═══
+   초록 카드 하나가 떴다가 약 1초 뒤 사라진다. 화면 어둡게·광선·이모지 낙하 없음.
+   3연속은 주황 카드, 5·10·15…연속에만 작은 색종이. 다시 풀어 맞힘은 작은 파란 카드 */
+#cbn{position:fixed;left:50%;top:44%;z-index:9000;pointer-events:none;opacity:0;transform:translate(-50%,-50%) scale(.6);padding:18px 48px;border-radius:20px;background:linear-gradient(135deg,#2f9e44,#69db7c);color:#fff;font-family:'Noto Sans KR','Malgun Gothic','맑은 고딕',sans-serif;font-size:clamp(28px,4vw,44px);font-weight:700;line-height:1.2;text-align:center;white-space:nowrap;box-shadow:0 14px 34px rgba(0,0,0,.25)}
+#cbn .s{display:block;font-size:.5em;font-weight:500;margin-top:4px}
+#cbn.show{animation:cbnPop 1.1s ease forwards}
+#cbn.combo{background:linear-gradient(135deg,#e8590c,#fab005)}
+#cbn.info{font-size:clamp(20px,2.6vw,30px);padding:14px 34px;background:linear-gradient(135deg,#6741d9,#9775fa)}
+#cbn.retry{font-size:clamp(20px,2.6vw,28px);padding:12px 30px;background:linear-gradient(135deg,#1c7ed6,#74c0fc)}
+@keyframes cbnPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}30%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(.92)}}
+#cbnFx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:8999}
+@media (prefers-reduced-motion:reduce){#cbn.show{animation:none!important;opacity:1!important;transform:translate(-50%,-50%)!important}}
+@keyframes cbnFade{0%,100%{opacity:0;transform:translate(-50%,-50%)}15%,80%{opacity:1;transform:translate(-50%,-50%)}}
 
   /* 모달 */
   .modal { position: fixed; inset: 0; z-index: 950; display: none; align-items: center; justify-content: center; background: rgba(20,40,60,0.45); padding: 16px; }
@@ -644,11 +641,9 @@
     .area-band { padding: 0 12px; }
     #start-screen { padding: 14px 14px 12px; }
     .sub-btn { flex: 1 1 100%; }
-    .banner-card { padding: 18px 26px; }
   }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
-    .confetti { display: none; }
   }
   .game-subtitle { word-break: keep-all; }
   @media (max-width: 560px) {
@@ -756,7 +751,7 @@
         </div>
         <div class="credit-box">
           제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-          제작일 2026.05.20 · <span class="dl-hook">최종 수정</span> 2026.10.01 15:00 · Made with Claude
+          제작일 2026.05.20 · <span class="dl-hook">최종 수정</span> 2026.10.05 03:00 · Made with Claude
         </div>
       </div>
     </div>
@@ -879,18 +874,13 @@
 
 <footer>
   제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-  제작일 2026.05.20 · <span class="dl-hook">최종 수정</span> 2026.10.01 15:00 · Made with Claude
+  제작일 2026.05.20 · <span class="dl-hook">최종 수정</span> 2026.10.05 03:00 · Made with Claude
 </footer>
 
 <div id="play-credit">제작 · 보라라샘 · 2026.05.20</div>
 
 <!-- 정답·콤보 배너 -->
-<div id="banner" aria-live="polite">
-  <div class="banner-card" id="banner-card">
-    <div class="banner-big" id="banner-big"></div>
-    <div class="banner-sub" id="banner-sub"></div>
-  </div>
-</div>
+<div id="cbn"></div><canvas id="cbnFx"></canvas>
 
 <!-- 오늘 나온 문제 (학생용) -->
 <div class="modal" id="qlist-modal" onclick="if(event.target===this)closeQList()">
@@ -1206,7 +1196,7 @@ const STAGE_DEFS = {
 
 const GAME_NAME = '논증방법 컵스';
 const CREDIT_LINE = '제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com';
-const DATE_LINE = '제작일 2026.05.20 · 최종 수정 2026.10.01 15:00 · Made with Claude';
+const DATE_LINE = '제작일 2026.05.20 · 최종 수정 2026.10.05 03:00 · Made with Claude';
 const STANDARD_CODE = '9국02-05';
 const STANDARD_TEXT = '글에 사용된 다양한 설명 방법과 논증 방법을 파악하고, 그 타당성을 평가하며 읽는다.';
 const LEARNING_GOAL = '예문을 읽고 연역·귀납·유추를 구별하고, 논증의 타당성을 평가한다.';
@@ -1324,36 +1314,23 @@ function playCombo(){ try{ const c=getCtx(); [523,659,784,1047].forEach((f,i)=>{
 
 function showToast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1800); }
 
-/* ─── 정답·콤보 배너 ─── */
-let bannerTimer=null;
-function showBanner(kind, big, sub){
-  const b=$('banner'), card=$('banner-card');
-  hideBanner();
-  card.className='banner-card'+(kind==='combo'?' combo':'');
-  $('banner-big').textContent=big; $('banner-sub').textContent=sub||'';
-  if(!REDUCED){
-    const colors=['#3B86C9','#f0956a','#5aa87a','#f5c842','#9fd0f5','#e88080'];
-    const count = kind==='combo' ? 70 : 34;
-    for(let i=0;i<count;i++){
-      const p=document.createElement('div'); p.className='confetti';
-      p.style.left=(Math.random()*100)+'%';
-      p.style.background=colors[i%colors.length];
-      p.style.animationDuration=(0.9+Math.random()*0.9)+'s';
-      p.style.animationDelay=(Math.random()*0.15)+'s';
-      p.style.transform='rotate('+(Math.random()*360)+'deg)';
-      b.appendChild(p);
-    }
-  }
-  b.classList.add('show');
-  bannerTimer=setTimeout(hideBanner, kind==='combo' ? 1400 : 900);
-}
-function hideBanner(){
-  const b=$('banner'); if(!b) return;
-  if(bannerTimer){ clearTimeout(bannerTimer); bannerTimer=null; }
-  b.classList.remove('show');
-  b.querySelectorAll('.confetti').forEach(el=>el.remove());
-}
-function bannerVisible(){ return $('banner').classList.contains('show'); }
+/* ═══ 정답 배너 — 깔끔한 카드형 (2026.10.05 교사 결정) ═══
+   cbShow(큰 글자, 작은 글자, 종류) 종류: '' 정답(초록) · 'combo' 연속(주황) · 'retry' 다시 풀어 맞힘(파랑) · 'info' 단계 안내(보라)
+   cbCelebrate(연속 수, 얻은 점수) — 첫 시도 정답 때 부른다. 5·10·15…연속에만 작은 색종이 */
+let cbTimer=null,cbRun=0;
+function cbShow(main,sub,kind,ms){const b=document.getElementById('cbn');if(!b)return;b.className='';b.innerHTML='';b.appendChild(document.createTextNode(main));if(sub){const s=document.createElement('span');s.className='s';s.textContent=sub;b.appendChild(s)}void b.offsetWidth;b.style.animationDuration=(ms||1100)+'ms';b.className='show'+(kind?' '+kind:'');clearTimeout(cbTimer);cbTimer=setTimeout(cbHide,(ms||1100)+30)}
+function cbHide(){const b=document.getElementById('cbn');if(b)b.className='';clearTimeout(cbTimer);cbRun++;const cv=document.getElementById('cbnFx');if(cv)cv.getContext('2d').clearRect(0,0,cv.width,cv.height)}
+function cbShown(){const b=document.getElementById('cbn');return !!(b&&b.classList.contains('show'))}
+function cbConfetti(){if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;const cv=document.getElementById('cbnFx');if(!cv)return;const c=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;
+  const cols=['#2f9e44','#fab005','#e8590c','#7c5cbf','#1c7ed6'],ps=[],x0=innerWidth/2,y0=innerHeight*.44;
+  for(let i=0;i<28;i++)ps.push({x:x0,y:y0,vx:(Math.random()-.5)*10,vy:-Math.random()*8-3,s:4+Math.random()*4,c:cols[i%cols.length],r:Math.random()*6});
+  const run=++cbRun,t0=performance.now();(function f(t){if(run!==cbRun)return;c.clearRect(0,0,cv.width,cv.height);ps.forEach(p=>{p.vy+=.4;p.x+=p.vx;p.y+=p.vy;p.r+=.2;c.save();c.translate(p.x,p.y);c.rotate(p.r);c.fillStyle=p.c;c.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);c.restore()});if(t-t0<900)requestAnimationFrame(f);else c.clearRect(0,0,cv.width,cv.height)})(t0)}
+function cbCelebrate(n,pts){const sub=pts!=null&&pts!==''?'+'+pts:'';
+  if(n>=5&&n%5===0){cbShow(n+'연속 정답!',sub,'combo');cbConfetti()}
+  else if(n===3)cbShow('3연속 정답!',sub,'combo');
+  else cbShow('정답!',sub,'')}
+function hideBanner(){ cbHide(); }
+function bannerVisible(){ return cbShown(); }
 
 /* ══════════════════════════════════════════════════════════
    단계 시작 (연동 래퍼 → doStartStage)
@@ -1601,17 +1578,14 @@ function handleAnswer(chosen, isCorrect){
       const gain=BASE_POINT+bonus;
       S.score += gain; updateScore();
       if(S.combo>=2){ $('combo-badge').classList.remove('hidden'); $('combo-val').textContent=S.combo; pulseCombo(); }
-      if(isComboMilestone(S.combo)){
-        playCombo(); showBanner('combo', `🔥 ${S.combo}콤보!`, `+${gain}점 (콤보 보너스 ${bonus}점 포함)`);
-      } else {
-        playCorrect(); showBanner('correct', '⭕ 정답!', `+${gain}점`);
-      }
+      if(isComboMilestone(S.combo)) playCombo(); else playCorrect();
+      cbCelebrate(S.combo, gain);
       const bt = bonus>0 ? ` · 콤보 보너스 ${bonus}점 포함` : '';
       showFeedback(true,`정답!  (+${gain}점${bt})`,true);
     } else {
       S.retryResult[idx]='correct';
       S.score += RETRY_POINT; updateScore();
-      playCorrect(); showBanner('correct', '⭕ 정답!', `다시 풀어 맞힘 +${RETRY_POINT}점`);
+      playCorrect(); cbShow('다시 풀어 맞힘', '+'+RETRY_POINT, 'retry');
       showFeedback(true,`정답!  (다시 풀어 맞힘 +${RETRY_POINT}점 · 콤보는 이어지지 않아요)`,true);
     }
     showDetail(q);

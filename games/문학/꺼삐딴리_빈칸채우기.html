@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
-<!-- 리모델링 2026.10.01 15:00 (6차): 게임 코드 L301→L303, 조사 떼기 오판 예외(처가·화가·화로·혹은·왜요·일본도·부인과), 409 스텐코프를 감방 시기에 만난 장교로 -->
+<!-- 리모델링 2026.10.01 15:00 (6차): 게임 코드 L301→L303, 조사 떼기 오판 예외(처가·화가·화로·혹은·왜요·일본도·부인과), 409 스텐코프를 감방 시기에 만난 장교로
+     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -141,35 +142,19 @@ h1{font-size:clamp(26px,3.6vw,36px);font-weight:700;color:var(--dark);line-heigh
 .ritem .ra{color:var(--ok);font-weight:700}
 .ritem .rd{color:#64748b;font-size:14px}
 
-/* ── 배너·연출 ── */
-#banner{position:fixed;inset:0;z-index:150;display:none;align-items:center;justify-content:center;pointer-events:none}
-#banner.on{display:flex}
-.bn-dim{position:absolute;inset:0;background:radial-gradient(circle,rgba(0,0,0,.25) 0%,rgba(0,0,0,.25) 60%,rgba(0,0,0,.12) 100%)}
-.bn-rays{position:absolute;width:760px;height:760px;border-radius:50%;background:repeating-conic-gradient(rgba(255,230,140,.35) 0 10deg,transparent 10deg 20deg);animation:spinR 6s linear infinite;-webkit-mask:radial-gradient(circle,#000 20%,transparent 68%);mask:radial-gradient(circle,#000 20%,transparent 68%)}
-@keyframes spinR{to{transform:rotate(360deg)}}
-.bn-panel{position:relative;text-align:center;animation:pop .35s cubic-bezier(.34,1.56,.64,1)}
-@keyframes pop{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.15);opacity:1}100%{transform:scale(1)}}
-.bn-title{font-size:clamp(56px,10vw,104px);font-weight:900;line-height:1.1;filter:drop-shadow(0 0 16px rgba(255,210,80,.85)) drop-shadow(0 4px 2px rgba(0,0,0,.25))}
-.bn-title .g{background:linear-gradient(180deg,#fff3b0,#f7c531 50%,#e39a10);-webkit-background-clip:text;background-clip:text;color:transparent}
-.bn-pts{font-size:clamp(30px,5vw,48px);font-weight:900;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.45)}
-.bn-sub{font-size:18px;color:#fff;font-weight:700;text-shadow:0 2px 6px rgba(0,0,0,.5)}
-#banner.c3 .bn-title .g{background:linear-gradient(180deg,#ffe0b2,#ff9a3c 55%,#e5541b);-webkit-background-clip:text;background-clip:text}
-#banner.c5 .bn-title .g,#banner.cbig .bn-title .g{background:linear-gradient(90deg,#ff5f6d,#ffc371,#47e891,#3ab4f2,#b36bff);-webkit-background-clip:text;background-clip:text}
-#banner.c5 .bn-title,#banner.cbig .bn-title{animation:wob .6s ease 2}
-#banner.cbig .bn-title{font-size:clamp(64px,11vw,120px)}
-@keyframes wob{25%{transform:rotate(-4deg) scale(1.08)}75%{transform:rotate(4deg) scale(1.08)}}
-.spark{position:absolute;font-size:26px;animation:spk .8s ease-out forwards}
-@keyframes spk{0%{transform:translate(0,0) scale(.4);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(1.1);opacity:0}}
-.emo{position:fixed;top:-40px;font-size:30px;z-index:160;pointer-events:none;animation:fall 1.6s linear forwards}
-@keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
-#fx{position:fixed;inset:0;z-index:155;pointer-events:none}
-body.glow::after{content:'';position:fixed;inset:0;z-index:149;pointer-events:none;box-shadow:inset 0 0 0 0 rgba(255,190,60,0);animation:glowP 1.2s ease}
-@keyframes glowP{40%{box-shadow:inset 0 0 60px 18px rgba(255,190,60,.75)}}
-@media (prefers-reduced-motion:reduce){
-  .bn-rays,.spark,.emo{display:none!important}
-  .bn-panel,.bn-title{animation:fadeIn .3s!important}
-  @keyframes fadeIn{from{opacity:0}}
-}
+/* ═══ 정답 배너 — 깔끔한 카드형 (2026.10.05 교사 결정) ═══
+   초록 카드 하나가 떴다가 약 1초 뒤 사라진다. 화면 어둡게·광선·이모지 낙하 없음.
+   3연속은 주황 카드, 5·10·15…연속에만 작은 색종이. 다시 풀어 맞힘은 작은 파란 카드 */
+#cbn{position:fixed;left:50%;top:44%;z-index:9000;pointer-events:none;opacity:0;transform:translate(-50%,-50%) scale(.6);padding:18px 48px;border-radius:20px;background:linear-gradient(135deg,#2f9e44,#69db7c);color:#fff;font-family:'Noto Sans KR','Malgun Gothic','맑은 고딕',sans-serif;font-size:clamp(28px,4vw,44px);font-weight:700;line-height:1.2;text-align:center;white-space:nowrap;box-shadow:0 14px 34px rgba(0,0,0,.25)}
+#cbn .s{display:block;font-size:.5em;font-weight:500;margin-top:4px}
+#cbn.show{animation:cbnPop 1.1s ease forwards}
+#cbn.combo{background:linear-gradient(135deg,#e8590c,#fab005)}
+#cbn.info{font-size:clamp(20px,2.6vw,30px);padding:14px 34px;background:linear-gradient(135deg,#6741d9,#9775fa)}
+#cbn.retry{font-size:clamp(20px,2.6vw,28px);padding:12px 30px;background:linear-gradient(135deg,#1c7ed6,#74c0fc)}
+@keyframes cbnPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}30%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(.92)}}
+#cbnFx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:8999}
+@media (prefers-reduced-motion:reduce){#cbn.show{animation:none!important;opacity:1!important;transform:translate(-50%,-50%)!important}}
+@keyframes cbnFade{0%,100%{opacity:0;transform:translate(-50%,-50%)}15%,80%{opacity:1;transform:translate(-50%,-50%)}}
 
 /* ── 반응형 ── */
 @media (max-width:860px){
@@ -247,7 +232,7 @@ body.glow::after{content:'';position:fixed;inset:0;z-index:149;pointer-events:no
 
    <div class="credit">
     제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-    제작일 2026.09.16 · 최종 수정 2026.10.01 15:00
+    제작일 2026.09.16 · 최종 수정 2026.10.05 03:00
    </div>
 
   <div class="privacy" id="privacyOffline">
@@ -370,12 +355,11 @@ body.glow::after{content:'';position:fixed;inset:0;z-index:149;pointer-events:no
   </div>
  </div>
 </div>
-<div id="banner"><div class="bn-dim"></div><div class="bn-rays"></div><div class="bn-panel"><div class="bn-title" id="bnTitle"></div><div class="bn-pts" id="bnPts"></div><div class="bn-sub" id="bnSub"></div></div><div id="bnSpark" style="position:absolute;left:50%;top:50%"></div></div>
-<canvas id="fx"></canvas>
+<div id="cbn"></div><canvas id="cbnFx"></canvas>
 
 <script>
 const MADE_DATE = "2026.09.16";
-const MODIFIED = "2026.10.01 15:00";
+const MODIFIED = "2026.10.05 03:00";
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -690,8 +674,7 @@ function reveal(){
   afterBlank(q, false);
 }
 function comboSpec(c, sub, pts){
-  if(c<=10) return {type:'c5', title:`${c}콤보!`, emo:'🎉🎊', sub, pts, dur:1500};
-  return {type:'cbig', title:`${c}연속!`, emo:'🌟', sub, pts, dur:1600};
+  return {type:'combo', title:`${c}연속 정답!`, sub};
 }
 function afterBlank(q, correct){
   const c = S.combo;
@@ -703,13 +686,13 @@ function afterBlank(q, correct){
     S.lockUntil = Date.now() + 450;
     const scenePts = sceneItems().reduce((a,x) => a + x.pts, 0);
     paintFb('scene', q);
-    if(milestone) showBanner(comboSpec(c, `장면 완료 · 이 장면 +${scenePts}점`, q.pts));
-    else showBanner({type:'ok', title:'장면 완료!', emo:'', sub:`이 장면에서 얻은 점수`, pts:scenePts, dur:1100});
+    if(milestone) showBanner(comboSpec(c, `+${q.pts}점 · 장면 완료`, q.pts));
+    else showBanner({type:'ok', title:'장면 완료!', sub:`이 장면 +${scenePts}점`});
     afterGraded();
     return;
   }
   paintFb(correct ? 'ok' : 'rv', q);
-  if(milestone) showBanner(comboSpec(c, '정답! 연속으로 맞히고 있어요', q.pts));
+  if(milestone) showBanner(comboSpec(c, `+${q.pts}점`, q.pts));
   else if(correct) sTick();
   const nx = nextUnsolved(q.id);
   if(nx) focusBlank(nx.id);
@@ -794,77 +777,28 @@ document.addEventListener('keydown', e => {
 });
 
 /* ================= 연출 ================= */
-let bannerTimer = null;
+/* ═══ 정답 배너 — 깔끔한 카드형 (2026.10.05 교사 결정) ═══
+   cbShow(큰 글자, 작은 글자, 종류) 종류: '' 정답(초록) · 'combo' 연속(주황) · 'retry' 다시 풀어 맞힘(파랑) · 'info' 단계 안내(보라)
+   cbCelebrate(연속 수, 얻은 점수) — 첫 시도 정답 때 부른다. 5·10·15…연속에만 작은 색종이 */
+let cbTimer=null,cbRun=0;
+function cbShow(main,sub,kind,ms){const b=document.getElementById('cbn');if(!b)return;b.className='';b.innerHTML='';b.appendChild(document.createTextNode(main));if(sub){const s=document.createElement('span');s.className='s';s.textContent=sub;b.appendChild(s)}void b.offsetWidth;b.style.animationDuration=(ms||1100)+'ms';b.className='show'+(kind?' '+kind:'');clearTimeout(cbTimer);cbTimer=setTimeout(cbHide,(ms||1100)+30)}
+function cbHide(){const b=document.getElementById('cbn');if(b)b.className='';clearTimeout(cbTimer);cbRun++;const cv=document.getElementById('cbnFx');if(cv)cv.getContext('2d').clearRect(0,0,cv.width,cv.height)}
+function cbShown(){const b=document.getElementById('cbn');return !!(b&&b.classList.contains('show'))}
+function cbConfetti(){if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;const cv=document.getElementById('cbnFx');if(!cv)return;const c=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;
+  const cols=['#2f9e44','#fab005','#e8590c','#7c5cbf','#1c7ed6'],ps=[],x0=innerWidth/2,y0=innerHeight*.44;
+  for(let i=0;i<28;i++)ps.push({x:x0,y:y0,vx:(Math.random()-.5)*10,vy:-Math.random()*8-3,s:4+Math.random()*4,c:cols[i%cols.length],r:Math.random()*6});
+  const run=++cbRun,t0=performance.now();(function f(t){if(run!==cbRun)return;c.clearRect(0,0,cv.width,cv.height);ps.forEach(p=>{p.vy+=.4;p.x+=p.vx;p.y+=p.vy;p.r+=.2;c.save();c.translate(p.x,p.y);c.rotate(p.r);c.fillStyle=p.c;c.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);c.restore()});if(t-t0<900)requestAnimationFrame(f);else c.clearRect(0,0,cv.width,cv.height)})(t0)}
+function cbCelebrate(n,pts){const sub=pts!=null&&pts!==''?'+'+pts:'';
+  if(n>=5&&n%5===0){cbShow(n+'연속 정답!',sub,'combo');cbConfetti()}
+  else if(n===3)cbShow('3연속 정답!',sub,'combo');
+  else cbShow('정답!',sub,'')}
 const sTick = () => { tone(784,0,.08,'sine',.14); tone(1175,.06,.12,'sine',.14); };
+/* 장면 완료 — 초록 카드 / 5·10·15…연속 — 주황 카드 + 작은 색종이 (효과음은 원래대로) */
 function showBanner(sp){
-  const b = $('banner'); b.className = 'on ' + (sp.type==='ok' ? '' : sp.type);
-  $('bnTitle').innerHTML = (sp.type==='cbig' ? esc(sp.emo)+' ' : '') + `<span class="g">${esc(sp.title)}</span>` + (sp.type!=='cbig' && sp.emo ? ' '+esc(sp.emo) : '');
-  $('bnSub').textContent = sp.sub || '';
-  const p = b.querySelector('.bn-panel'); p.style.animation='none'; void p.offsetWidth; p.style.animation='';
-  countUp($('bnPts'), sp.pts);
-  if(sp.type==='ok') sOK(); else if(sp.type==='c3') sC3(); else sC5();
-  if(!reduceMotion){
-    sparks(sp.type==='ok' ? 10 : 12);
-    if(sp.type==='ok') confetti([[.5,.45]], 50);
-    else if(sp.type==='c3'){ confetti([[.25,.6],[.75,.6]], 45); emojis(['🔥','✨'], 12); }
-    else {
-      const shots = sp.type==='cbig' ? Math.min(8, 4 + Math.floor((S.combo-10)/5)) : 4;
-      const pos = [[.15,.7],[.85,.7],[.35,.55],[.65,.55],[.5,.75],[.1,.4],[.9,.4],[.5,.4]].slice(0, shots);
-      confetti(pos, 45);
-      emojis(['🎉','🎊','⭐','✨'], sp.type==='cbig' ? 28 : 20);
-      document.body.classList.remove('glow'); void document.body.offsetWidth; document.body.classList.add('glow');
-    }
-  }
-  clearTimeout(bannerTimer);
-  bannerTimer = setTimeout(hideBanner, sp.dur);
+  if(sp.type==='ok'){ sOK(); cbShow(sp.title, sp.sub||'', ''); return; }
+  sC5(); cbShow(sp.title, sp.sub||'', 'combo'); cbConfetti();
 }
-function hideBanner(){ clearTimeout(bannerTimer); $('banner').className=''; }
-function countUp(el, n){
-  const t0=performance.now(), d=400;
-  (function step(t){ const k=Math.min(1,(t-t0)/d); el.textContent='+'+Math.round(n*k)+'점'; if(k<1) requestAnimationFrame(step); })(t0);
-}
-function sparks(n){
-  const box=$('bnSpark'); box.innerHTML='';
-  for(let i=0;i<n;i++){
-    const s=document.createElement('span'); s.className='spark'; s.textContent=['✨','⭐','💫'][i%3];
-    const a=Math.PI*2*i/n, r=150+Math.random()*80;
-    s.style.setProperty('--dx', Math.cos(a)*r+'px'); s.style.setProperty('--dy', Math.sin(a)*r*.7+'px');
-    s.style.left='-13px'; s.style.top='-13px';
-    box.appendChild(s);
-  }
-}
-function emojis(list, n){
-  for(let i=0;i<n;i++){
-    const e=document.createElement('span'); e.className='emo'; e.textContent=list[i%list.length];
-    e.style.left=Math.random()*96+'vw'; e.style.animationDelay=(Math.random()*.5)+'s';
-    e.style.animationDuration=(1.2+Math.random()*.8)+'s';
-    document.body.appendChild(e); setTimeout(()=>e.remove(), 2600);
-  }
-}
-const FX = { parts:[], raf:null };
-function confetti(origins, per){
-  const cv=$('fx'); cv.width=innerWidth; cv.height=innerHeight;
-  const colors=['#f7c531','#2E9B79','#ff6b6b','#4dabf7','#b36bff','#ff9a3c'];
-  origins.forEach(([ox,oy])=>{
-    for(let i=0;i<per;i++){
-      const a=-Math.PI/2 + (Math.random()-.5)*Math.PI*1.1, v=6+Math.random()*8;
-      FX.parts.push({x:ox*cv.width,y:oy*cv.height,vx:Math.cos(a)*v,vy:Math.sin(a)*v,r:Math.random()*6,rv:(Math.random()-.5)*.3,w:6+Math.random()*6,h:4+Math.random()*4,c:colors[i%colors.length],life:0});
-    }
-  });
-  if(!FX.raf) FX.raf=requestAnimationFrame(fxStep);
-}
-function fxStep(){
-  const cv=$('fx'), ctx=cv.getContext('2d');
-  ctx.clearRect(0,0,cv.width,cv.height);
-  FX.parts = FX.parts.filter(p=>p.life<75);
-  FX.parts.forEach(p=>{
-    p.life++; p.vy+=.32; p.vx*=.99; p.x+=p.vx; p.y+=p.vy; p.r+=p.rv;
-    ctx.save(); ctx.globalAlpha=Math.max(0,1-p.life/75); ctx.translate(p.x,p.y); ctx.rotate(p.r);
-    ctx.fillStyle=p.c; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h); ctx.restore();
-  });
-  if(FX.parts.length) FX.raf=requestAnimationFrame(fxStep);
-  else { FX.raf=null; ctx.clearRect(0,0,cv.width,cv.height); }
-}
+function hideBanner(){ cbHide(); }
 
 /* ================= 결과 계산 ================= */
 function stats(){

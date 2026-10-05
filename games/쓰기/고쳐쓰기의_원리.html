@@ -4,7 +4,8 @@
      문항: 기본 3 고친 문장 → '한글 자음의 기본자는 발음 기관의 모양을 본떠 만들어졌다'
      문항: 기본 16 고치기 전 글을 결론이 근거 사이에 끼인 글로(실제로 고칠 점이 있게)
      설명: 재구성 = 문장의 순서를 바꾸거나, 긴 문장을 나누거나 짧은 문장을 합치는 등 글의 짜임을 다시 짜는 것(교사 결정) — 시작 화면 칩·유형 설명·팁·힌트 통일
-     확인: 직접 쓰기는 추가·삭제·대치·재구성만 정답(첨가·재배열 등 오답) — 기존 채점 그대로 맞음 -->
+     확인: 직접 쓰기는 추가·삭제·대치·재구성만 정답(첨가·재배열 등 오답) — 기존 채점 그대로 맞음
+     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -169,22 +170,20 @@ mark.hl-move{background:#EAE5F8;color:#6748A8;font-weight:600;box-shadow:inset 0
 .afterbox .lab{font-size:11.5px;font-weight:700;color:var(--add);display:block;margin-bottom:6px}
 .pcredit{font-size:10.5px;color:#c6b5bd;text-align:right;padding:4px 18px 8px}
 
-/* ===== 배너 / 파티클 ===== */
-#fx{position:fixed;inset:0;pointer-events:none;z-index:900;display:none}
-#banner{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:901;
-  background:radial-gradient(circle at center,rgba(0,0,0,.28),rgba(0,0,0,.18))}
-#banner.on{display:flex}
-.bnCard{position:relative;text-align:center;padding:26px 46px;border-radius:22px;background:rgba(255,255,255,.96);
-  box-shadow:0 20px 60px rgba(0,0,0,.28);animation:pop .35s cubic-bezier(.3,1.5,.5,1)}
-@keyframes pop{0%{transform:scale(.3);opacity:0}60%{transform:scale(1.15);opacity:1}100%{transform:scale(1)}}
-.bnCard .bt{font-size:44px;font-weight:700;line-height:1.1;
-  background:linear-gradient(120deg,#E0A458,#F3D08A,#D4718F);-webkit-background-clip:text;background-clip:text;color:transparent;
-  filter:drop-shadow(0 2px 6px rgba(224,164,88,.35))}
-.bnCard .bp{font-size:26px;font-weight:700;color:var(--acc-d);margin-top:6px;font-variant-numeric:tabular-nums}
-.bnCard .bs{font-size:13.5px;color:var(--soft);margin-top:8px}
-.bnCard.combo .bt{background:linear-gradient(120deg,#E07A5F,#D4718F,#7C5CBF,#3B86C9);
-  -webkit-background-clip:text;background-clip:text;color:transparent}
-@media (prefers-reduced-motion:reduce){.bnCard{animation:none}.wandbtn .wand{animation:none}}
+/* ═══ 정답 배너 — 깔끔한 카드형 (2026.10.05 교사 결정) ═══
+   초록 카드 하나가 떴다가 약 1초 뒤 사라진다. 화면 어둡게·광선·이모지 낙하 없음.
+   3연속은 주황 카드, 5·10·15…연속에만 작은 색종이. 다시 풀어 맞힘은 작은 파란 카드 */
+#cbn{position:fixed;left:50%;top:44%;z-index:9000;pointer-events:none;opacity:0;transform:translate(-50%,-50%) scale(.6);padding:18px 48px;border-radius:20px;background:linear-gradient(135deg,#2f9e44,#69db7c);color:#fff;font-family:'Noto Sans KR','Malgun Gothic','맑은 고딕',sans-serif;font-size:clamp(28px,4vw,44px);font-weight:700;line-height:1.2;text-align:center;white-space:nowrap;box-shadow:0 14px 34px rgba(0,0,0,.25)}
+#cbn .s{display:block;font-size:.5em;font-weight:500;margin-top:4px}
+#cbn.show{animation:cbnPop 1.1s ease forwards}
+#cbn.combo{background:linear-gradient(135deg,#e8590c,#fab005)}
+#cbn.info{font-size:clamp(20px,2.6vw,30px);padding:14px 34px;background:linear-gradient(135deg,#6741d9,#9775fa)}
+#cbn.retry{font-size:clamp(20px,2.6vw,28px);padding:12px 30px;background:linear-gradient(135deg,#1c7ed6,#74c0fc)}
+@keyframes cbnPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}30%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(.92)}}
+#cbnFx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:8999}
+@media (prefers-reduced-motion:reduce){#cbn.show{animation:none!important;opacity:1!important;transform:translate(-50%,-50%)!important}}
+@keyframes cbnFade{0%,100%{opacity:0;transform:translate(-50%,-50%)}15%,80%{opacity:1;transform:translate(-50%,-50%)}}
+@media (prefers-reduced-motion:reduce){.wandbtn .wand{animation:none}}
 
 /* ===== END ===== */
 #end .ebody{padding:26px 28px 34px;display:flex;flex-direction:column;gap:15px}
@@ -315,7 +314,7 @@ mark.hl-move{background:#EAE5F8;color:#6748A8;font-weight:600;box-shadow:inset 0
 
       <div class="credit">
         제작 · <b>보라라샘</b> · 전주서신중학교 교사 · siaawase@gmail.com<br>
-        제작일 2026.06.16 · <span id="lastMod">최종 수정 2026.10.01 17:00</span>
+        제작일 2026.06.16 · <span id="lastMod">최종 수정 2026.10.05 03:00</span>
       </div>
 
       <div class="privacy" id="privacyOffline">
@@ -433,15 +432,10 @@ mark.hl-move{background:#EAE5F8;color:#6748A8;font-weight:600;box-shadow:inset 0
   <div class="mc" id="modalBody"></div>
 </div></div>
 
-<canvas id="fx"></canvas>
-<div id="banner"><div class="bnCard" id="bnCard">
-  <div class="bt" id="bnTitle">정답!</div>
-  <div class="bp" id="bnPoint"></div>
-  <div class="bs" id="bnSub"></div>
-</div></div>
+<div id="cbn"></div><canvas id="cbnFx"></canvas>
 <script>
 const MADE_DATE='2026.06.16';
-const LAST_MOD='최종 수정 2026.10.01 17:00';
+const LAST_MOD='최종 수정 2026.10.05 03:00';
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -710,42 +704,22 @@ function sComboBig(){[523,659,784,1047,1319].forEach((f,i)=>tone(f,i*.09,.32,'tr
 function sEnd(){[523,659,784,1047,1319].forEach((f,i)=>tone(f,i*.1,.3,'triangle',.14));}
 function sMagic(){[784,988,1175,1568].forEach((f,i)=>tone(f,i*.06,.2,'triangle',.12));}
 
-/* ===================== 배너 · 색종이 ===================== */
-const reduceMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-let bannerOn=false, bnTimer=null, parts=[], fxRAF=null;
-function fxCanvas(){const c=$('fx');c.width=innerWidth;c.height=innerHeight;return c;}
-function confetti(n){
-  if(reduceMotion)return;
-  const c=fxCanvas(); c.style.display='block'; const ctx=c.getContext('2d');
-  const cols=['#D4718F','#E0A458','#2E9B79','#3B86C9','#7C5CBF','#F3D08A'];
-  for(let i=0;i<n;i++)parts.push({x:innerWidth/2+(Math.random()-.5)*260,y:innerHeight/2+(Math.random()-.5)*80,
-    vx:(Math.random()-.5)*11,vy:-Math.random()*13-4,g:.42,r:Math.random()*Math.PI,vr:(Math.random()-.5)*.3,
-    w:6+Math.random()*7,h:9+Math.random()*9,c:cols[i%cols.length],life:78});
-  if(!fxRAF)fxRAF=requestAnimationFrame(function step(){
-    ctx.clearRect(0,0,c.width,c.height);
-    parts=parts.filter(p=>p.life>0);
-    parts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=p.g;p.r+=p.vr;p.life--;
-      ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.fillStyle=p.c;
-      ctx.globalAlpha=Math.min(1,p.life/24);ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();});
-    if(parts.length){fxRAF=requestAnimationFrame(step);}
-    else{fxRAF=null;ctx.clearRect(0,0,c.width,c.height);c.style.display='none';}
-  });
-}
-function showBanner(title,point,sub,isCombo,ms){
-  bannerOn=true;
-  $('bnTitle').textContent=title;
-  $('bnPoint').textContent=point||'';
-  $('bnSub').textContent=sub||'';
-  $('bnCard').className='bnCard'+(isCombo?' combo':'');
-  $('banner').classList.add('on');
-  if(bnTimer)clearTimeout(bnTimer);
-  bnTimer=setTimeout(hideBanner,ms||900);
-}
-function hideBanner(){
-  if(!bannerOn)return;
-  bannerOn=false;$('banner').classList.remove('on');
-  if(bnTimer){clearTimeout(bnTimer);bnTimer=null;}
-}
+/* ═══ 정답 배너 — 깔끔한 카드형 (2026.10.05 교사 결정) ═══
+   cbShow(큰 글자, 작은 글자, 종류) 종류: '' 정답(초록) · 'combo' 연속(주황) · 'retry' 다시 풀어 맞힘(파랑) · 'info' 단계 안내(보라)
+   cbCelebrate(연속 수, 얻은 점수) — 첫 시도 정답 때 부른다. 5·10·15…연속에만 작은 색종이 */
+let cbTimer=null,cbRun=0;
+function cbShow(main,sub,kind,ms){const b=document.getElementById('cbn');if(!b)return;b.className='';b.innerHTML='';b.appendChild(document.createTextNode(main));if(sub){const s=document.createElement('span');s.className='s';s.textContent=sub;b.appendChild(s)}void b.offsetWidth;b.style.animationDuration=(ms||1100)+'ms';b.className='show'+(kind?' '+kind:'');clearTimeout(cbTimer);cbTimer=setTimeout(cbHide,(ms||1100)+30)}
+function cbHide(){const b=document.getElementById('cbn');if(b)b.className='';clearTimeout(cbTimer);cbRun++;const cv=document.getElementById('cbnFx');if(cv)cv.getContext('2d').clearRect(0,0,cv.width,cv.height)}
+function cbShown(){const b=document.getElementById('cbn');return !!(b&&b.classList.contains('show'))}
+function cbConfetti(){if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;const cv=document.getElementById('cbnFx');if(!cv)return;const c=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;
+  const cols=['#2f9e44','#fab005','#e8590c','#7c5cbf','#1c7ed6'],ps=[],x0=innerWidth/2,y0=innerHeight*.44;
+  for(let i=0;i<28;i++)ps.push({x:x0,y:y0,vx:(Math.random()-.5)*10,vy:-Math.random()*8-3,s:4+Math.random()*4,c:cols[i%cols.length],r:Math.random()*6});
+  const run=++cbRun,t0=performance.now();(function f(t){if(run!==cbRun)return;c.clearRect(0,0,cv.width,cv.height);ps.forEach(p=>{p.vy+=.4;p.x+=p.vx;p.y+=p.vy;p.r+=.2;c.save();c.translate(p.x,p.y);c.rotate(p.r);c.fillStyle=p.c;c.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);c.restore()});if(t-t0<900)requestAnimationFrame(f);else c.clearRect(0,0,cv.width,cv.height)})(t0)}
+function cbCelebrate(n,pts){const sub=pts!=null&&pts!==''?'+'+pts:'';
+  if(n>=5&&n%5===0){cbShow(n+'연속 정답!',sub,'combo');cbConfetti()}
+  else if(n===3)cbShow('3연속 정답!',sub,'combo');
+  else cbShow('정답!',sub,'')}
+function hideBanner(){cbHide()}
 
 /* ===================== 흐름 ===================== */
 if(IS_ONLINE){
@@ -833,10 +807,10 @@ function award(first){
 function penalty(){ S.combo=0; S.score=Math.max(0,S.score-3); }
 function celebrate(pt){
   const c=S.combo;
-  if(c===3){ sCombo3(); confetti(34); showBanner('3콤보! 🔥','+'+pt+'점','연속 정답 3개!',true,1100); }
-  else if(c===5||(c>5&&c%5===0)){ sComboBig(); confetti(c>=15?80:56);
-    showBanner((c>=15?'🌟 '+c+'연속! 최고예요':c+'콤보! 🎉🎊'),'+'+pt+'점','연속 정답 '+c+'개!',true,1300); }
-  else { sOk(); confetti(26); showBanner('정답!','+'+pt+'점','',false,900); }
+  if(c===3) sCombo3();
+  else if(c===5||(c>5&&c%5===0)) sComboBig();
+  else sOk();
+  cbCelebrate(c,pt);
 }
 
 /* ===================== 렌더 ===================== */
@@ -892,7 +866,7 @@ function pickBasic(pos){
     st.result = first?'first':'retry';
     const a=award(first);
     if(first) celebrate(a.pt);
-    else { sOk(); showBanner('정답!','+'+a.pt+'점','다시 풀어 맞혔어요',false,900); }
+    else { sOk(); cbShow('다시 풀어 맞힘','+'+a.pt,'retry'); }
     hideHint(); updateBar(); render();
   }else{
     sNo(); penalty(); st.picked=pos;
@@ -953,7 +927,7 @@ function chalSettle(){
   st.result = first?'first':'retry';
   const a=award(first);
   if(first) celebrate(a.pt);
-  else { sOk(); showBanner('정답!','+'+a.pt+'점','다시 풀어 맞혔어요',false,900); }
+  else { sOk(); cbShow('다시 풀어 맞힘','+'+a.pt,'retry'); }
   updateBar(); render();
 }
 
@@ -1027,7 +1001,7 @@ document.addEventListener('keydown',e=>{
   const st=S.st[S.idx];
   if(e.key==='Enter'||e.key===' '||e.key==='Spacebar'||e.key==='ArrowRight'){
     e.preventDefault();
-    if(bannerOn){hideBanner(); if(st.done){go(1);} return;}
+    if(cbShown()){hideBanner(); if(st.done){go(1);} return;}
     if(st.done){go(1);return;}
     if(stage().key==='basic'&&!st.revealed){castMagic();return;}
   }else if(e.key==='ArrowLeft'){ e.preventDefault(); hideBanner(); go(-1);
@@ -1091,7 +1065,6 @@ function wrongList(){
 function finish(){
   if(S.ended){show('end');return;}
   S.ended=true; hideBanner(); sEnd();
-  parts=[]; if(fxRAF){cancelAnimationFrame(fxRAF);fxRAF=null;} $('fx').style.display='none';
   S.elapsed=Math.round((Date.now()-S.t0)/1000);
   const A=analyze(), g=stage();
   renderReport(A);
@@ -1424,7 +1397,6 @@ function downloadTeacherXls(){
   trigger.style.cursor='default';
   trigger.addEventListener('click',downloadTeacherXls);
 })();
-addEventListener('resize',()=>{if($('fx').style.display==='block')fxCanvas();});
 </script>
 </body>
 </html>

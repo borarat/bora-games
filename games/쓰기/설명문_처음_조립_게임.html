@@ -4,7 +4,8 @@
      문항: 심화 '스트레스' — 질문 문장("스트레스는 무엇이길래…?")을 흥미 유발 → 방향 안내로(게임 기준·숏폼·아이스크림과 같게),
            본론 내용('종류')을 넣은 배경 정보 문장을 '처음'에 맞는 배경 정보 문장으로 바꿈(순서: 흥미→배경→안내→안내)
      키보드: 답하기 전 → 키로 다음 주제로 넘어가던 버그 수정
-     해설: 스트레스 3번 문장 순서 설명 → '2번이 이처럼으로 1번을 바로 받으므로, 질문은 2번 뒤에 와요.' -->
+     해설: 스트레스 3번 문장 순서 설명 → '2번이 이처럼으로 1번을 바로 받으므로, 질문은 2번 뒤에 와요.'
+     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -178,20 +179,20 @@ button{font-family:inherit}
 .ov-next{flex:1;border:none;border-radius:10px;padding:12px;font-size:1rem;font-weight:700;color:#fff;background:var(--accent);cursor:pointer;min-height:44px}
 .ov-close{padding:12px 18px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--muted);font-size:.88rem;font-weight:700;cursor:pointer;min-height:44px}
 
-/* ===== 정답/콤보 배너 ===== */
-#banner-dim{position:fixed;inset:0;z-index:400;display:none;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(0,0,0,.42) 0%,rgba(0,0,0,.3) 100%)}
-#banner-dim.show{display:flex}
-#confetti{position:fixed;inset:0;z-index:401;pointer-events:none;display:none}
-#confetti.show{display:block}
-.banner-box{position:relative;text-align:center;padding:26px 44px;border-radius:26px;background:rgba(45,20,32,.74);box-shadow:0 18px 50px rgba(0,0,0,.35);animation:pop .35s cubic-bezier(.34,1.8,.64,1)}
-@keyframes pop{0%{transform:scale(.3);opacity:0}60%{transform:scale(1.15);opacity:1}100%{transform:scale(1)}}
-.banner-rays{position:absolute;left:50%;top:50%;width:420px;height:420px;margin:-210px 0 0 -210px;border-radius:50%;background:conic-gradient(rgba(255,255,255,.35) 0deg,transparent 22deg,rgba(255,255,255,.35) 44deg,transparent 66deg,rgba(255,255,255,.35) 88deg,transparent 110deg,rgba(255,255,255,.35) 132deg,transparent 154deg,rgba(255,255,255,.35) 176deg,transparent 198deg,rgba(255,255,255,.35) 220deg,transparent 242deg,rgba(255,255,255,.35) 264deg,transparent 286deg,rgba(255,255,255,.35) 308deg,transparent 330deg,rgba(255,255,255,.35) 352deg,transparent 360deg);animation:spin 9s linear infinite}
+/* ═══ 정답 배너 — 깔끔한 카드형 (2026.10.05 교사 결정) ═══
+   초록 카드 하나가 떴다가 약 1초 뒤 사라진다. 화면 어둡게·광선·이모지 낙하 없음.
+   3연속은 주황 카드, 5·10·15…연속에만 작은 색종이. 다시 풀어 맞힘은 작은 파란 카드 */
+#cbn{position:fixed;left:50%;top:44%;z-index:9000;pointer-events:none;opacity:0;transform:translate(-50%,-50%) scale(.6);padding:18px 48px;border-radius:20px;background:linear-gradient(135deg,#2f9e44,#69db7c);color:#fff;font-family:'Noto Sans KR','Malgun Gothic','맑은 고딕',sans-serif;font-size:clamp(28px,4vw,44px);font-weight:700;line-height:1.2;text-align:center;white-space:nowrap;box-shadow:0 14px 34px rgba(0,0,0,.25)}
+#cbn .s{display:block;font-size:.5em;font-weight:500;margin-top:4px}
+#cbn.show{animation:cbnPop 1.1s ease forwards}
+#cbn.combo{background:linear-gradient(135deg,#e8590c,#fab005)}
+#cbn.info{font-size:clamp(20px,2.6vw,30px);padding:14px 34px;background:linear-gradient(135deg,#6741d9,#9775fa)}
+#cbn.retry{font-size:clamp(20px,2.6vw,28px);padding:12px 30px;background:linear-gradient(135deg,#1c7ed6,#74c0fc)}
+@keyframes cbnPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}30%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(.92)}}
+#cbnFx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:8999}
+@media (prefers-reduced-motion:reduce){#cbn.show{animation:none!important;opacity:1!important;transform:translate(-50%,-50%)!important}}
+@keyframes cbnFade{0%,100%{opacity:0;transform:translate(-50%,-50%)}15%,80%{opacity:1;transform:translate(-50%,-50%)}}
 @keyframes spin{to{transform:rotate(360deg)}}
-.banner-main{position:relative;font-size:clamp(2.3rem,7vw,3.7rem);font-weight:900;background:linear-gradient(180deg,#FFF3B0,#F5B02E);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 22px rgba(255,220,130,.85);letter-spacing:-1px}
-.banner-main.combo{background:linear-gradient(90deg,#FF6B6B,#FFD93D,#6BCB77,#4D96FF,#C86BFF);-webkit-background-clip:text;background-clip:text}
-.banner-pts{position:relative;font-size:clamp(1.3rem,3.4vw,2rem);font-weight:900;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.45);margin-top:6px}
-.banner-sub{position:relative;font-size:.92rem;color:#fff;opacity:.9;margin-top:8px}
-@media(prefers-reduced-motion:reduce){.banner-rays{animation:none}.banner-box{animation:none}}
 
 /* ===== 종료 화면 ===== */
 #end-screen{display:none;width:100%;max-width:1160px;margin:0 auto}
@@ -441,8 +442,7 @@ button{font-family:inherit}
 <div class="ingame-credit" id="ingame-credit"></div>
 <div class="ov" id="result-overlay"><div class="ov-panel" id="result-panel"></div></div>
 <div class="ov" id="list-overlay"><div class="ov-panel" id="list-panel"></div></div>
-<div id="banner-dim"><div class="banner-box"><div class="banner-rays" id="banner-rays"></div><div class="banner-main" id="banner-main">정답!</div><div class="banner-pts" id="banner-pts"></div><div class="banner-sub" id="banner-sub"></div></div></div>
-<canvas id="confetti"></canvas>
+<div id="cbn"></div><canvas id="cbnFx"></canvas>
 
 <script>
 /* ═══════════════════════════════════════════
@@ -450,7 +450,7 @@ button{font-family:inherit}
    ★ 제작일은 아래 MADE_DATE 한 줄만 고치면 전체에 반영됩니다
    ═══════════════════════════════════════════ */
 const MADE_DATE='2026.06.18';
-const LAST_MOD='2026.10.01 17:00';
+const LAST_MOD='2026.10.05 03:00';
 
 const GAME_CONFIG={
   gameCode:"W202",
@@ -614,45 +614,28 @@ function noise(t0){try{const c=getCtx(),b=c.createBuffer(1,c.sampleRate*.3,c.sam
   for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/d.length);
   const s=c.createBufferSource(),g=c.createGain();s.buffer=b;s.connect(g);g.connect(c.destination);g.gain.value=.18;s.start(c.currentTime+t0)}catch(e){}}
 
-/* ===== 색종이 ===== */
-const cvs=$('confetti');let particles=[],confAnim=null;
-function reduced(){return window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches}
-function confetti(n){
-  if(reduced())return;
-  cvs.width=innerWidth;cvs.height=innerHeight;cvs.classList.add('show');
-  const cols=['#D4718F','#F5C842','#6BCB77','#4D96FF','#C86BFF','#FF9E5E'];
-  for(let i=0;i<n;i++)particles.push({x:innerWidth/2+(Math.random()-.5)*260,y:innerHeight/2,vx:(Math.random()-.5)*11,vy:-Math.random()*13-4,
-    w:6+Math.random()*7,h:9+Math.random()*9,r:Math.random()*6,vr:(Math.random()-.5)*.35,c:cols[i%cols.length],life:0});
-  if(!confAnim)confAnim=requestAnimationFrame(stepConf);
-}
-function stepConf(){
-  const c=cvs.getContext('2d');c.clearRect(0,0,cvs.width,cvs.height);
-  particles=particles.filter(p=>p.life<130);
-  particles.forEach(p=>{p.life++;p.vy+=.34;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;
-    c.save();c.translate(p.x,p.y);c.rotate(p.r);c.fillStyle=p.c;c.globalAlpha=Math.max(0,1-p.life/130);c.fillRect(-p.w/2,-p.h/2,p.w,p.h);c.restore()});
-  if(particles.length)confAnim=requestAnimationFrame(stepConf);
-  else{confAnim=null;cvs.classList.remove('show');c.clearRect(0,0,cvs.width,cvs.height)}
-}
-
-/* ===== 배너 ===== */
+/* ═══ 정답 배너 — 깔끔한 카드형 (2026.10.05 교사 결정) ═══
+   cbShow(큰 글자, 작은 글자, 종류) 종류: '' 정답(초록) · 'combo' 연속(주황) · 'retry' 다시 풀어 맞힘(파랑) · 'info' 단계 안내(보라)
+   cbCelebrate(연속 수, 얻은 점수) — 첫 시도 정답 때 부른다. 5·10·15…연속에만 작은 색종이 */
+let cbTimer=null,cbRun=0;
+function cbShow(main,sub,kind,ms){const b=document.getElementById('cbn');if(!b)return;b.className='';b.innerHTML='';b.appendChild(document.createTextNode(main));if(sub){const s=document.createElement('span');s.className='s';s.textContent=sub;b.appendChild(s)}void b.offsetWidth;b.style.animationDuration=(ms||1100)+'ms';b.className='show'+(kind?' '+kind:'');clearTimeout(cbTimer);cbTimer=setTimeout(cbHide,(ms||1100)+30)}
+function cbHide(){const b=document.getElementById('cbn');if(b)b.className='';clearTimeout(cbTimer);cbRun++;const cv=document.getElementById('cbnFx');if(cv)cv.getContext('2d').clearRect(0,0,cv.width,cv.height)}
+function cbShown(){const b=document.getElementById('cbn');return !!(b&&b.classList.contains('show'))}
+function cbConfetti(){if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;const cv=document.getElementById('cbnFx');if(!cv)return;const c=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;
+  const cols=['#2f9e44','#fab005','#e8590c','#7c5cbf','#1c7ed6'],ps=[],x0=innerWidth/2,y0=innerHeight*.44;
+  for(let i=0;i<28;i++)ps.push({x:x0,y:y0,vx:(Math.random()-.5)*10,vy:-Math.random()*8-3,s:4+Math.random()*4,c:cols[i%cols.length],r:Math.random()*6});
+  const run=++cbRun,t0=performance.now();(function f(t){if(run!==cbRun)return;c.clearRect(0,0,cv.width,cv.height);ps.forEach(p=>{p.vy+=.4;p.x+=p.vx;p.y+=p.vy;p.r+=.2;c.save();c.translate(p.x,p.y);c.rotate(p.r);c.fillStyle=p.c;c.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);c.restore()});if(t-t0<900)requestAnimationFrame(f);else c.clearRect(0,0,cv.width,cv.height)})(t0)}
+function cbCelebrate(n,pts){const sub=pts!=null&&pts!==''?'+'+pts:'';
+  if(n>=5&&n%5===0){cbShow(n+'연속 정답!',sub,'combo');cbConfetti()}
+  else if(n===3)cbShow('3연속 정답!',sub,'combo');
+  else cbShow('정답!',sub,'')}
+/* 카드가 닫히면(시간이 지나거나 Enter·Space·→) 결과 창을 띄운다 — 예전 배너와 같은 흐름 */
 let bannerTimer=null,bannerOnDone=null;
-function showBanner(opts){
-  const dim=$('banner-dim'),main=$('banner-main'),pts=$('banner-pts'),sub=$('banner-sub');
-  main.textContent=opts.title;main.className='banner-main'+(opts.combo?' combo':'');
-  sub.textContent=opts.sub||'';
-  pts.textContent='';
-  dim.classList.add('show');
-  if(opts.points>0){let v=0;const step=Math.max(1,Math.round(opts.points/18));
-    const t=setInterval(()=>{v+=step;if(v>=opts.points){v=opts.points;clearInterval(t)}pts.textContent='+'+v+'점'},22);}
-  confetti(opts.confetti||46);
-  if(opts.combo)playFanfare();else playCorrect();
-  bannerOnDone=opts.onDone||null;
-  clearTimeout(bannerTimer);bannerTimer=setTimeout(closeBanner,opts.dur||1100);
-}
+function bannerAfter(onDone,ms){bannerOnDone=onDone||null;clearTimeout(bannerTimer);bannerTimer=setTimeout(closeBanner,ms||1100)}
 function closeBanner(){
   clearTimeout(bannerTimer);
-  const dim=$('banner-dim');if(!dim.classList.contains('show'))return false;
-  dim.classList.remove('show');
+  if(!cbShown()&&!bannerOnDone)return false;
+  cbHide();
   const f=bannerOnDone;bannerOnDone=null;if(f)f();
   return true;
 }
@@ -798,12 +781,10 @@ function checkAnswer(){
 
     const comboMilestone=first&&(S.combo===3||S.combo===5||S.combo===10||(S.combo>5&&S.combo%5===0));
     const after=()=>showResultOverlay(q,q.status,q.gained,bonus);
-    if(comboMilestone){
-      const t=S.combo===3?'3콤보! 🔥':(S.combo>=15?'🌟 '+S.combo+'연속! 최고예요':S.combo+'콤보! 🎉🎊');
-      showBanner({title:t,points:q.gained,combo:true,sub:'정답! 연속 '+S.combo+'주제째예요',confetti:Math.min(90,40+S.combo*6),dur:1400,onDone:after});
-    }else{
-      showBanner({title:'정답!',points:q.gained,sub:first?'첫 시도에 맞혔어요':'다시 풀어 맞혔어요',confetti:first?48:30,dur:1000,onDone:after});
-    }
+    if(comboMilestone)playFanfare();else playCorrect();
+    if(first)cbCelebrate(S.combo,q.gained);
+    else cbShow('다시 풀어 맞힘','+'+q.gained,'retry');
+    bannerAfter(after,1100);
   }else{
     playWrong();S.combo=0;S.score=Math.max(0,S.score-PENALTY);updateBand();
     let msg;
@@ -858,7 +839,7 @@ document.addEventListener('keydown',e=>{
   if(!['Enter',' ','ArrowRight'].includes(e.key))return;
   if($('loginOverlay').style.display==='flex'){if(e.key==='Enter')doLogin();return}
   if(document.activeElement&&['INPUT','TEXTAREA'].includes(document.activeElement.tagName))return;
-  if($('banner-dim').classList.contains('show')){e.preventDefault();closeBanner();return}
+  if(cbShown()){e.preventDefault();closeBanner();return}
   if($('result-overlay').classList.contains('show')){e.preventDefault();proceedOverlay();return}
   if(!$('game-screen').classList.contains('show'))return;
   const q=S.qs[S.idx];

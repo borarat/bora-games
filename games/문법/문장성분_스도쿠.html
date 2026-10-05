@@ -2,7 +2,8 @@
 <html lang="ko">
 <!-- 리모델링 2026.10.01 08:55 (5차 야간)
      기록: 게임 중 단계 이동 버튼을 누르면 화면 안 확인 창을 띄움 (채우거나 틀린 칸이 있을 때만). 취소하면 판과 기록이 그대로 남고 포커스는 누른 단계 버튼으로 돌아감. 다 푼 직후(완료 화면이 뜨기 전)에는 단계 이동을 막아 결과 전송이 빠지지 않게 함
-     연동: 틀리게 채운 칸을 wrongItems로 전송 (칸 위치 · 정답 성분 · 넣은 성분). 소감(reflection)은 교사 결정으로 빈 값 유지 -->
+     연동: 틀리게 채운 칸을 wrongItems로 전송 (칸 위치 · 정답 성분 · 넣은 성분). 소감(reflection)은 교사 결정으로 빈 값 유지
+     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -128,25 +129,26 @@
   .stage-jump .sbtn.cur{background:var(--acc);color:#fff;border-color:var(--acc);}
   .watermark{position:absolute;bottom:6px;right:14px;font-size:.68rem;color:#b9aedb;pointer-events:none;}
 
-  /* 배너 */
+  /* 알림 배너 (오답·카드 먼저 고르기·한 줄 완성) — 정답 배너는 아래 카드형 */
   .banner{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.6);padding:16px 38px;border-radius:16px;
     font-weight:800;font-size:1.7rem;box-shadow:0 8px 24px rgba(0,0,0,.2);opacity:0;pointer-events:none;z-index:50;text-align:center;white-space:nowrap;}
   .banner.show{animation:pop 1.1s ease;}
-  .banner.big.show{animation:popbig 1.5s ease;}
   @keyframes pop{0%{opacity:0;transform:translate(-50%,-50%) scale(.3);}20%{opacity:1;transform:translate(-50%,-50%) scale(1.15);}32%{transform:translate(-50%,-50%) scale(1);}78%{opacity:1;}100%{opacity:0;transform:translate(-50%,-50%) scale(.95);}}
-  @keyframes popbig{0%{opacity:0;transform:translate(-50%,-50%) scale(.3);}15%{opacity:1;transform:translate(-50%,-50%) scale(1.2) rotate(-3deg);}25%{transform:translate(-50%,-50%) scale(1) rotate(3deg);}35%{transform:translate(-50%,-50%) scale(1.04) rotate(0);}82%{opacity:1;}100%{opacity:0;transform:translate(-50%,-50%) scale(.95);}}
-  .banner.ok{background:#e3f4e7;color:var(--green);}
   .banner.no{background:#fbe3e0;color:var(--red);}
-  .banner.combo3{background:linear-gradient(135deg,#ffb347,#ff7a3d);color:#fff;}
-  .banner.combo5{background:linear-gradient(90deg,#ff6b6b,#ffb347,#ffe066,#6bd49a,#5aa9f0,#a07ae8);color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.25);font-size:2rem;}
   .banner.line{background:#ece5fb;color:var(--dk);}
   .banner small{display:block;font-size:.95rem;font-weight:700;margin-top:2px;}
-  .glow{position:fixed;inset:0;pointer-events:none;z-index:45;box-shadow:inset 0 0 0 0 rgba(255,190,60,0);}
-  .glow.on{animation:glow 1.2s ease;}
-  @keyframes glow{0%,100%{box-shadow:inset 0 0 0 0 rgba(255,190,60,0);}30%,70%{box-shadow:inset 0 0 40px 14px rgba(255,190,60,.55);}}
-  .emoji-fall{position:fixed;top:-40px;font-size:1.8rem;pointer-events:none;z-index:55;animation:fall 1.6s ease-in forwards;}
-  @keyframes fall{to{transform:translateY(110vh) rotate(360deg);opacity:.2;}}
-  #fx{position:fixed;inset:0;pointer-events:none;z-index:52;}
+/* ═══ 정답 배너 — 깔끔한 카드형 (2026.10.05 교사 결정) ═══
+   초록 카드 하나가 떴다가 약 1초 뒤 사라진다. 화면 어둡게·광선·이모지 낙하 없음.
+   3연속은 주황 카드, 5·10·15…연속에만 작은 색종이. 다시 풀어 맞힘은 작은 파란 카드 */
+#cbn{position:fixed;left:50%;top:44%;z-index:9000;pointer-events:none;opacity:0;transform:translate(-50%,-50%) scale(.6);padding:18px 48px;border-radius:20px;background:linear-gradient(135deg,#2f9e44,#69db7c);color:#fff;font-family:'Noto Sans KR','Malgun Gothic','맑은 고딕',sans-serif;font-size:clamp(28px,4vw,44px);font-weight:700;line-height:1.2;text-align:center;white-space:nowrap;box-shadow:0 14px 34px rgba(0,0,0,.25)}
+#cbn .s{display:block;font-size:.5em;font-weight:500;margin-top:4px}
+#cbn.show{animation:cbnPop 1.1s ease forwards}
+#cbn.combo{background:linear-gradient(135deg,#e8590c,#fab005)}
+#cbn.retry{font-size:clamp(20px,2.6vw,28px);padding:12px 30px;background:linear-gradient(135deg,#1c7ed6,#74c0fc)}
+@keyframes cbnPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}30%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(.92)}}
+#cbnFx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:8999}
+@media (prefers-reduced-motion:reduce){#cbn.show{animation:none!important;opacity:1!important;transform:translate(-50%,-50%)!important}}
+@keyframes cbnFade{0%,100%{opacity:0;transform:translate(-50%,-50%)}15%,80%{opacity:1;transform:translate(-50%,-50%)}}
 
   /* 스도쿠 설명 오버레이 */
   .overlay{display:none;position:fixed;inset:0;background:rgba(40,30,80,.45);z-index:80;justify-content:center;align-items:center;padding:14px;}
@@ -230,13 +232,10 @@
     .result-grid{grid-template-columns:repeat(2,1fr);}
     .report .ex{display:none;}
     .banner{font-size:1.25rem;padding:12px 22px;}
-    .banner.combo5{font-size:1.4rem;}
   }
 </style>
 </head>
 <body>
-<canvas id="fx"></canvas>
-<div class="glow" id="glow"></div>
 <div class="frame" id="frame">
 
   <!-- ===== 시작 화면 ===== -->
@@ -281,7 +280,7 @@
 
       <div class="credit-box">
         <p>제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com</p>
-        <p>제작일 2026.09.25 · <span id="lastMod">최종 수정 2026.10.01 08:55</span></p>
+        <p>제작일 2026.09.25 · <span id="lastMod">최종 수정 2026.10.05 03:00</span></p>
       </div>
 
       <div class="privacy" id="privacyOffline">
@@ -433,6 +432,7 @@
 </div>
 
 <div id="banner" class="banner"></div>
+<div id="cbn"></div><canvas id="cbnFx"></canvas>
 
 <script>
 const $=id=>document.getElementById(id);
@@ -587,27 +587,28 @@ function sndLine(){[659,784,988,1319,1568].forEach((f,i)=>tone(f,i*0.07,0.3,"tri
 // 연출
 // ═══════════════════════════════════════════
 function banner(html,type){
+  cbHide();   // 알림 배너가 뜨면 정답 카드는 내린다 (예전처럼 배너는 한 번에 하나)
   const b=$('banner');b.innerHTML=html;b.className='banner '+type;void b.offsetWidth;b.classList.add('show');
 }
-let fxRAF=0;
-function confetti(n){
-  if(RM)return;
-  const cv=$('fx'),ctx=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;
-  const cols=['#f5b700','#e0564b','#3f8fd0','#3faa5a','#9166cc','#ef8a2c'];const ps=[];
-  for(let i=0;i<n;i++)ps.push({x:innerWidth/2+(Math.random()-.5)*240,y:innerHeight/2,vx:(Math.random()-.5)*14,vy:-Math.random()*13-4,
-    a:Math.random()*6,va:(Math.random()-.5)*.35,s:5+Math.random()*6,c:cols[i%cols.length]});
-  const t0=performance.now();cancelAnimationFrame(fxRAF);
-  function f(t){ctx.clearRect(0,0,cv.width,cv.height);
-    ps.forEach(p=>{p.vy+=.38;p.x+=p.vx;p.y+=p.vy;p.a+=p.va;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.a);ctx.fillStyle=p.c;ctx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);ctx.restore();});
-    if(t-t0<1300)fxRAF=requestAnimationFrame(f);else ctx.clearRect(0,0,cv.width,cv.height);}
-  fxRAF=requestAnimationFrame(f);
+/* ═══ 정답 배너 — 깔끔한 카드형 (2026.10.05 교사 결정) ═══
+   cbShow(큰 글자, 작은 글자, 종류) 종류: '' 정답(초록) · 'combo' 연속(주황) · 'retry' 다시 풀어 맞힘(파랑)
+   cbCelebrate(연속 수, 얻은 점수) — 첫 시도 정답 때 부른다. 5·10·15…연속에만 작은 색종이 */
+let cbTimer=null,cbRun=0;
+function cbShow(main,sub,kind,ms){const b=document.getElementById('cbn');if(!b)return;b.className='';b.innerHTML='';b.appendChild(document.createTextNode(main));if(sub){const s=document.createElement('span');s.className='s';s.textContent=sub;b.appendChild(s)}void b.offsetWidth;b.style.animationDuration=(ms||1100)+'ms';b.className='show'+(kind?' '+kind:'');clearTimeout(cbTimer);cbTimer=setTimeout(cbHide,(ms||1100)+30)}
+function cbHide(){const b=document.getElementById('cbn');if(b)b.className='';clearTimeout(cbTimer);cbRun++;const cv=document.getElementById('cbnFx');if(cv)cv.getContext('2d').clearRect(0,0,cv.width,cv.height)}
+function cbShown(){const b=document.getElementById('cbn');return !!(b&&b.classList.contains('show'))}
+function cbConfetti(){if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;const cv=document.getElementById('cbnFx');if(!cv)return;const c=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;
+  const cols=['#2f9e44','#fab005','#e8590c','#7c5cbf','#1c7ed6'],ps=[],x0=innerWidth/2,y0=innerHeight*.44;
+  for(let i=0;i<28;i++)ps.push({x:x0,y:y0,vx:(Math.random()-.5)*10,vy:-Math.random()*8-3,s:4+Math.random()*4,c:cols[i%cols.length],r:Math.random()*6});
+  const run=++cbRun,t0=performance.now();(function f(t){if(run!==cbRun)return;c.clearRect(0,0,cv.width,cv.height);ps.forEach(p=>{p.vy+=.4;p.x+=p.vx;p.y+=p.vy;p.r+=.2;c.save();c.translate(p.x,p.y);c.rotate(p.r);c.fillStyle=p.c;c.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);c.restore()});if(t-t0<900)requestAnimationFrame(f);else c.clearRect(0,0,cv.width,cv.height)})(t0)}
+function cbCelebrate(n,pts){const sub=pts!=null&&pts!==''?'+'+pts:'';
+  if(n>=5&&n%5===0){cbShow(n+'연속 정답!',sub,'combo');cbConfetti()}
+  else if(n===3)cbShow('3연속 정답!',sub,'combo');
+  else cbShow('정답!',sub,'')}
+function correctBanner(c,gain){   // 정답·콤보 카드. 알림 배너가 떠 있으면 내린다
+  $('banner').className='banner';
+  cbCelebrate(c,gain);
 }
-function emojiRain(list,count){
-  if(RM)return;
-  for(let i=0;i<count;i++){const s=document.createElement('span');s.className='emoji-fall';s.textContent=list[i%list.length];
-    s.style.left=(Math.random()*96)+'vw';s.style.animationDelay=(Math.random()*.4)+'s';document.body.appendChild(s);setTimeout(()=>s.remove(),2200);}
-}
-function glowPulse(){if(RM)return;const g=$('glow');g.classList.remove('on');void g.offsetWidth;g.classList.add('on');}
 function pulseCombo(){const b=$('hudComboBox');b.classList.remove('pulse');void b.offsetWidth;b.classList.add('pulse');}
 function isComboMilestone(c){return c===3||c===5||(c>=10&&c%5===0);}
 
@@ -617,7 +618,7 @@ function isComboMilestone(c){return c===3||c===5||(c>=10&&c%5===0);}
 function isMobile(){return window.innerWidth<=640;}
 function show(id){
   if(id!=='game')stopTimer();
-  document.querySelectorAll('.emoji-fall').forEach(x=>x.remove());
+  cbHide();
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   $(id).classList.add('active');
   $('frame').classList.toggle('wide',id==='game');
@@ -797,10 +798,9 @@ function onCellClick(r,c){
     const bonus=comboBonusFor(state.combo);const gain=PT_OK+bonus;state.score+=gain;
     pulseCombo();
     if(isComboMilestone(state.combo)){
-      if(state.combo===3){sndCombo3();banner('3콤보! 🔥<small>+'+gain+'점</small>','combo3 big');confetti(20);emojiRain(['🔥','✨'],12);}
-      else{sndCombo5();const txt=state.combo>=15?'🌟 '+state.combo+'연속! 최고예요':state.combo+'콤보! 🎉🎊';
-        banner(txt+'<small>+'+gain+'점</small>','combo5 big');confetti(state.combo>=10?60:45);glowPulse();emojiRain(['🎉','🎊','⭐','✨'],20);}
-    }else{sndOk();banner('✅ 정답!<small>+'+gain+'점</small>','ok');}
+      if(state.combo===3)sndCombo3();else sndCombo5();
+    }else sndOk();
+    correctBanner(state.combo,gain);
     setHint(state.totalBlanks-state.ok>0?'좋아요! 남은 빈칸 '+(state.totalBlanks-state.ok)+'개':'모두 채웠어요!',false);
     checkLineBonus(r,c);
   }else{
