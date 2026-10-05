@@ -3,7 +3,8 @@
 <!-- 리모델링 2026.10.01 17:00 (7차)
      코드 L201 → L202 · 「사랑손님과 어머니」 발표 1935년 · 1단계 7번/2단계 세트 B: 어머니를 막은 원인 = 법이 없어진 뒤에도 남은 관습(시선)
      3단계 채점: '-기에' 오인(여기에 등) · 공백 든 키워드(남의 눈) · 마름+지주 감점 · '집'/'참' 글자 걸림 고침 · 마스코트 이미지 교체
-     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 / 이전·다음·게임 끝내기 내비게이션 바를 오른쪽으로(교사 요청) -->
+     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 / 이전·다음·게임 끝내기 내비게이션 바를 오른쪽으로(교사 요청)
+     2026.10.05 23:50 버그: 답하기 전에 Enter·Space·→ 를 누르면 다음 문항으로 넘어가던 문제 — 채점 뒤에만 넘어가게 -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -288,7 +289,7 @@ h1{font-size:clamp(22px,4.4vw,30px); color:var(--ink); font-weight:700; letter-s
 
   <div class="credit">
    제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-   제작일 2026.09.24 · 최종 수정 2026.10.05 03:00
+   제작일 2026.09.24 · 최종 수정 2026.10.05 23:50
   </div>
   <div class="privacy" id="privacyOffline">
    <b>🔒 개인정보 보호 안내</b><br>
@@ -371,7 +372,7 @@ h1{font-size:clamp(22px,4.4vw,30px); color:var(--ink); font-weight:700; letter-s
   </div>
   <div class="credit">
    제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-   제작일 2026.09.24 · 최종 수정 2026.10.05 03:00
+   제작일 2026.09.24 · 최종 수정 2026.10.05 23:50
   </div>
  </div>
 </div>
@@ -399,7 +400,7 @@ h1{font-size:clamp(22px,4.4vw,30px); color:var(--ink); font-weight:700; letter-s
    조건 사냥꾼 — L202 · 문학 · 중2 · 서논술형 답안 쓰기 훈련
    ═══════════════════════════════════════════════════════════ */
 const MADE_DATE = '2026.09.24';
-const MOD_DATE  = '2026.10.05 03:00';
+const MOD_DATE  = '2026.10.05 23:50';
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -1117,6 +1118,7 @@ document.addEventListener('keydown',e=>{
     e.preventDefault();
     if(cbShown()){ cbHide(); goNext(); return; }
     const q=S.list[S.i], r=R[q.id];
+    if(!r||(!r.done&&!r.graded)) return;   // 답하기 전에는 키로 넘기지 않음 (지침 6-1) — '다음' 버튼은 그대로
     if(q.cat!=='keyword'&&q.cat!=='write'&&!r.done&&r.tries===1) return;  // 오답 후 재시도 대기
     goNext();
   } else if(e.key==='ArrowLeft'){ e.preventDefault(); goPrev(); }

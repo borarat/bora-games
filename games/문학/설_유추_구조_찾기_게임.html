@@ -6,7 +6,8 @@
      문항: 이옥설 나라 정치 문장 교훈으로 통일(정리 화면), 퀴즈23 문구(경험 주체), 퀴즈25 예시를 경설 확장으로
      용어: 교과서에 맞춰 '교훈' 단계 이름을 화면 전체에서 '깨달음'으로 바꿈(내부 키 les는 그대로)
      문항: 경설 교훈 문항(k3)을 마지막 문장 "그 흐림을 취한다"로 옮김, 퀴즈27·i3 해설 이옥설 정리와 맞춤, 경험 유형 설명 "글쓴이나 글 속 인물"
-     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 -->
+     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
+     2026.10.05 23:50 힌트: 첫 오답 때 힌트 칸에 해설이 그대로 나오던 문제 — 고른 단계에 맞춘 판별 질문으로 바꿈(해설은 정답 공개 때만) -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -274,7 +275,7 @@ input,textarea,button{font-family:inherit;color-scheme:light}
 
    <div class="credit-box">
     제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-    제작일 2026.07.15 · <span id="lastMod">최종 수정 2026.10.05 03:00</span>
+    제작일 2026.07.15 · <span id="lastMod">최종 수정 2026.10.05 23:50</span>
    </div>
 
    <div class="privacy" id="privacyOffline">
@@ -479,7 +480,7 @@ input,textarea,button{font-family:inherit;color-scheme:light}
 <canvas id="reportCanvas"></canvas>
 
 <script>
-const MADE_DATE='2026.07.15', LAST_MOD='2026.10.05 03:00';
+const MADE_DATE='2026.07.15', LAST_MOD='2026.10.05 23:50';
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -540,6 +541,12 @@ const CATEGORIES={
    tip:'유추는 \'경험 → 유사성 → 확장 → 깨달음\'의 차례로 흐릅니다. 각 단계의 이름을 말로 설명해 보면 개념이 정리됩니다.'}
 };
 const CATN=c=>CATEGORIES[c].mark+' '+CATEGORIES[c].label;
+// 첫 오답 때 보여 줄 힌트 — 학생이 고른 단계가 왜 아닐 수 있는지 판별 기준을 묻는다 (지침 4-1, 해설과 다른 문장)
+const HINT_BY_PICK={
+ exp:'이 문장이 글쓴이나 인물이 직접 겪거나 본 일 그 자체인가요? 그 일을 넘어 사람 일반이나 세상 이야기로 넓어지지는 않았나요?',
+ ext:'이 문장이 겪은 일을 닮은 다른 대상(사람 일반·세상)으로 넓히는 중인가요? 아니면 겪은 일 자체를 말하거나, 독자에게 어떻게 살라고 말하고 있나요?',
+ les:'이 문장이 독자에게 어떻게 살라고 당부하거나 비판하나요? 아니면 아직 겪은 일, 또는 그 일과 닮은 다른 대상을 말하고 있나요?'
+};
 
 const BASE_PT=10, RETRY_PT=5, PENALTY=2;
 
@@ -729,7 +736,7 @@ function classify(answer){
    showExplain(mark.cat,'정답은 '+CATN(mark.cat)+'입니다. '+mark.detail);
    afterAnswer();
   } else {
-   $('hintBox').classList.add('visible');$('hintText').textContent=mark.detail;
+   $('hintBox').classList.add('visible');$('hintText').textContent=HINT_BY_PICK[answer]||'';   // 해설은 정답 뒤에만 보여 준다
    $('explainBox').classList.remove('visible');
   }
  }
