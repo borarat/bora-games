@@ -4,7 +4,8 @@
      문항: 수사 단어 카드 '다섯' → '넷' ('다섯'은 관형사로도 쓰여 정답이 둘. 교사 승인)
      채점: 총평 기준을 지침 5-2 표(95/85/70/50%)에 맞춤. 정답률 = 찾은 짝 ÷ 두 장씩 뒤집은 횟수
      2026.10.01 13:00 '게임 끝내기' 확인 단계 추가(지침 6-1): 화면 안 확인창이 떠 있는 동안 시간·전체 공개 초 세기 멈춤, 취소·Esc면 이어서
-     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 -->
+     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
+     2026.10.06 01:30 게임 테마층(도서관 분류 카드·금 #C9A227): 시작 화면 서랍장·대출 카드 그림, 게임 방법 상자 왼쪽 테두리 / 버그: 짝 처리 중(0.4~1.1초) 끝내기·다시 하기를 누르면 지난 판 처리가 끝난 판·새 판의 점수·카드를 바꾸던 문제(판 번호로 막음), 끝내기 확인창이 떠 있을 때 키보드로 뒤 카드·전체 공개·다시 하기가 눌리던 문제 / 총평(교사 결정 2026.10.06): 중간에 끝내면 칭찬 대신 '남은 짝까지 연습' 문구, 한 번도 짝을 맞춰 보지 않았으면 '풀어 본 문제가 없어요' -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -184,6 +185,13 @@ details.concept summary{cursor:pointer;font-weight:700;color:var(--deep);font-si
   .std{flex-direction:column;gap:6px}
   .mbr{display:inline}
 }
+/* ═══ 게임 테마층 · 도서관 분류 카드 (2026.10.06) ═══
+   9품사 이름표를 단 작은 분류 서랍장과 그 앞에 꽂힌 대출 카드. 보조색 금 #C9A227.
+   영역 강조색(보라)·헤더 띠·정답/오답 색·카드 판·정답 카드(#cbn)는 그대로. 이 블록과 시작 화면 SVG를 지우면 원래 모습 */
+:root{--th:#C9A227;--th-soft:#FBF5E1}
+.title-row .keyArt{flex:0 0 auto;height:126px;width:auto;margin-left:10px}
+@media (max-width:860px){.title-row .keyArt{display:none}}
+.box{border-left:4px solid var(--th)}
 </style>
 </head>
 <body>
@@ -199,6 +207,9 @@ details.concept summary{cursor:pointer;font-weight:700;color:var(--deep);font-si
      <div class="title">품사 메모리 게임</div>
      <div class="sub">9품사를 5언으로, 단어를 9품사로 짝짓기</div>
     </div>
+    <svg class="keyArt" viewBox="0 0 300 126" aria-hidden="true" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-weight="700" text-anchor="middle">
+     <g font-size="9.5" fill="#5C4A10"><rect x="6" y="6" width="196" height="9" rx="3" fill="#C9A227"/><rect x="10" y="15" width="188" height="98" rx="4" fill="#FBF5E1" stroke="#C9A227" stroke-width="2"/><path d="M20 113v8M188 113v8" stroke="#C9A227" stroke-width="3" stroke-linecap="round"/><rect x="17" y="21" width="54" height="26" rx="3" fill="#fff" stroke="#C9A227" stroke-width="1.5"/><rect x="26" y="24" width="36" height="12" rx="1.5" fill="#FBF5E1" stroke="#C9A227" stroke-width="1"/><text x="44" y="33.6">명사</text><path d="M38 41.5q6 3 12 0" stroke="#C9A227" stroke-width="2" fill="none" stroke-linecap="round"/><rect x="77" y="21" width="54" height="26" rx="3" fill="#fff" stroke="#C9A227" stroke-width="1.5"/><rect x="86" y="24" width="36" height="12" rx="1.5" fill="#FBF5E1" stroke="#C9A227" stroke-width="1"/><text x="104" y="33.6">대명사</text><path d="M98 41.5q6 3 12 0" stroke="#C9A227" stroke-width="2" fill="none" stroke-linecap="round"/><rect x="137" y="21" width="54" height="26" rx="3" fill="#fff" stroke="#C9A227" stroke-width="1.5"/><rect x="146" y="24" width="36" height="12" rx="1.5" fill="#FBF5E1" stroke="#C9A227" stroke-width="1"/><text x="164" y="33.6">수사</text><path d="M158 41.5q6 3 12 0" stroke="#C9A227" stroke-width="2" fill="none" stroke-linecap="round"/><rect x="17" y="51" width="54" height="26" rx="3" fill="#fff" stroke="#C9A227" stroke-width="1.5"/><rect x="26" y="54" width="36" height="12" rx="1.5" fill="#FBF5E1" stroke="#C9A227" stroke-width="1"/><text x="44" y="63.6">동사</text><path d="M38 71.5q6 3 12 0" stroke="#C9A227" stroke-width="2" fill="none" stroke-linecap="round"/><rect x="77" y="51" width="54" height="26" rx="3" fill="#fff" stroke="#C9A227" stroke-width="1.5"/><rect x="86" y="54" width="36" height="12" rx="1.5" fill="#FBF5E1" stroke="#C9A227" stroke-width="1"/><text x="104" y="63.6">형용사</text><path d="M98 71.5q6 3 12 0" stroke="#C9A227" stroke-width="2" fill="none" stroke-linecap="round"/><rect x="137" y="51" width="54" height="26" rx="3" fill="#fff" stroke="#C9A227" stroke-width="1.5"/><rect x="146" y="54" width="36" height="12" rx="1.5" fill="#FBF5E1" stroke="#C9A227" stroke-width="1"/><text x="164" y="63.6">관형사</text><path d="M158 71.5q6 3 12 0" stroke="#C9A227" stroke-width="2" fill="none" stroke-linecap="round"/><rect x="17" y="81" width="54" height="26" rx="3" fill="#fff" stroke="#C9A227" stroke-width="1.5"/><rect x="26" y="84" width="36" height="12" rx="1.5" fill="#FBF5E1" stroke="#C9A227" stroke-width="1"/><text x="44" y="93.6">부사</text><path d="M38 101.5q6 3 12 0" stroke="#C9A227" stroke-width="2" fill="none" stroke-linecap="round"/><rect x="77" y="81" width="54" height="26" rx="3" fill="#fff" stroke="#C9A227" stroke-width="1.5"/><rect x="86" y="84" width="36" height="12" rx="1.5" fill="#FBF5E1" stroke="#C9A227" stroke-width="1"/><text x="104" y="93.6">조사</text><path d="M98 101.5q6 3 12 0" stroke="#C9A227" stroke-width="2" fill="none" stroke-linecap="round"/><rect x="137" y="81" width="54" height="26" rx="3" fill="#fff" stroke="#C9A227" stroke-width="1.5"/><rect x="146" y="84" width="36" height="12" rx="1.5" fill="#FBF5E1" stroke="#C9A227" stroke-width="1"/><text x="164" y="93.6">감탄사</text><path d="M158 101.5q6 3 12 0" stroke="#C9A227" stroke-width="2" fill="none" stroke-linecap="round"/><g transform="translate(214 30) rotate(-9)"><rect x="0" y="0" width="64" height="86" rx="4" fill="#fff" stroke="#C9A227" stroke-width="2"/></g><g transform="translate(226 34) rotate(6)"><rect x="0" y="0" width="64" height="86" rx="4" fill="#fff" stroke="#C9A227" stroke-width="2"/><text x="32" y="16" font-size="10" fill="#7A6210">대출 카드</text><path d="M6 22H58" stroke="#C9A227" stroke-width="1.5"/><path d="M8 34H56" stroke="#E6D7A3" stroke-width="1"/><path d="M8 44H56" stroke="#E6D7A3" stroke-width="1"/><path d="M8 54H56" stroke="#E6D7A3" stroke-width="1"/><path d="M8 64H56" stroke="#E6D7A3" stroke-width="1"/><path d="M8 74H56" stroke="#E6D7A3" stroke-width="1"/><path d="M23 34V74" stroke="#E6D7A3" stroke-width="1"/><circle cx="32" cy="80" r="2.6" fill="none" stroke="#C9A227" stroke-width="1.2"/></g></g>
+    </svg>
    </div>
 
    <div class="std">
@@ -234,7 +245,7 @@ details.concept summary{cursor:pointer;font-weight:700;color:var(--deep);font-si
 
    <div class="credit">
     제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-    제작일 2026.06.26 · <span id="lastMod">최종 수정 2026.10.05 03:00</span>
+    제작일 2026.06.26 · <span id="lastMod">최종 수정 2026.10.06 01:30</span>
    </div>
 
    <div class="privacy" id="privacyOffline">
@@ -344,7 +355,7 @@ details.concept summary{cursor:pointer;font-weight:700;color:var(--deep);font-si
 
 <script>
 const MADE_DATE = '2026.06.26';
-const LAST_MOD = '2026.10.05 03:00';
+const LAST_MOD = '2026.10.06 01:30';
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -566,6 +577,7 @@ function doStartStage(n) {
     moves: 0, matched: 0, score: 0, combo: 0, maxCombo: 0,
     startTs: 0, elapsed: 0, timer: null, finished: false, lastSubmit: null, paused: false
   });
+  ROUND++;  // 판 번호 — 지난 판에서 걸어 둔 처리가 새 판을 건드리지 않게
   const r = buildRound(st);
   S.cards = r.cards; S.round = r.round; S.total = r.round.length;
   $('gGoal').textContent = st.goal;
@@ -621,8 +633,10 @@ function layoutBoard() {
 }
 window.addEventListener('resize', layoutBoard);
 
+let ROUND = 0;
+const live = rid => rid === ROUND && !S.finished;  // 그 판이 아직 진행 중인가
 function onCard(i) {
-  if (S.lock || S.peeking || S.finished) return;
+  if (S.lock || S.peeking || S.finished || S.paused) return;  // 확인창이 떠 있으면 키보드로도 카드를 뒤집지 않는다
   const c = S.cards[i];
   if (c.done || c.up) return;
   startTimer();
@@ -631,8 +645,9 @@ function onCard(i) {
   const a = S.first;
   S.lock = true; S.moves++;
   updateHud();
-  if (a.kind !== c.kind && a.key === c.key) setTimeout(() => onMatch(a, c), 380);
-  else setTimeout(() => onMiss(a, c), 550);
+  const rid = ROUND;
+  if (a.kind !== c.kind && a.key === c.key) setTimeout(() => { if (live(rid)) onMatch(a, c); }, 380);
+  else setTimeout(() => { if (live(rid)) onMiss(a, c); }, 550);
 }
 
 function onMatch(a, b) {
@@ -645,14 +660,17 @@ function onMatch(a, b) {
   const c = S.combo;
   if (c === 3 || c === 5 || (c >= 10 && c % 5 === 0)) comboBanner(c, gain);
   else correctBanner(gain);
-  if (S.matched === S.total) setTimeout(() => finish(false), 1000);
+  const rid = ROUND;
+  if (S.matched === S.total) setTimeout(() => { if (rid === ROUND) finish(false); }, 1000);
 }
 
 function onMiss(a, b) {
   [a, b].forEach(c => c.el.classList.add('bad', 'shake'));
   sWrong();
   S.combo = 0; updateHud();
+  const rid = ROUND;
   setTimeout(() => {
+    if (rid !== ROUND) return;
     [a, b].forEach(c => { c.el.classList.remove('bad', 'shake', 'up'); c.up = false; });
     S.first = null; S.lock = false;
   }, 550);
@@ -674,7 +692,7 @@ function updateHud(pulse) {
 
 /* 전체 공개 — 한 판에 한 번, 7초 */
 $('peekBtn').addEventListener('click', () => {
-  if (S.peekUsed || S.lock || S.finished) return;
+  if (S.peekUsed || S.lock || S.finished || S.paused) return;
   S.peekUsed = true; S.peeking = true; startTimer();
   const btn = $('peekBtn'); btn.disabled = true;
   S.cards.forEach(c => { if (!c.done) c.el.classList.add('up'); });
@@ -690,7 +708,7 @@ function peekStep() {
   btn.textContent = '👀 공개 사용함';
   S.peeking = false;
 }
-$('restartBtn').addEventListener('click', () => doStartStage(S.stage));
+$('restartBtn').addEventListener('click', () => { if (!S.paused) doStartStage(S.stage); });
 // 게임 끝내기: 한 번 확인한 뒤 끝낸다 (지침 6-1). 확인창이 떠 있는 동안 시간과 전체 공개 초 세기를 멈춘다
 function askQuit() {
   if (S.finished || S.paused) return;
@@ -795,8 +813,11 @@ function finish(quit) {
   $('eCombo').textContent = S.maxCombo;
   $('eTime').textContent = fmtTime(S.elapsed);
   $('eLeft').textContent = complete ? '' : `끝까지 풀지 않았어요 (${left}쌍 남음)`;
-  $('eGrade').textContent = S.moves ? gradeText(right / S.moves) : '';
-  if (!S.moves) $('eGrade').textContent = '카드를 뒤집지 않고 끝냈어요';
+  // 교사 결정(2026.10.06): 끝까지 하지 않았으면 정답률이 높아도 칭찬 대신 더 연습해 보자는 말. 한 번도 짝을 맞춰 보지 않았으면 '풀어 본 문제가 없어요'(지침 5-3)
+  const eff = S.moves ? right / S.moves : 0;
+  $('eGrade').textContent = !S.moves ? '풀어 본 문제가 없어요'
+    : !complete ? (S.moves >= 5 && eff >= .35 ? '잘하고 있어요! 남은 짝까지 찾아보며 좀 더 연습해 보면 어떨까요?' : '좀 더 연습해 보면 어떨까요? 남은 짝까지 찾아보면 감이 잡혀요.')
+    : gradeText(eff);
 
   const hasNext = S.stage < STAGES.length;
   const nb = $('btnNextStage');

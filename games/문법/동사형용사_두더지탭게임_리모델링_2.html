@@ -4,7 +4,8 @@
      채점: 잘못 탭 감점 −5 → −10 (맞힘 기본점과 같게, 지침 3-6 속도형)
      화면: 모바일 등급 M1 유지(교사 결정 2026.10.01: 탭 조작이라 휴대폰에서도 사용). 정답률에 놓침 포함
      2026.10.01 13:00 '게임 끝내기' 확인 단계 추가(지침 6-1): 화면 안 확인창이 떠 있는 동안 시간·두더지 멈춤, 취소·Esc면 이어서
-     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 -->
+     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
+     2026.10.06 01:30 테마층 '움직임과 상태'(시작 화면 달리는 사람·온도계 SVG, 보조색 연두 #7FB539, 안내 상자 왼쪽 테두리). 버그: 소리 버튼 포커스로 플레이 중 Space·Enter가 소리를 바꾸던 것, 종료 화면에 콤보 카드가 남던 것, 중간에 끝낸 판의 '완벽해요' → '잘하고 있어요! 좀 더 연습해 보면 어떨까요?'(교사 결정 2026.10.06), 탭 0번인데 '잘못 탭한 단어가 없어요!'·잘하는 유형이 뜨던 것, 앱스크립트 전송 totalQuestions·wrongItems에 놓침 포함(시트 정답률 = 화면 정답률) -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -272,6 +273,14 @@ body.t-verb .pTgt .tgt{color:var(--verb);} body.t-adj .pTgt .tgt{color:var(--adj
 @media (prefers-reduced-motion:reduce){
   .mole.miss{animation:none;}
 }
+/* ═══ 게임 테마층 · 움직임과 상태 (2026.10.06) ═══
+   달리는 사람(움직임)과 온도계(상태)로 동사·형용사의 뜻 차이를 떠올리게 하는 시작 화면. 보조색 연두 #7FB539.
+   영역 팔레트·헤더 띠·정답/오답 색·플레이 화면(두더지·보드)·정답 카드는 그대로.
+   이 블록과 시작 화면 SVG를 지우면 원래 모습 */
+:root{--th:#7FB539;--th-ink:#4F7A22}
+.titleWrap .keyArt{flex:0 0 auto;height:124px;width:auto;margin-left:14px}
+@media (max-width:860px){.titleWrap .keyArt{display:none}}
+.box.howto,.box.concept{border-left:4px solid var(--th)}
 </style>
 </head>
 <body class="t-verb">
@@ -287,6 +296,19 @@ body.t-verb .pTgt .tgt{color:var(--verb);} body.t-adj .pTgt .tgt{color:var(--adj
      <h1 class="title">동사·형용사 두더지 탭</h1>
      <div class="subtitle">🦔 목표 품사 두더지만 골라 잡기</div>
     </div>
+    <svg class="keyArt" viewBox="0 0 250 126" aria-hidden="true" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-weight="700" text-anchor="middle">
+     <g stroke="#7FB539" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <g stroke-width="3" opacity=".55"><path d="M10 40h18M4 54h22M12 68h14"/></g>
+      <g stroke-width="7"><path d="M70 34L60 64"/><path d="M68 40L82 50L94 42"/><path d="M68 40L52 48L42 40"/><path d="M60 64L76 80L72 100"/><path d="M60 64L46 82L30 84"/></g>
+     </g>
+     <circle cx="74" cy="22" r="9" fill="#7FB539"/>
+     <rect x="176" y="8" width="20" height="76" rx="10" fill="#fff" stroke="#7FB539" stroke-width="3"/>
+     <circle cx="186" cy="90" r="14" fill="#fff" stroke="#7FB539" stroke-width="3"/>
+     <rect x="182" y="44" width="8" height="46" rx="4" fill="#7FB539"/>
+     <circle cx="186" cy="90" r="8.5" fill="#7FB539"/>
+     <g stroke="#7FB539" stroke-width="2.5" stroke-linecap="round"><path d="M202 20h10M202 32h7M202 44h10M202 56h7M202 68h10"/></g>
+     <g font-size="14" fill="#4F7A22"><text x="62" y="122">움직임</text><text x="186" y="122">상태</text></g>
+    </svg>
    </div>
 
    <div class="startGrid">
@@ -341,7 +363,7 @@ body.t-verb .pTgt .tgt{color:var(--verb);} body.t-adj .pTgt .tgt{color:var(--adj
 
    <div class="credit">
     <span class="seg">제작 · 보라라샘</span> · <span class="seg">전주서신중학교 교사</span> · <span class="seg">siaawase@gmail.com</span><br>
-    <span class="seg">제작일 2026.06.03</span> · <span class="seg" id="lastMod">최종 수정 2026.10.05 03:00</span>
+    <span class="seg">제작일 2026.06.03</span> · <span class="seg" id="lastMod">최종 수정 2026.10.06 01:30</span>
    </div>
 
    <div class="privacy" id="privacyOffline">
@@ -428,7 +450,7 @@ body.t-verb .pTgt .tgt{color:var(--verb);} body.t-adj .pTgt .tgt{color:var(--adj
 
    <div class="credit">
     <span class="seg">제작 · 보라라샘</span> · <span class="seg">전주서신중학교 교사</span> · <span class="seg">siaawase@gmail.com</span><br>
-    <span class="seg">제작일 2026.06.03</span> · <span class="seg" id="lastMod2">최종 수정 2026.10.05 03:00</span>
+    <span class="seg">제작일 2026.06.03</span> · <span class="seg" id="lastMod2">최종 수정 2026.10.06 01:30</span>
    </div>
   </div>
  </div>
@@ -462,7 +484,7 @@ body.t-verb .pTgt .tgt{color:var(--verb);} body.t-adj .pTgt .tgt{color:var(--adj
 
 <script>
 const MADE_DATE = "2026.06.03";
-const LAST_MOD = "2026.10.05 03:00";
+const LAST_MOD = "2026.10.06 01:30";
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -890,7 +912,7 @@ function comboFx(c){
   cbCelebrate(c);
 }
 
-$("muteBtn").addEventListener("click", () => { muted = !muted; $("muteBtn").textContent = muted ? "🔇 소리" : "🔊 소리"; });
+$("muteBtn").addEventListener("click", () => { muted = !muted; $("muteBtn").textContent = muted ? "🔇 소리" : "🔊 소리"; $("muteBtn").blur(); });  // 포커스를 풀어 플레이 중 Space·Enter가 소리를 바꾸지 않게
 // 게임 끝내기: 한 번 확인한 뒤 끝낸다 (지침 6-1). 확인창이 떠 있는 동안에는 시간과 두더지를 멈춘다
 function askQuit(){
   if(!S || S.endAt || S.paused) return;
@@ -953,7 +975,8 @@ function analyze(){
     const ap = S.appear[k]||0, wr = S.wrongTap[k]||0;
     return { k, label:CATEGORIES[k].label, ap, wr, ok:ap-wr, acc: ap ? (ap-wr)/ap : 1 };
   }).filter(r => r.ap >= 2);
-  const good = rows.filter(r => r.wr === 0);
+  const noTap = taps === 0;   // 한 번도 치지 않음 → 잘하는 유형·칭찬 없음 (지침 5-3)
+  const good = noTap ? [] : rows.filter(r => r.wr === 0);
   const weak = rows.filter(r => r.wr / r.ap >= 0.5);
   const allWeak = rows.length >= 2 && rows.every(r => r.acc < 0.5);
   let first = null;
@@ -965,14 +988,17 @@ function analyze(){
   }
   const missedCats = targetCats.map(k => ({ k, label:CATEGORIES[k].label, ap:S.appear[k]||0, ms:S.missed[k]||0 }))
     .filter(r => r.ap >= 2 && r.ms / r.ap >= 0.5);
-  let verdict = rate === null ? "탭한 두더지가 없어 판단 기록이 없어요" : gradeText(rate);
+  let verdict = (rate === null || noTap) ? "탭한 두더지가 없어 판단 기록이 없어요" : gradeText(rate);
+  // 중간에 끝낸 판은 '완벽해요'·'아주 잘했어요' 대신 격려 (교사 결정 2026.10.06)
+  if(!noTap && rate !== null && S.reason === "quit" && rate >= 70) verdict = "잘하고 있어요! 좀 더 연습해 보면 어떨까요?";
   const unfinished = S.reason === "quit" ? "끝까지 하지 않았어요 (남은 시간 " + fmtTime(S.time) + ")" : "";
   let firstMsg;
-  if(allWeak) firstMsg = "유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 판별법을 먼저 읽어 보세요.";
+  if(noTap) firstMsg = "두더지를 하나도 치지 않아 판단 기록이 없어요. 목표 품사 두더지를 직접 쳐 보세요.";
+  else if(allWeak) firstMsg = "유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 판별법을 먼저 읽어 보세요.";
   else if(!first && anyWrong) firstMsg = "한 번씩만 나온 유형에서 실수했어요. 오답노트의 해설로 그 단어들을 복습해 보세요.";
   else if(!first) firstMsg = S.stage < STAGES.length ? "약점이 보이지 않아요. 다음 단계에 도전해 보세요." : "약점이 보이지 않아요. 다른 목표 품사로도 도전해 보세요.";
   else firstMsg = CATEGORIES[first].label + " — " + CATEGORIES[first].tip;
-  return { taps, rate, good, weak, allWeak, first, firstMsg, missedCats, verdict, unfinished };
+  return { taps, missedN, denom, noTap, rate, good, weak, allWeak, first, firstMsg, missedCats, verdict, unfinished };
 }
 function elapsedSec(){ return Math.round((S.endAt - S.startAt)/1000); }
 function fmtDur(sec){ const m = Math.floor(sec/60), s = sec%60; return (m ? m + "분 " : "") + s + "초"; }
@@ -983,6 +1009,7 @@ function endGame(reason){
   S.endAt = Date.now(); S.reason = reason;
   clearInterval(spawnTimer); clearInterval(gameTimer);
   holeData.forEach(h => { if(h.hideTO) clearTimeout(h.hideTO); h.mole.classList.remove("up"); h.active = false; });
+  cbHide();   // 종료 화면에 콤보 카드가 남지 않게
   sndOver();
   renderEnd();
   sendResult();
@@ -999,7 +1026,7 @@ function renderEnd(){
   $("unfinished").textContent = A.unfinished;
   const stats = [
     ["정답률", A.rate === null ? "—" : A.rate + "%"], ["✅ 바르게 탭", S.correct], ["❌ 잘못 탭", S.wrong],
-    ["👀 놓친 단어", S.missedLog.reduce((a,b)=>a+b.count,0)], ["🔥 최고 콤보", S.maxCombo], ["⏱ 소요 시간", fmtDur(elapsedSec())]
+    ["👀 놓친 단어", A.missedN], ["🔥 최고 콤보", S.maxCombo], ["⏱ 소요 시간", fmtDur(elapsedSec())]
   ];
   $("statGrid").innerHTML = stats.map(s => '<div class="card"><div class="k">'+s[0]+'</div><div class="v">'+s[1]+'</div></div>').join("");
   $("verdict").textContent = A.verdict;
@@ -1009,7 +1036,7 @@ function renderEnd(){
   rep += '<div class="repBox good"><h4>🌟 잘하는 유형</h4>' +
     (A.good.length ? A.good.map(r => r.label + ' ' + r.ok + '/' + r.ap).join('<br>') + '<div style="font-size:12.5px;color:#64748b">(' + otherLabel + ' / 나온 횟수)</div>' : '아직 2번 이상 나오고 실수 없는 유형이 없어요.') + '</div>';
   rep += '<div class="repBox weak"><h4>📌 보완이 필요한 유형</h4>' +
-    (A.weak.length ? A.weak.map(r => r.label + ' ' + r.ok + '/' + r.ap).join('<br>') : '보완이 필요한 유형이 보이지 않아요.') + '</div>';
+    (A.weak.length ? A.weak.map(r => r.label + ' ' + r.ok + '/' + r.ap).join('<br>') : A.noTap ? '탭한 두더지가 없어 아직 판단할 수 없어요.' : '보완이 필요한 유형이 보이지 않아요.') + '</div>';
   rep += '<div class="repBox first"><h4>🎯 가장 먼저 공부할 것</h4>' + esc(A.firstMsg) + '</div>';
   if(A.missedCats.length){
     rep += '<div class="repBox miss"><h4>👀 자주 놓친 유형 (참고)</h4>' + A.missedCats.map(r => r.label + ' ' + r.ms + '/' + r.ap).join(' · ') +
@@ -1018,7 +1045,9 @@ function renderEnd(){
   $("repGrid").innerHTML = rep;
 
   const wrap = $("wrongListWrap");
-  if(!S.wrongLog.length){
+  if(A.noTap){
+    wrap.innerHTML = '<div class="repBox first" style="text-align:center"><b>탭한 두더지가 없어요.</b> 목표 품사 두더지를 직접 쳐 보세요.</div>';
+  } else if(!S.wrongLog.length){
     wrap.innerHTML = '<div class="repBox good" style="text-align:center"><b>🎊 잘못 탭한 단어가 없어요!</b></div>';
   } else {
     wrap.innerHTML = '<div class="wrongList"><h3>❌ 잘못 탭한 단어 (' + S.wrongLog.length + '개)</h3>' +
@@ -1045,12 +1074,13 @@ function sendResult(){
   // ── 연동 모드: 결과 전송 ──
   if(IS_ONLINE&&STUDENT.verified){
     const nameInput=$('nameInput');nameInput.value=STUDENT.name;nameInput.readOnly=true;nameInput.style.background='#f0ede5';
-    const wrongItems=S.wrongLog.map(e=>e.id).join(',');
+    const A=analyze();   // 화면·JPG와 같은 계산 함수
+    const wrongItems=[...S.wrongLog.map(e=>e.id), ...S.missedLog.map(e=>e.id)].filter((x,i,a)=>a.indexOf(x)===i).join(',');
     submitResult({
       studentId:STUDENT.id,
       studentName:STUDENT.name,
       className:STUDENT.className,
-      totalQuestions:S.correct+S.wrong,
+      totalQuestions:A.denom,   // 맞힘 + 잘못 탭 + 놓침 → 시트 정답률 = 화면 정답률
       correctCount:S.correct,
       score:S.score,
       elapsedSeconds:elapsedSec(),
@@ -1188,8 +1218,11 @@ $("dlWrongBtn").addEventListener("click", () => {
   const name = requireName(); if(!name) return;
   const d = new Doc(960), A = analyze(), X = 48, BW = 960 - 96;
   docHeader(d, "📝 오답노트", name);
-  d.text("정답률 " + (A.rate===null?"—":A.rate+"%") + " · 바르게 탭 " + S.correct + " · 잘못 탭 " + S.wrong + " · 놓친 단어 " + S.missedLog.reduce((a,b)=>a+b.count,0), { size:16, color:"#333", gap:12 });
-  if(!S.wrongLog.length){
+  d.text("정답률 " + (A.rate===null?"—":A.rate+"%") + " · 바르게 탭 " + S.correct + " · 잘못 탭 " + S.wrong + " · 놓친 단어 " + A.missedN, { size:16, color:"#333", gap:12 });
+  if(A.noTap){
+    d.box(X, BW, "#F7F3FC", "#dcd2f2", 18, () => d.text("탭한 두더지가 없어요. 목표 품사 두더지를 직접 쳐 보세요.", { size:19, weight:"bold", color:"#3C3489", x:X+20, maxW:BW-40 }));
+    d.y += 12;
+  } else if(!S.wrongLog.length){
     d.box(X, BW, "#f0fdf4", "#bbf7d0", 18, () => d.text("🎊 잘못 탭한 단어가 없어요! 목표 품사를 정확하게 골라냈어요.", { size:19, weight:"bold", color:"#15803d", x:X+20, maxW:BW-40 }));
     d.y += 12;
   } else {
@@ -1236,7 +1269,7 @@ $("dlReportBtn").addEventListener("click", () => {
     d.ops.push({ t:"text", s:String(s[1]), font:CF("bold",26), color:"#3C3489", x:cx+16, y:cy+64 });
   });
   d.y += 82*2 + 10 + 12;
-  d.text("👀 놓친 목표 단어 " + S.missedLog.reduce((a,b)=>a+b.count,0) + "회 (감점 없음, 정답률에는 넣음)", { size:14, color:"#92400e", gap:10 });
+  d.text("👀 놓친 목표 단어 " + A.missedN + "회 (감점 없음, 정답률에는 넣음)", { size:14, color:"#92400e", gap:10 });
 
   d.box(X, BW, "#3C3489", null, 16, () => d.text((A.unfinished ? A.unfinished + " · " : "") + "총평: " + A.verdict, { size:21, weight:"bold", color:"#ffffff", x:X+20, maxW:BW-40 }));
   d.y += 14;
@@ -1251,7 +1284,7 @@ $("dlReportBtn").addEventListener("click", () => {
   d.y += 10;
   d.box(X, BW, "#fef2f2", "#fecaca", 14, () => {
     d.text("📌 보완이 필요한 유형", { size:18, weight:"bold", color:"#dc2626", x:X+18, gap:2 });
-    d.text(A.weak.length ? A.weak.map(r => r.label + " " + r.ok + "/" + r.ap).join("   ·   ") : "보완이 필요한 유형이 보이지 않아요.", { size:16, color:"#333", x:X+18, maxW:BW-36 });
+    d.text(A.weak.length ? A.weak.map(r => r.label + " " + r.ok + "/" + r.ap).join("   ·   ") : A.noTap ? "탭한 두더지가 없어 아직 판단할 수 없어요." : "보완이 필요한 유형이 보이지 않아요.", { size:16, color:"#333", x:X+18, maxW:BW-36 });
   });
   d.y += 10;
   d.box(X, BW, "#F7F3FC", "#dcd2f2", 14, () => {
