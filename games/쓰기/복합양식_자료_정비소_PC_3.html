@@ -6,7 +6,8 @@
      팁: 배치 판단 팁에 "(기사문이면 본문)" 추가
      2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이; 문제 화면의 이전·다음·끝내기 사이드바를 오른쪽으로 옮김(교사 요청, 넓은 화면만 — 모바일 배치는 그대로)
      2026.10.05 23:55 문항: 1단계 1·7·9번의 누가 봐도 틀린 보기와 없는 용어(단순양식·순수양식)를 학생 오개념에서 나온 보기로 교체(교사 승인 2026.10.05)
-     2026.10.06 00:30 버그 검사(실제 입력): 이전·다음 버튼 클릭 뒤 Enter·Space로 답하기 전 넘어가던 문제, 다시 풀기가 끝없이 되던 것을 1회로(두 번 틀리면 정답·해설 공개), 모든 문항 채점 뒤 자동 종료, 풀어 본 문제가 없을 때 축하·정답률 문구 대신 '풀어 본 문제가 없어요', 오답 목록 '내 답'이 다시 풀어 맞힌 정답으로 바뀌던 것, 보기 글자 낱말 중간 줄바꿈 -->
+     2026.10.06 00:30 버그 검사(실제 입력): 이전·다음 버튼 클릭 뒤 Enter·Space로 답하기 전 넘어가던 문제, 다시 풀기가 끝없이 되던 것을 1회로(두 번 틀리면 정답·해설 공개), 모든 문항 채점 뒤 자동 종료, 풀어 본 문제가 없을 때 축하·정답률 문구 대신 '풀어 본 문제가 없어요', 오답 목록 '내 답'이 다시 풀어 맞힌 정답으로 바뀌던 것, 보기 글자 낱말 중간 줄바꿈
+     2026.10.06 00:45 버그: 온라인 모드에서도 JPG 꼬리말에 오프라인 개인정보 문구가 나오던 문제 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -248,7 +249,7 @@ h1 .mark{color:var(--pt-deep)}
     <button class="start-go" id="startGo" disabled>학습 시작하기 ▶</button>
     <div class="credit">
       제작 · <b>보라라샘</b> · 전주서신중학교 교사 · siaawase@gmail.com<br>
-      제작일 2026.07.23 · <span id="lastMod">최종 수정 2026.10.06 00:30</span>
+      제작일 2026.07.23 · <span id="lastMod">최종 수정 2026.10.06 00:45</span>
     </div>
     <div class="privacy" id="privacyOffline">
       🔒 <b>개인정보 보호 안내</b><br>
@@ -371,7 +372,7 @@ h1 .mark{color:var(--pt-deep)}
 
 </div>
 <script>
-const MADE_DATE="2026.07.23", LAST_MOD="2026.10.06 00:30";
+const MADE_DATE="2026.07.23", LAST_MOD="2026.10.06 00:45";
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -965,7 +966,7 @@ function headFoot(ctx,W,H,title,name){
   ctx.fillText("복합양식 자료 정비소 · "+st.label+"    이름: "+name+"    "+(meta.dateStr||""),40,80);
   ctx.strokeStyle="#FAE4EC";ctx.beginPath();ctx.moveTo(40,98);ctx.lineTo(W-40,98);ctx.stroke();
   ctx.fillStyle="#b9a7b0";ctx.font="11.5px system-ui";
-  ctx.fillText("🔒 이름과 소감은 서버에 저장되지 않으며, 리포트 이미지(JPG) 생성용으로만 쓰입니다.",40,H-38);
+  ctx.fillText(IS_ONLINE?"🔒 학습 결과는 담당 선생님의 학습 관리 스프레드시트로 전송되며, 학습 지도 목적으로만 쓰입니다.":"🔒 이름과 소감은 서버에 저장되지 않으며, 리포트 이미지(JPG) 생성용으로만 쓰입니다.",40,H-38);   // 연동 여부에 따라 문구 전환(화면연출표준 5장)
   ctx.fillText("제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com · 제작일 "+MADE_DATE,40,H-20);
 }
 function downloadNote(){
