@@ -7,7 +7,9 @@
      2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이; 문제 화면의 이전·다음·끝내기 사이드바를 오른쪽으로 옮김(교사 요청, 넓은 화면만 — 모바일 배치는 그대로)
      2026.10.05 23:55 문항: 1단계 1·7·9번의 누가 봐도 틀린 보기와 없는 용어(단순양식·순수양식)를 학생 오개념에서 나온 보기로 교체(교사 승인 2026.10.05)
      2026.10.06 00:30 버그 검사(실제 입력): 이전·다음 버튼 클릭 뒤 Enter·Space로 답하기 전 넘어가던 문제, 다시 풀기가 끝없이 되던 것을 1회로(두 번 틀리면 정답·해설 공개), 모든 문항 채점 뒤 자동 종료, 풀어 본 문제가 없을 때 축하·정답률 문구 대신 '풀어 본 문제가 없어요', 오답 목록 '내 답'이 다시 풀어 맞힌 정답으로 바뀌던 것, 보기 글자 낱말 중간 줄바꿈
-     2026.10.06 00:45 버그: 온라인 모드에서도 JPG 꼬리말에 오프라인 개인정보 문구가 나오던 문제 -->
+     2026.10.06 00:45 버그: 온라인 모드에서도 JPG 꼬리말에 오프라인 개인정보 문구가 나오던 문제
+     2026.10.06 00:25 종료 제목: 중간에 끝내면 '정비 완료!' 대신 '정비 중단 · 다음에 이어서 정비해요'(교사 결정)
+     2026.10.06 00:30 총평: 끝까지 풀지 않으면 '완벽해요/약점이 보이지 않아요' 대신 더 연습해 보자는 말 / 버그: 정답 카드가 떠 있을 때 끝내면 종료 화면에 카드가 남던 문제 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -249,7 +251,7 @@ h1 .mark{color:var(--pt-deep)}
     <button class="start-go" id="startGo" disabled>학습 시작하기 ▶</button>
     <div class="credit">
       제작 · <b>보라라샘</b> · 전주서신중학교 교사 · siaawase@gmail.com<br>
-      제작일 2026.07.23 · <span id="lastMod">최종 수정 2026.10.06 00:45</span>
+      제작일 2026.07.23 · <span id="lastMod">최종 수정 2026.10.06 00:30</span>
     </div>
     <div class="privacy" id="privacyOffline">
       🔒 <b>개인정보 보호 안내</b><br>
@@ -372,7 +374,7 @@ h1 .mark{color:var(--pt-deep)}
 
 </div>
 <script>
-const MADE_DATE="2026.07.23", LAST_MOD="2026.10.06 00:45";
+const MADE_DATE="2026.07.23", LAST_MOD="2026.10.06 00:30";
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -813,6 +815,12 @@ function stats(){
   const acc=answered?Math.round(firstOk/answered*100):0;
   return{answered,firstOk,retryOk,missed,skipped,acc};
 }
+// 교사 결정(2026.10.06, 메모리게임과 같은 원칙): 끝까지 풀지 않았으면 정답률이 높아도 칭찬 대신 더 연습해 보자는 말
+function verdictText(st){
+  if(!st.skipped)return grade(st.acc);
+  return st.acc>=70?"잘하고 있어요! 남은 문제까지 풀며 좀 더 연습해 보면 어떨까요?":"좀 더 연습해 보면 어떨까요? 남은 문제까지 풀어 보면 감이 잡혀요.";
+}
+function noWeakText(st){return st.skipped?"남은 문제를 마저 풀어 보세요.":"약점이 보이지 않아요. 다음 단계에 도전해 보세요."}
 function grade(acc){
   if(acc>=95)return"완벽해요!";
   if(acc>=85)return"아주 잘했어요";
@@ -845,11 +853,12 @@ function analyze(){
 /* ═══ 종료 ═══ */
 function finishStage(){
   clearTimeout(finTimer);finTimer=null;
+  if(typeof cbHide==='function')cbHide();   // 정답 카드가 떠 있을 때 끝내도 종료 화면에 남지 않게
   const stage=STAGES[S.stageIdx];
   S.elapsed=Date.now()-(S.startTime||Date.now());
   const sec=Math.round(S.elapsed/1000),mm=Math.floor(sec/60),ss=sec%60;
   const st=stats();
-  $("endTitle").textContent=stage.ico+" "+stage.label+" — 정비 완료!";
+  $("endTitle").textContent=stage.ico+" "+stage.label+(st.skipped>0?" — 정비 중단 · 다음에 이어서 정비해요":" — 정비 완료!");   // 교사 결정(2026.10.06): 중간에 끝내면 정비 중단
   $("finalScore").textContent=S.score;
   document.querySelector("#finalScore").nextElementSibling.textContent="점수 / "+S.max;
   $("finalAcc").textContent=st.answered?st.acc+"%":"—";
@@ -919,12 +928,12 @@ function buildReport(stage,st){
   }
   let msg="";
   if(st.skipped)msg+='⏸️ <b>끝까지 풀지 않았어요 ('+st.skipped+'문항 남음)</b><br>';
-  msg+='🏁 <b>'+grade(st.acc)+'</b><br>';
+  msg+='🏁 <b>'+verdictText(st)+'</b><br>';
   if(an.good.length)msg+='✅ <b>잘하는 유형</b>: '+an.good.map(g=>CATEGORIES[g.c].label+" "+g.ok+"/"+g.n).join(", ")+'<br>';
   if(an.weak.length)msg+='📌 <b>보완이 필요한 유형</b>: '+an.weak.map(g=>CATEGORIES[g.c].label+" "+g.ok+"/"+g.n).join(", ")+'<br>';
   if(an.allBad)msg+='🧭 <b>가장 먼저 공부할 것</b>: 유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.';
   else if(an.first)msg+='🧭 <b>가장 먼저 공부할 것 — '+CATEGORIES[an.first.c].label+'</b><br>'+CATEGORIES[an.first.c].tip;
-  else msg+='🧭 약점이 보이지 않아요. 다음 단계에 도전해 보세요.';
+  else msg+='🧭 '+noWeakText(st);
   html+='<div class="report-msg">'+msg+'</div>';
   $("reportArea").innerHTML=html;
 }
@@ -1007,7 +1016,7 @@ function downloadReportImg(){
   const inner=W-2*pad-20;
   const rows=Object.entries(m).filter(([c,v])=>v.n>=2);
   const tipText=an.allBad?"유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요."
-    :(an.first?CATEGORIES[an.first.c].tip:"약점이 보이지 않아요. 다음 단계에 도전해 보세요.");
+    :(an.first?CATEGORIES[an.first.c].tip:noWeakText(st));
   const tipLines=wrap(ctx,tipText,inner-20,"13.5px system-ui");
   const feelLines=feeling?wrap(ctx,feeling,inner-20,"13.5px system-ui"):[];
   const stdLines=wrap(ctx,"성취기준 "+STD_CODE+" "+STD_TEXT,inner,"12px system-ui");
@@ -1030,7 +1039,7 @@ function downloadReportImg(){
   ctx.fillText("첫 시도 정답 "+st.firstOk+" · 다시 풀어 맞힘 "+st.retryOk+" · 못 맞힘 "+st.missed+
     (st.skipped?" · 미응답 "+st.skipped:"")+" · 최고 콤보 "+S.maxCombo+" · 소요 시간 "+(window._meta?window._meta.elapsed:""),pad,y);y+=26;
   ctx.fillStyle="#993556";ctx.font="bold 15px system-ui";
-  ctx.fillText("🏁 "+(st.skipped?"끝까지 풀지 않았어요 ("+st.skipped+"문항 남음) · ":"")+grade(st.acc),pad,y);y+=28;
+  ctx.fillText("🏁 "+(st.skipped?"끝까지 풀지 않았어요 ("+st.skipped+"문항 남음) · ":"")+verdictText(st),pad,y);y+=28;
   rows.forEach(([c,v])=>{
     const pct=Math.round(v.ok/v.n*100);
     ctx.fillStyle="#3a2f36";ctx.font="bold 14px system-ui";ctx.fillText(CATEGORIES[c].label,pad,y);
