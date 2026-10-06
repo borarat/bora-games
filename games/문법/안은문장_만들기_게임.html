@@ -15,7 +15,8 @@
      화면 2026.10.02 15:39: 게임 이름 '안은문장 학습 게임'으로 변경(교사 결정), 테마층 '마트료시카'(시작 화면 그림·단계 버튼), 문제 화면 글자 키움
      표기 2026.10.05 01:54: 10.02 16:20에 비상 지도서를 근거로 바꾼 '안긴문장' 표기와 부사절 표지 '-이, -듯이'를 되돌림 — 3학년 수업 교과서는 천재. 천재 교과서 확인 전까지 원래 표기 유지
      확인: 부사절 '-게, -도록' — 비상 교과서가 부사절로 가르침(교사 확인 2026.10.02). 문항 9개 그대로 유지
-     2026.10.05 02:40 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 -->
+     2026.10.05 02:40 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
+     2026.10.07 08:45 실제 조작 버그 검사·수정: 첫 시도에 틀린 뒤 '다시 풀기'만 누르고 다른 문제로 가면 못 맞힘이 아니라 미응답으로 세던 버그, '게임 종료' → '게임 끝내기', 중간 종료 제목·총평(칭찬 대신 연습 권유) -->
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -315,7 +316,7 @@ main{position:relative;z-index:10;width:100%;max-width:1100px;padding:12px 12px 
     </div>
   </div>
   <div class="start-footer">
-    <div class="credit-box">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.08.21 · <span id="lastMod">최종 수정 2026.10.05 02:40</span></div>
+    <div class="credit-box">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.08.21 · <span id="lastMod">최종 수정 2026.10.07 08:45</span></div>
     <div class="privacy-box" id="privacyOffline"><strong>🔒 개인정보 보호 안내</strong><br>본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다. 입력하는 이름, 소감 등은 오직 사용자 기기 내부에서 리포트 이미지 다운로드 용도로만 처리됩니다.</div>
     <div class="privacy-box" id="privacyOnline" style="display:none"><strong>🔒 개인정보 보호 안내</strong><br>본 게임의 학습 결과(학번, 이름, 점수, 오답 정보, 학습 소감)는 담당 선생님의 학습 관리용 스프레드시트에 안전하게 전송·저장됩니다.<br>수집된 정보는 학습 지도 목적으로만 사용되며, 제3자에게 제공되지 않습니다.</div>
   </div>
@@ -350,7 +351,7 @@ main{position:relative;z-index:10;width:100%;max-width:1100px;padding:12px 12px 
     <button class="nav-btn" id="next-btn" onclick="navQ(1)">다음<br>문제 ▶</button>
     <button class="stage-jump-btn" id="jump2" onclick="startGame(1)" style="display:none">2단계로<br>이동</button>
     <button class="stage-jump-btn" id="jump3" onclick="startGame(2)" style="display:none">3단계로<br>이동</button>
-    <button class="nav-btn finish-btn" onclick="finishGame()">게임<br>종료</button>
+    <button class="nav-btn finish-btn" onclick="finishGame()">게임<br>끝내기</button>
   </div>
 </div>
 <div id="complete-screen">
@@ -380,7 +381,7 @@ main{position:relative;z-index:10;width:100%;max-width:1100px;padding:12px 12px 
 
 <script>
 /* ========== Apps Script 연동 설정 ========== */
-const MADE_DATE='2026.08.21', MOD_DATE='2026.10.05 02:40';
+const MADE_DATE='2026.08.21', MOD_DATE='2026.10.07 08:45';
 const GAME_CONFIG = {
   gameCode: "G303",
   gameName: "안은문장 학습 게임",
@@ -752,9 +753,10 @@ function retryQ(){
 }
 function navQ(d){const n=cQ+d;if(n<0||n>=CUR.length)return;cQ=n;renderQ()}
 function finishGame(){
-  if(!confirm('게임을 종료하시겠어요? 풀지 않은 문제는 미응답으로 기록됩니다.'))return;
+  if(!confirm('게임을 끝낼까요? 풀지 않은 문제는 미응답으로 기록됩니다.'))return;
   // 첫 시도에 틀리고 다시 풀지 않은 문제만 '못 맞힘'으로 확정. 풀지 않은 문제(null)는 미응답으로 남긴다 (지침 5-3)
-  ans=ans.map(a=>a==='wrong'?'wrong-final':a);
+  // 첫 시도에 틀린 뒤 '다시 풀기'만 누르고 떠난 문제(ans=null, retry=true)도 미응답이 아니라 못 맞힘
+  ans=ans.map((a,i)=>a==='wrong'||(a===null&&retry[i])?'wrong-final':a);
   showComplete();
 }
 
@@ -773,8 +775,8 @@ function showComplete(){
   document.getElementById('s-combo').textContent=maxCombo;
   const V=verdict(S);
   document.getElementById('c-emoji').textContent=V.emoji;
-  document.getElementById('c-title').textContent=V.title;
-  document.getElementById('c-rate').textContent=S.graded?`첫 시도 정답률 ${S.rate}% (${S.first}/${S.graded})`:'';
+  document.getElementById('c-title').textContent=V.head||V.title;
+  document.getElementById('c-rate').textContent=S.graded?(V.head?V.title+' · ':'')+`첫 시도 정답률 ${S.rate}% (${S.first}/${S.graded})`:'';
   endAt=new Date(tLast||Date.now());
   const elapsed=Math.max(0,Math.round(((tLast||Date.now())-t0)/1000));
   document.getElementById('endMeta').textContent=`완료 ${fmtDT(endAt)} · 걸린 시간 ${fmtDur(elapsed)} (마지막으로 채점한 때까지)`;
@@ -810,7 +812,8 @@ function verdict(S){
   if(!S.graded)return{emoji:'📝',title:'풀어 본 문제가 없어요'};
   const r=S.first/S.graded;
   let v=r>=.95?{emoji:'🏆',title:'완벽해요!'}:r>=.85?{emoji:'🎉',title:'아주 잘했어요'}:r>=.7?{emoji:'😊',title:'잘하고 있어요'}:r>=.5?{emoji:'🙂',title:'기본은 잡혔어요'}:{emoji:'💪',title:'다시 한 번 도전해요'};
-  if(S.skipped)v={emoji:v.emoji,title:`끝까지 풀지 않았어요 (${S.skipped}문항 남음) · ${v.title}`};
+  // 중간 종료면 칭찬 대신 더 연습 권유(화면연출표준 7장, 교사 결정 2026.10.06)
+  if(S.skipped)v={emoji:'📝',title:`끝까지 풀지 않았어요 (${S.skipped}문항 남음) · `+(r>=.7?'잘하고 있어요! 남은 문제까지 풀며 좀 더 연습해 보면 어떨까요?':'좀 더 연습해 보면 어떨까요? 남은 문제까지 풀어 보면 감이 잡혀요.'),head:'여기까지 풀었어요'};
   return v;
 }
 function sendResult(){
@@ -918,8 +921,9 @@ function dlReport(){
     }
     const miss=k=>S.byCat[k].graded-S.byCat[k].first;
     const cand=cats.filter(k=>miss(k)>0).sort((a,b)=>miss(b)-miss(a)||rate(a)-rate(b)||S.byCat[b].graded-S.byCat[a].graded);
-    if(S.miss+S.retryOk===0)B.push({t:'약점이 보이지 않아요. 다음 단계에 도전해 보세요.',f:`bold 14px ${FF}`,lh:21,c:'#2a7a5a',gap:6});
+    if(S.miss+S.retryOk===0)B.push({t:S.skipped?'남은 문제를 마저 풀어 보세요.':cStg<STAGES.length-1?'약점이 보이지 않아요. 다음 단계에 도전해 보세요.':'약점이 보이지 않아요. 다시 섞어서 도전해 보세요.',f:`bold 14px ${FF}`,lh:21,c:'#2a7a5a',gap:6});
     else if(cand.length){B.push({t:'🎯 가장 먼저 공부할 것',f:`bold 14px ${FF}`,lh:21,c:'#5a3d9e'});B.push({t:TIPS[cand[0]]||cand[0],f:`14px ${FF}`,lh:21,gap:6})}
+    else if(S.skipped)B.push({t:'🎯 가장 먼저 공부할 것 — 남은 문제를 마저 풀어 보세요.',f:`bold 14px ${FF}`,lh:21,c:'#5a3d9e',gap:6});   // 화면연출표준 7장
   }
   if(cm){B.push({t:'💬 학습 소감',f:`bold 14px ${FF}`,lh:21,rule:1});B.push({t:cm,f:`14px ${FF}`,lh:21,c:'#5b5670',gap:6})}
   B.push({t:`성취기준 ${STD_TEXT}`,f:`11.5px ${FF}`,lh:17,c:'#8878a0',rule:1});

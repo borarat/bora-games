@@ -17,7 +17,8 @@
      화면 2026.10.02 15:55: 시작 화면 유형 표를 왼쪽 대등 3개 · 오른쪽 종속 4개로 나누고 열 머리말을 붙임(교사 요청)
      표기·문구 2026.10.02 16:20: 3학년 천재 교과서·지도서와 비상 지도서(3-1)에 맞춤 — '이어진문장' 붙여 씀(교사 승인), 판별 문구 '뜻이 같다/달라진다' → '의미가 (크게) 달라지지 않는다 / 달라지거나 어색해진다', 2단계 나열 힌트에 판별 질문 추가
      문항·채점 2026.10.02 15:51: 33문항에 힌트 추가(교사 승인 '이대로'), 다시 풀기 1회 — 1단계 직접 쓰기·2단계 2차 세부 유형·3단계 4지선다. 2단계 1차(대등/종속, 보기 2개)는 바로 공개. 다시 풀어 맞히면 +5, 콤보 없음, 정답률에서 빼고 따로 셈
-     2026.10.05 02:40 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 -->
+     2026.10.05 02:40 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
+     2026.10.07 08:45 실제 조작 버그 검사: '게임 종료' → '게임 끝내기', 중간 종료 제목·총평(칭찬 대신 연습 권유) -->
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -384,7 +385,7 @@ textarea.report-input{height:60px;resize:vertical}
     </div>
   </div>
 
-  <div class="credit-box">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2025.08.12 · <span id="lastMod">최종 수정 2026.10.05 02:40</span></div>
+  <div class="credit-box">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2025.08.12 · <span id="lastMod">최종 수정 2026.10.07 08:45</span></div>
 <div class="privacy-box" id="privacyOffline">
   <strong>🔒 개인정보 보호 안내</strong><br>
   본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다. 게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.
@@ -428,7 +429,7 @@ textarea.report-input{height:60px;resize:vertical}
   <div class="nav-sidebar">
     <button class="nav-btn" id="prev-btn" onclick="navigate(-1)" disabled>◀ 이전<br>문제</button>
     <button class="nav-btn" id="next-btn" onclick="navigate(1)" disabled>다음<br>문제 ▶</button>
-    <button class="nav-btn finish-btn" onclick="finishGame()">게임<br>종료</button>
+    <button class="nav-btn finish-btn" onclick="finishGame()">게임<br>끝내기</button>
   </div>
 </div>
 
@@ -480,7 +481,7 @@ textarea.report-input{height:60px;resize:vertical}
 
 <script>
 /* ===== Apps Script 연동 설정 ===== */
-const MADE_DATE='2025.08.12', MOD_DATE='2026.10.05 02:40';
+const MADE_DATE='2025.08.12', MOD_DATE='2026.10.07 08:45';
 const GAME_CONFIG = {
   gameCode: "G304",
   gameName: "이어진문장 학습 게임",
@@ -996,7 +997,8 @@ function verdict(S){
   if(!S.graded)return{emoji:'📝',title:'풀어 본 문제가 없어요'};
   const r=S.first/S.graded;
   let v=r>=.95?{emoji:'🏆',title:'완벽해요!'}:r>=.85?{emoji:'🎉',title:'아주 잘했어요'}:r>=.7?{emoji:'😊',title:'잘하고 있어요'}:r>=.5?{emoji:'🙂',title:'기본은 잡혔어요'}:{emoji:'💪',title:'다시 한 번 도전해요'};
-  if(S.skipped)v={emoji:v.emoji,title:`끝까지 풀지 않았어요 (${S.skipped}문항 남음) · ${v.title}`};
+  // 중간 종료면 칭찬 대신 더 연습 권유(화면연출표준 7장, 교사 결정 2026.10.06)
+  if(S.skipped)v={emoji:'📝',title:`끝까지 풀지 않았어요 (${S.skipped}문항 남음) · `+(r>=.7?'잘하고 있어요! 남은 문제까지 풀며 좀 더 연습해 보면 어떨까요?':'좀 더 연습해 보면 어떨까요? 남은 문제까지 풀어 보면 감이 잡혀요.'),head:'여기까지 풀었어요'};
   return v;
 }
 function sendResult(){
@@ -1038,11 +1040,10 @@ function showComplete(){
   document.getElementById('stat-wrong').textContent=S.miss;
   document.getElementById('stat-skip').textContent=S.skipped;
   document.getElementById('stat-combo').textContent=maxCombo;
-  document.getElementById('stat-rate').textContent=S.graded?`첫 시도 정답률 ${S.rate}% (${S.first}/${S.graded})`:'';
-
   const V=verdict(S);
+  document.getElementById('stat-rate').textContent=S.graded?(V.head?V.title+' · ':'')+`첫 시도 정답률 ${S.rate}% (${S.first}/${S.graded})`:'';
   document.getElementById('complete-emoji').textContent=V.emoji;
-  document.getElementById('complete-title').textContent=V.title;
+  document.getElementById('complete-title').textContent=V.head||V.title;
 
   // 못 맞힌 문제 + 미응답 목록
   const wrongList=questions.map((q,i)=>({q,i})).filter(x=>answered[x.i]!==true&&answered[x.i]!=='r');
@@ -1149,8 +1150,9 @@ function downloadReport(){
       B.push({t:`⚠️ 보완이 필요한 유형  ${weak.length?weak.map(lab).join(' · '):'—'}`,f:`bold 14px ${FF}`,lh:21,c:'#c05050',gap:6})}
     const miss=k=>S.byType[k].graded-S.byType[k].first;
     const cand=cats.filter(k=>miss(k)>0).sort((a,b)=>miss(b)-miss(a)||rate(a)-rate(b)||S.byType[b].graded-S.byType[a].graded);
-    if(S.miss+S.retryOk===0)B.push({t:'약점이 보이지 않아요. 다음 단계에 도전해 보세요.',f:`bold 14px ${FF}`,lh:21,c:'#3a8f60',gap:6});
+    if(S.miss+S.retryOk===0)B.push({t:S.skipped?'남은 문제를 마저 풀어 보세요.':currentStage<STAGES.length-1?'약점이 보이지 않아요. 다음 단계에 도전해 보세요.':'약점이 보이지 않아요. 다시 섞어서 도전해 보세요.',f:`bold 14px ${FF}`,lh:21,c:'#3a8f60',gap:6});
     else if(cand.length){B.push({t:'🎯 가장 먼저 공부할 것',f:`bold 14px ${FF}`,lh:21,c:'#5a3d9e'});B.push({t:TIPS[cand[0]]||cand[0],f:`14px ${FF}`,lh:21,gap:6})}
+    else if(S.skipped)B.push({t:'🎯 가장 먼저 공부할 것 — 남은 문제를 마저 풀어 보세요.',f:`bold 14px ${FF}`,lh:21,c:'#5a3d9e',gap:6});   // 화면연출표준 7장
   }
   if(cm){B.push({t:'💬 학습 소감',f:`bold 14px ${FF}`,lh:21,rule:1});B.push({t:cm,f:`14px ${FF}`,lh:21,c:'#5b5670',gap:6})}
   B.push({t:`성취기준 ${STD_TEXT}`,f:`11.5px ${FF}`,lh:17,c:'#8888aa',rule:1});
