@@ -6,7 +6,8 @@
      진단: 그 판의 목표가 아닌 유형(늘 0/n)은 잘함·보완 필요 판정에서 뺌
      2026.10.01 13:00 유형 tip 3개의 어근 판별 기준 '혼자 쓰이는지' → 교과서 기준 '실질적인 뜻을 나타내는지'(어근)·'어근에 붙어 뜻을 더함'(접사). 단어 분류는 그대로 
      화면 2026.10.02 14:11: 게임 테마층 '낱말 블록과 퍼즐'(CSS 끝 블록 + 시작 화면 SVG). 문항·채점·로직 변경 없음
-     2026.10.05 03:00 연속 정답 연출을 깔끔한 카드형으로(교사 결정): 불꽃·이모지 낙하·화면 테두리 글로우 없앰, 5·10연속에만 작은 색종이 -->
+     2026.10.05 03:00 연속 정답 연출을 깔끔한 카드형으로(교사 결정): 불꽃·이모지 낙하·화면 테두리 글로우 없앰, 5·10연속에만 작은 색종이
+     2026.10.06 17:25 실제 조작 버그 검사·수정: '끝내기' → '게임 끝내기'(확인 한 번, 취소하면 이어서), 중간 종료 총평(칭찬 대신 연습 권유), 판정 0개 문구, 플레이 크레딧 가운뎃점 -->
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -226,7 +227,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
    <div class="start-foot">
     <div class="credit">
      제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br/>
-     제작일 2025.11.12 · <span class="lastMod">최종 수정 2026.10.05 03:00</span>
+     제작일 2025.11.12 · <span class="lastMod">최종 수정 2026.10.06 17:25</span>
     </div>
     <div class="privacy" id="privacyOffline">
      <b>🔒 개인정보 보호 안내</b><br>
@@ -267,14 +268,14 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
  <div class="gwrap">
   <div class="band">
    <span class="l">문법<span class="goal"> · 합성어와 파생어를 구별한다 · 🎯 <span id="tgtEl">합성어</span> · <span id="stageEl">1단계 기본</span></span></span>
-   <span class="hud">⏱ <b id="timeEl">180</b> ❤️ <b id="livesEl">20</b> <span><b id="scoreEl">0</b>점</span><button class="quit" onclick="endGame('직접 종료')">끝내기</button></span>
+   <span class="hud">⏱ <b id="timeEl">180</b> ❤️ <b id="livesEl">20</b> <span><b id="scoreEl">0</b>점</span><button class="quit" onclick="askQuit()">게임 끝내기</button></span>
   </div>
   <div class="stage" id="stageBox">
    <canvas id="cv" width="1100" height="580"></canvas>
    <div id="comboHud">🔥 <b id="comboEl">0</b></div>
   </div>
  </div>
- <div class="watermark">제작 · 보라라샘 / 2025.11.12</div>
+ <div class="watermark">제작 · 보라라샘 · 2025.11.12</div>
 </div>
 
 <!-- ═══════════ 결과 화면 ═══════════ -->
@@ -312,7 +313,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
    </div>
    <div class="credit">
     제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br/>
-    제작일 2025.11.12 · <span class="lastMod">최종 수정 2026.10.05 03:00</span>
+    제작일 2025.11.12 · <span class="lastMod">최종 수정 2026.10.06 17:25</span>
    </div>
   </div>
  </div>
@@ -327,7 +328,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 
 <script>
 const MADE_DATE='2025.11.12';
-const LAST_MOD='2026.10.05 03:00';
+const LAST_MOD='2026.10.06 17:25';
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -740,13 +741,18 @@ function analyze(){
   const allLow=judged.length>0&&judged.every(c=>c.correct/c.total<.5);
   const cand=list.filter(c=>c.err>0).sort((a,b)=>(b.total>=2)-(a.total>=2)||b.err-a.err||a.correct/a.total-b.correct/b.total||b.total-a.total);
   let grade;
-  if(!total)grade='아직 판정한 단어가 없어요';
+  if(!total)grade='풀어 본 문제가 없어요';
   else if(rate>=.95)grade='🏆 완벽해요!';else if(rate>=.85)grade='🌟 아주 잘했어요';else if(rate>=.70)grade='👍 잘하고 있어요';else if(rate>=.50)grade='🌱 기본은 잡혔어요';else grade='💪 다시 한 번 도전해요';
-  const early=S.endReason==='직접 종료'&&S.timer>1&&S.lives>0?'끝까지 하지 않았어요 (남은 시간 '+Math.ceil(S.timer)+'초)':'';
-  return{hit,wrong,miss,total,rate,acc:Math.round(rate*100),strong,weak,allLow,priority:cand[0]||null,grade,early};
+  const early=total&&S.endReason==='직접 종료'&&S.timer>1&&S.lives>0?'끝까지 하지 않았어요 (남은 시간 '+Math.ceil(S.timer)+'초)':'';
+  // 중간 종료면 정답률이 높아도 칭찬하지 않는다(화면연출표준 7장, 교사 결정 2026.10.06)
+  if(total&&early)grade=rate>=.70?'잘하고 있어요! 남은 문제까지 풀며 좀 더 연습해 보면 어떨까요?':'좀 더 연습해 보면 어떨까요? 남은 문제까지 풀어 보면 감이 잡혀요.';
+  const noWeakMsg=!total?'풀어 본 문제가 없어요.':early?'남은 문제를 마저 풀어 보세요.':(hasNextStage()?'약점이 보이지 않아요. 다음 단계에 도전해 보세요.':'약점이 보이지 않아요. 다른 목표 유형으로도 도전해 보세요.');
+  return{hit,wrong,miss,total,rate,acc:Math.round(rate*100),strong,weak,allLow,priority:cand[0]||null,grade,early,noWeakMsg};
 }
 const fmtSec=ms=>{const s=Math.round(ms/1000);return Math.floor(s/60)+'분 '+String(s%60).padStart(2,'0')+'초'};
 const hasNextStage=()=>S.stage<STAGES.length;
+// 게임 끝내기: 한 번 확인한 뒤 끝낸다(지침 6-1). 확인창이 떠 있는 동안은 게임이 멈춘다(dt 상한 0.033초)
+function askQuit(){ if(!S.running)return; keys.clear(); if(confirm('게임을 끝낼까요? 지금까지의 결과로 끝나요.'))endGame('직접 종료'); else if(document.activeElement)document.activeElement.blur(); }
 
 function endGame(reason){
   if(!S.running)return;
@@ -765,7 +771,7 @@ function endGame(reason){
   }
   h+='<h4>📌 가장 먼저 공부할 것</h4>';
   h+=A.priority?'<div class="tipbox"><b>'+CATEGORIES[A.priority.key].label+'</b><br>'+CATEGORIES[A.priority.key].tip+'</div>'
-    :'<div class="tipbox">'+(A.total?(hasNextStage()?'약점이 보이지 않아요. 다음 단계에 도전해 보세요.':'약점이 보이지 않아요. 다른 목표 유형으로도 도전해 보세요.'):'단어를 판정하지 않고 끝났어요. 다시 도전해 보세요.')+'</div>';
+    :'<div class="tipbox">'+A.noWeakMsg+'</div>';
   $('diag').innerHTML=h;
   // 버튼 위계 — 총 단계 수 기준
   const btn=$('btnNextStage'),hasNext=hasNextStage();
@@ -939,7 +945,7 @@ function downloadReport(){
     }
     y+=6;sec('📌 가장 먼저 공부할 것');
     const tipText=A.priority?CATEGORIES[A.priority.key].label+' — '+CATEGORIES[A.priority.key].tip
-      :(A.total?(hasNextStage()?'약점이 보이지 않아요. 다음 단계에 도전해 보세요.':'약점이 보이지 않아요. 다른 목표 유형으로도 도전해 보세요.'):'단어를 판정하지 않고 끝났어요. 다시 도전해 보세요.');
+      :A.noWeakMsg;
     g.font='14px '+JF;const th=wrap(g,tipText,776).length*22+20;
     if(draw){g.fillStyle='#F7F3FC';g.fillRect(40,y,820,th);g.fillStyle='#7C5CBF';g.fillRect(40,y,4,th)}
     textBlock(g,draw,tipText,62,y+10,776,'14px '+JF,'#1f1b33',22);y+=th+14;

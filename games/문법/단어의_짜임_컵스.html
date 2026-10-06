@@ -7,7 +7,8 @@
      버그: 채점 전 → 키로 문항이 넘어가던 것 막음 (지침 6-1)
      2026.10.01 13:00 재시도 배너를 모든 단계로: 틀린 뒤 다시 풀어 맞히면 0~3단계도 '정답!'·색종이 대신 작은 재시도 배너 (첫 시도 정답은 그대로 큰 배너) 
      화면 2026.10.02 14:11: 게임 테마층 '낱말 블록과 퍼즐'(CSS 끝 블록 + 시작 화면 SVG). 문항·채점·로직 변경 없음
-     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 -->
+     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
+     2026.10.06 17:25 실제 조작 버그 검사·수정: '다음'·'게임 끝내기'를 마우스로 누른 뒤 Enter·Space로 문제가 넘어가거나 게임이 끝나던 버그, 다시 하기 직후 '게임 끝내기' 한 번에 끝나던 버그, 중간 종료 제목·총평, 채점 0개 판 정답률 –, 플레이 크레딧 가운뎃점 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -324,7 +325,7 @@ img.mascot{height:90px;border-radius:12px;-webkit-touch-callout:none;user-select
    </div>
    <div class="credit">
     제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-    제작일 2025.09.05 · <span id="lastMod">최종 수정 2026.10.05 03:00</span>
+    제작일 2025.09.05 · <span id="lastMod">최종 수정 2026.10.06 17:25</span>
    </div>
    <div class="privacy" id="privacyOffline">
     <b>🔒 개인정보 보호 안내</b><br>
@@ -400,7 +401,7 @@ img.mascot{height:90px;border-radius:12px;-webkit-touch-callout:none;user-select
    </div>
   </div>
  </div>
- <div class="mini-credit">제작 · 보라라샘 / 2025.09.05</div>
+ <div class="mini-credit">제작 · 보라라샘 · 2025.09.05</div>
 </div>
 
 <!-- ================= 종료 화면 ================= -->
@@ -451,7 +452,7 @@ img.mascot{height:90px;border-radius:12px;-webkit-touch-callout:none;user-select
 
 <script>
 const MADE_DATE = '2025.09.05';
-const LAST_MOD = '2026.10.05 03:00';
+const LAST_MOD = '2026.10.06 17:25';
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
 // ═══════════════════════════════════════════
@@ -751,6 +752,7 @@ document.addEventListener('keydown',e=>{
 });
 function beginPlay(){
   S.t0 = Date.now();
+  quitArm=0; $('quitBtn').textContent='게임 끝내기';   // 지난 판의 '한 번 더 누르면 종료'가 새 판에 남아 한 번에 끝나던 버그
   buildStMenu();
   show('play');
   renderQ();
@@ -993,6 +995,10 @@ document.addEventListener('keydown',e=>{
   if(k==='Enter'||k===' '||k==='ArrowRight'){
     if(S.banner){ e.preventDefault(); hideBanner(true); return; }
     if(isDone(q)){ e.preventDefault(); nextQ(); return; }
+    // 채점 전: 마우스로 누른 '다음'·'게임 끝내기' 버튼에 포커스가 남아 Enter·Space로 다시 눌리던 버그 막기(지침 6-1).
+    // 카드(#tray) 버튼만 키보드로 고를 수 있게 둔다
+    const ae=document.activeElement;
+    if((k===' '||k==='Enter') && !(ae && ae.closest && ae.closest('#tray'))) e.preventDefault();
     if(k===' '||k==='Enter'){ // 오답 상태: 힌트 닫고 다시 풀기
       if($('fb').querySelector('.hint')){ e.preventDefault(); $('fb').innerHTML=''; }
     }
@@ -1018,8 +1024,8 @@ function computeStats(){
   const elig=Object.keys(cats).filter(k=>cats[k].n>=2);
   let firstStudy=null, firstMsg='';
   const wrongTotal=retry+fail;
-  if(!graded.length) firstMsg='채점된 문항이 없어요. 문제를 풀어 본 뒤 다시 확인해 보세요.';
-  else if(wrongTotal===0) firstMsg='약점이 보이지 않아요. 다음 단계에 도전해 보세요.';
+  if(!graded.length) firstMsg='풀어 본 문제가 없어요.';
+  else if(wrongTotal===0) firstMsg= skipped ? '남은 문제를 마저 풀어 보세요.' : '약점이 보이지 않아요. 다음 단계에 도전해 보세요.';
   else if(elig.length && elig.every(k=>cats[k].ok/cats[k].n<.5)) firstMsg='유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.';
   else {
     let cand=Object.keys(cats).filter(k=>cats[k].n-cats[k].ok>0 && cats[k].n>=2);
@@ -1030,8 +1036,9 @@ function computeStats(){
   }
   const allWeak = firstMsg.startsWith('유형 구분 자체');
   let comment = acc>=95?'완벽해요!':acc>=85?'아주 잘했어요':acc>=70?'잘하고 있어요':acc>=50?'기본은 잡혔어요':'다시 한 번 도전해요';
-  if(!graded.length) comment='아직 푼 문항이 없어요';
-  if(skipped>0) comment=`끝까지 풀지 않았어요 (${skipped}문항 남음) · `+comment;
+  // 중간 종료면 칭찬 대신 더 연습 권유(화면연출표준 7장, 교사 결정 2026.10.06). 채점 0개면 '풀어 본 문제가 없어요'만
+  if(!graded.length) comment='풀어 본 문제가 없어요';
+  else if(skipped>0) comment=`끝까지 풀지 않았어요 (${skipped}문항 남음) · `+(acc>=70?'잘하고 있어요! 남은 문제까지 풀며 좀 더 연습해 보면 어떨까요?':'좀 더 연습해 보면 어떨까요? 남은 문제까지 풀어 보면 감이 잡혀요.');
   return {graded:graded.length, first, retry, fail, skipped, acc, cats, good, weak, firstMsg, comment, allWeak, max:maxScore(S.qs.length)};
 }
 function catList(keys,cats){ return keys.length?keys.map(k=>`${CATEGORIES[k].label} ${cats[k].ok}/${cats[k].n}`).join(' · '):'—'; }
@@ -1044,10 +1051,10 @@ function finish(){
   if(!S.finished){ S.finished=true; S.elapsed=Date.now()-S.t0; S.endAt=new Date(); }
   const R=computeStats(); S.R=R;
   $('eBand').textContent='문법 · '+stageLabel(S.stage);
-  $('eStage').textContent=stageLabel(S.stage)+' · 학습 결과';
+  $('eStage').textContent=stageLabel(S.stage)+(R.skipped?' · 여기까지 풀었어요':' · 학습 결과');
   $('eScore').innerHTML=`${S.score}점 <span style="font-size:18px;color:#8a84a3;font-weight:500">/ ${R.max}점 만점</span>`;
   $('eComment').textContent=R.comment;
-  $('eAcc').textContent=R.acc+'%';
+  $('eAcc').textContent=R.graded?R.acc+'%':'–';
   $('eCombo').textContent=S.maxCombo;
   $('eTime').textContent=fmtTime(S.elapsed);
   $('eDone').textContent=R.graded+' / '+S.qs.length;
@@ -1201,7 +1208,7 @@ function downloadReport(){
   doc.text(`단어의 짜임 컵스 · ${stageLabel(S.stage)} · ${name} · ${dateText(d)}`,{size:15,color:'#5b5670',gap:10});
   doc.box(b=>{
     b.text(`${S.score}점  /  ${R.max}점 만점`,{size:28,bold:true,color:'#3C3489',gap:6});
-    b.text(`정답률 ${R.acc}% (첫 시도 기준) · 정답 ${R.first} · 오답 ${R.retry+R.fail} · 최고 콤보 ${S.maxCombo} · 소요 시간 ${fmtTime(S.elapsed)}`,{size:15,gap:4});
+    b.text(`정답률 ${R.graded?R.acc+'%':'–'} (첫 시도 기준) · 정답 ${R.first} · 오답 ${R.retry+R.fail} · 최고 콤보 ${S.maxCombo} · 소요 시간 ${fmtTime(S.elapsed)}`,{size:15,gap:4});
     b.text(`첫 시도 정답 ${R.first} · 다시 풀어 맞힘 ${R.retry} · 못 맞힘 ${R.fail}`+(R.skipped?` · 미응답 ${R.skipped}문항`:''),{size:14,color:'#5b5670',gap:0});
   });
   doc.text('💬 총평  '+R.comment,{size:18,bold:true,color:'#7C5CBF',gap:10});

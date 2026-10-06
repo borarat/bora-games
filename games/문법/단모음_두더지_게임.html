@@ -6,7 +6,8 @@
      2026.10.01 13:00 안내: ㅚ·ㅟ 문구를 '단모음으로 발음하는 것이 원칙이지만, 이중 모음으로 발음할 수도 있어요'로
      2026.10.01 13:00 '게임 끝내기' 확인을 브라우저 confirm() 대신 화면 안 확인창으로 (떠 있는 동안 시간·두더지 멈춤, 계속하기·Esc면 이어서) 
      화면 2026.10.05 02:10: 게임 테마층 '두더지 굴 모음 지도'(시작 화면 그림, 모음 사각도). 문항·채점·로직 변경 없음
-     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 -->
+     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
+     2026.10.06 17:25 실제 조작 버그 검사·수정: '소리' 버튼을 누른 뒤 Space로 소리가 다시 바뀌던 버그, 연속 카드에 +점수, 중간 종료 제목·총평, 판정 0개 문구, 플레이 크레딧 가운뎃점 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -387,7 +388,7 @@ body.playing{overflow:hidden;}
 
    <div class="credit">
     <span class="seg">제작 · 보라라샘</span> · <span class="seg">전주서신중학교 교사</span> · <span class="seg">siaawase@gmail.com</span><br>
-    <span class="seg">제작일 2026.08.13</span> · <span class="seg" id="lastMod">최종 수정 2026.10.05 03:00</span>
+    <span class="seg">제작일 2026.08.13</span> · <span class="seg" id="lastMod">최종 수정 2026.10.06 17:25</span>
    </div>
 
    <div class="privacy" id="privacyOffline">
@@ -437,7 +438,7 @@ body.playing{overflow:hidden;}
    <div class="boardArea hammer"><div class="board" id="board"></div></div>
   </div>
  </div>
- <div class="playCredit">제작 · 보라라샘 / 2026.08.13</div>
+ <div class="playCredit">제작 · 보라라샘 · 2026.08.13</div>
 </section>
 
 <!-- ================= 종료 화면 ================= -->
@@ -475,7 +476,7 @@ body.playing{overflow:hidden;}
 
    <div class="credit">
     <span class="seg">제작 · 보라라샘</span> · <span class="seg">전주서신중학교 교사</span> · <span class="seg">siaawase@gmail.com</span><br>
-    <span class="seg">제작일 2026.08.13</span> · <span class="seg" id="lastMod2">최종 수정 2026.10.05 03:00</span>
+    <span class="seg">제작일 2026.08.13</span> · <span class="seg" id="lastMod2">최종 수정 2026.10.06 17:25</span>
    </div>
   </div>
  </div>
@@ -509,7 +510,7 @@ body.playing{overflow:hidden;}
 
 <script>
 const MADE_DATE = "2026.08.13";
-const LAST_MOD = "2026.10.05 03:00";
+const LAST_MOD = "2026.10.06 17:25";
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -844,7 +845,7 @@ function onTap(idx){
     floatText(h.hole, "✅ +" + gain, "#15803d");
     sndCorrect();
     pulseCombo();
-    if(S.combo === 3 || S.combo === 5 || (S.combo >= 10 && S.combo % 5 === 0)) comboFx(S.combo);
+    if(S.combo === 3 || S.combo === 5 || (S.combo >= 10 && S.combo % 5 === 0)) comboFx(S.combo, gain);
   } else {
     S.score = Math.max(0, S.score - WRONG_PENALTY);
     S.wrong++; S.lives--; S.combo = 0;
@@ -891,9 +892,9 @@ function cbCelebrate(n,pts){const sub=pts!=null&&pts!==''?'+'+pts:'';
   else if(n===3)cbShow('3연속 정답!',sub,'combo');
   else cbShow('정답!',sub,'')}
 /* 콤보 연출 (속도형, 게임을 멈추지 않음): 3연속·5의 배수 연속에만 카드. 효과음은 그대로 */
-function comboFx(c){
+function comboFx(c, gain){
   if(c === 3) sndCombo3(); else sndCombo5();
-  cbCelebrate(c);
+  cbCelebrate(c, gain);   // 카드에 얻은 점수(+N)도 함께(화면연출표준 3-1)
 }
 
 $("muteBtn").addEventListener("click", () => { muted = !muted; $("muteBtn").textContent = muted ? "🔇 소리" : "🔊 소리"; });
@@ -966,11 +967,15 @@ function analyze(){
     withErr.sort((a,b) => b.er - a.er || a.acc - b.acc || b.ap - a.ap);
     first = withErr[0].id;
   }
-  let verdict = rate === null ? "판정된 모음이 없어 기록이 없어요" : gradeText(rate);
-  const unfinished = S.reason === "quit" ? "끝까지 하지 않았어요 (남은 시간 " + fmtTime(S.time) + ")" : "";
+  // 중간 종료면 칭찬 대신 더 연습 권유(화면연출표준 7장, 교사 결정 2026.10.06). 판정 0개면 '풀어 본 문제가 없어요'
+  const early = S.reason === "quit" && judged > 0;
+  let verdict = rate === null ? "풀어 본 문제가 없어요" : early ? (rate >= 70 ? "잘하고 있어요! 남은 문제까지 풀며 좀 더 연습해 보면 어떨까요?" : "좀 더 연습해 보면 어떨까요? 남은 문제까지 풀어 보면 감이 잡혀요.") : gradeText(rate);
+  const unfinished = early ? "끝까지 하지 않았어요 (남은 시간 " + fmtTime(S.time) + ")" : "";
   let firstMsg;
   if(allWeak) firstMsg = "분류 기준 자체를 다시 익힐 단계예요. 시작 화면의 단모음 표를 먼저 읽어 보세요.";
   else if(!first && anyErr) firstMsg = "한 번씩만 나온 모음에서 실수했어요. 오답노트의 해설로 그 모음을 복습해 보세요.";
+  else if(!judged) firstMsg = "풀어 본 문제가 없어요.";
+  else if(!first && early) firstMsg = "남은 문제를 마저 풀어 보세요.";
   else if(!first) firstMsg = S.stage < STAGES.length ? "약점이 보이지 않아요. 다음 단계에 도전해 보세요." : "약점이 보이지 않아요. 다른 분류 기준으로도 도전해 보세요.";
   else firstMsg = "'" + V_BY_ID[first].ch + "' 판단법 — " + V_BY_ID[first].tip;
   return { judged, rate, good, weak, allWeak, first, firstMsg, verdict, unfinished };
@@ -993,7 +998,7 @@ function endGame(reason){
 
 function renderEnd(){
   const A = analyze(), cfg = S.cfg, T = TARGETS[S.target];
-  $("endTitle").textContent = S.reason === "life" ? "💔 생명을 모두 잃었어요!" : S.reason === "quit" ? "⏹ 게임을 끝냈어요" : "⏰ 시간 종료!";
+  $("endTitle").textContent = S.reason === "life" ? "💔 생명을 모두 잃었어요!" : S.reason === "quit" ? (A.judged ? "📝 여기까지 풀었어요" : "📝 풀어 본 문제가 없어요") : "⏰ 시간 종료!";
   $("endSub").textContent = cfg.n + "단계 " + cfg.label + " · 목표: " + T.label + " (" + T.members.join(" ") + ")";
   $("endBandRight").textContent = cfg.n + "단계 " + cfg.label;
   $("finalScore").textContent = S.score;
@@ -1019,7 +1024,7 @@ function renderEnd(){
   S.wrongLog.forEach(e => items.push({ v:V_BY_ID[e.id], count:e.count, kind:"wrong" }));
   S.missedLog.forEach(e => items.push({ v:V_BY_ID[e.id], count:e.count, kind:"miss" }));
   if(!items.length){
-    wrap.innerHTML = '<div class="repBox good" style="text-align:center"><b>🎊 잘못 탭하거나 놓친 모음이 없어요!</b></div>';
+    wrap.innerHTML = A.judged ? '<div class="repBox good" style="text-align:center"><b>'+(A.unfinished?'잘못 탭하거나 놓친 모음은 없어요. 남은 문제를 마저 풀어 보세요.':'🎊 잘못 탭하거나 놓친 모음이 없어요!')+'</b></div>' : '';
   } else {
     wrap.innerHTML = '<div class="wrongList"><h3>❌ 잘못 탭하거나 놓친 모음 (' + items.length + '개)</h3>' +
       items.map(it => '<div class="wItem"><span class="lab">' + (it.kind==="wrong" ? "❌ 잘못 탭 · " : "👀 놓침 · ") + vType(it.v) + '</span><span class="w">' + it.v.ch + '</span>' +
@@ -1193,7 +1198,9 @@ $("dlWrongBtn").addEventListener("click", () => {
   S.wrongLog.forEach(e => items.push({ v:V_BY_ID[e.id], count:e.count, kind:"wrong" }));
   S.missedLog.forEach(e => items.push({ v:V_BY_ID[e.id], count:e.count, kind:"miss" }));
   if(!items.length){
-    d.box(X, BW, "#f0fdf4", "#bbf7d0", 18, () => d.text("🎊 잘못 탭하거나 놓친 모음이 없어요! " + TARGETS[S.target].label + "을 정확하게 골라냈어요.", { size:19, weight:"bold", color:"#15803d", x:X+20, maxW:BW-40 }));
+    const A0 = analyze();   // 0개 판·중간 종료에는 칭찬하지 않기
+    const m0 = !A0.judged ? "풀어 본 문제가 없어요." : A0.unfinished ? "잘못 탭하거나 놓친 모음은 없어요. 남은 문제를 마저 풀어 보세요." : "🎊 잘못 탭하거나 놓친 모음이 없어요! " + TARGETS[S.target].label + "을 정확하게 골라냈어요.";
+    d.box(X, BW, "#f0fdf4", "#bbf7d0", 18, () => d.text(m0, { size:19, weight:"bold", color:"#15803d", x:X+20, maxW:BW-40 }));
     d.y += 12;
   } else {
     d.text("❌ 잘못 탭하거나 놓친 모음 (" + items.length + "개)", { size:20, weight:"bold", color:"#dc2626", gap:8 });
@@ -1314,6 +1321,8 @@ document.addEventListener("keydown", e => {
   }
   if(S && S.paused){ if(e.key === "Escape"){ e.preventDefault(); quitCancel(); } return; }
   if($("reviewModal").classList.contains("active") && e.key === "Escape"){ $("reviewModal").classList.remove("active"); return; }
+  // 플레이 중: 마우스로 누른 '소리'·'게임 끝내기' 버튼에 포커스가 남아 Space·Enter로 다시 눌리던 버그 막기
+  if($("playScreen").classList.contains("active") && S && !S.endAt && (e.key === " " || e.key === "Enter") && document.activeElement && document.activeElement.tagName === "BUTTON"){ e.preventDefault(); return; }
   if($("playScreen").classList.contains("active") && S && !S.endAt && e.code in KEYMAP){
     e.preventDefault(); onTap(KEYMAP[e.code]);
   }
