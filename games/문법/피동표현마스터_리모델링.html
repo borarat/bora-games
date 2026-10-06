@@ -4,7 +4,8 @@
      내용: 접미사 선택을 어간 끝소리로 설명한 부분 삭제 — 시작 화면 안내, 재시도 힌트, 유형별 tip 4개, 문항 해설 36개(형태 설명으로)
      문항: 20번 피동문 '두꺼운 책 밑에 장난감이 눌려 있다.' → '두꺼운 책에 장난감이 눌렸다.' (교사 승인, '-어 있-' 제거)
      2026.10.01 13:00 유형별 tip 4개 끝에 "헷갈리면 접미사를 붙여 문장 속에서 소리 내 읽어 보세요." 한 문장 추가 (받침 규칙은 넣지 않음)
-     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 -->
+     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
+     2026.10.06 16:15 6차 피동 묶음: 테마층 '카메라 두 대'(먹 #3D3D4A) / 오답 감점 −3 → −5(교사 결정, 지침 5-1) / 실제 조작 버그 검사·수정: 답하기 전 → 로 넘어감, 중간 종료 제목·총평(칭찬 대신 연습 권유), 채점 0개 판 정답률 0% 표시, 오답노트 0개 문구, 플레이 화면 크레딧 가운뎃점 -->
 <html lang="ko">
 <head>
 <meta charset="utf-8"/>
@@ -220,6 +221,14 @@ button{font-family:inherit}
 @media (prefers-reduced-motion: reduce){
   .ans-btn.shake{animation:none}
 }
+/* ═══ 게임 테마층 · 카메라 두 대 (2026.10.06) ═══
+   같은 장면을 양쪽에서 찍는 카메라 둘 — 무엇을 앞(주어)에 두고 찍느냐가 능동문과 피동문의 차이.
+   '당하는' 그림(맞는 사람·잡히는 사람)은 쓰지 않는다. 보조색 먹 #3D3D4A. 영역 팔레트·헤더 띠·문제 화면·정답/오답 색은 그대로.
+   이 블록과 시작 화면 SVG를 지우면 원래 모습 */
+:root{--th:#3D3D4A;--th-soft:#ECECF0}
+.title-row .keyArt{flex:0 0 auto;height:122px;width:auto;margin-left:18px}
+@media (max-width:860px){.title-row .keyArt{display:none}}
+.start-grid .box{border-left:4px solid var(--th)}
 </style>
 </head>
 <body>
@@ -235,6 +244,19 @@ button{font-family:inherit}
      <h1 class="title">피동 표현 마스터</h1>
      <div class="subtitle">능동문을 피동문으로! 알맞은 <b>피동 접미사</b>를 골라요</div>
     </div>
+    <svg class="keyArt" viewBox="0 0 260 126" aria-hidden="true">
+      <g stroke="#3D3D4A" stroke-width="2" stroke-linecap="round" fill="none"><path d="M32 64l-8 13M32 64v13M32 64l8 13"/><path d="M228 64l-8 13M228 64v13M228 64l8 13"/><line x1="98" y1="64" x2="162" y2="64"/></g>
+      <g stroke="#3D3D4A" stroke-width="1.6" stroke-dasharray="3 4" opacity=".55"><line x1="59" y1="52" x2="104" y2="52"/><line x1="201" y1="52" x2="164" y2="52"/></g>
+      <g stroke="#3D3D4A" stroke-width="2.5" stroke-linejoin="round" fill="#ECECF0">
+        <rect x="16" y="40" width="32" height="24" rx="4"/><rect x="22" y="34" width="10" height="7" rx="1.5"/><rect x="48" y="45" width="9" height="14" rx="2"/>
+        <rect x="212" y="40" width="32" height="24" rx="4"/><rect x="228" y="34" width="10" height="7" rx="1.5"/><rect x="203" y="45" width="9" height="14" rx="2"/>
+      </g>
+      <g fill="#3D3D4A"><circle cx="24" cy="47" r="2"/><circle cx="236" cy="47" r="2"/></g>
+      <g stroke="#3D3D4A" stroke-width="2.2"><rect x="110" y="41" width="22" height="22" rx="3" fill="#C9C9D3"/><circle cx="149" cy="52" r="11" fill="#fff"/></g>
+      <g stroke="#3D3D4A" stroke-width="1.8" fill="#fff"><rect x="10" y="86" width="88" height="36" rx="4"/><rect x="162" y="86" width="88" height="36" rx="4"/></g>
+      <g stroke="#3D3D4A" stroke-width="2"><circle cx="72" cy="104" r="6" fill="#fff" opacity=".7"/><rect x="24" y="92" width="25" height="25" rx="3" fill="#C9C9D3"/><rect x="221" y="98" width="13" height="13" rx="2" fill="#C9C9D3" opacity=".7"/><circle cx="190" cy="104" r="13" fill="#fff"/></g>
+      <g stroke="#3D3D4A" stroke-width="1.4" opacity=".45"><line x1="54" y1="80" x2="54" y2="86"/><line x1="206" y1="80" x2="206" y2="86"/></g>
+    </svg>
    </div>
 
    <div class="std-box"><span class="tag">성취기준</span><b>[9국04-05]</b> 피동 표현과 인용 표현의 의도와 효과를 분석하고 상황에 맞게 활용한다.</div>
@@ -253,7 +275,7 @@ button{font-family:inherit}
       <li>첫 시도에 맞히면 +10점이에요.</li>
       <li>3연속부터 콤보 보너스 +5점, 5연속부터 +10점이 더 붙어요.</li>
       <li>틀리면 한 번 더 풀 수 있고, 다시 풀어 맞히면 +5점이에요.</li>
-      <li>틀릴 때마다 -3점이에요. 0점 아래로는 내려가지 않아요.</li>
+      <li>틀릴 때마다 -5점이에요. 0점 아래로는 내려가지 않아요.</li>
       <li>단계별 만점은 <b id="maxLabel">330점</b>이에요.</li>
      </ul>
     </div>
@@ -278,7 +300,7 @@ button{font-family:inherit}
 
    <div class="maker">
     제작 · <b>보라라샘</b> · 전주서신중학교 교사 · siaawase@gmail.com<br>
-    제작일 2026.04.01 · <span id="lastMod">최종 수정 2026.10.05 03:00</span>
+    제작일 2026.04.01 · <span id="lastMod">최종 수정 2026.10.06 16:15</span>
    </div>
 
    <div class="privacy" id="privacyOffline">
@@ -334,7 +356,7 @@ button{font-family:inherit}
     <button class="nav swap" id="btnSwap" onclick="swapStage()"><span class="i">⇄</span><span id="swapLabel">2단계로</span></button>
    </div>
   </div>
-  <div class="gcredit">제작 · 보라라샘 / 2026.04.01</div>
+  <div class="gcredit">제작 · 보라라샘 · 2026.04.01</div>
  </div>
 </section>
 
@@ -370,7 +392,7 @@ button{font-family:inherit}
     <button class="btn sec" onclick="goHome()">⌂ 시작화면으로</button>
    </div>
    <div class="privacy" style="margin-top:10px;text-align:left" id="endPrivacy">입력하신 이름과 소감은 서버에 저장되지 않으며, 리포트 이미지(JPG) 생성용으로만 쓰입니다.</div>
-   <div class="maker" style="margin-top:12px">제작 · <b>보라라샘</b> · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.04.01 · 최종 수정 2026.10.05 03:00</div>
+   <div class="maker" style="margin-top:12px">제작 · <b>보라라샘</b> · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.04.01 · 최종 수정 2026.10.06 16:15</div>
   </div>
  </div>
 </section>
@@ -388,7 +410,7 @@ button{font-family:inherit}
 
 <script>
 const MADE_DATE='2026.04.01';
-const LAST_MOD='2026.10.05 03:00';
+const LAST_MOD='2026.10.06 16:15';
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -491,7 +513,7 @@ const QUESTIONS=[
 ];
 const SUFFIXES=[{s:'-이-',c:'y'},{s:'-히-',c:'p'},{s:'-리-',c:'s'},{s:'-기-',c:'g'}];
 const STAGES=[{no:1,label:'1단계'},{no:2,label:'2단계'}];
-const PER_STAGE=18, BASE=10, RETRY_PTS=5, PENALTY=3;
+const PER_STAGE=18, BASE=10, RETRY_PTS=5, PENALTY=5;   // 오답 감점 = 기본점의 절반(지침 5-1, 교사 결정 2026.10.06)
 function calcMax(n){ return n>=5 ? n*BASE + 10 + 10*(n-4) : n*BASE; }
 const MAX_SCORE=calcMax(PER_STAGE); // 330
 
@@ -609,7 +631,7 @@ function render(){
   }else if(e.st==='retry'){
     fb.innerHTML='<div class="hint"><span class="hl">💡 힌트</span><span class="ht">남은 접미사를 하나씩 붙여 문장 속에서 소리 내 읽고, 가장 자연스러운 말을 고르세요.</span>'+(S.awaitRetry?'<button class="retry-btn" onclick="retryQ()">↺ 다시 풀기 (Enter)</button>':'')+'</div>';
   }else{
-    fb.innerHTML='<div class="tipline">버튼을 누르거나 숫자 키 1~4로 고르세요. 모르면 → 키로 넘어가도 돼요.</div>';
+    fb.innerHTML='<div class="tipline">버튼을 누르거나 숫자 키 1~4로 고르세요. 모르면 다음 ▶ 버튼으로 넘어가도 돼요.</div>';
   }
   const last=S.idx===N-1;
   $('nextLabel').textContent= last ? '결과 보기' : '다음';
@@ -692,6 +714,13 @@ function calcStats(){
   return r;
 }
 function verdictOf(rate){ return rate>=.95?'완벽해요!':rate>=.85?'아주 잘했어요':rate>=.7?'잘하고 있어요':rate>=.5?'기본은 잡혔어요':'다시 한 번 도전해요'; }
+// 총평 한 곳에서(화면·리포트 JPG 공통). 중간 종료면 칭찬 대신 더 연습 권유(화면연출표준 7장, 교사 결정 2026.10.06)
+function verdictText(r){
+  if(r.answered===0) return '풀어 본 문제가 없어요';
+  if(r.skip) return '끝까지 풀지 않았어요 ('+r.skip+'문항 남음) · '+(r.rate>=.7?'잘하고 있어요! 남은 문제까지 풀며 좀 더 연습해 보면 어떨까요?':'좀 더 연습해 보면 어떨까요? 남은 문제까지 풀어 보면 감이 잡혀요.');
+  return verdictOf(r.rate);
+}
+function rateText(r){ return r.answered ? Math.round(r.rate*100)+'%' : '–'; }
 function emojiOf(rate){ return rate>=.95?'🏆':rate>=.85?'🌳':rate>=.7?'🌿':rate>=.5?'🌱':'💪'; }
 function analyze(r){
   const shown=CAT_ORDER.filter(k=>r.cats[k].n>=2);
@@ -699,7 +728,8 @@ function analyze(r){
   const bad=shown.filter(k=>r.cats[k].c1/r.cats[k].n<.5);
   const allWeak= shown.length>0 && shown.every(k=>r.cats[k].c1/r.cats[k].n<.5);
   let first=null, firstMsg='';
-  if(r.answered===0){ firstMsg='푼 문제가 없어요. 다시 도전해 보세요.'; }
+  if(r.answered===0){ firstMsg='풀어 본 문제가 없어요.'; }
+  else if(r.answered===r.c1&&r.skip){ firstMsg='남은 문제를 마저 풀어 보세요.'; }
   else if(r.answered===r.c1){ firstMsg= S.stage<STAGES.length ? '약점이 보이지 않아요. 다음 단계에 도전해 보세요.' : '약점이 보이지 않아요. 이 단계를 다시 섞어서 도전해 보세요.'; }
   else if(allWeak && shown.length>=2){ firstMsg='유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.'; }
   else {
@@ -722,11 +752,11 @@ function finish(){
   document.querySelectorAll('.send-status').forEach(x=>x.remove());
   const r=calcStats(), a=analyze(r);
   $('endBandR').textContent=stageLabel();
-  $('resTitle').textContent=stageLabel()+' 끝! 수고했어요';
-  $('resEmoji').textContent=emojiOf(r.rate);
+  $('resTitle').textContent= r.skip ? '여기까지 풀었어요' : stageLabel()+' 끝! 수고했어요';
+  $('resEmoji').textContent= r.skip ? '📝' : emojiOf(r.rate);
   $('resScore').innerHTML=S.score+'점 <small>/ '+MAX_SCORE+'점 만점</small>';
-  $('resVerdict').textContent= r.answered===0 ? '푼 문제가 없어요. 다시 도전해 보세요.' : (r.skip?'끝까지 풀지 않았어요 ('+r.skip+'문항 남음) · ':'')+verdictOf(r.rate)+' · 정답률 '+Math.round(r.rate*100)+'%';
-  const st=[['첫 시도 정답',r.c1],['다시 풀어 맞힘',r.c2],['못 맞힘',r.x],['미응답',r.skip],['정답률',Math.round(r.rate*100)+'%'],['최고 콤보',S.maxCombo],['소요 시간',fmtTime(S.elapsed)],['푼 문항',r.answered+' / '+r.N]];
+  $('resVerdict').textContent= verdictText(r)+(r.answered?' · 정답률 '+rateText(r):'');
+  const st=[['첫 시도 정답',r.c1],['다시 풀어 맞힘',r.c2],['못 맞힘',r.x],['미응답',r.skip],['정답률',rateText(r)],['최고 콤보',S.maxCombo],['소요 시간',fmtTime(S.elapsed)],['푼 문항',r.answered+' / '+r.N]];
   $('statGrid').innerHTML=st.map(s=>'<div class="stat"><b>'+s[1]+'</b><span>'+s[0]+'</span></div>').join('');
   $('repGood').innerHTML=a.good.length? '<div class="chips">'+a.good.map(k=>'<span class="chip good">✅ '+CATEGORIES[k].label+' '+r.cats[k].c1+'/'+r.cats[k].n+'</span>').join('')+'</div>' : '<div class="muted">아직 모두 맞힌 유형이 없어요.</div>';
   $('repBad').innerHTML=a.bad.length? '<div class="chips">'+a.bad.map(k=>'<span class="chip bad">📌 '+CATEGORIES[k].label+' '+r.cats[k].c1+'/'+r.cats[k].n+'</span>').join('')+'</div>' : '<div class="muted">정답률 50% 미만인 유형이 없어요.</div>';
@@ -836,7 +866,9 @@ function saveNote(){
     y=T(ctx,draw,stageLabel()+' · '+name+' · '+ts.disp,P,y+4,F(500,16),'#6B6390',mw,24);
     y+=14; if(draw){ ctx.strokeStyle='#EAE5F8'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(P,y); ctx.lineTo(W-P,y); ctx.stroke(); } y+=20;
     if(!wrongs.length){
-      y=T(ctx,draw,'틀린 문제가 없어요! 피동 접미사를 완벽하게 골랐어요.',P,y,F(700,22),'#2E8B57',mw,32)+20;
+      const r0=calcStats(); // 오답 0개 문구도 같은 계산에서: 0개 판·중간 종료에 칭찬하지 않기
+      const msg0= r0.answered===0 ? '풀어 본 문제가 없어요.' : r0.skip ? '틀린 문제는 없어요. 남은 문제를 마저 풀어 보세요.' : '틀린 문제가 없어요! 피동 접미사를 완벽하게 골랐어요.';
+      y=T(ctx,draw,msg0,P,y,F(700,22),r0.answered&&!r0.skip?'#2E8B57':'#3C3489',mw,32)+20;
     }else{
       y=T(ctx,draw,'다시 볼 문제 '+wrongs.length+'개',P,y,F(700,17),'#3C3489',mw,26)+10;
       wrongs.forEach(e=>{
@@ -877,13 +909,13 @@ function saveReport(){
     // 점수
     y=T(ctx,draw,'최종 점수  '+S.score+'점 / '+MAX_SCORE+'점 만점',P,y,F(700,24),'#7C5CBF',mw,34)+8;
     // 요약 칸
-    const cells=[['정답률',Math.round(r.rate*100)+'%'],['첫 시도 정답',r.c1+''],['오답',(r.c2+r.x)+''],['최고 콤보',S.maxCombo+''],['소요 시간',fmtTime(S.elapsed)]];
+    const cells=[['정답률',rateText(r)],['첫 시도 정답',r.c1+''],['오답',(r.c2+r.x)+''],['최고 콤보',S.maxCombo+''],['소요 시간',fmtTime(S.elapsed)]];
     const cw=(mw-4*10)/5;
     cells.forEach((c,i)=>{ const x=P+i*(cw+10); if(draw){ ctx.fillStyle='#F7F3FC'; roundBox(ctx,x,y,cw,66,12); ctx.fill(); ctx.textAlign='center'; ctx.textBaseline='top'; ctx.fillStyle='#3C3489'; ctx.font=F(700,20); ctx.fillText(c[1],x+cw/2,y+10); ctx.fillStyle='#6B6390'; ctx.font=F(500,13); ctx.fillText(c[0],x+cw/2,y+40); ctx.textAlign='left'; } });
     y+=78;
     y=T(ctx,draw,'첫 시도 정답 '+r.c1+' · 다시 풀어 맞힘 '+r.c2+' · 못 맞힘 '+r.x+' · 미응답 '+r.skip,P,y,F(500,14),'#555555',mw,22)+12;
     // 총평
-    const verdict= r.answered===0 ? '푼 문제가 없어요' : (r.skip?'끝까지 풀지 않았어요 ('+r.skip+'문항 남음) · ':'')+verdictOf(r.rate);
+    const verdict=verdictText(r);
     y=T(ctx,draw,'총평  '+verdict,P,y,F(700,19),'#3C3489',mw,28)+14;
     // 잘하는 / 보완
     y=T(ctx,draw,'잘하는 유형',P,y,F(700,16),'#2E8B57',mw,24);
@@ -915,7 +947,7 @@ function xSheet(name,cols,head,rows,tail){
   return '<Worksheet ss:Name="'+xe(name)+'"><Table>'+cols.map(w=>'<Column ss:Width="'+w+'"/>').join('')+xRow(head,'h')+rows.map(r=>xRow(r)).join('')+(tail||[]).map(r=>xRow(r)).join('')+'</Table></Worksheet>';
 }
 function downloadTeacherXls(){
-  const info=[[],['성취기준',STD_CODE+' '+STD_TEXT],['배점 규칙','첫 시도 정답 +10 · 3~4연속 +5 · 5연속부터 +10 · 다시 풀어 정답 +5 · 오답 -3(0점 하한) · 단계별 만점 '+MAX_SCORE+'점'],['총문항 수','36문항 (1단계 18 · 2단계 18)'],['단계 배분','페이지를 열 때마다 유형별로 고르게 두 단계에 무작위 배분, 단계 안에서도 순서를 섞음'],['크레딧','제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com · 제작일 '+MADE_DATE+' · 최종 수정 '+LAST_MOD]];
+  const info=[[],['성취기준',STD_CODE+' '+STD_TEXT],['배점 규칙','첫 시도 정답 +10 · 3~4연속 +5 · 5연속부터 +10 · 다시 풀어 정답 +5 · 오답 -5(0점 하한) · 단계별 만점 '+MAX_SCORE+'점'],['총문항 수','36문항 (1단계 18 · 2단계 18)'],['단계 배분','페이지를 열 때마다 유형별로 고르게 두 단계에 무작위 배분, 단계 안에서도 순서를 섞음'],['크레딧','제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com · 제작일 '+MADE_DATE+' · 최종 수정 '+LAST_MOD]];
   const qRows=QUESTIONS.map(q=>[q.id,CATEGORIES[q.cat].label,q.verb,q.active,(q.masked||q.passive.split(' ').slice(0,-1).join(' ')+' ??다.'),q.passive,q.answer,q.structure,q.detail]);
   const sumRows=CAT_ORDER.map(k=>{ const ids=QUESTIONS.filter(q=>q.cat===k).map(q=>q.id); return [CATEGORIES[k].label,CATEGORIES[k].desc,ids.length,ids.join(', '),CATEGORIES[k].tip]; });
   const xml='<?xml version="1.0" encoding="UTF-8"?><?mso-application progid="Excel.Sheet"?>'+
@@ -941,7 +973,7 @@ document.addEventListener('keydown',ev=>{
   const e=S.qs[S.idx];
   if(['1','2','3','4'].includes(k)){ const b=$('answers').children[+k-1]; if(b&&!b.disabled) b.click(); return; }
   if(k==='Enter'||k===' '){ ev.preventDefault(); if(isGraded(e)) goNext(); else if(S.awaitRetry) retryQ(); return; }
-  if(k==='ArrowRight'){ ev.preventDefault(); goNext(); }
+  if(k==='ArrowRight'){ ev.preventDefault(); if(isGraded(e)) goNext(); } // 지침 6-1: 채점 전 → 로 넘어가지 않음(건너뛰기는 '다음' 버튼)
   else if(k==='ArrowLeft'){ ev.preventDefault(); goPrev(); }
 });
 
