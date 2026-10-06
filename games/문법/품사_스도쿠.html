@@ -2,7 +2,9 @@
 <html lang="ko">
 <!-- 리모델링 기록
   2026.10.01 19:00 (8차) 맞힌 칸 잠금(점수 한 번만), 재전송 시 시간 보너스 한 번만, PART 2 "의미에 따른"→"형태·기능·의미에 따른", 관형사 예 새→헌, 오답 표시 0.65초 동안 칸 잠금, 화면 크기 바뀔 때 맞힌 칸 유지
-  2026.10.06 01:30 테마층 '신문 퍼즐 면'(시작 화면 신문·연필 그림, 보조색 먹 #3D3D4A) · 정답·연속 알림을 공통 초록 정답 카드(#cbn)로 · 버그: 오답 표시 중이나 마지막 칸 직후 새 판을 시작하면 새 판이 망가지거나 결과 화면이 새 판 값으로 뜨던 것, PART 1 결과 화면 정리표에서 관계언·수식언 색이 보드 색과 뒤바뀌던 것 -->
+  2026.10.06 01:30 테마층 '신문 퍼즐 면'(시작 화면 신문·연필 그림, 보조색 먹 #3D3D4A) · 정답·연속 알림을 공통 초록 정답 카드(#cbn)로 · 버그: 오답 표시 중이나 마지막 칸 직후 새 판을 시작하면 새 판이 망가지거나 결과 화면이 새 판 값으로 뜨던 것, PART 1 결과 화면 정리표에서 관계언·수식언 색이 보드 색과 뒤바뀌던 것
+  2026.10.06 01:10 '게임 끝내기' 추가(교사 결정)·중간 종료 총평 — 지금까지 채운 결과로 마무리, 시간 보너스는 다 채웠을 때만, 끝까지 안 채우면 칭찬 문구 대신 '끝까지 풀지 않았어요 (n칸 남음)', 앱스크립트에 채운 칸·남은 칸(answeredCount·skippedCount) 함께 전송, 전송 안내가 판마다 쌓이던 것 정리
+     2026.10.06 12:30 실제 조작 버그 검사 처음부터 다시 실행 — 전 항목 통과 확인 후 사이트 반영 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -228,6 +230,8 @@
   .banner.line{background:#e8e0fb;color:#5a3fb0;}
 
   .grade{text-align:center;font-weight:900;font-size:1.8rem;margin:6px 0 14px;color:var(--pt-dk);}
+  .grade.unfinished{font-size:1.25rem;line-height:1.5;}
+  .grade .unfin{display:block;font-size:1rem;font-weight:700;color:var(--ink2);margin-bottom:2px;}
   .result-box{margin-top:6px;background:var(--paper);border:2px solid var(--pt-soft);border-radius:14px;padding:18px;}
   .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
   .result-grid .stat{min-width:0;padding:10px;}
@@ -369,7 +373,7 @@
 
       <div class="credit-box">
         <p>제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com</p>
-        <p>제작일 2026.06.08 · <span id="lastMod">최종 수정 2026.10.06 01:30</span> · Made with Claude</p>
+        <p>제작일 2026.06.08 · <span id="lastMod">최종 수정 2026.10.06 12:30</span></p>
       </div>
 
       <div class="privacy" id="privacyOffline">
@@ -430,6 +434,7 @@
           <button class="btn ghost" onclick="restart()">처음부터<br>다시하기</button>
           <button class="btn ghost" onclick="backToStage()">단계 선택</button>
           <button class="btn ghost" onclick="show('intro')">시작화면으로</button>
+          <button class="btn ghost" id="endBtn" onclick="endGame()">게임 끝내기</button>
           <div class="pick-side">
             <div class="pick-side-label">선택한 카드</div>
             <div class="pick-box" id="pickBoxSide">없음</div>
@@ -445,7 +450,7 @@
   <section id="done" class="screen">
     <div class="area-bar"><span>문법</span></div>
     <div class="frame-inner">
-      <h1 class="game-h" style="margin-top:14px"><span class="small">수고했어요</span>학습 완료!</h1>
+      <h1 class="game-h" style="margin-top:14px"><span class="small" id="doneSub">수고했어요</span><span id="doneTitle">학습 완료!</span></h1>
       <div class="grade" id="grade"></div>
       <div class="result-box">
         <div class="result-grid">
@@ -740,7 +745,7 @@ function buildPalette(){
 // 칸 클릭
 // ═══════════════════════════════════════════
 function onCellClick(r,c){
-  if(state.fixed[r][c])return;const el=cellEl(r,c);
+  if(state.finished||state.fixed[r][c])return;const el=cellEl(r,c);
   if(state.grid[r][c]!==-1||el.dataset.pending)return; // 맞힌 칸·오답 표시 중인 칸은 잠금 — 지웠다 다시 채워 점수·콤보·줄 보너스를 또 받지 않도록 (2026.10.01)
   if(state.selChip===null){banner('낱말 카드를 먼저 고르세요','no');return;}
   const guess=state.selChip,answer=state.solution[r][c];
@@ -768,7 +773,7 @@ function checkLineBonus(r,c){
     state.score+=lb*lines;
     if(rd)for(let i=0;i<n;i++)flashLineCell(r,i);
     if(cd)for(let i=0;i<n;i++)flashLineCell(i,c);
-    const st=state;setTimeout(()=>{if(state!==st)return;sndLine();banner((lines===2)?'가로·세로 동시 완성! +'+(lb*lines):'한 줄 완성! +'+lb,'line');},520);
+    const st=state;setTimeout(()=>{if(state!==st||state.ended)return;sndLine();banner((lines===2)?'가로·세로 동시 완성! +'+(lb*lines):'한 줄 완성! +'+lb,'line');},520);
     updateHUD();
   }
 }
@@ -788,9 +793,22 @@ function checkDone(){
   stopTimer();const st=state;setTimeout(()=>{if(state===st)showResult();},800);  // 그사이 새 판을 시작했으면 결과를 띄우지 않는다 (2026.10.06)
 }
 
+// '게임 끝내기' (2026.10.06 교사 결정) — 한 번 확인한 뒤 지금까지 채운 결과로 마무리. 시간 보너스는 다 채웠을 때만
+function endGame(){
+  if(state.finished||!$('game').classList.contains('active'))return;   // 이미 끝난 판(마지막 칸을 채움)이면 두 번 끝내지 않는다
+  if(!confirm('게임을 끝낼까요? 지금까지 채운 결과로 마무리돼요.'))return;
+  if(state.finished)return;
+  state.finished=true;state.ended=true;
+  state.elapsed=Math.floor((Date.now()-state.startTime)/1000);
+  stopTimer();cbHide();$('banner').className='banner';
+  showResult();
+}
+function remainingBlanks(){let k=0;const n=DATA.size;for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(state.grid[r][c]===-1)k++;return k;}
+
 function showResult(){
   // 시간 보너스는 한 번만 더함 — 재전송으로 showResult가 다시 불려도 중복 가산 안 됨 (2026.10.01)
-  if(state.timeBonus===undefined){state.timeBonus=timeBonus(currentPart,state.elapsed);state.score+=state.timeBonus;}
+  const left=remainingBlanks(),unfinished=left>0;
+  if(state.timeBonus===undefined){state.timeBonus=unfinished?0:timeBonus(currentPart,state.elapsed);state.score+=state.timeBonus;}
   const bonus=state.timeBonus;
   $('rScore').textContent=state.score;$('rOk').textContent=state.ok;$('rNo').textContent=state.no;
   $('rCombo').textContent=state.maxCombo;$('rTime').textContent=fmtTime(state.elapsed);$('rTimeBonus').textContent='+'+bonus;
@@ -799,10 +817,23 @@ function showResult(){
   else if(bonus>=30)tm.textContent='⏱️ 빠르게 풀었어요! 시간 보너스 +'+bonus;
   else if(bonus>0)tm.textContent='🕐 시간 보너스 +'+bonus+' (더 빠르면 점수 UP!)';
   else tm.textContent='🐢 시간 보너스는 없지만 끝까지 잘 풀었어요!';
-  let grade;
-  if(state.no===0)grade='⭐ 완벽해요! ⭐';else if(state.no<=2)grade='🌟 아주 잘했어요';
-  else if(state.no<=5)grade='👍 잘했어요';else grade='💪 다시 도전!';
-  $('grade').textContent=grade;
+  if(unfinished)tm.textContent='시간 보너스는 빈칸을 모두 채웠을 때만 받아요.';
+  const g=$('grade');g.className='grade';
+  $('doneSub').textContent=unfinished?'게임을 끝냈어요':'수고했어요';
+  $('doneTitle').textContent=unfinished?'여기까지 채웠어요':'학습 완료!';
+  if(unfinished){   // 끝까지 채우지 않은 판 — 칭찬 문구 없이 (2026.10.06 교사 결정)
+    g.classList.add('unfinished');
+    if(state.ok+state.no===0){g.textContent='풀어 본 문제가 없어요';tm.textContent='';}
+    else{
+      const acc=state.ok/(state.ok+state.no);   // 놓은 횟수 가운데 맞게 놓은 비율
+      g.innerHTML='<span class="unfin">끝까지 풀지 않았어요 ('+left+'칸 남음)</span>'+(acc>=0.7?'잘하고 있어요! 남은 칸까지 채우며 좀 더 연습해 보면 어떨까요?':'좀 더 연습해 보면 어떨까요? 남은 칸까지 채워 보면 감이 잡혀요.');
+    }
+  }else{
+    let grade;
+    if(state.no===0)grade='⭐ 완벽해요! ⭐';else if(state.no<=2)grade='🌟 아주 잘했어요';
+    else if(state.no<=5)grade='👍 잘했어요';else grade='💪 다시 도전!';
+    g.textContent=grade;
+  }
   $('summaryTitle').textContent=DATA.summaryTitle;
   let html='<ul class="summary-list">';
   DATA.summary.forEach(item=>{const i=DATA.parts.indexOf(item.name);html+='<li><b style="color:var('+DATA.colors[i]+')">'+item.name+'</b><span class="sdesc">'+item.desc+'</span></li>';});
@@ -810,9 +841,10 @@ function showResult(){
 
   // ── 연동 모드: 결과 전송 ──
   if(IS_ONLINE&&STUDENT.verified){
+    $('onlineResultMsg').innerHTML='';   // 지난 판의 전송 안내가 쌓이지 않게
     submitResult({
       studentId:STUDENT.id,studentName:STUDENT.name,className:STUDENT.className,
-      totalQuestions:state.totalBlanks,correctCount:state.ok,score:state.score,
+      totalQuestions:state.totalBlanks,correctCount:state.ok,answeredCount:state.ok,skippedCount:left,score:state.score,
       elapsedSeconds:state.elapsed,wrongItems:'',reflection:''
     }).then(res=>{
       const el=document.createElement('div');
