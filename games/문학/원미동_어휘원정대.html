@@ -3,7 +3,8 @@
 <!-- 리모델링 기록
      2026.10.02 00:30 10차 — 양식→糧食·상호→商號로 뜻 통일, 3단계 구실 가짜 뜻풀이 교체(01:00 반대 뜻으로), 뜻 비슷한 낱말 오답 보기 짝 제외, 답하기 전 Enter·Space·→ 건너뜀 막음, 채점 0문항 문구, 총평 반올림 기준, wrongItems=첫 시도에 못 맞힌 문항, 연동 모드 JPG 개인정보 문구, 4단계 '게임 설정(원작에 없음)' 표시·결말 문구, 1단계 힌트 첫 글자만, 콤보 단계마다 새로 시작(전체 만점 2300)
      2026.10.02 01:30 — 2단계 빈칸의 ○ 글자 수 표시·글자 수 힌트 삭제(보기 글자 수로 답이 드러남), 보기는 기본형이고 문장에서 활용형으로 들어간다는 안내와 해설 추가
-     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 / 이전·다음·게임 끝내기 내비게이션 바를 오른쪽으로(교사 요청) -->
+     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 / 이전·다음·게임 끝내기 내비게이션 바를 오른쪽으로(교사 요청)
+     2026.10.07 23:01 9차: 테마층(1980년대 동네 골목) + 실제 조작 버그 검사·수정 — Made with 삭제·총평·보완 칸 하나·자동 종료·재감점·엑셀 정답 빨강 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -285,6 +286,15 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 }
 ::-webkit-scrollbar{width:9px}
 ::-webkit-scrollbar-thumb{background:#bcdfd2;border-radius:5px}
+
+/* ═══ 게임 테마층 · 1980년대 동네 골목 (2026.10.07) ═══
+   간판을 단 낮은 가게들이 늘어선 원미동 골목. 보조색 머스터드 #C99A2E. 영역 팔레트·헤더 띠·정답/오답 색·흰 문제 카드·정답 카드는 그대로.
+   이 블록과 시작 화면 SVG를 지우면 원래 모습 */
+:root{--th:#C99A2E}
+.head .keyArt{margin-left:auto;flex:none;height:100px;width:auto}
+@media (max-width:860px){.head .keyArt{display:none}}
+#start .box{border-left:4px solid var(--th)}
+#start .box h3{color:var(--th)}
 </style>
 </head>
 <body>
@@ -301,6 +311,38 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
     <div class="title">원미동 <span class="dot">어휘 원정대</span></div>
     <div class="subtitle">양귀자 「일용할 양식」 어휘 57개 — 훑고, 넣어 보고, 가려내고, 직접 써 보는 네 단계</div>
    </div>
+   <svg class="keyArt" viewBox="0 0 300 120" aria-hidden="true">
+    <!-- 전봇대와 전깃줄 -->
+    <rect x="284" y="10" width="5" height="104" fill="#6d5a3a"/>
+    <rect x="276" y="18" width="21" height="3" fill="#6d5a3a"/>
+    <path d="M278 21 Q200 36 120 24 M296 21 Q220 44 140 32" fill="none" stroke="#6d5a3a" stroke-width="1"/>
+    <!-- 가게 1: 동네 슈퍼(바구니 간판·줄무늬 차양) -->
+    <rect x="8" y="50" width="86" height="62" fill="#F6EEDC" stroke="#8a6d2a" stroke-width="1.5"/>
+    <rect x="12" y="44" width="78" height="17" rx="2" fill="#C99A2E"/>
+    <g fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"><path d="M42 50 h18 l-3 8 h-12 z"/><path d="M46 50 l4 -4 l4 4"/></g>
+    <g><rect x="8" y="61" width="86" height="7" fill="#fff" stroke="#8a6d2a" stroke-width="1"/>
+     <g fill="#C99A2E"><rect x="8" y="61" width="11" height="7"/><rect x="30" y="61" width="11" height="7"/><rect x="52" y="61" width="11" height="7"/><rect x="74" y="61" width="11" height="7"/></g></g>
+    <rect x="16" y="76" width="34" height="22" fill="#DCEFF0" stroke="#8a6d2a" stroke-width="1.2"/>
+    <rect x="58" y="76" width="26" height="36" fill="#B98A52" stroke="#8a6d2a" stroke-width="1.2"/>
+    <g fill="#E8C772" stroke="#8a6d2a" stroke-width=".8"><rect x="18" y="100" width="9" height="12"/><rect x="29" y="100" width="9" height="12"/><rect x="40" y="100" width="9" height="12"/></g>
+    <!-- 가게 2: 사진관(2층, 카메라 간판) -->
+    <rect x="102" y="34" width="84" height="78" fill="#EFE6D2" stroke="#8a6d2a" stroke-width="1.5"/>
+    <rect x="98" y="30" width="92" height="5" fill="#8a6d2a"/>
+    <rect x="114" y="40" width="22" height="16" fill="#DCEFF0" stroke="#8a6d2a" stroke-width="1"/><rect x="152" y="40" width="22" height="16" fill="#DCEFF0" stroke="#8a6d2a" stroke-width="1"/>
+    <rect x="106" y="62" width="76" height="17" rx="2" fill="#C99A2E"/>
+    <g fill="none" stroke="#fff" stroke-width="2"><rect x="135" y="65" width="18" height="11" rx="2"/><circle cx="144" cy="70.5" r="3.2"/><path d="M139 65 l2 -2.5 h6 l2 2.5"/></g>
+    <rect x="110" y="86" width="40" height="22" fill="#DCEFF0" stroke="#8a6d2a" stroke-width="1.2"/>
+    <rect x="156" y="84" width="24" height="28" fill="#B98A52" stroke="#8a6d2a" stroke-width="1.2"/>
+    <!-- 가게 3: 부동산(집 모양 간판) -->
+    <rect x="194" y="56" width="78" height="56" fill="#F6EEDC" stroke="#8a6d2a" stroke-width="1.5"/>
+    <rect x="198" y="50" width="70" height="17" rx="2" fill="#C99A2E"/>
+    <g fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"><path d="M224 59 l9 -6 l9 6"/><path d="M227 58 v6 h12 v-6"/></g>
+    <rect x="202" y="74" width="36" height="24" fill="#DCEFF0" stroke="#8a6d2a" stroke-width="1.2"/>
+    <line x1="220" y1="74" x2="220" y2="98" stroke="#8a6d2a" stroke-width="1"/>
+    <rect x="244" y="78" width="22" height="34" fill="#B98A52" stroke="#8a6d2a" stroke-width="1.2"/>
+    <!-- 골목 바닥 -->
+    <rect x="0" y="112" width="300" height="5" rx="2" fill="#d9cfb8"/>
+   </svg>
   </div>
 
   <div class="cols">
@@ -366,8 +408,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
    <span style="white-space:nowrap"><b>전주서신중학교 교사</b></span>
    <span style="white-space:nowrap"><b>siaawase@gmail.com</b></span>
    <span style="white-space:nowrap">제작일 <b>2026.08.25</b></span>
-   <span style="white-space:nowrap" id="lastMod">최종 수정 2026.10.05 03:00</span>
-   <span style="white-space:nowrap">Made with Claude</span>
+   <span style="white-space:nowrap" id="lastMod">최종 수정 2026.10.07 23:01</span>
   </div>
 
   <div class="privacy" id="privacyOffline">
@@ -432,7 +473,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
      <div class="fb" id="fb"></div>
     </div>
    </div>
-   <div class="sig">제작 · 보라라샘 / 2026.08.25</div>
+   <div class="sig">제작 · 보라라샘 · 2026.08.25</div>
   </div>
  </div>
 </div>
@@ -447,7 +488,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
   <div class="ehead">
    <img id="mascot2" alt="보라라샘">
    <div>
-    <h2>학습을 마쳤어요!</h2>
+    <h2 id="endTitle">학습을 마쳤어요!</h2>
     <p id="endStage">1단계 · 어휘 스프린트</p>
    </div>
   </div>
@@ -523,10 +564,10 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
    비상교육 중학 국어 2 (박현숙) 1단원 「함께 살아가는 즐거움」
    01. 사회를 비추는 문학 — 양귀자 「일용할 양식」 어휘 학습지
    제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com
-   제작일 2026.08.25 · 최종 수정 2026.10.05 03:00
+   제작일 2026.08.25 · 최종 수정 2026.10.07 23:01
    ========================================================= */
 const MADE_DATE = '2026.08.25';
-const LAST_MOD  = '2026.10.05 03:00';
+const LAST_MOD  = '2026.10.07 23:01';
 const STD_CODE  = '[9국05-05]';
 const STD_TEXT  = '작품에 반영된 사회·문화적 상황을 이해하며 작품을 감상한다.';
 
@@ -1024,7 +1065,7 @@ function startMode(mode){
   doStartMode(mode);
 }
 function doStartMode(mode){
-  ac(); closeBanner(true);
+  ac(); closeBanner(true); autoTok++;
   S.mode=mode; S.i=0; S.score=0; S.combo=0; S.comboStage=0; S.best=0; S.sale=0; S.t0=Date.now(); S.endAt=null;
   S.ranges={}; S.reordered={};
   let list=[], max=0;
@@ -1157,6 +1198,7 @@ function paintHint(q){
 function pick(idx){
   const q=S.qs[S.i];
   if(q.done) return;
+  if(q.wrong.indexOf(idx)>=0) return;   /* 이미 틀린 보기를 다시 눌러도 또 감점하지 않는다 */
   /* 콤보는 단계마다 새로 시작한다 (지침 5-1) */
   if(S.comboStage!==q.stage){ S.combo=0; S.comboStage=q.stage; }
   q.tries++;
@@ -1185,6 +1227,7 @@ function pick(idx){
       sOK();
       cbShow('다시 풀어 맞힘','+'+q.gained,'retry');
     }
+    checkAllDone();
     return;
   }
   if(q.wrong.indexOf(idx)<0) q.wrong.push(idx);
@@ -1194,7 +1237,7 @@ function pick(idx){
   $('bandRight').textContent=(S.i+1)+' / '+S.qs.length+' · '+S.score+'점';
   $('pCombo').textContent='🔥 0';
   if(q.stage===4) $('pSale').textContent='매상 '+S.sale;
-  if(q.tries>=3){ q.done=true; q.correct=false; renderQ(); }
+  if(q.tries>=3){ q.done=true; q.correct=false; renderQ(); checkAllDone(); }
   else{
     const el=$('answers').children[idx];
     if(el){ el.classList.remove('ng'); void el.offsetWidth; el.classList.add('ng'); }
@@ -1202,11 +1245,22 @@ function pick(idx){
   }
 }
 
+/* 모든 문항이 채점되면 약 2초 뒤 결과 화면. 그사이 화면이 바뀌거나 새 판을 시작하면 무효 */
+let autoTok=0;
+function checkAllDone(){
+  if(S.qs.some(q=>!q.done)) return;
+  const tok=++autoTok;
+  setTimeout(()=>{ if(tok===autoTok && $('play').classList.contains('on')) finish(); },2000);
+}
 window.goNext=goNext;
 function goNext(){
   closeBanner(true);
   const q=S.qs[S.i];
-  if(S.i>=S.qs.length-1){ finish(); return; }
+  if(S.i>=S.qs.length-1){
+    const left=S.qs.filter(x=>!x.done).length;   /* 마지막 '결과 보기' — 남은 문항이 있으면 한 번 확인 */
+    if(left>0 && !confirm('아직 풀지 않은 문항이 '+left+'개 있어요. 결과를 볼까요?\n풀지 않은 문항은 오답이 아니라 미응답으로 따로 표시됩니다.')) return;
+    finish(); return;
+  }
   S.i++;
   const nx=S.qs[S.i];
   if(nx.stage!==q.stage) reorderStage(nx.stage);
@@ -1259,6 +1313,13 @@ function verdictText(r){
   if(p>=50) return '기본은 잡혔어요';
   return '다시 한 번 도전해요';
 }
+/* 총평 (화면연출표준 7장): 채점 0개 / 중간 종료 / 끝까지 */
+function summaryOf(){
+  const a=answered().length, sk=skippedList().length, r=accRate();
+  if(!a) return {title:NONE_TXT, verdict:NONE_TXT};
+  if(sk) return {title:'여기까지 풀었어요', verdict:Math.round(r*100)>=70?'잘하고 있어요! 남은 문제까지 풀며 좀 더 연습해 보면 어떨까요?':'좀 더 연습해 보면 어떨까요? 남은 문제까지 풀어 보면 감이 잡혀요.'};
+  return {title:'학습을 마쳤어요!', verdict:verdictText(r)};
+}
 /* 유형별 집계 — 첫 시도 정답 ÷ 채점된 출제 수, 미응답 제외 */
 function catStats(){
   const map={},out=[];
@@ -1284,20 +1345,24 @@ function firstToStudy(){
   list.sort((a,b)=> b.w-a.w || a.r-b.r || b.t-a.t );
   return list[0];
 }
+/* '보완이 필요한 분야' 한 칸 = 가장 먼저 공부할 분야 하나 + 판단 방법(tip) (화면연출표준 8-2, v3.3 — 이 게임은 유형을 '분야'라 부른다) */
 function adviceText(){
-  if(!answered().length) return {head:'가장 먼저 공부할 것', body:NONE_TXT+'. 1단계부터 한 문제씩 풀어 보세요.'};
-  const shown=catShown();
-  if(shown.length && shown.every(c=>pctOf(c)<50))
-    return {head:'가장 먼저 공부할 것', body:'분야를 가리지 않고 어려웠어요. 시작 화면의 낱말 분야 설명을 먼저 읽고, 1단계부터 다시 한 바퀴 돌아 보세요.'};
+  const H='보완이 필요한 분야';
+  const shown=catShown(), totalWrong=S.qs.filter(q=>q.done&&!(q.correct&&q.firstTry)).length;
+  if(shown.length>=2 && shown.every(c=>pctOf(c)<50) && totalWrong>0)
+    return {head:H, body:'분야를 가리지 않고 어려웠어요. 시작 화면의 낱말 분야 설명을 먼저 읽고, 1단계부터 다시 한 바퀴 돌아 보세요.'};
   const t=firstToStudy();
-  if(!t) return {head:'가장 먼저 공부할 것', body:'약점이 보이지 않아요. 다음 단계에 도전해 보세요.'};
-  return {head:'가장 먼저 공부할 것 — '+CATEGORIES[t.cat].label+' ('+t.c+'/'+t.t+')', body:CATEGORIES[t.cat].tip};
+  if(t) return {head:H+' — '+CATEGORIES[t.cat].label+' '+t.c+'/'+t.t, body:CATEGORIES[t.cat].tip};
+  if(totalWrong>0) return {head:H, body:'뚜렷하게 약한 분야는 없어요. 틀린 문제는 오답노트의 해설을 확인해 보세요.'};
+  if(skippedList().length) return {head:H, body:'남은 문제를 마저 풀어 보세요.'};
+  return {head:H, body:(S.mode>=1&&S.mode<STAGE_COUNT)?'약점이 보이지 않아요. 다음 단계에 도전해 보세요.':'약점이 보이지 않아요. 다른 단계에도 도전해 보세요.'};
 }
 
 function finish(){
-  closeBanner(true);
-  S.elapsed=Date.now()-S.t0; S.endAt=new Date();
-  S.qs.forEach(q=>{ if(!q.done) q.skipped=true; });
+  closeBanner(true); autoTok++;
+  if(!S.endAt){ S.elapsed=Date.now()-S.t0; S.endAt=new Date(); }
+  /* 첫 시도에 틀리고 다시 풀지 않은 채 떠난 문항은 미응답이 아니라 '못 맞힘' */
+  S.qs.forEach(q=>{ if(!q.done && q.tries>0){ q.done=true; q.correct=false; } if(!q.done) q.skipped=true; });
   sEnd();
   const a=answered().length, sk=skippedList().length, rate=accRate();
   $('fScore').textContent=S.score+' / '+S.max;
@@ -1305,7 +1370,9 @@ function finish(){
   $('fFirst').textContent=firstCount()+' / '+a;
   $('fTime').textContent=fmtTime(S.elapsed);
   $('endStage').textContent=stageTag().full+' · 완료 '+dtStr(S.endAt);
-  $('verdict').innerHTML=esc(verdictText(rate))+
+  const sm=summaryOf();
+  $('endTitle').textContent=sm.title;
+  $('verdict').innerHTML=esc(sm.verdict)+
     '<span class="sk">첫 시도 정답 '+firstCount()+' · 다시 풀어 맞힘 '+retryCount()+' · 못 맞힘 '+wrongList().length+
     (sk?' · 미응답 '+sk+'문항':'')+'</span>'+
     (sk?'<span class="sk">끝까지 풀지 않았어요 ('+sk+'문항 남음)</span>':'');
@@ -1329,7 +1396,7 @@ function finish(){
   const wl=$('wrongList'); wl.innerHTML='';
   const wrongs=wrongList();
   if(!a){ wl.innerHTML='<div class="perfect" style="background:#F4F7F6;border-color:#DDE6E2;color:#5b7a71">'+NONE_TXT+'.</div>'; }
-  else if(!wrongs.length){ wl.innerHTML='<div class="perfect">🎉 틀린 문항이 하나도 없어요! 어휘를 잘 익혔습니다.</div>'; }
+  else if(!wrongs.length){ wl.innerHTML=sk?'<div class="perfect">푼 문제는 모두 첫 시도에 맞혔어요.</div>':'<div class="perfect">🎉 틀린 문항이 하나도 없어요! 어휘를 잘 익혔습니다.</div>'; }
   else wrongs.forEach(q=>{
     const ai=ansIdx(q);
     const exHtml=esc(q.ex).replace(/\n/g,'<br>').replace(/&lt;b&gt;/g,'<b>').replace(/&lt;\/b&gt;/g,'</b>');
@@ -1513,7 +1580,7 @@ $('btnNote').addEventListener('click',()=>{
     ctx.fillStyle=answeredN?'#E9F8EF':'#F4F7F6'; ctx.strokeStyle=answeredN?'#A9DCBF':'#DDE6E2'; ctx.lineWidth=2;
     ctx.fillRect(44,y,W-88,84); ctx.strokeRect(44,y,W-88,84);
     ctx.fillStyle=answeredN?'#166b40':'#5b7a71'; ctx.font=F(22,'bold');
-    ctx.fillText(answeredN?'틀린 문항이 하나도 없습니다. 아주 훌륭해요!':NONE_TXT+'.',80,y+50);
+    ctx.fillText(!answeredN?NONE_TXT+'.':(sk?'푼 문제는 모두 첫 시도에 맞혔어요.':'틀린 문항이 하나도 없습니다. 아주 훌륭해요!'),80,y+50);
     y+=84+24;
   }else{
     blocks.forEach(b=>{
@@ -1554,34 +1621,34 @@ $('btnReport').addEventListener('click',()=>{
   const good=goodCats(), weak=weakCats(), ad=adviceText();
   const cv=document.createElement('canvas'); const ctx=cv.getContext('2d');
   ctx.font=F(17);
-  /* 잘하는 분야(90% 이상)와 보완 분야(50% 미만)가 둘 다 비면 두 칸을 한 줄로 합친다 */
-  const bothEmpty = shown.length>0 && !good.length && !weak.length;
-  const EVEN_TXT='분야별로 고르게 나왔어요. 가장 낮은 분야부터 다져 보세요.';
+  /* '잘하는 분야'는 그대로, '보완이 필요한 분야'는 가장 먼저 공부할 분야 하나 + tip 한 칸 (화면연출표준 8-2) */
   const gTxt=good.length?good.map(c=>CAT[c.cat]+' '+c.c+'/'+c.t).join('  ,  '):'아직 없어요. 조금만 더 연습해 볼까요?';
-  const wTxt=weak.length?weak.map(c=>CAT[c.cat]+' '+c.c+'/'+c.t).join('  ,  '):'없습니다. 모든 분야를 고르게 이해했어요!';
-  let panelH;
-  if(!shown.length) panelH=0;
-  else if(bothEmpty) panelH=52+wrap(ctx,EVEN_TXT,W-160).length*26+14;
-  else panelH=(52+wrap(ctx,gTxt,W-160).length*26)+14+(52+wrap(ctx,wTxt,W-160).length*26)+14;
+  const sm=summaryOf();
+  ctx.font=F(22,'bold');
+  const skN=skippedList().length, aN=answered().length;
+  const vLines=wrap(ctx,(skN&&aN?'끝까지 풀지 않았어요 ('+skN+'문항 남음) · ':'')+sm.verdict,W-128);
+  ctx.font=F(17);
+  const panelH=shown.length?(52+wrap(ctx,gTxt,W-160).length*26)+14:0;
   ctx.font=F(16);
   const adL=wrap(ctx,ad.body,W-160).length;
   const chartH=(shown.length?shown.length*50+30:60);
   const memoH=info.memo?42+wrap(ctx,info.memo,W-140).length*26+22:0;
-  const H=110+30+54+30+70+30+42+chartH+30+panelH+(56+adL*24)+24+memoH+140;
+  const H=110+30+54+30+76+(vLines.length-1)*30+30+42+chartH+30+panelH+(56+adL*24)+24+memoH+140;
   cv.width=W; cv.height=H;
   ctx.fillStyle='#F2FBF7'; ctx.fillRect(0,0,W,H);
   headerBand(ctx,W,'원미동 어휘 원정대 — 학습 결과 분석 리포트',stageTag().full+' · '+info.name+' · '+dtStr(S.endAt));
   let y=140; metaRow(ctx,y,info,W); y+=54+30;
 
   /* 총평 */
-  ctx.fillStyle='#E8F5F0'; ctx.fillRect(44,y,W-88,62);
-  ctx.strokeStyle='#CDEBE0'; ctx.lineWidth=2; ctx.strokeRect(44,y,W-88,62);
+  const vh=68+(vLines.length-1)*30;
+  ctx.fillStyle='#E8F5F0'; ctx.fillRect(44,y,W-88,vh);
+  ctx.strokeStyle='#CDEBE0'; ctx.lineWidth=2; ctx.strokeRect(44,y,W-88,vh);
   ctx.fillStyle='#0F6E56'; ctx.font=F(22,'bold');
-  ctx.fillText(verdictText(rate),64,y+28);
+  vLines.forEach((l,i)=>ctx.fillText(l,64,y+30+i*30));
   ctx.fillStyle='#4a5c56'; ctx.font=F(15);
   ctx.fillText('첫 시도 정답 '+firstCount()+' · 다시 풀어 맞힘 '+retryCount()+' · 못 맞힘 '+wrongList().length+
-    (sk?' · 미응답 '+sk+'문항 (채점에서 제외)':'')+'      최고 콤보 '+S.best,64,y+50);
-  y+=62+30;
+    (sk?' · 미응답 '+sk+'문항 (채점에서 제외)':'')+'      최고 콤보 '+S.best,64,y+vh-12);
+  y+=vh+30;
 
   ctx.fillStyle='#0F6E56'; ctx.font=F(20,'bold'); ctx.fillText('분야별 정답률 (첫 시도 기준)',44,y+8); y+=42;
   if(!shown.length){
@@ -1613,15 +1680,8 @@ $('btnReport').addEventListener('click',()=>{
     lines.forEach((l,i)=>ctx.fillText(l,64,y+56+i*(fs?24:26)));
     y+=h+14;
   }
-  if(shown.length){
-    if(bothEmpty){
-      panel('분야별 진단','#166b40','#E9F8EF','#A9DCBF',EVEN_TXT);
-    }else{
-      panel('잘하는 분야','#166b40','#E9F8EF','#A9DCBF',gTxt);
-      panel('보완이 필요한 분야','#9c322f','#FDEEED','#F0B6B4',wTxt);
-    }
-  }
-  panel(ad.head,'#a5711d','#FFF8E8','#E6C87E',ad.body,16);
+  if(shown.length) panel('잘하는 분야','#166b40','#E9F8EF','#A9DCBF',gTxt);
+  panel(ad.head,'#9c322f','#FFF8E8','#E6C87E',ad.body,16);
   y+=10;
   if(info.memo) y=memoBox(ctx,y,info.memo,W)+22;
   y+=18;
@@ -1633,6 +1693,7 @@ $('btnReport').addEventListener('click',()=>{
 function xmlEsc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function xCell(v,type){ return '<Cell><Data ss:Type="'+(type||'String')+'">'+xmlEsc(v)+'</Data></Cell>'; }
 function xRow(cells){ return '<Row>'+cells.join('')+'</Row>'; }
+function xCellAns(v){ return '<Cell ss:StyleID="ans"><Data ss:Type="String">'+xmlEsc(v)+'</Data></Cell>'; }   /* 정답 칸 — 빨간 굵은 글씨 */
 function teacherRows(){
   const R={1:[],2:[],3:[],4:[]};
   WORDS.forEach((w,i)=>R[1].push([i+1,CAT[w.c],'뜻 — '+w.m,w.k,'「'+w.d+'」 '+w.m+(w.n?' ('+w.n+')':'')]));
@@ -1657,7 +1718,7 @@ function downloadTeacherXls(){
   [1,2,3,4].forEach(n=>{
     const rows=R[n];
     let body=xRow(head.map(h=>xCell(h)));
-    rows.forEach(r=>{ body+=xRow([xCell(r[0],'Number'),xCell(r[1]),xCell(r[2]),xCell(r[3]),xCell(r[4])]); });
+    rows.forEach(r=>{ body+=xRow([xCell(r[0],'Number'),xCell(r[1]),xCell(r[2]),xCellAns(r[3]),xCell(r[4])]); });
     body+=xRow([xCell('')]);
     body+=xRow([xCell(std)]);
     body+=xRow([xCell(rule)]);
@@ -1688,6 +1749,7 @@ function downloadTeacherXls(){
   const xml='<?xml version="1.0" encoding="UTF-8"?>\n'+
     '<?mso-application progid="Excel.Sheet"?>\n'+
     '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">'+
+    '<Styles><Style ss:ID="ans"><Font ss:Bold="1" ss:Color="#E00000"/></Style></Styles>'+
     sheets+'</Workbook>';
   const d=new Date();
   saveBlob(new Blob(['\ufeff'+xml],{type:'application/vnd.ms-excel;charset=utf-8'}),
@@ -1696,6 +1758,8 @@ function downloadTeacherXls(){
 const trigger=$('lastMod');
 trigger.style.cursor='default';
 trigger.addEventListener('click',downloadTeacherXls);
+/* 마우스로 누른 버튼에 포커스가 남아 Enter·Space로 다시 눌리지 않게 */
+document.addEventListener('click',e=>{ const b=e.target&&e.target.closest?e.target.closest('button'):null; if(b&&e.detail>0) b.blur(); });
 </script>
 </body>
 </html>
