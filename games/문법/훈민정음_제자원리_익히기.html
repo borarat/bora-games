@@ -4,7 +4,8 @@
            '획을 하나 지워 보세요' 판정법을 '획을 더해 소리가 세졌는가'로(G209와 같은 기준), 체계표 목구멍소리 열 머리와 2단계 '목구멍소리' 이름표 해설에 '(목청소리)' 병기
      수정(2026.10.01 13:00): 휴대폰 폭(390px)에서 5단계 아래 이동 버튼 줄이 2px 넘치던 문제 — 600px 이하에서 .body 열 minmax(0,1fr)·버튼 여백 축소
      수정(2026.10.01 16:10): 2015 성취기준 삭제(교사 결정: 2022만)
-     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 -->
+     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
+     2026.10.07 09:20 테마층 + 실제 조작 버그 검사·수정 -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -486,6 +487,13 @@ textarea.fi{resize:vertical;min-height:56px}
 }
 .chart th.hd .alt-nm{display:block;font-size:.72em;font-weight:500;opacity:.8;line-height:1.2}
 .chart.mini th.hd .alt-nm{font-size:.85em}
+/* ═══ 게임 테마층 · 목판 인쇄소 (2026.10.07) ═══
+   목판에 새긴 기본자 다섯 글자와 인쇄된 종이. 보조색 먹 #3D3D4A. 영역 팔레트·헤더 띠·체계표·카드·정답/오답 색은 그대로.
+   이 블록과 시작 화면 SVG를 지우면 원래 모습 */
+:root{--th:#3D3D4A;--th-soft:#ECECF0}
+.titlebar .keyArt{flex:0 0 auto;height:110px;width:auto;margin-left:10px}
+@media (max-width:860px){.titlebar .keyArt{display:none}}
+.cols .box{border-left:4px solid var(--th)}
 </style>
 </head>
 <body>
@@ -501,6 +509,15 @@ textarea.fi{resize:vertical;min-height:56px}
     <h1>훈민정음 제자 원리 익히기</h1>
     <p>한글은 어떤 원리로 만들어졌을까 — 자음자와 모음자의 창제 원리</p>
    </div>
+   <svg class="keyArt" viewBox="0 0 250 110" aria-hidden="true" font-family="'Noto Serif KR','Batang','Noto Sans KR',serif" font-weight="700" text-anchor="middle">
+    <rect x="8" y="18" width="150" height="80" rx="6" fill="#C9A87A" stroke="#7A5A33" stroke-width="2.5"/>
+    <g stroke="#B08B5C" stroke-width="1.2" fill="none" opacity=".7"><path d="M14 34q70-8 138 0"/><path d="M14 58q70 7 138 0"/><path d="M14 82q70-6 138 0"/></g>
+    <rect x="18" y="28" width="130" height="60" rx="3" fill="#E3CBA2" stroke="#7A5A33" stroke-width="1.5"/>
+    <g font-size="23" fill="#3D3D4A"><text x="34" y="66">ㄱ</text><text x="58" y="66">ㄴ</text><text x="83" y="66">ㅁ</text><text x="108" y="66">ㅅ</text><text x="133" y="66">ㅇ</text></g>
+    <rect x="170" y="10" width="72" height="92" rx="2" fill="#fff" stroke="#3D3D4A" stroke-width="1.8" transform="rotate(5 206 56)"/>
+    <g transform="rotate(5 206 56)" fill="#3D3D4A" opacity=".85"><rect x="182" y="28" width="48" height="5" rx="2"/><rect x="182" y="42" width="40" height="5" rx="2"/><rect x="182" y="56" width="46" height="5" rx="2"/><rect x="182" y="70" width="30" height="5" rx="2"/></g>
+    <g fill="#3D3D4A" opacity=".25"><circle cx="164" cy="104" r="2"/><circle cx="12" cy="10" r="1.6"/></g>
+   </svg>
   </div>
 
   <div class="std" id="stdBox"></div>
@@ -627,7 +644,7 @@ const MASCOT_B64 = 'iVBORw0KGgoAAAANSUhEUgAAAIQAAACxCAMAAAAyLeWLAAAB/lBMVEUAAABM
    제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com
    ═══════════════════════════════════════════ */
 const MADE_DATE = '2026.09.10';
-const MOD_DATE  = '2026.10.05 03:00';
+const MOD_DATE  = '2026.10.07 09:20';
 
 /* ★★ 시트에서 문법·2학년의 마지막 번호를 확인한 뒤 이 한 줄만 고치면 됩니다 ★★ */
 const GAME_CODE = 'G211';
@@ -1413,6 +1430,10 @@ function checkR2(i){
 }
 
 /* ══════════ 5단계 : 낱말 완성 ══════════ */
+function autoFinish5(){
+  if(!S.order.every(i=>{ const r=getRes(i); return r && r.status!=='skip'; })) return;
+  setTimeout(()=>{ if(!END && S.stage===5 && $('play').classList.contains('on')) finish(); }, 2200);
+}
 function curQ(){ return Q5[S.order[S.pos]]; }
 function getRes(i){ return S.res[i] || null; }
 function chartsVisible(){ return S.pos < CHART_FREE || !!S.hint[S.order[S.pos]]; }
@@ -1530,6 +1551,7 @@ function checkQ(){
                   wrongPart:S.wpAcc[idx]||{}, hint:!!S.hint[idx]};
     S.locked = true; renderQ();
     if(pts>0) celebrate(S.combo, pts, firstTry); else sPlace();
+    autoFinish5();
     return;
   }
 
@@ -1552,6 +1574,7 @@ function checkQ(){
   } else {
     S.res[idx] = {status:'wrong', tries:t+1, pts:0, pick:{...S.pick}, wrongPart:acc, hint:!!S.hint[idx]};
     S.locked = true; renderQ();
+    autoFinish5();
   }
 }
 
@@ -1701,6 +1724,14 @@ var END = null;
 function gradeText(acc){
   return acc>=95?'완벽해요!' : acc>=85?'아주 잘했어요' : acc>=70?'잘하고 있어요' : acc>=50?'기본은 잡혔어요' : '다시 한 번 도전해요';
 }
+// 총평 한 곳에서 — 채점 0개·중간 종료에 칭찬하지 않기(화면연출표준 7장, 교사 결정 2026.10.06)
+function verdictText(e){
+  if(!e.answered) return '풀어 본 문제가 없어요';
+  if(e.skipped) return e.acc>=70 ? '잘하고 있어요! 남은 문제까지 풀며 좀 더 연습해 보면 어떨까요?' : '좀 더 연습해 보면 어떨까요? 남은 문제까지 풀어 보면 감이 잡혀요.';
+  return gradeText(e.acc);
+}
+function accText(e){ return e.answered ? e.acc+'%' : '–'; }
+function noWeakText(e){ return e.skipped ? '남은 문제를 마저 풀어 보세요.' : (e.stage < LAST_STAGE ? '약점이 보이지 않아요. 다음 단계에 도전해 보세요.' : '약점이 보이지 않아요. 다른 단계도 다시 도전해 보세요.'); }
 function gradeEmoji(acc){ return acc>=95?'🏆' : acc>=85?'🎉' : acc>=70?'😊' : acc>=50?'🙂' : '💪'; }
 
 function collectEnd(){
@@ -1856,13 +1887,13 @@ function renderEnd(){
   $('endGoal').textContent = '· ' + e.label + ' ' + e.title;
 
   $('endCard').innerHTML =
-   '<div class="ehead"><div class="em">'+gradeEmoji(e.acc)+'</div><h2>'+gradeText(e.acc)+'</h2>'+
+   '<div class="ehead"><div class="em">'+(e.answered&&!e.skipped?gradeEmoji(e.acc):'📝')+'</div><h2>'+(!e.answered?'풀어 본 문제가 없어요':e.skipped?'여기까지 풀었어요':gradeText(e.acc))+'</h2>'+
    '<p>훈민정음 제자 원리 익히기 · '+e.label+' · '+e.title+'<br>'+d+' '+t+' · 학습 시간 '+mm+'분 '+ss+'초</p>'+
    (e.skipped ? '<div class="skipnote">끝까지 풀지 않았어요 ('+e.skipped+'문항 남음)</div>' : '')+
    '</div>'+
    '<div class="stats">'+
      '<div class="st p"><div class="v">'+S.score+'<small> / '+e.max+'</small></div><div class="l">점수 (만점 '+e.max+')</div></div>'+
-     '<div class="st g"><div class="v">'+e.acc+'%</div><div class="l">정답률 (첫 시도 기준)</div></div>'+
+     '<div class="st g"><div class="v">'+accText(e)+'</div><div class="l">정답률 (첫 시도 기준)</div></div>'+
      '<div class="st r"><div class="v">'+e.firstRight+'<small> / '+e.answered+'</small></div><div class="l">첫 시도 정답 / 푼 문항</div></div>'+
      '<div class="st o"><div class="v">'+S.maxCombo+'</div><div class="l">최고 연속</div></div>'+
    '</div>'+
@@ -1927,7 +1958,7 @@ function reportHTML(e){
 
   let firstHTML;
   if(!P.first){
-    firstHTML = '<div class="firstbox"><div class="rt">🎯 가장 먼저 공부할 것</div><div class="rb">약점이 보이지 않아요. 다음 단계에 도전해 보세요.</div></div>';
+    firstHTML = '<div class="firstbox"><div class="rt">🎯 가장 먼저 공부할 것</div><div class="rb">'+noWeakText(e)+'</div></div>';
   } else if(P.allLow){
     firstHTML = '<div class="firstbox"><div class="rt">🎯 가장 먼저 공부할 것</div><div class="rb">유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.</div></div>';
   } else {
@@ -1935,7 +1966,7 @@ function reportHTML(e){
   }
 
   return '<div class="report"><h3>📊 학습 결과 분석</h3>'+
-    '<div class="rnote">'+esc(gradeText(e.acc))+' — 첫 시도 정답률 '+e.acc+'% ('+e.firstRight+'/'+e.answered+')'+
+    '<div class="rnote">'+esc(verdictText(e))+' — 첫 시도 정답률 '+e.acc+'% ('+e.firstRight+'/'+e.answered+')'+
       (hidden>0 ? ' · 문항이 1개뿐인 유형 '+hidden+'개는 표시하지 않습니다' : '')+'</div>'+
     (rows || '<div class="rnote">표시할 유형이 없습니다.</div>')+
     '<div class="rsum">'+
@@ -2040,7 +2071,7 @@ function makeWrongNote(){
   let y = headerBlock(g, W, PX, '📝 오답노트 · 훈민정음 제자 원리 익히기', nm, s,
                       e.label+' · '+e.title);
   g.fillStyle='#3C3489'; g.font='bold 14px '+FONT;
-  g.fillText('점수 '+S.score+' / '+e.max+'점   ·   첫 시도 정답 '+e.firstRight+'/'+e.answered+'   ·   정답률 '+e.acc+'%', PX+330, 135);
+  g.fillText('점수 '+S.score+' / '+e.max+'점   ·   첫 시도 정답 '+e.firstRight+'/'+e.answered+'   ·   정답률 '+accText(e), PX+330, 135);
 
   if(!e.wrongItems.length){
     const none = (e.answered===0);
@@ -2092,7 +2123,7 @@ function makeReport(){
 
   const none = (e.answered===0);
   const tipText = none ? '아직 푼 문항이 없어요. 시작 화면에서 다시 도전해 보세요.'
-    : !P.first ? '약점이 보이지 않아요. 다음 단계에 도전해 보세요.'
+    : !P.first ? noWeakText(e)
     : P.allLow ? '유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.'
     : P.first.name+' ('+P.first.ok+'/'+P.first.total+') — '+CATEGORIES[P.first.code].tip;
   mg.font='14px '+FONT;
@@ -2106,14 +2137,14 @@ function makeReport(){
   mg.font='12px '+FONT;
   const achH = measureH(mg, ach, IW, 17);
 
-  const H = 176 + 74 + 36 + (P.shown.length||1)*52 + 14 + sumH + 14 + tipH + feelH + 30 + achH + 60;
+  const H = 176 + 74 + (e.skipped?22:0) + 36 + (P.shown.length||1)*52 + 14 + sumH + 14 + tipH + feelH + 30 + achH + 60;
 
   const c = document.createElement('canvas'); c.width=W; c.height=H;
   const g = c.getContext('2d');
   let y = headerBlock(g, W, PX, '📊 학습 결과 분석 리포트 · 훈민정음 제자 원리', nm, s, e.label+' · '+e.title);
   const mm = Math.floor(S.elapsed/60000), ss = Math.floor(S.elapsed%60000/1000);
   g.fillStyle='#3C3489'; g.font='bold 14px '+FONT;
-  g.fillText('점수 '+S.score+' / '+e.max+'점  ·  정답률 '+e.acc+'%  ·  최고 연속 '+S.maxCombo+'  ·  '+mm+'분 '+ss+'초', PX+330, 135);
+  g.fillText('점수 '+S.score+' / '+e.max+'점  ·  정답률 '+accText(e)+'  ·  최고 연속 '+S.maxCombo+'  ·  '+mm+'분 '+ss+'초', PX+330, 135);
 
   // 요약 · 총평
   const gTone = e.acc>=85 ? ['#f3fbf5','#bfe3c9','#15803d','#2f6b45']
@@ -2122,14 +2153,15 @@ function makeReport(){
   g.fillStyle=gTone[0]; g.fillRect(PX,y,IW,66);
   g.strokeStyle=gTone[1]; g.strokeRect(PX,y,IW,66);
   g.fillStyle=gTone[2]; g.font='bold 18px '+FONT;
-  g.fillText(gradeEmoji(e.acc)+' '+gradeText(e.acc), PX+18, y+28);
+  g.fillText((e.answered&&!e.skipped?gradeEmoji(e.acc)+' ':'')+verdictText(e), PX+18, y+28);
   g.font='13.5px '+FONT; g.fillStyle=gTone[3];
   g.fillText('✅ 첫 시도 정답 '+e.firstRight+'   ↻ 다시 풀어 맞힘 '+e.retryRight+'   ❌ 못 맞힘 '+e.missed
              + (e.skipped ? '   ⏭ 미응답 '+e.skipped : '') + '   ·   푼 문항 '+e.answered+' / '+e.total, PX+18, y+52);
   y += 74;
   if(e.skipped){
     g.fillStyle='#b45309'; g.font='bold 13px '+FONT;
-    g.fillText('끝까지 풀지 않았어요 ('+e.skipped+'문항 남음)', PX, y+2);
+    g.fillText('끝까지 풀지 않았어요 ('+e.skipped+'문항 남음)', PX, y+14);   // 위 상자와 겹치지 않게
+    y += 22;
   }
 
   g.fillStyle='#2b2440'; g.font='bold 17px '+FONT;
@@ -2258,7 +2290,7 @@ $('lastMod').textContent  = '최종 수정 ' + MOD_DATE;
 $('lastMod').style.cursor = 'default';
 $('lastMod').addEventListener('click', downloadTeacherXls);
 $('mobBadge').textContent = MOBILE_BADGE;
-$('wmPlay').textContent = '제작 · 보라라샘 / ' + MADE_DATE;
+$('wmPlay').textContent = '제작 · 보라라샘 · ' + MADE_DATE;
 $('stdBox').innerHTML =
   '「성취기준」<br>' +
   '(2022) <b>[' + ACH_2022.code + ']</b> ' + esc(ACH_2022.text);

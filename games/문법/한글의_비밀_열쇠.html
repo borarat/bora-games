@@ -5,7 +5,8 @@
      수정(2026.10.01 16:10): 2015 성취기준 삭제(교사 결정: 2022만)
      버그: 객관식에서 답하기 전 Enter·Space·→ 로 넘기면 문항이 잠기던 문제 — 채점 전에는 키로 넘기지 않음
      2026.10.05 03:00 화면: 이전·다음·게임 끝내기 내비게이션 바를 플레이 화면 오른쪽으로 옮김(교사 요청)
-     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 -->
+     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
+     2026.10.07 09:20 테마층 + 실제 조작 버그 검사·수정 -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -337,6 +338,13 @@ input,textarea{font-family:inherit}
 }
 ::-webkit-scrollbar{width:9px}
 ::-webkit-scrollbar-thumb{background:#cfc4ad;border-radius:5px}
+/* ═══ 게임 테마층 · 비밀 상자 (2026.10.07) ═══
+   잠긴 나무 상자와 열쇠 — 다섯 단계를 풀며 한글의 비밀을 연다. 보조색 쪽빛 #3F5FA8.
+   영역 팔레트·헤더 띠·문제 화면·정답/오답 색은 그대로. 이 블록과 시작 화면 SVG를 지우면 원래 모습 */
+:root{--th:#3F5FA8;--th-soft:#E4EAF6}
+.head .keyArt{flex:0 0 auto;height:100px;width:auto;margin-left:auto}
+@media (max-width:860px){.head .keyArt{display:none}}
+.cols > div > .box:not(.std){border-left:4px solid var(--th)}
 </style>
 </head>
 <body>
@@ -356,6 +364,16 @@ input,textarea{font-family:inherit}
       <div class="title">한글의 비밀 <span class="dot">열쇠</span></div>
       <div class="subtitle">한글의 창제 정신과 자음·모음의 창제 원리, 그리고 한글의 가치를 다섯 단계로 복습해 보아요</div>
      </div>
+     <svg class="keyArt" viewBox="0 0 230 100" aria-hidden="true">
+      <rect x="18" y="40" width="112" height="54" rx="6" fill="#E9D7B8" stroke="#8C6B3E" stroke-width="2.5"/>
+      <path d="M18 46q0-30 56-30t56 30v4H18z" fill="#DCC49B" stroke="#8C6B3E" stroke-width="2.5" stroke-linejoin="round"/>
+      <g stroke="#8C6B3E" stroke-width="1.5" opacity=".45"><line x1="24" y1="62" x2="124" y2="62"/><line x1="24" y1="78" x2="124" y2="78"/></g>
+      <g fill="#3F5FA8"><rect x="60" y="42" width="28" height="30" rx="4"/></g>
+      <g fill="#E4EAF6"><circle cx="74" cy="53" r="4.5"/><path d="M71.5 55h5l1.5 10h-8z"/></g>
+      <g fill="none" stroke="#3F5FA8" stroke-width="5" stroke-linecap="round"><circle cx="178" cy="34" r="14"/><path d="M178 48v40M178 72h12M178 84h9"/></g>
+      <circle cx="178" cy="34" r="5" fill="#E4EAF6"/>
+      <g fill="#3F5FA8" opacity=".35"><circle cx="150" cy="16" r="2"/><circle cx="206" cy="66" r="1.6"/><circle cx="146" cy="88" r="1.6"/></g>
+     </svg>
     </div>
 
     <div class="cols">
@@ -423,7 +441,7 @@ input,textarea{font-family:inherit}
 
     <div class="credit">
      <span class="cline">제작 · <b>보라라샘</b> · <b>전주서신중학교 교사</b> · <b>siaawase@gmail.com</b></span>
-     <span class="cline">제작일 2026.08.31 · <span id="lastMod">최종 수정 2026.10.05 03:00</span></span>
+     <span class="cline">제작일 2026.08.31 · <span id="lastMod">최종 수정 2026.10.07 09:20</span></span>
     </div>
 
     <div class="privacy" id="privacyOffline">
@@ -485,7 +503,7 @@ input,textarea{font-family:inherit}
     <div id="answerZone"></div>
     <div class="fb" id="fb"></div>
    </div>
-   <div class="sig">제작 · 보라라샘 / 2026.08.31</div>
+   <div class="sig">제작 · 보라라샘 · 2026.08.31</div>
   </div>
  </div>
 </div>
@@ -571,10 +589,10 @@ input,textarea{font-family:inherit}
 /* =========================================================
    한글의 비밀 열쇠  ·  게임코드 G210 (옛 코드 HAN02)
    제작 · 보라라샘 (전주서신중학교 교사) · siaawase@gmail.com
-   제작일 2026.08.31 · 최종 수정 2026.10.05 03:00
+   제작일 2026.08.31 · 최종 수정 2026.10.07 09:20
    ========================================================= */
 const MADE_DATE = '2026.08.31';
-const LASTMOD   = '2026.10.05 03:00';
+const LASTMOD   = '2026.10.07 09:20';
 const GAME_NAME = '한글의 비밀 열쇠';
 const BASE = 10;                     // 문항 기본점
 
@@ -1675,11 +1693,18 @@ function award(q){
     renderQ(); pulseHud();
     const milestone = (S.combo===3)||(S.combo>=5 && S.combo%5===0);
     if(milestone) showComboBanner(S.combo,gain); else showAnswerBanner(gain,bonus);
+    autoFinishIfAllDone();
     return;
   }
   /* 재시도 정답 — 기본점의 절반, 콤보는 복구 안 됨 */
   S.combo=0; const gain=Math.round(BASE/2); q.gained=gain; S.score+=gain; q.done=true; q.correct=true;
   renderQ(); showAnswerBanner(gain,0,true);
+  autoFinishIfAllDone();
+}
+function autoFinishIfAllDone(){
+  if(!S.qs.every(q=>q.done)) return;
+  const qs=S.qs;
+  setTimeout(()=>{ if(S.qs===qs && $('play').classList.contains('on')) finish(); }, 2200);
 }
 function penalize(){ S.combo=0; S.score=Math.max(0,S.score-5); updateHUD(); sNG(); }
 
@@ -1690,7 +1715,7 @@ function pickMC(idx){
   q.wrong.push(idx); q.myAns=q.opts[idx]; penalize();
   const el=optEl(idx); if(el){ el.classList.remove('ng'); void el.offsetWidth; el.classList.add('ng'); }
   const cur=q;
-  if(q.tries>=2){ q.done=true; q.correct=false; setTimeout(()=>{ if(S.qs[S.i]===cur) renderQ(); },430); }
+  if(q.tries>=2){ q.done=true; q.correct=false; setTimeout(()=>{ if(S.qs[S.i]===cur) renderQ(); },430); autoFinishIfAllDone(); }
   else setTimeout(()=>{ if(S.qs[S.i]===cur && !cur.done) paintHint(cur); },430);
 }
 function submitSA(){
@@ -1703,7 +1728,7 @@ function submitSA(){
   if(q.wrong.indexOf(raw)<0) q.wrong.push(raw); q.myAns=raw; penalize();
   el.classList.remove('ng'); void el.offsetWidth; el.classList.add('ng');
   const cur=q;
-  if(q.tries>=2){ q.done=true; q.correct=false; setTimeout(()=>{ if(S.qs[S.i]===cur) renderQ(); },450); }
+  if(q.tries>=2){ q.done=true; q.correct=false; setTimeout(()=>{ if(S.qs[S.i]===cur) renderQ(); },450); autoFinishIfAllDone(); }
   else setTimeout(()=>{ if(S.qs[S.i]===cur && !cur.done){ paintHint(cur); const e2=$('saIn'); if(e2) e2.focus(); } },450);
 }
 
@@ -1738,7 +1763,7 @@ window.goNext=goNext;
 function goNext(){
   hideFx();
   const q=S.qs[S.i];
-  if(!q.done){ q.done=true; q.correct=false; q.skipped=(q.tries===0); S.combo=0; }
+  if(!q.done){ S.combo=0; }   // 건너뛴 문항은 잠그지 않는다 — 돌아와서 풀 수 있다(지침 5-1). 미응답·못 맞힘은 끝낼 때 정한다
   if(S.i>=S.qs.length-1){ finish(); return; }
   S.i++; renderQ();
 }
@@ -1753,6 +1778,7 @@ document.addEventListener('keydown',e=>{
   if(!q.done && q.t==='mc' && e.key>='1' && e.key<='9'){ const idx=parseInt(e.key,10)-1; if(idx<q.opts.length) pickMC(idx); return; }
   if(e.key==='Enter'||e.key===' '||e.key==='Spacebar'||e.key==='ArrowRight'){
     if(typing && !q.done) return; if(e.key===' '&&typing) return;
+    const ae=document.activeElement; if(ae&&ae.tagName==='BUTTON') e.preventDefault();   // 포커스가 남은 버튼이 다시 눌리지 않게
     if(!q.done) return;              /* 채점 전에는 넘기지 않는다 (지침 6-1) — 답하기 전 Enter로 문항이 잠기던 버그 수정 */
     e.preventDefault(); goNext();
   }else if(e.key==='ArrowLeft'){ if(typing) return; e.preventDefault(); goPrev(); }
@@ -1775,6 +1801,12 @@ function stats(){
   const acc=answered?Math.round(firstCorrect/answered*100):0;
   return {total,answered,firstCorrect,retryCorrect,missed,skipped,acc};
 }
+function verdictText(st){
+  if(!st.answered) return '풀어 본 문제가 없어요';
+  if(st.skipped) return st.acc>=70 ? '잘하고 있어요! 남은 문제까지 풀며 좀 더 연습해 보면 어떨까요?' : '좀 더 연습해 보면 어떨까요? 남은 문제까지 풀어 보면 감이 잡혀요.';
+  return gradeText(st.acc);
+}
+function accText(st){ return st.answered ? st.acc+'%' : '–'; }
 function gradeText(acc){ return acc>=95?'완벽해요!':acc>=85?'아주 잘했어요':acc>=70?'잘하고 있어요':acc>=50?'기본은 잡혔어요':'다시 한 번 도전해요'; }
 
 function finish(){
@@ -1784,13 +1816,14 @@ function finish(){
   sEnd();
   const st=stats(), MAX=maxScore(S.qs.length);
   $('fScore').innerHTML=S.score+'<small> / '+MAX+'</small>';
-  $('fAcc').textContent=st.acc+'%';
+  $('fAcc').textContent=accText(st);
+  document.querySelector('#end h2').textContent = st.skipped ? '여기까지 풀었어요' : '학습을 마쳤어요!';
   $('fCombo').textContent=S.best;
   $('fTime').textContent=fmtTime(S.elapsed);
   $('endStage').textContent=STAGES[S.stage].full;
   $('endRight').textContent=STAGES[S.stage].full;
   $('inDate').value=todayStr(); $('inTime').value=fmtTime(S.elapsed);
-  $('remark').firstChild.textContent=gradeText(st.acc)+' ';
+  $('remark').firstChild.textContent=verdictText(st)+' ';
   $('remarkBrk').textContent='첫 시도 정답 '+st.firstCorrect+' · 다시 풀어 맞힘 '+st.retryCorrect+' · 못 맞힘 '+st.missed;
   const nd=$('notdone'); if(st.skipped>0){ nd.textContent='끝까지 풀지 않았어요 ('+st.skipped+'문항 남음)'; nd.classList.add('on'); } else nd.classList.remove('on');
 
@@ -1821,11 +1854,11 @@ function finish(){
   /* 연동 모드: 결과 전송 (wrongItems = 원본 id) */
   if(IS_ONLINE&&STUDENT.verified){
     const nameInput=$('inName'); nameInput.value=STUDENT.name; nameInput.readOnly=true; nameInput.style.background='#f0ede5';
-    const wrongItems=S.qs.filter(q=>!q.correct).map(q=>q.id).sort((a,b)=>a-b).join(',');
+    const wrongItems=S.qs.filter(q=>q.tries>0&&!q.correct).map(q=>q.id).sort((a,b)=>a-b).join(',');   // 미응답은 오답이 아니다(지침 5-3)
     submitResult({
       studentId:STUDENT.id, studentName:STUDENT.name, className:STUDENT.className,
       stage:S.stage, stageName:STAGES[S.stage].full,
-      totalQuestions:st.total, correctCount:st.firstCorrect+st.retryCorrect,
+      totalQuestions:st.total, correctCount:st.firstCorrect, retryCorrectCount:st.retryCorrect,   // 정답 수 = 첫 시도 정답(지침 5-2·7-2)
       firstTryCount:st.firstCorrect, retryCount:st.retryCorrect,
       answeredCount:st.answered, skippedCount:st.skipped,
       accuracy:st.acc, score:S.score, maxScore:MAX, bestCombo:S.best,
@@ -1923,18 +1956,18 @@ $('btnReport').addEventListener('click',()=>{
   const W=1040, st=stats(), MAX=maxScore(S.qs.length);
   /* 유형별(첫 시도 기준) */
   const map={}, cats=[];
-  S.qs.forEach(q=>{ if(!map[q.cat]){ map[q.cat]={cat:q.cat,t:0,c:0}; cats.push(map[q.cat]); } map[q.cat].t++; if(q.correct&&q.firstTry) map[q.cat].c++; });
+  S.qs.filter(q=>q.tries>0).forEach(q=>{ if(!map[q.cat]){ map[q.cat]={cat:q.cat,t:0,c:0}; cats.push(map[q.cat]); } map[q.cat].t++; if(q.correct&&q.firstTry) map[q.cat].c++; });   // 미응답은 유형별 정답률에서 뺀다
   cats.forEach(c=>{ c.r=c.c/c.t; c.wrong=c.t-c.c; });
   const shown=cats.filter(c=>c.t>=2);                 /* 1문항뿐인 유형은 진단 제외 */
   const good=shown.filter(c=>c.r>=1);
   const weak=shown.filter(c=>c.r<0.5).sort((a,b)=>a.r-b.r);
   const gTxt=good.length?good.map(c=>catLabel(c.cat)+' '+c.c+'/'+c.t).join('  ·  '):'아직 100%인 유형은 없어요. 조금만 더!';
-  const wTxt=weak.length?weak.map(c=>catLabel(c.cat)+' '+c.c+'/'+c.t).join('  ·  '):'없습니다. 모든 유형을 고르게 이해했어요!';
+  const wTxt=weak.length?weak.map(c=>catLabel(c.cat)+' '+c.c+'/'+c.t).join('  ·  '):'정답률이 50% 미만인 유형은 없어요.';   // 중간 종료·0개 판에 칭찬하지 않기
   /* 가장 먼저 공부할 유형 */
   let firstStudy;
   const allWeak = shown.length>0 && shown.every(c=>c.r<0.5);
   const anyWrong = shown.some(c=>c.wrong>0);
-  if(!anyWrong){ firstStudy='약점이 보이지 않아요. 다음 단계에 도전해 보세요.'; }
+  if(!anyWrong){ firstStudy=!st.answered?'풀어 본 문제가 없어요.':st.skipped?'남은 문제를 마저 풀어 보세요.':S.stage<STAGE_ORDER.length?'약점이 보이지 않아요. 다음 단계에 도전해 보세요.':'약점이 보이지 않아요. 다시 섞어서 도전해 보세요.'; }
   else if(allWeak){ firstStudy='유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.'; }
   else{ const cand=shown.filter(c=>c.wrong>0).sort((a,b)=> b.wrong-a.wrong || a.r-b.r || b.t-a.t )[0];
         firstStudy='['+catLabel(cand.cat)+'] '+(CATEGORIES[cand.cat]?CATEGORIES[cand.cat].tip:''); }
@@ -1952,11 +1985,11 @@ $('btnReport').addEventListener('click',()=>{
   /* 요약 수치 */
   ctx.fillStyle='#eef3fb'; ctx.strokeStyle='#c9d8ef'; ctx.lineWidth=2; ctx.fillRect(44,y,W-88,52); ctx.strokeRect(44,y,W-88,52);
   ctx.fillStyle='#2f558f'; ctx.font=F(16.5,'bold');
-  ctx.fillText('점수 '+S.score+' / '+MAX+'      정답률(첫 시도) '+st.acc+'%      최고 콤보 '+S.best+'      소요 '+fmtTime(S.elapsed),66,y+33);
-  y+=52+8;
+  ctx.fillText('점수 '+S.score+' / '+MAX+'      정답률(첫 시도) '+accText(st)+'      최고 콤보 '+S.best+'      소요 '+fmtTime(S.elapsed),66,y+33);
+  y+=52+20;   // 아래 줄이 상자 테두리에 겹치지 않게
   ctx.fillStyle='#4d5a76'; ctx.font=F(15.5);
   ctx.fillText('첫 시도 정답 '+st.firstCorrect+' · 다시 풀어 맞힘 '+st.retryCorrect+' · 못 맞힘 '+st.missed+(st.skipped?' · 미응답 '+st.skipped:''),66,y+8); y+=30;
-  ctx.fillStyle='#3c3489'; ctx.font=F(20,'bold'); ctx.fillText('총평 · '+gradeText(st.acc),44,y+8); y+=40;
+  ctx.fillStyle='#3c3489'; ctx.font=F(20,'bold'); ctx.fillText('총평 · '+verdictText(st),44,y+8); y+=40;
 
   /* 유형별 정답률 막대 (첫 시도 기준) */
   if(shown.length){
