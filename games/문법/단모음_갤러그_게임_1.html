@@ -9,7 +9,8 @@
      2026.10.01 13:00 '게임 끝내기' 확인을 브라우저 confirm() 대신 화면 안 확인창으로 (떠 있는 동안 멈춤, 계속하기·Esc면 이어서) 
      화면 2026.10.05 02:10: 게임 테마층 '밤하늘 모음 별자리'(시작 화면 그림, 모음 사각도). 문항·채점·로직 변경 없음
      2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
-     2026.10.06 17:25 실제 조작 버그 검사·수정: 중간 종료 제목·총평(칭찬 대신 연습 권유), 판정 0개 문구·정답률 –, 플레이 크레딧 가운뎃점 -->
+     2026.10.06 17:25 실제 조작 버그 검사·수정: 중간 종료 제목·총평(칭찬 대신 연습 권유), 판정 0개 문구·정답률 –, 플레이 크레딧 가운뎃점
+     2026.10.07 13:58 끝낸 게임 다시 훑기(실제 조작 재검사): 소리 버튼 Enter 재입력·오답노트 칭찬 제거, 보완 칸 하나, 확인 버튼 이름, 엑셀 빨간 글씨 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -273,7 +274,7 @@ details.vtable summary{cursor:pointer;font-size:.9rem;font-weight:700;color:var(
 
     <div class="credit-box">
       제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-      제작일 2026.08.13 · <span id="lastMod">최종 수정 2026.10.06 17:25</span>
+      제작일 2026.08.13 · <span id="lastMod">최종 수정 2026.10.07 13:58</span>
     </div>
 
     <div class="privacy" id="privacyOffline">
@@ -360,10 +361,9 @@ details.vtable summary{cursor:pointer;font-size:.9rem;font-weight:700;color:var(
       <div class="stat"><div class="v" id="stCombo">0</div><div class="l">🔥 최고 콤보</div></div>
       <div class="stat"><div class="v" id="stTime">0</div><div class="l">⏱ 소요 시간</div></div>
     </div>
-    <div class="analysis">
+    <div class="analysis" style="grid-template-columns:1fr">
       <div class="an-box"><h4>✅ 잘 구별한 모음</h4><div id="anGood"></div></div>
-      <div class="an-box"><h4>⚠️ 보완이 필요한 모음</h4><div id="anWeak"></div></div>
-      <div class="an-box study-box"><h4>📚 가장 먼저 공부할 것</h4><div id="anStudy"></div></div>
+      <div class="an-box study-box"><h4>⚠️ 보완이 필요한 모음</h4><div id="anWeak"></div></div>
     </div>
     <div class="inputs">
       <div><label for="inName">📛 이름 (필수)</label><input type="text" id="inName" maxlength="10" placeholder="이름을 입력하세요"></div>
@@ -391,7 +391,7 @@ details.vtable summary{cursor:pointer;font-size:.9rem;font-weight:700;color:var(
     <div class="modal-head"><span id="quitTitle">게임 끝내기</span></div>
     <div class="modal-body" style="text-align:center;padding:20px 16px;line-height:1.6">
       <b style="font-size:1.1rem">게임을 끝낼까요?</b><br>지금까지의 결과로 마무리돼요.
-      <div style="display:flex;gap:10px;margin-top:16px"><button class="btn sec" id="quitNo" onclick="quitCancel()">계속하기</button><button class="btn" id="quitYes" onclick="quitConfirm()">끝내기</button></div>
+      <div style="display:flex;gap:10px;margin-top:16px"><button class="btn sec" id="quitNo" onclick="quitCancel()">계속하기</button><button class="btn" id="quitYes" onclick="quitConfirm()">게임 끝내기</button></div>
     </div>
   </div>
 </div>
@@ -404,7 +404,7 @@ details.vtable summary{cursor:pointer;font-size:.9rem;font-weight:700;color:var(
 
 <script>
 const MADE_DATE='2026.08.13';
-const LAST_MOD='2026.10.06 17:25';
+const LAST_MOD='2026.10.07 13:58';
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -572,7 +572,7 @@ function play(kind){
     else if(kind==='combo5'){[523,659,784,1047,1319].forEach((f,i)=>tone(f,i*.09,.2,'triangle',.14));noise(.05,.25);noise(.3,.25)}
   }catch(e){}
 }
-function toggleMute(){muted=!muted;$('muteBtn').textContent=muted?'🔇':'🔊'}
+function toggleMute(){muted=!muted;$('muteBtn').textContent=muted?'🔇':'🔊';$('muteBtn').blur()}   // 포커스가 남아 Enter로 다시 눌리지 않게
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),1800)}
 const REDUCED=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -774,6 +774,7 @@ function setupControls(){
   document.addEventListener('keydown',e=>{
     if(S&&S.paused){if(e.key==='Escape'){e.preventDefault();quitCancel()}return}
     if(!S||S.ended||$('game-screen').classList.contains('hidden'))return;
+    if(e.key==='Enter'&&e.target&&e.target.tagName==='BUTTON'){e.preventDefault();return}   // 마우스로 누른 버튼(소리·게임 끝내기)이 Enter로 다시 눌리지 않게
     if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A'){e.preventDefault();moveDir=-1;keys.add('L')}
     else if(e.key==='ArrowRight'||e.key==='d'||e.key==='D'){e.preventDefault();moveDir=1;keys.add('R')}
     else if(e.key===' '||e.key==='ArrowUp'){e.preventDefault();if(!keys.has('F')){keys.add('F');fire();fireCd=.25;firing=true}}
@@ -810,19 +811,21 @@ function analyze(st){
   const shown=Object.entries(st.perV).filter(([,p])=>p.n>=2);
   const good=shown.filter(([,p])=>p.ok===p.n).map(([v,p])=>`${v} ${p.ok}/${p.n}`);
   const weak=shown.filter(([,p])=>p.ok/p.n<.5).map(([v,p])=>`${v} ${p.ok}/${p.n}`);
-  const allLow=shown.length>0&&shown.every(([,p])=>p.ok/p.n<.5);
-  const errs=Object.entries(st.perV).filter(([,p])=>p.n-p.ok>0)
+  const allLow=shown.length>=2&&shown.every(([,p])=>p.ok/p.n<.5);   // 판정한 모음이 2개 이상이고 모두 50% 미만일 때만
+  // '보완이 필요한 모음' 한 칸 = 가장 먼저 공부할 모음 하나(2번 이상 채점된 모음 중 오답 최다) + 판단 방법 (화면연출표준 8-2, v3.3)
+  const errs=shown.filter(([,p])=>p.n-p.ok>0)
     .sort((a,b)=>((b[1].n-b[1].ok)-(a[1].n-a[1].ok))||(a[1].ok/a[1].n-b[1].ok/b[1].n)||(b[1].n-a[1].n));
-  let study,studyVowel=null;
+  let study,studyVowel=null,studyHead='';
   if(!st.graded)study='풀어 본 문제가 없어요.';
-  else if(!errs.length)study=S.early?'남은 문제를 마저 풀어 보세요.':'약점이 보이지 않아요. 다음 단계에 도전해 보세요.';
   else if(allLow)study='유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 단모음 분류표를 먼저 읽어 보세요.';
-  else{studyVowel=errs[0][0];study=`${studyVowel} — ${TIPS[S.group][studyVowel]}`}
+  else if(errs.length){studyVowel=errs[0][0];studyHead=`${studyVowel} ${errs[0][1].ok}/${errs[0][1].n}`;study=TIPS[S.group][studyVowel]}
+  else if(st.miss+st.wrongHit>0)study='뚜렷하게 약한 유형은 없어요. 틀린 문제는 오답노트의 해설을 확인해 보세요.';
+  else study=S.early?'남은 문제를 마저 풀어 보세요.':S.stage<STAGES.length?'약점이 보이지 않아요. 다음 단계에 도전해 보세요.':'약점이 보이지 않아요. 다른 단계에도 도전해 보세요.';
   let nature='';
   if(st.wrongHit+st.miss>0){
     nature=st.wrongHit>st.miss?'해당하지 않는 모음을 목표 모음으로 착각한 실수가 많아요.':st.miss>st.wrongHit?'목표 모음을 알아보지 못하고 놓친 실수가 많아요.':'잘못 격추와 놓침이 비슷하게 섞여 있어요.';
   }
-  return {good,weak,allLow,study,studyVowel,nature};
+  return {good,weak,allLow,study,studyVowel,studyHead,nature};
 }
 function fmtDate(d){const p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}.${p(d.getMonth()+1)}.${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`}
 function fmtStamp(d){const p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}`}
@@ -872,8 +875,7 @@ function finish(){
   const sk=$('skipNote');
   if(ST.skipped>0){sk.classList.remove('hidden');sk.textContent=`⏸ 끝까지 풀지 않았어요 (${ST.skipped}문항 남음) — 화면에 남아 있던 모음은 정답률에 넣지 않았어요.`}else sk.classList.add('hidden');
   $('anGood').textContent=AN.allLow?'—':(AN.good.join('   ')||'—');
-  $('anWeak').textContent=AN.allLow?'—':(AN.weak.join('   ')||'—');
-  $('anStudy').innerHTML=(AN.nature?`<div style="color:var(--muted)">${AN.nature}</div>`:'')+`<div>${AN.study}</div>`;
+  $('anWeak').innerHTML=(AN.nature?`<div style="color:var(--muted)">${AN.nature}</div>`:'')+(AN.studyHead?`<b>${AN.studyHead}</b><br>`:'')+`<div>${AN.study}</div>`;
   $('metaLine').textContent=`📅 완료 ${fmtDate(S.finishedAt)} · ⏱ 학습 시간 ${fmtDur(S.elapsedSec)} (자동 기록)`;
   // 버튼 위계
   const hasNext=S.stage<STAGES.length,bn=$('btnNextStage');
@@ -1020,7 +1022,10 @@ function downloadNote(){
   const cv=renderCanvas(d=>{
     header(d,'📋 오답노트',$('inName').value.trim());
     if(!list.length){
-      d.box('#e3f6ea',null,dd=>{dd.text('틀린 모음이 없어요! 목표 모음을 모두 정확하게 골라냈어요.',{size:18,bold:true,color:'#2e9b5f',x:PAD+16});dd.text('다음 단계에 도전해 보세요.',{size:14,color:'#333',x:PAD+16})},{pad:18});
+      // 채점 0개·중간 종료면 칭찬 문구를 쓰지 않는다 (화면연출표준 7장)
+      if(!ST.graded)d.box('#f3f3f6',null,dd=>{dd.text('풀어 본 문제가 없어요.',{size:18,bold:true,color:'#6b6b85',x:PAD+16})},{pad:18});
+      else if(S.early)d.box('#f3f3f6',null,dd=>{dd.text('남은 문제를 마저 풀어 보세요.',{size:18,bold:true,color:'#6b6b85',x:PAD+16})},{pad:18});
+      else d.box('#e3f6ea',null,dd=>{dd.text('틀린 모음이 없어요! 목표 모음을 모두 정확하게 골라냈어요.',{size:18,bold:true,color:'#2e9b5f',x:PAD+16});dd.text('다음 단계에 도전해 보세요.',{size:14,color:'#333',x:PAD+16})},{pad:18});
     }else{
       d.text(`틀린 모음 ${list.length}종 · 실수 ${ST.miss+ST.wrongHit}회 (놓침 ${ST.miss} · 잘못 격추 ${ST.wrongHit})`,{size:14,color:'#6b6b85'});d.gap(8);
       list.forEach((g,i)=>{
@@ -1075,16 +1080,11 @@ function downloadReport(){
       });
       d.gap(6);
     }
-    if(AN.allLow){
-      d.text('잘하는 모음 · 보완이 필요한 모음',{size:15,bold:true,color:'#3C3489'});
-      d.text('여러 모음에서 정답률이 낮아 하나씩 나누어 보기 어려워요.',{size:14});
-    }else{
-      d.text(`✔ 잘 구별한 모음  ${AN.good.join('   ')||'—'}`,{size:15,bold:true,color:'#2e9b5f'});
-      d.text(`! 보완이 필요한 모음  ${AN.weak.join('   ')||'—'}`,{size:15,bold:true,color:'#d64545'});
-    }
+    d.text(`✔ 잘 구별한 모음  ${AN.allLow?'—':(AN.good.join('   ')||'—')}`,{size:15,bold:true,color:'#2e9b5f'});
     d.gap(10);
+    // '보완이 필요한 모음' 한 칸 = 가장 먼저 공부할 모음 하나 + 판단 방법
     d.box('#fffaf0','#f0d9a8',dd=>{
-      dd.text('가장 먼저 공부할 것',{size:15,bold:true,color:'#8a5a00',x:PAD+16,maxW:W-PAD*2-32});
+      dd.text('! 보완이 필요한 모음'+(AN.studyHead?'  '+AN.studyHead:''),{size:15,bold:true,color:'#d64545',x:PAD+16,maxW:W-PAD*2-32});
       dd.text(AN.study,{size:15,color:'#333',x:PAD+16,maxW:W-PAD*2-32});
     });
     if(comment){
@@ -1101,8 +1101,9 @@ function downloadReport(){
 
 /* ═════════ 교사용 학습 데이터 엑셀 ('최종 수정' 글자 클릭) ═════════ */
 function xmlEsc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
-function sheetXml(name,rows,headRows=1){
-  return `<Worksheet ss:Name="${xmlEsc(name)}"><Table>`+rows.map((r,i)=>`<Row>${r.map(c=>`<Cell${i<headRows?' ss:StyleID="h"':''}><Data ss:Type="${typeof c==='number'?'Number':'String'}">${xmlEsc(c)}</Data></Cell>`).join('')}</Row>`).join('')+`</Table></Worksheet>`;
+// ans: {행 번호: [정답 열 번호]} — 머리줄을 뺀 정답 칸을 빨간 굵은 글씨로 (교사용 정답 표시 관례)
+function sheetXml(name,rows,headRows=1,ans){
+  return `<Worksheet ss:Name="${xmlEsc(name)}"><Table>`+rows.map((r,i)=>`<Row>${r.map((c,j)=>`<Cell${i<headRows?' ss:StyleID="h"':ans&&ans(i,j)?' ss:StyleID="ans"':''}><Data ss:Type="${typeof c==='number'?'Number':'String'}">${xmlEsc(c)}</Data></Cell>`).join('')}</Row>`).join('')+`</Table></Worksheet>`;
 }
 function downloadTeacherXls(){
   const info=[[],['성취기준',`${STANDARD.code} ${STANDARD.text}`],
@@ -1119,8 +1120,8 @@ function downloadTeacherXls(){
   const s3=[['분류 기준','모음','학습 조언(tip)'],...GROUPS.flatMap(g=>VOWELS.map(v=>[g.label,v,TIPS[g.key][v]])),...info];
   const s4=[['분류 기준','목표','이 목표로 플레이할 때 모음별 판정'],
     ...Object.entries(CATEGORIES).flatMap(([n,c])=>VOWELS.map(v=>[GROUPS.find(g=>g.key===c.group).label,n,`${v} : ${c.test(v)?'격추(목표)':'통과(비목표)'}`]))];
-  const xml=`<?xml version="1.0" encoding="UTF-8"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Styles><Style ss:ID="h"><Font ss:Bold="1"/><Interior ss:Color="#EAE5F8" ss:Pattern="Solid"/></Style></Styles>`
-    +sheetXml('모음 분류표',s1)+sheetXml('목표·단계 구성',s2)+sheetXml('학습 조언',s3)+sheetXml('목표별 정답표',s4)+`</Workbook>`;
+  const xml=`<?xml version="1.0" encoding="UTF-8"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Styles><Style ss:ID="h"><Font ss:Bold="1"/><Interior ss:Color="#EAE5F8" ss:Pattern="Solid"/></Style><Style ss:ID="ans"><Font ss:Bold="1" ss:Color="#E00000"/></Style></Styles>`
+    +sheetXml('모음 분류표',s1,1,(i,j)=>i<=VOWELS.length&&j>=2&&j<=4)+sheetXml('목표·단계 구성',s2,1,(i,j)=>i<=Object.keys(CATEGORIES).length&&j===3)+sheetXml('학습 조언',s3)+sheetXml('목표별 정답표',s4,1,(i,j)=>j===2)+`</Workbook>`;
   const d=new Date(),p=n=>String(n).padStart(2,'0');
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob(['\ufeff'+xml],{type:'application/vnd.ms-excel'}));

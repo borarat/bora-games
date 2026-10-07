@@ -4,7 +4,8 @@
   2026.10.01 19:00 (8차) 맞힌 칸 잠금(점수 한 번만), 재전송 시 시간 보너스 한 번만, PART 2 "의미에 따른"→"형태·기능·의미에 따른", 관형사 예 새→헌, 오답 표시 0.65초 동안 칸 잠금, 화면 크기 바뀔 때 맞힌 칸 유지
   2026.10.06 01:30 테마층 '신문 퍼즐 면'(시작 화면 신문·연필 그림, 보조색 먹 #3D3D4A) · 정답·연속 알림을 공통 초록 정답 카드(#cbn)로 · 버그: 오답 표시 중이나 마지막 칸 직후 새 판을 시작하면 새 판이 망가지거나 결과 화면이 새 판 값으로 뜨던 것, PART 1 결과 화면 정리표에서 관계언·수식언 색이 보드 색과 뒤바뀌던 것
   2026.10.06 01:10 '게임 끝내기' 추가(교사 결정)·중간 종료 총평 — 지금까지 채운 결과로 마무리, 시간 보너스는 다 채웠을 때만, 끝까지 안 채우면 칭찬 문구 대신 '끝까지 풀지 않았어요 (n칸 남음)', 앱스크립트에 채운 칸·남은 칸(answeredCount·skippedCount) 함께 전송, 전송 안내가 판마다 쌓이던 것 정리
-     2026.10.06 12:30 실제 조작 버그 검사 처음부터 다시 실행 — 전 항목 통과 확인 후 사이트 반영 -->
+     2026.10.06 12:30 실제 조작 버그 검사 처음부터 다시 실행 — 전 항목 통과 확인 후 사이트 반영
+     2026.10.07 13:58 끝낸 게임 다시 훑기(실제 조작 재검사): 중간 종료·0개 제목, 엑셀 정답 빨강, 클릭 버튼 포커스 해제, 크레딧 · -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -373,7 +374,7 @@
 
       <div class="credit-box">
         <p>제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com</p>
-        <p>제작일 2026.06.08 · <span id="lastMod">최종 수정 2026.10.06 12:30</span></p>
+        <p>제작일 2026.06.08 · <span id="lastMod">최종 수정 2026.10.07 13:58</span></p>
       </div>
 
       <div class="privacy" id="privacyOffline">
@@ -443,7 +444,7 @@
         </div>
       </div>
     </div>
-    <div class="watermark">제작 · 보라라샘 / 2026.06.08</div>
+    <div class="watermark">제작 · 보라라샘 · 2026.06.08</div>
   </section>
 
   <!-- ===== 완료 화면 ===== -->
@@ -820,10 +821,10 @@ function showResult(){
   if(unfinished)tm.textContent='시간 보너스는 빈칸을 모두 채웠을 때만 받아요.';
   const g=$('grade');g.className='grade';
   $('doneSub').textContent=unfinished?'게임을 끝냈어요':'수고했어요';
-  $('doneTitle').textContent=unfinished?'여기까지 채웠어요':'학습 완료!';
+  $('doneTitle').textContent=!unfinished?'학습 완료!':(state.ok+state.no)?'여기까지 풀었어요':'풀어 본 문제가 없어요';   // 화면연출표준 7장 중간 종료·채점 0개 제목
   if(unfinished){   // 끝까지 채우지 않은 판 — 칭찬 문구 없이 (2026.10.06 교사 결정)
     g.classList.add('unfinished');
-    if(state.ok+state.no===0){g.textContent='풀어 본 문제가 없어요';tm.textContent='';}
+    if(state.ok+state.no===0){g.textContent='끝까지 풀지 않았어요 ('+left+'칸 남음)';tm.textContent='';}
     else{
       const acc=state.ok/(state.ok+state.no);   // 놓은 횟수 가운데 맞게 놓은 비율
       g.innerHTML='<span class="unfin">끝까지 풀지 않았어요 ('+left+'칸 남음)</span>'+(acc>=0.7?'잘하고 있어요! 남은 칸까지 채우며 좀 더 연습해 보면 어떨까요?':'좀 더 연습해 보면 어떨까요? 남은 칸까지 채워 보면 감이 잡혀요.');
@@ -864,14 +865,15 @@ function downloadTeacherXls(){
   let h='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"><style>td{padding:4px 8px;border:1px solid #ccc;font-size:12px;}th{background:#f0f0f0;font-weight:bold;padding:6px 8px;border:1px solid #ccc;}</style></head><body>';
   h+='<h2>Part 1 · 기능에 따른 단어 분류 (5×5)</h2>';
   h+='<table><tr><th>번호</th><th>이름</th><th>설명</th></tr>';
-  PART1.summary.forEach((s,i)=>{h+='<tr><td>'+(i+1)+'</td><td>'+s.name+'</td><td>'+s.desc+'</td></tr>';});
+  const A='<td style="color:#E00000;font-weight:bold">';   // 정답(칸에 들어가는 낱말) = 빨간 굵은 글씨
+  PART1.summary.forEach((s,i)=>{h+='<tr><td>'+(i+1)+'</td>'+A+s.name+'</td><td>'+s.desc+'</td></tr>';});
   h+='</table><br>';
   h+='<table><tr><th>단계</th><th>빈칸 수</th><th>줄당 최대 빈칸</th></tr>';
   [1,2,3].forEach(s=>{const c=PART1.stages[s];h+='<tr><td>'+s+'단계</td><td>'+c.blanks+'</td><td>'+c.maxLine+'</td></tr>';});
   h+='</table><br>';
   h+='<h2>Part 2 · 형태·기능·의미에 따른 품사 (9×9)</h2>';
   h+='<table><tr><th>번호</th><th>이름</th><th>약어</th><th>설명</th></tr>';
-  PART2.summary.forEach((s,i)=>{h+='<tr><td>'+(i+1)+'</td><td>'+s.name+'</td><td>'+PART2.short[i]+'</td><td>'+s.desc+'</td></tr>';});
+  PART2.summary.forEach((s,i)=>{h+='<tr><td>'+(i+1)+'</td>'+A+s.name+'</td>'+A+PART2.short[i]+'</td><td>'+s.desc+'</td></tr>';});
   h+='</table><br>';
   h+='<table><tr><th>단계</th><th>빈칸 수</th><th>줄당 최대 빈칸</th></tr>';
   [1,2,3].forEach(s=>{const c=PART2.stages[s];h+='<tr><td>'+s+'단계</td><td>'+c.blanks+'</td><td>'+c.maxLine+'</td></tr>';});
@@ -889,6 +891,9 @@ function downloadTeacherXls(){
   const a=document.createElement('a');a.href=url;a.download='G105_품사스도쿠_학습데이터목록_20261001.xls';a.click();
   URL.revokeObjectURL(url);
 }
+
+// 마우스로 누른 버튼에 포커스가 남으면 Enter·Space가 그 버튼(처음부터 다시하기·게임 끝내기 등)을 다시 누른다 → 누르는 순간 놓는다
+document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('button');if(b&&e.detail>0)b.blur();},true);
 
 // 크레딧 '최종 수정' 클릭 → 엑셀 다운로드
 document.addEventListener('DOMContentLoaded',()=>{

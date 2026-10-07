@@ -5,7 +5,8 @@
      연동: 틀리게 채운 칸을 wrongItems로 전송 (칸 위치 · 정답 성분 · 넣은 성분). 소감(reflection)은 교사 결정으로 빈 값 유지
      2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
      2026.10.06 01:40 테마층 '타일 모자이크'(시작 화면 격자 모자이크·타일 그림, 보조색 청록 #2A8C8C) · '게임 끝내기' 추가(교사 결정, 화면 안 확인 창 한 번) — 지금까지 채운 결과로 마무리, 시간 보너스는 다 채웠을 때만, 끝까지 안 채우면 칭찬 대신 '끝까지 풀지 않았어요 (n칸 남음)', 전송에 채운 칸·남은 칸(answeredCount·skippedCount) 추가 · 버그: 마지막 칸 직후 다시하기·시작화면을 누르면 결과 화면·전송이 사라지던 것, 다시하기 버튼 포커스로 Enter·Space에 판이 또 바뀌던 것, 오답 표시 중 새 판을 열면 옛 타이머가 새 판 잠금을 풀던 것, 줄 완성 알림이 새 판·끝낸 뒤에 뜰 수 있던 것
-     2026.10.06 12:30 실제 조작 버그 검사 처음부터 다시 실행 — 전 항목 통과 확인 후 사이트 반영 -->
+     2026.10.06 12:30 실제 조작 버그 검사 처음부터 다시 실행 — 전 항목 통과 확인 후 사이트 반영
+     2026.10.07 13:58 끝낸 게임 다시 훑기(실제 조작 재검사): 중간 종료·채점 0개 제목, 크레딧 · -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -300,7 +301,7 @@
 
       <div class="credit-box">
         <p>제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com</p>
-        <p>제작일 2026.09.25 · <span id="lastMod">최종 수정 2026.10.06 12:30</span></p>
+        <p>제작일 2026.09.25 · <span id="lastMod">최종 수정 2026.10.07 13:58</span></p>
       </div>
 
       <div class="privacy" id="privacyOffline">
@@ -351,7 +352,7 @@
         </div>
       </div>
     </div>
-    <div class="watermark">제작 · 보라라샘 / 2026.09.25</div>
+    <div class="watermark">제작 · 보라라샘 · 2026.09.25</div>
   </section>
 
   <!-- ===== 완료 화면 ===== -->
@@ -913,12 +914,12 @@ function finish(){
   const bonus=state.timeBonus,tries=state.ok+state.no,acc=tries?Math.round(state.ok/tries*100):0;
   $('doneBar').textContent=currentStage+(unfinished?'단계 · 게임을 끝냄':'단계 완료');
   $('doneTag').textContent=currentStage+'단계 · '+STAGES[currentStage].label;
-  $('doneTitle').textContent=unfinished?'여기까지 채웠어요':'스도쿠 완성!';
+  $('doneTitle').textContent=!unfinished?'스도쿠 완성!':tries?'여기까지 풀었어요':'풀어 본 문제가 없어요';   // 화면연출표준 7장 중간 종료·채점 0개 제목
   const g=$('grade');g.className='grade';
   if(!unfinished)g.textContent=gradeText(acc);
   else{   // 끝까지 채우지 않은 판 — 칭찬 문구 없이 (2026.10.06 교사 결정)
     g.classList.add('unfinished');
-    if(!tries)g.textContent='풀어 본 문제가 없어요';
+    if(!tries)g.textContent='끝까지 풀지 않았어요 ('+left+'칸 남음)';
     else g.innerHTML='<span class="unfin">끝까지 풀지 않았어요 ('+left+'칸 남음)</span>'+(acc>=70?'잘하고 있어요! 남은 칸까지 채우며 좀 더 연습해 보면 어떨까요?':'좀 더 연습해 보면 어떨까요? 남은 칸까지 채워 보면 감이 잡혀요.');
   }
   $('rScore').textContent=state.score;$('rMax').textContent='/ '+state.maxScore+'점 만점';

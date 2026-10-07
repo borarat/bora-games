@@ -10,7 +10,8 @@
      후속(2026.10.01 11:52, 교사 답변 반영): 4단계 이름·발문 '1음절 단어' → '1음절 글자'(톺·욀은 혼자 쓰는 단어가 아님), ㅚ·ㅟ 이중 모음 발음 허용 안내, 오답 문구 조사·띄어쓰기
      기록: 첫 시도 / 다시 풀어 맞힘 / 못 맞힘 / 미응답을 나눠 기록, 앱스크립트 연동, 교사용 엑셀('최종 수정' 클릭)
      2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
-     2026.10.06 00:30 게임 테마층 · 설계실(시작 화면 설계 도면 그림·게임 방법 상자 청록 테두리) + 버그 수정: 1~3단계 카드·빈칸 빠른 두 번 클릭이 선택 취소·오답 2회로 기록되던 것, 풀어 본 문제가 없을 때 정답률 0% 대신 — 표시, 휴대폰 폭에서 4단계 자음 체계표 목청소리(ㅎ) 칸이 잘려 고를 수 없던 것 -->
+     2026.10.06 00:30 게임 테마층 · 설계실(시작 화면 설계 도면 그림·게임 방법 상자 청록 테두리) + 버그 수정: 1~3단계 카드·빈칸 빠른 두 번 클릭이 선택 취소·오답 2회로 기록되던 것, 풀어 본 문제가 없을 때 정답률 0% 대신 — 표시, 휴대폰 폭에서 4단계 자음 체계표 목청소리(ㅎ) 칸이 잘려 고를 수 없던 것
+     2026.10.07 13:58 끝낸 게임 다시 훑기(실제 조작 재검사): 중간 종료·0개 총평(배치=칸), 보완 칸 하나, 엑셀 정답 빨강, 버튼 포커스 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -227,6 +228,7 @@ table.mt{border-collapse:collapse;width:100%}
 .res-emoji{font-size:48px;line-height:1.2}
 .res-title{font-size:26px;font-weight:700;color:var(--ink);margin-top:4px}
 .res-note{font-size:13.5px;color:var(--ng);margin-top:4px;font-weight:700}
+.res-desc{font-size:14px;color:var(--ink2);margin-top:6px;line-height:1.6;word-break:keep-all}
 .res-score{font-size:15px;color:var(--ink2);margin-top:8px}
 .res-score b{font-size:32px;color:var(--accent)}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
@@ -395,7 +397,7 @@ table.mt{border-collapse:collapse;width:100%}
     </div>
 
     <div class="start-foot">
-     <div class="credit">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.07.29 · <span id="lastMod">최종 수정 2026.10.06 00:30</span></div>
+     <div class="credit">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.07.29 · <span id="lastMod">최종 수정 2026.10.07 13:58</span></div>
      <div>
       <div class="privacy" id="privacyOffline">
        <b>🔒 개인정보 보호 안내</b><br>
@@ -507,6 +509,7 @@ table.mt{border-collapse:collapse;width:100%}
       <div class="res-emoji" id="resEmoji">🎉</div>
       <div class="res-note" id="resNote"></div>
       <div class="res-title" id="resTitle"></div>
+      <div class="res-desc" id="resDesc"></div>
       <div class="res-score" id="resScoreRow"><b id="resScore">0</b>점 <span id="resMax"></span></div>
      </div>
      <div class="stats" id="stats"></div>
@@ -558,7 +561,7 @@ table.mt{border-collapse:collapse;width:100%}
 // 1. 설정
 // ═══════════════════════════════════════════
 const MADE_DATE='2026.07.29';
-const LAST_MOD='2026.10.06 00:30';
+const LAST_MOD='2026.10.07 13:58';
 const GAME_CONFIG = {
   gameCode: "G212",
   gameName: "음운 체계 익히기",
@@ -762,7 +765,18 @@ function stats(){
   }
   c.graded=c.first+c.retry+c.fail;c.total=c.items.length;
   c.acc=c.graded?c.first/c.graded:0;
-  const g=GRADES.find(r=>c.acc>=r[0]);c.emoji=c.graded?g[1]:'📝';c.verdict=c.graded?g[2]:'풀어 본 문제가 없어요';
+  const g=GRADES.find(r=>c.acc>=r[0]);
+  // 남은 것: 배치는 아직 놓지 못한 카드(칸), 글자 완성은 손대지 않은 문제 + 풀다 멈춘 문제
+  c.remain=S.kind==='place'?c.total-c.first-c.retry:c.skip+c.items.filter(x=>x.st==='fail'&&x.r.status!=='giveup').length;
+  c.unit=S.kind==='place'?'칸':'문항';
+  // 총평 (화면연출표준 7장): 채점 0개 / 중간 종료 / 끝까지 — 배치 단계는 퍼즐형 문구('남은 칸까지 채우며')
+  if(!c.graded){c.emoji='📭';c.title='풀어 본 문제가 없어요';c.verdict='풀어 본 문제가 없어요'}
+  else if(c.remain>0){c.emoji='✏️';c.title='여기까지 풀었어요';
+    c.verdict=S.kind==='place'?
+      (c.acc>=.70?'잘하고 있어요! 남은 칸까지 채우며 좀 더 연습해 보면 어떨까요?':'좀 더 연습해 보면 어떨까요? 남은 칸까지 채워 보면 감이 잡혀요.'):
+      (c.acc>=.70?'잘하고 있어요! 남은 문제까지 풀며 좀 더 연습해 보면 어떨까요?':'좀 더 연습해 보면 어떨까요? 남은 문제까지 풀어 보면 감이 잡혀요.')}
+  else{c.emoji=g[1];c.title=g[2];c.verdict=g[2]}
+  c.midNote=c.graded&&c.remain>0?'끝까지 풀지 않았어요 ('+c.remain+c.unit+' 남음)':'';
   const sec=Math.max(0,Math.round(((S.end||S.lastGraded||new Date())-S.start)/1000));c.sec=sec;c.timeStr=Math.floor(sec/60)+'분 '+pad2(sec%60)+'초';
   return c;
 }
@@ -849,6 +863,7 @@ function doStartStage(n){
   render();
 }
 function jumpStage(i){
+  dropFocus();
   if(i===S.stage)return;
   if(hasProgress()&&!confirm(STAGES[i].no+'단계로 이동하면 지금 단계 기록은 사라져요. 이동할까요?'))return;
   startStage(i);
@@ -858,7 +873,9 @@ function hasProgress(){
   if(S.kind==='word')return Object.keys(S.res).length>0;
   return false;
 }
-function render(){if(S.kind==='place')renderPlace();else renderWord()}
+// 마우스로 누른 버튼에 포커스가 남으면 Enter·Space가 그 버튼(다음 문제·게임 끝내기·카드 리셋 등)을 다시 누른다 → 먼저 놓는다
+function dropFocus(){const a=document.activeElement;if(a&&a!==document.body&&a.blur&&!/^(INPUT|TEXTAREA)$/.test(a.tagName))a.blur()}
+function render(){dropFocus();if(S.kind==='place')renderPlace();else renderWord()}
 
 // ─────────── 1~3단계: 배치 ───────────
 function renderPlace(){
@@ -960,6 +977,7 @@ function slotClick(slot){
 }
 function pMsg(ok,t){const m=$('pMsg');m.className='msg on '+(ok?'ok':'ng');m.textContent=t;clearTimeout(S.msgT);S.msgT=setTimeout(()=>{m.className='msg'},1500)}
 function resetPlace(){
+  dropFocus();
   if(!confirm('지금까지 배치한 카드를 모두 초기화하고 이 단계를 처음부터 다시 시작할까요?'))return;
   doStartStage(S.stage);
 }
@@ -1104,13 +1122,15 @@ function updateHud(){
 
 // ─────────── 공통: 끝내기 ───────────
 function askFinish(){
+  if(S.done)return;
+  dropFocus();
   const c=stats();const left=c.skip+(S.kind==='word'?c.items.filter(x=>x.st==='fail'&&x.r.status!=='giveup').length:0);
   const msg=S.kind==='place'?'아직 배치하지 않은 카드가 '+(c.total-Object.keys(S.placed).length)+'장 있어요. 게임을 끝낼까요?':'아직 끝내지 않은 문제가 '+left+'개 있어요. 게임을 끝낼까요?\n(손대지 않은 문제는 미응답, 풀다 멈춘 문제는 못 맞힘으로 기록돼요)';
   const remain=S.kind==='place'?c.total-Object.keys(S.placed).length:left;
   if(!confirm(remain>0?msg:'게임을 끝내고 결과를 볼까요?'))return;
   finishGame();
 }
-function goHomeAsk(){if(hasProgress()&&!confirm('시작 화면으로 가면 지금 단계 기록은 사라져요. 이동할까요?'))return;goHome()}
+function goHomeAsk(){dropFocus();if(hasProgress()&&!confirm('시작 화면으로 가면 지금 단계 기록은 사라져요. 이동할까요?'))return;goHome()}
 function goHome(){clearTimeout(S.autoT);clearTimeout(S.checkT);S.done=true;show('start')}
 
 // ═══════════════════════════════════════════
@@ -1178,13 +1198,14 @@ function finishGame(){
   S.endShown=new Date();
   const c=stats(),st=STAGES[S.stage];
   $('endBandRight').textContent=stageTag();
-  $('resEmoji').textContent=c.emoji;$('resTitle').textContent=c.verdict;
-  $('resNote').textContent=c.skip>0&&c.graded?'끝까지 풀지 않았어요 ('+c.skip+(S.kind==='place'?'장':'문항')+' 남음)':'';
+  $('resEmoji').textContent=c.emoji;$('resTitle').textContent=c.title;
+  $('resNote').textContent=c.midNote;
+  $('resDesc').textContent=c.midNote?c.verdict:'';
   if(S.kind==='word'){$('resScoreRow').style.display='';$('resScore').textContent=S.score;$('resMax').textContent='/ 만점 '+W_MAX+'점'}
   else $('resScoreRow').style.display='none';
   const sb=S.kind==='place'?
-    [['ok',c.first,'첫 시도에 배치'],['',c.retry,'다시 시도해 배치'],['ng',c.fail,'틀린 뒤 못 배치'],['',c.graded?Math.round(c.acc*100)+'%':'—','정답률'],['ng',c.wrongTotal+'회','총 오답'],['skip',c.skip,'미응답']]:
-    [['ok',c.first,'첫 시도 정답'],['',c.retry,'다시 풀어 맞힘'],['ng',c.fail,'못 맞힘'],['',c.graded?Math.round(c.acc*100)+'%':'—','정답률'],['',S.maxCombo,'최고 콤보'],['skip',c.skip,'미응답']];
+    [['ok',c.first,'첫 시도에 배치'],['',c.retry,'다시 시도해 배치'],['ng',c.fail,'틀린 뒤 못 배치'],['',c.graded?Math.round(c.acc*100)+'%':'–','정답률'],['ng',c.wrongTotal+'회','총 오답'],['skip',c.skip,'미응답']]:
+    [['ok',c.first,'첫 시도 정답'],['',c.retry,'다시 풀어 맞힘'],['ng',c.fail,'못 맞힘'],['',c.graded?Math.round(c.acc*100)+'%':'–','정답률'],['',S.maxCombo,'최고 콤보'],['skip',c.skip,'미응답']];
   $('stats').innerHTML=sb.map(s=>'<div class="stat '+s[0]+'"><div class="v">'+s[1]+'</div><div class="l">'+s[2]+'</div></div>').join('');
   $('anal').innerHTML=analysisHTML(c);
   $('inDate').value=fmtDT(S.end);$('inTime').value=c.timeStr;
@@ -1221,12 +1242,12 @@ function analysisHTML(c){
   if(!c.graded)return '<h3>📈 분석</h3>풀어 본 문제가 없어요. 다시 도전해 보세요.';
   const A=analyze(c);
   if(S.kind==='place'){
-    if(!A.rank.length)return '<h3>📈 음운 분류별 분석</h3><b style="color:var(--ok)">✅ 모든 카드를 한 번에 정확히 배치했어요!</b>';
+    if(!A.rank.length)return c.remain>0?'<h3>📈 음운 분류별 분석</h3>남은 문제를 마저 풀어 보세요.':'<h3>📈 음운 분류별 분석</h3><b style="color:var(--ok)">✅ 모든 카드를 한 번에 정확히 배치했어요!</b>';
     const mx=A.rank[0][1];
     return '<h3>📈 음운 분류별 분석 · 보완이 필요한 영역 (실수가 많은 순)</h3>'+A.rank.slice(0,5).map(([k,n])=>'<div class="bar-row"><div class="bl">'+k+'</div><div class="bt"><i style="width:'+(n/mx*100)+'%"></i></div><div class="bn">'+n+'회</div></div>').join('')+
       '<div style="margin-top:6px">→ 특히 <b style="color:var(--ng)">"'+A.rank[0][0]+'"</b> 부분을 중점적으로 복습하면 좋아요.</div>';
   }
-  if(!A.wrongWords.length&&A.choW+A.jungW+A.jongW===0)return '<h3>📈 학습 분석</h3><b style="color:var(--ok)">✅ 모든 문제를 첫 시도에 맞혔어요!</b>';
+  if(!A.wrongWords.length&&A.choW+A.jungW+A.jongW===0)return c.remain>0?'<h3>📈 학습 분석</h3>남은 문제를 마저 풀어 보세요.':'<h3>📈 학습 분석</h3><b style="color:var(--ok)">✅ 모든 문제를 첫 시도에 맞혔어요!</b>';
   return '<h3>📈 학습 분석</h3>'+(A.wrongWords.length?'❌ 첫 시도에 틀린 문제의 글자: '+A.wrongWords.join(', ')+'<br>':'')+
     '틀린 시도 가운데 초성 오답 '+A.choW+'회 · 중성 오답 '+A.jungW+'회 · 종성 오답 '+A.jongW+'회'+(A.advice?'<br>'+A.advice:'');
 }
@@ -1266,7 +1287,7 @@ function buildWrongList(){
   const box=$('wrongList'),c=stats();
   if(!c.graded){box.innerHTML='';return}
   const wl=wrongEntries();
-  if(!wl.length){box.innerHTML='<div class="allgood">🎊 한 번도 틀리지 않았어요!</div>';return}
+  if(!wl.length){box.innerHTML='<div class="allgood">'+(c.remain>0?'푼 문제는 모두 첫 시도에 맞혔어요. ('+c.remain+c.unit+' 남음)':'🎊 한 번도 틀리지 않았어요!')+'</div>';return}
   box.innerHTML='<h3>❌ 첫 시도에 틀린 '+(S.kind==='place'?'카드':'문제')+' ('+wl.length+')</h3>'+wl.map(x=>
     '<div class="wl-item"><div class="wl-h"><span class="wl-ch">'+esc(x.head)+'</span><span class="tag">'+esc(x.label)+'</span><span class="tag re">'+x.tag+'</span></div>'+
     '<div><span class="ans-ng">'+esc(x.my)+'</span> → <span class="ans-ok">✅ '+esc(x.ans)+'</span></div>'+
@@ -1346,9 +1367,10 @@ function downloadNote(){
   let y=drawHeader(c,W,'📋 오답노트 · '+GAME_TITLE,stageTag()+'  ·  '+name+'  ·  '+fmtDT(S.end));
   y+=30;
   const st=stats(),wl=wrongEntries();
+  if(st.midNote){c.font='bold 15px '+SF;const nl=wrapLines(c,st.midNote+' · '+st.verdict,iw);nl.forEach((l,i)=>txt(c,l,P,y+6+i*22,'bold 15px','#b45309'));y+=8+nl.length*22}
   if(!wl.length){
     c.fillStyle='#e7f6ee';roundBox(c,P,y,iw,90,14);c.fill();
-    txt(c,st.graded?'🎊 한 번도 틀리지 않았어요! 틀린 '+(S.kind==='place'?'카드':'문제')+'가 없어요.':'풀어 본 문제가 없어요.',W/2,y+54,'bold 22px','#1e8f5a','center');
+    txt(c,!st.graded?'풀어 본 문제가 없어요.':(st.remain>0?'푼 문제는 모두 첫 시도에 맞혔어요.':'🎊 한 번도 틀리지 않았어요! 틀린 '+(S.kind==='place'?'카드':'문제')+'가 없어요.'),W/2,y+54,'bold 22px','#1e8f5a','center');
     y+=120;
   }else{
     txt(c,'첫 시도에 틀린 '+(S.kind==='place'?'카드':'문제')+' '+wl.length+'개 — 정답과 설명을 다시 읽어 보세요.',P,y+6,'15px','#6a6488');y+=26;
@@ -1384,13 +1406,13 @@ function downloadReport(){
   let y=drawHeader(c,W,'📊 학습 결과 분석 리포트 · '+GAME_TITLE,stageTag()+'  ·  '+name+'  ·  '+fmtDT(S.end));
   y+=26;
   const boxes=S.kind==='word'?
-    [['최종 점수',S.score+' / '+W_MAX],['정답률',c0.graded?Math.round(c0.acc*100)+'%':'—'],['첫 시도 정답',c0.first+'문항'],['다시 풀어 맞힘',c0.retry+'문항'],['못 맞힘',c0.fail+'문항'],['미응답',c0.skip+'문항'],['최고 콤보',S.maxCombo+'연속'],['소요 시간',c0.timeStr]]:
-    [['배치 완료',(c0.first+c0.retry)+' / '+c0.total],['정답률',c0.graded?Math.round(c0.acc*100)+'%':'—'],['첫 시도에 배치',c0.first+'장'],['다시 시도해 배치',c0.retry+'장'],['틀린 뒤 못 배치',c0.fail+'장'],['미응답',c0.skip+'장'],['총 오답',c0.wrongTotal+'회'],['소요 시간',c0.timeStr]];
+    [['최종 점수',S.score+' / '+W_MAX],['정답률',c0.graded?Math.round(c0.acc*100)+'%':'–'],['첫 시도 정답',c0.first+'문항'],['다시 풀어 맞힘',c0.retry+'문항'],['못 맞힘',c0.fail+'문항'],['미응답',c0.skip+'문항'],['최고 콤보',S.maxCombo+'연속'],['소요 시간',c0.timeStr]]:
+    [['배치 완료',(c0.first+c0.retry)+' / '+c0.total],['정답률',c0.graded?Math.round(c0.acc*100)+'%':'–'],['첫 시도에 배치',c0.first+'장'],['다시 시도해 배치',c0.retry+'장'],['틀린 뒤 못 배치',c0.fail+'장'],['미응답',c0.skip+'장'],['총 오답',c0.wrongTotal+'회'],['소요 시간',c0.timeStr]];
   const bw=(iw-3*12)/4,bh=70;
   boxes.forEach((b,i)=>{const bx=P+(i%4)*(bw+12),by=y+Math.floor(i/4)*(bh+12);c.fillStyle=i===0?'#7C5CBF':'#F7F3FC';roundBox(c,bx,by,bw,bh,12);c.fill();
     txt(c,b[1],bx+bw/2,by+34,'bold 22px',i===0?'#fff':'#3C3489','center');txt(c,b[0],bx+bw/2,by+58,'13px',i===0?'#efe9ff':'#6a6488','center')});
   y+=bh*2+12+26;
-  let verdict=c0.verdict;if(c0.skip>0&&c0.graded)verdict='끝까지 풀지 않았어요 ('+c0.skip+(S.kind==='place'?'장':'문항')+' 남음) · '+verdict;
+  let verdict=c0.verdict;if(c0.midNote)verdict=c0.midNote+' · '+verdict;
   c.font='bold 18px '+SF;const vl=wrapLines(c,c0.emoji+' '+verdict,iw-40);const vh=24+vl.length*28+10;
   c.fillStyle='#fff6dc';roundBox(c,P,y,iw,vh,12);c.fill();
   c.fillStyle='#5c4208';c.textAlign='left';vl.forEach((l,i)=>c.fillText(l,P+20,y+36+i*28));
@@ -1398,24 +1420,26 @@ function downloadReport(){
   txt(c,'※ 정답률은 첫 시도에 맞힌 수 ÷ 실제로 푼 '+(S.kind==='place'?'카드':'문항')+'('+c0.graded+')로 계산했어요.',P,y,'13px','#8a86a0');y+=34;
   const sec=(title,color,bg,lines)=>{c.font='15px '+SF;let ls=[];lines.forEach(l=>ls=ls.concat(wrapLines(c,l,iw-40)));const h=46+ls.length*24+12;
     c.fillStyle=bg;roundBox(c,P,y,iw,h,12);c.fill();txt(c,title,P+20,y+30,'bold 16px',color);c.fillStyle='#333';c.font='15px '+SF;ls.forEach((l,i)=>c.fillText(l,P+20,y+58+i*24));y+=h+12};
+  // '보완이 필요한 유형' 한 칸 (화면연출표준 8-2, v3.3) — 분석 막대는 그대로, 따로 있던 '가장 먼저 공부할 것'을 이 칸으로 합침
+  const noWeak=c0.remain>0?'남은 문제를 마저 풀어 보세요.':(S.stage<STAGES.length-1?'약점이 보이지 않아요. 다음 단계에 도전해 보세요.':'약점이 보이지 않아요. 다른 단계에도 도전해 보세요.');
   if(!c0.graded){
-    sec('📌 진단','#6a6488','#f3f3f6',['풀어 본 문제가 없어요. 다시 도전해 보세요.']);
+    sec('📌 진단','#6a6488','#f3f3f6',['풀어 본 문제가 없어요. 시작 화면에서 다시 도전해 보세요.']);
   }else if(S.kind==='place'){
-    if(!A.rank.length)sec('✅ 음운 분류별 분석','#1e8f5a','#e7f6ee',['모든 카드를 한 번에 정확히 배치했어요!']);
+    if(!A.rank.length)sec('📌 보완이 필요한 유형','#cf3d3d','#fdeded',[noWeak]);
     else{
-      txt(c,'📈 음운 분류별 분석 · 보완이 필요한 영역 (실수가 많은 순)',P,y+4,'bold 17px','#3C3489');y+=22;
+      txt(c,'📈 음운 분류별 분석 (실수가 많은 순)',P,y+4,'bold 17px','#3C3489');y+=22;
       const mx=A.rank[0][1];
       A.rank.slice(0,5).forEach(([k,n])=>{txt(c,k,P,y+18,'15px','#333');const bx=P+170,bwid=iw-170-80;c.fillStyle='#f8d9d9';roundBox(c,bx,y+4,bwid,18,9);c.fill();c.fillStyle='#e06464';roundBox(c,bx,y+4,Math.max(18,bwid*n/mx),18,9);c.fill();txt(c,n+'회',bx+bwid+12,y+19,'bold 14px','#cf3d3d');y+=30});
       y+=8;
-      sec('📌 가장 먼저 공부할 것','#3C3489','#efe9fa',['특히 "'+A.rank[0][0]+'" 부분을 중점적으로 복습하면 좋아요.']);
+      sec('📌 보완이 필요한 유형 · '+A.rank[0][0],'#cf3d3d','#fdeded',['특히 "'+A.rank[0][0]+'" 부분을 중점적으로 복습하면 좋아요.']);
     }
   }else{
-    if(!A.wrongWords.length&&A.choW+A.jungW+A.jongW===0)sec('✅ 학습 분석','#1e8f5a','#e7f6ee',['모든 문제를 첫 시도에 맞혔어요!']);
+    if(!A.wrongWords.length&&A.choW+A.jungW+A.jongW===0)sec('📌 보완이 필요한 유형','#cf3d3d','#fdeded',[noWeak]);
     else{
       const ls=[];if(A.wrongWords.length)ls.push('첫 시도에 틀린 문제의 글자: '+A.wrongWords.join(', '));
       ls.push('틀린 시도 가운데 초성 오답 '+A.choW+'회 · 중성 오답 '+A.jungW+'회 · 종성 오답 '+A.jongW+'회');
-      sec('📈 학습 분석','#cf3d3d','#fdeded',ls);
-      if(A.advice)sec('📌 가장 먼저 공부할 것','#3C3489','#efe9fa',[A.advice.replace(/^→ /,'')]);
+      sec('📈 학습 분석','#3C3489','#efe9fa',ls);
+      sec('📌 보완이 필요한 유형','#cf3d3d','#fdeded',[A.advice?A.advice.replace(/^→ /,''):'뚜렷하게 약한 유형은 없어요. 틀린 문제는 오답노트의 해설을 확인해 보세요.']);
     }
   }
   const refl=$('inRefl').value.trim();
@@ -1431,7 +1455,7 @@ function downloadReport(){
 // 교사용 학습 데이터 엑셀 ('최종 수정' 글자 클릭)
 // ═══════════════════════════════════════════
 function xe(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
-function xRow(cells,style){return '<Row>'+cells.map(v=>'<Cell'+(style?' ss:StyleID="'+style+'"':'')+'><Data ss:Type="'+(typeof v==='number'?'Number':'String')+'">'+xe(v)+'</Data></Cell>').join('')+'</Row>'}
+function xRow(cells,style,ansCols){return '<Row>'+cells.map((v,i)=>'<Cell'+(style?' ss:StyleID="'+style+'"':(ansCols&&ansCols.includes(i)?' ss:StyleID="ans"':''))+'><Data ss:Type="'+(typeof v==='number'?'Number':'String')+'">'+xe(v)+'</Data></Cell>').join('')+'</Row>'}
 function xSheet(name,rows,widths){return '<Worksheet ss:Name="'+xe(name)+'"><Table>'+(widths||[]).map(w=>'<Column ss:Width="'+w+'"/>').join('')+rows.join('')+'</Table></Worksheet>'}
 function downloadTeacherXls(){
   const tail=[xRow([]),
@@ -1442,13 +1466,13 @@ function downloadTeacherXls(){
     xRow(['총문항 수','카드 10/9/19장 + 글자 13문제 = 51'],'b'),
     xRow(['크레딧',CREDIT1+' · '+CREDIT2+' · 게임 코드 '+GAME_CONFIG.gameCode],'b')];
   const s1=[xRow(['1단계 · 단모음 배치하기 · 카드 10장'],'h'),xRow(['원본 id','모음','정답 자리(혀의 최고점의 위치)','혀의 높이','입술 모양','팁'],'h')];
-  VOWELS.forEach(v=>s1.push(xRow([v.char,v.char,v.pos+' 모음',v.height+'모음',v.shape+'모음',STAGES[0].tip])));
+  VOWELS.forEach(v=>s1.push(xRow([v.char,v.char,v.pos+' 모음',v.height+'모음',v.shape+'모음',STAGES[0].tip],null,[2,3,4])));  // 정답 자리 = 빨간 굵은 글씨
   const s2=[xRow(['2단계 · 특징 라벨 배치 · 카드 9장'],'h'),xRow(['원본 id','카드','분류','정답 자리','팁'],'h')];
-  LABELS.forEach(l=>{const inf=cardInfo(1,l.id);s2.push(xRow([l.id,l.text,inf.cats[0],inf.where,STAGES[1].tip]))});
+  LABELS.forEach(l=>{const inf=cardInfo(1,l.id);s2.push(xRow([l.id,l.text,inf.cats[0],inf.where,STAGES[1].tip],null,[3]))});
   const s3=[xRow(['3단계 · 자음 배치하기 · 카드 19장'],'h'),xRow(['원본 id','자음','소리 나는 위치','소리 내는 방법','소리의 세기','팁'],'h')];
-  CONSONANTS.forEach(k=>s3.push(xRow([k.char,k.char,k.place,MANNER_LABEL[k.manner],k.type||(k.char==='ㅎ'?'(세기 분류에 넣지 않음 — 교과서 기준)':'—'),STAGES[2].tip])));
+  CONSONANTS.forEach(k=>s3.push(xRow([k.char,k.char,k.place,MANNER_LABEL[k.manner],k.type||(k.char==='ㅎ'?'(세기 분류에 넣지 않음 — 교과서 기준)':'—'),STAGES[2].tip],null,[2,3,4])));
   const s4=[xRow(['4단계 · 글자 완성하기 · 13문제 · 만점 '+W_MAX+'점'],'h'),xRow(['원본 id','정답 글자','초성','중성','종성','초성 설명','중성 설명','종성 설명','근거'],'h')];
-  QUESTIONS.forEach(q=>s4.push(xRow([q.id,q.word,q.answer.cho,q.answer.jung,jongText(q.answer.jong),q.clues.cho.join(' '),q.clues.jung.join(' '),q.clues.jong.join(' '),q.src])));
+  QUESTIONS.forEach(q=>s4.push(xRow([q.id,q.word,q.answer.cho,q.answer.jung,jongText(q.answer.jong),q.clues.cho.join(' '),q.clues.jung.join(' '),q.clues.jong.join(' '),q.src],null,[1,2,3,4])));
   const sum=[xRow(['단계','내용','수','만점','유의점'],'h'),
     xRow(['1단계 기본','단모음 배치하기',10,'점수 없음','']),
     xRow(['2단계 심화','특징 라벨 배치',9,'점수 없음','평순·원순 카드는 같은 이름 칸 두 곳 중 어디에 놓아도 정답']),
@@ -1461,7 +1485,8 @@ function downloadTeacherXls(){
    '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">'+
    '<Styles><Style ss:ID="Default"><Alignment ss:Vertical="Top" ss:WrapText="1"/><Font ss:FontName="맑은 고딕" ss:Size="10"/></Style>'+
    '<Style ss:ID="h"><Font ss:FontName="맑은 고딕" ss:Size="10" ss:Bold="1" ss:Color="#FFFFFF"/><Interior ss:Color="#7C5CBF" ss:Pattern="Solid"/></Style>'+
-   '<Style ss:ID="b"><Font ss:FontName="맑은 고딕" ss:Size="10" ss:Bold="1" ss:Color="#3C3489"/></Style></Styles>'+
+   '<Style ss:ID="b"><Font ss:FontName="맑은 고딕" ss:Size="10" ss:Bold="1" ss:Color="#3C3489"/></Style>'+
+   '<Style ss:ID="ans"><Font ss:FontName="맑은 고딕" ss:Size="10" ss:Bold="1" ss:Color="#E00000"/></Style></Styles>'+
    sheets.join('')+'</Workbook>';
   const d=new Date(),stamp=d.getFullYear()+pad2(d.getMonth()+1)+pad2(d.getDate());
   const blob=new Blob([xml],{type:'application/vnd.ms-excel'});

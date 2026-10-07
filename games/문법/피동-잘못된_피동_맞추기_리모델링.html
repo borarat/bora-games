@@ -4,7 +4,8 @@
      문항: 올바른 피동 C19·C23의 자동사 문장을 교사 승인 문장으로 교체 (id 그대로)
      채점: 정답률 = 명중 ÷ (명중 + 오발사 + 놓침) (지침 5-2 속도형) · 오발사 감점 −5 → −10 (지침 3-6)
      2026.10.01 13:00 '게임 끝내기' 확인 단계 추가(지침 6-1): 화면 안 확인창이 떠 있는 동안 풍선·시간 멈춤, 취소·Esc면 이어서
-     2026.10.06 16:15 6차 피동 묶음: 테마층 '겹친 부품 검수대'(주황 #E07B39) / 실제 조작 버그 검사·수정: 연속 명중 연출을 옛 배너(화면 어둡게·무지개·이모지 낙하) → 공통 정답 카드(위쪽 15%), 끝내기 확인창·종료 때 카드 닫기, 중간 종료 총평(칭찬 대신 연습 권유), 채점 0개 판 문구·정답률 –, 리포트 JPG 총평 겹침, 시작 안내 줄바꿈, 플레이 화면 크레딧 가운뎃점 -->
+     2026.10.06 16:15 6차 피동 묶음: 테마층 '겹친 부품 검수대'(주황 #E07B39) / 실제 조작 버그 검사·수정: 연속 명중 연출을 옛 배너(화면 어둡게·무지개·이모지 낙하) → 공통 정답 카드(위쪽 15%), 끝내기 확인창·종료 때 카드 닫기, 중간 종료 총평(칭찬 대신 연습 권유), 채점 0개 판 문구·정답률 –, 리포트 JPG 총평 겹침, 시작 안내 줄바꿈, 플레이 화면 크레딧 가운뎃점
+     2026.10.07 13:58 끝낸 게임 다시 훑기(실제 조작 재검사): 중간 종료 총평 표준 문구, 보완 칸 하나, 엑셀 정답 빨간 글씨, 게임 끝내기 이름 -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -193,7 +194,7 @@ canvas#game{display:block;width:100%;height:auto;background:linear-gradient(180d
 
     <div class="credit">
      제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-     제작일 2026.04.14 · <span id="lastMod">최종 수정 2026.10.06 16:15</span>
+     제작일 2026.04.14 · <span id="lastMod">최종 수정 2026.10.07 13:58</span>
     </div>
    </div>
   </div>
@@ -283,7 +284,7 @@ canvas#game{display:block;width:100%;height:auto;background:linear-gradient(180d
  <div class="mbox" style="max-width:420px;text-align:center">
   <h3 id="quitTitle">게임을 끝낼까요?</h3>
   <p style="margin:0 0 6px">지금까지의 결과로 마무리돼요.</p>
-  <div class="btnrow"><button class="btn sec" id="quitNo" onclick="quitCancel()">계속하기</button><button class="btn" id="quitYes" onclick="quitConfirm()">끝내기</button></div>
+  <div class="btnrow"><button class="btn sec" id="quitNo" onclick="quitCancel()">계속하기</button><button class="btn" id="quitYes" onclick="quitConfirm()">게임 끝내기</button></div>
  </div>
 </div>
 
@@ -296,7 +297,7 @@ canvas#game{display:block;width:100%;height:auto;background:linear-gradient(180d
 </div>
 
 <script>
-const MADE_DATE='2026.04.14', LAST_MOD='2026.10.06 16:15';
+const MADE_DATE='2026.04.14', LAST_MOD='2026.10.07 13:58';
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
 // ═══════════════════════════════════════════
@@ -678,7 +679,7 @@ function gradeText(p){return p>=95?'완벽해요!':p>=85?'아주 잘했어요':p
 function accText(){return gradedOf()?accOf()+'%':'–';}
 function verdictText(){
  if(!gradedOf()) return '풀어 본 문제가 없어요';
- if(S.manual) return '중간에 끝냈어요 · '+(accOf()>=70?'잘하고 있어요! 남은 문제까지 풀며 좀 더 연습해 보면 어떨까요?':'좀 더 연습해 보면 어떨까요? 남은 문제까지 풀어 보면 감이 잡혀요.');
+ if(S.manual) return '여기까지 풀었어요 · '+(accOf()>=70?'잘하고 있어요! 남은 문제까지 풀며 좀 더 연습해 보면 어떨까요?':'좀 더 연습해 보면 어떨까요? 남은 문제까지 풀어 보면 감이 잡혀요.');
  return gradeText(accOf());
 }
 function fmtTime(ms){const s=Math.round(ms/1000);return Math.floor(s/60)+'분 '+(s%60)+'초';}
@@ -693,16 +694,16 @@ function analysis(){
  const shown=Object.entries(cs).filter(([k,v])=>v.n>=2);
  const good=shown.filter(([k,v])=>v.ok===v.n).map(([k,v])=>`${CATEGORIES[k].label} ${v.ok}/${v.n}`);
  const weak=shown.filter(([k,v])=>v.ok/v.n<.5).map(([k,v])=>`${CATEGORIES[k].label} ${v.ok}/${v.n}`);
- const judged=S.hits+S.missed;
+ // '보완이 필요한 유형' 한 칸 = 가장 먼저 공부할 유형 하나(n/N) + 판단 방법(tip) (화면연출표준 8-2 v3.3) — 화면·리포트 JPG 공통
+ // 판정 유형 = 2번 이상 나온 잘못된 표현 유형. 놓친 표현이 우선, 놓친 것이 없고 오발사만 있으면 '올바른 피동'(그대로 둔 풍선/올바른 풍선)
  let first=null;
- const active=Object.values(cs).filter(v=>v.n>0);
- if(active.length>=2&&active.every(v=>v.ok/v.n<.5)){first={special:'유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.'};}
- else if(S.missed>0){
-  const cand=Object.entries(cs).filter(([k,v])=>v.n-v.ok>0).sort((a,b)=>(b[1].n-b[1].ok)-(a[1].n-a[1].ok)||(a[1].ok/a[1].n)-(b[1].ok/b[1].n)||b[1].n-a[1].n);
-  first={cat:cand[0][0]};
- }
- else if(S.wrongShots>0){first={cat:'correct'};}
- else if(judged>0){first={special:S.manual?'남은 문제를 마저 풀어 보세요.':'약점이 보이지 않아요. 다음 단계에 도전해 보세요.'};}
+ const cand=shown.filter(([k,v])=>v.n-v.ok>0).sort((a,b)=>(b[1].n-b[1].ok)-(a[1].n-a[1].ok)||(a[1].ok/a[1].n)-(b[1].ok/b[1].n)||b[1].n-a[1].n);
+ if(!gradedOf()){first={special:'풀어 본 문제가 없어요.'};}
+ else if(shown.length>=2&&shown.every(([k,v])=>v.ok/v.n<.5)){first={special:'유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.'};}
+ else if(cand.length){const [k,v]=cand[0];first={cat:k,head:CATEGORIES[k].label+' '+v.ok+'/'+v.n};}
+ else if(S.wrongShots>0){const pass=S.log.filter(l=>l.result==='pass').length;first={cat:'correct',head:CATEGORIES.correct.label+' '+pass+'/'+(pass+S.wrongShots)};}
+ else if(S.missed>0){first={special:'뚜렷하게 약한 유형은 없어요. 틀린 문제는 오답노트의 해설을 확인해 보세요.'};}
+ else {first={special:S.manual?'남은 문제를 마저 풀어 보세요.':S.stage<STAGES.length?'약점이 보이지 않아요. 다음 단계에 도전해 보세요.':'약점이 보이지 않아요. 다른 단계에도 도전해 보세요.'};}
  return {good,weak,first,cs};
 }
 
@@ -718,9 +719,7 @@ function endGame(manual){
  $('endGrade').textContent=verdictText();
  const a=analysis(); let h='';
  h+=`<div class="abox good"><h4>✅ 잘하는 유형</h4>${a.good.length?a.good.join('<br>'):'<span style="opacity:.7">아직 없어요</span>'}</div>`;
- h+=`<div class="abox weak"><h4>📝 보완이 필요한 유형</h4>${a.weak.length?a.weak.join('<br>'):'<span style="opacity:.7">없어요'+(S.wrongShots?' (올바른 표현 오발사 '+S.wrongShots+'회)':'')+'</span>'}</div>`;
- if(a.first){ if(a.first.special)h+=`<div class="abox tip"><h4>💡 가장 먼저 공부할 것</h4>${a.first.special}</div>`;
-  else h+=`<div class="abox tip"><h4>💡 가장 먼저 공부할 것 — ${CATEGORIES[a.first.cat].label}</h4>${CATEGORIES[a.first.cat].tip}</div>`;}
+ h+=`<div class="abox weak"><h4>📝 보완이 필요한 유형${a.first.head?' · '+a.first.head:''}</h4>${a.first.special||CATEGORIES[a.first.cat].tip}</div>`;
  $('endAnalysis').innerHTML=h;
  const hasNext=S.stage<STAGES.length, nb=$('btnNextStage'), rb=$('btnRetry');
  nb.style.display=hasNext?'':'none'; nb.onclick=()=>startStage(S.stage+1);
@@ -832,11 +831,11 @@ function makeReport(){
  const acc=accOf(),judged=S.hits+S.missed,maxS=maxScoreFor(judged),a=analysis();
  const c=document.createElement('canvas');const g=c.getContext('2d');c.width=Wd;
  g.font='13px '+CF;
- const goodL=a.good.length?a.good:['아직 없어요'],weakL=a.weak.length?a.weak:['없어요'+(S.wrongShots?' (올바른 표현 오발사 '+S.wrongShots+'회)':'')];
- const boxH=40+Math.max(goodL.length,weakL.length)*20+10;
- let tipTitle='',tipLines=[];
- if(a.first){if(a.first.special){tipTitle='💡 가장 먼저 공부할 것';tipLines=wrap(g,a.first.special,cw-32);}else{tipTitle='💡 가장 먼저 공부할 것 — '+CATEGORIES[a.first.cat].label;tipLines=wrap(g,CATEGORIES[a.first.cat].tip,cw-32);}}
- const tipH=a.first?40+tipLines.length*20+8:0;
+ const half=(cw-16)/2;
+ const goodL=a.good.length?a.good:['아직 없어요'],weakL=wrap(g,a.first.special||CATEGORIES[a.first.cat].tip,half-32);
+ g.font='700 14px '+CF; const wtL=wrap(g,'📝 보완이 필요한 유형'+(a.first.head?' · '+a.first.head:''),half-32); g.font='13px '+CF;
+ const boxH=40+Math.max(goodL.length,weakL.length+wtL.length-1)*20+10;
+ const tipH=0;
  const refLines=ref?wrap(g,ref,cw-32):[];const refH=ref?40+refLines.length*20+8:0;
  g.font='700 15px '+CF; const vl=wrap(g,'정답률 '+accText()+'  ·  '+verdictText(),cw-250); const ext=(vl.length-1)*20;  // 총평이 길면 위 상자를 줄 수만큼 늘린다
  let total=118+110+ext+40+boxH+16+(tipH?tipH+16:0)+(refH?refH+16:0)+16+footerH(g,Wd,pad);
@@ -854,13 +853,11 @@ function makeReport(){
  g.font='700 15px '+CF;g.fillStyle='#3C3489';vl.forEach((l,i)=>g.fillText(l,pad+230,y+64+i*20));
  g.font='12px '+CF;g.fillStyle='#94a3b8';if(gradedOf())g.fillText('(정답률 = 명중 '+S.hits+' ÷ 명중·오발사·놓침 '+gradedOf()+')',pad+230,y+86+ext);
  y+=110+ext+16;
- const half=(cw-16)/2;
  rr(g,pad,y,half,boxH,12);g.fillStyle='#f0fdf4';g.fill();g.strokeStyle='#bbf7d0';g.stroke();
  g.font='700 14px '+CF;g.fillStyle='#16a34a';g.fillText('✅ 잘하는 유형',pad+16,y+26);g.font='13px '+CF;g.fillStyle='#166534';goodL.forEach((l,i)=>g.fillText(l,pad+16,y+52+i*20));
  const rx=pad+half+16;rr(g,rx,y,half,boxH,12);g.fillStyle='#fff7ed';g.fill();g.strokeStyle='#fed7aa';g.stroke();
- g.font='700 14px '+CF;g.fillStyle='#ea580c';g.fillText('📝 보완이 필요한 유형',rx+16,y+26);g.font='13px '+CF;g.fillStyle='#9a3412';weakL.forEach((l,i)=>g.fillText(l,rx+16,y+52+i*20));
+ g.font='700 14px '+CF;g.fillStyle='#ea580c';wtL.forEach((l,i)=>g.fillText(l,rx+16,y+26+i*20));g.font='13px '+CF;g.fillStyle='#9a3412';weakL.forEach((l,i)=>g.fillText(l,rx+16,y+52+(wtL.length-1)*20+i*20));
  y+=boxH+16;
- if(tipH){rr(g,pad,y,cw,tipH,12);g.fillStyle='#eef2ff';g.fill();g.strokeStyle='#c7d2fe';g.stroke();g.font='700 14px '+CF;g.fillStyle='#3730a3';g.fillText(tipTitle,pad+16,y+26);g.font='13px '+CF;g.fillStyle='#3730a3';tipLines.forEach((l,i)=>g.fillText(l,pad+16,y+52+i*20));y+=tipH+16;}
  if(refH){rr(g,pad,y,cw,refH,12);g.fillStyle='#f8fafc';g.fill();g.strokeStyle='#e2e8f0';g.stroke();g.font='700 14px '+CF;g.fillStyle='#1e293b';g.fillText('💬 학습 소감',pad+16,y+26);g.font='13px '+CF;g.fillStyle='#475569';refLines.forEach((l,i)=>g.fillText(l,pad+16,y+52+i*20));y+=refH+16;}
  y+=6;footer(g,Wd,y,pad);
  dl(c,`${name}_학습리포트_${st.label}_${np.file}.jpg`);
@@ -868,11 +865,12 @@ function makeReport(){
 
 /* ═══════ 교사용 학습 데이터 엑셀 ('최종 수정' 클릭) ═══════ */
 function xe(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function xrow(cells,bold){return '<Row>'+cells.map(v=>`<Cell${bold?' ss:StyleID="b"':''}><Data ss:Type="${typeof v==='number'?'Number':'String'}">${xe(v)}</Data></Cell>`).join('')+'</Row>';}
+// ans: 정답 열 번호(빨간 굵은 글씨, 머리줄 제외)
+function xrow(cells,bold,ans){return '<Row>'+cells.map((v,j)=>`<Cell${bold?' ss:StyleID="b"':ans&&ans.includes(j)?' ss:StyleID="ans"':''}><Data ss:Type="${typeof v==='number'?'Number':'String'}">${xe(v)}</Data></Cell>`).join('')+'</Row>';}
 function downloadTeacherXls(){
  const np=nowParts();
  let s1=xrow(['id','구분','유형','문장','고친 표현','해설'],true);
- ALL_ITEMS.forEach(q=>{s1+=xrow([q.id,q.target?'잘못된 표현(목표)':'올바른 표현',CATEGORIES[q.cat].label,q.text,q.fix||'-',q.detail]);});
+ ALL_ITEMS.forEach(q=>{s1+=xrow([q.id,q.target?'잘못된 표현(목표)':'올바른 표현',CATEGORIES[q.cat].label,q.text,q.fix||'-',q.detail],false,[1,4]);});
  s1+=xrow(['']);s1+=xrow(['성취기준',STD_CODE+' '+STD_TEXT]);
  s1+=xrow(['배점 규칙','잘못된 표현 명중 +10 · 3연속부터 +5 · 5연속부터 +10 · 올바른 표현 오발사 −10(하한 0) · 목숨 20 · 만점은 판마다 등장한 잘못된 표현 수로 계산']);
  s1+=xrow(['출제 방식','셔플백 1회 = 잘못된 표현 14개 + 올바른 표현 12개 무작위. 초급 3.5초 간격·느린 낙하, 고급 2초 간격·빠른 낙하']);
@@ -880,7 +878,7 @@ function downloadTeacherXls(){
  s1+=xrow(['크레딧','제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com · 제작일 '+MADE_DATE+' · 최종 수정 '+LAST_MOD]);
  let s2=xrow(['유형','문항 수','설명','학습 조언(tip)'],true);
  Object.entries(CATEGORIES).forEach(([k,c])=>{s2+=xrow([c.label,ALL_ITEMS.filter(q=>q.cat===k).length,c.desc,c.tip]);});
- const xml=`<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Styles><Style ss:ID="b"><Font ss:Bold="1"/></Style></Styles><Worksheet ss:Name="문항 목록"><Table>${s1}</Table></Worksheet><Worksheet ss:Name="유형별 요약"><Table>${s2}</Table></Worksheet></Workbook>`;
+ const xml=`<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Styles><Style ss:ID="b"><Font ss:Bold="1"/></Style><Style ss:ID="ans"><Font ss:Bold="1" ss:Color="#E00000"/></Style></Styles><Worksheet ss:Name="문항 목록"><Table>${s1}</Table></Worksheet><Worksheet ss:Name="유형별 요약"><Table>${s2}</Table></Worksheet></Workbook>`;
  const blob=new Blob(['\ufeff'+xml],{type:'application/vnd.ms-excel'});
  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`${GAME_CONFIG.gameCode}_잘못된피동표현맞히기_학습데이터목록_${np.file.slice(0,8)}.xls`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);
 }

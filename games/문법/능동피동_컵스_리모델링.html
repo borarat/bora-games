@@ -12,7 +12,8 @@
            중간 종료 제목·총평, 오늘 나온 문제, 오답노트·리포트 JPG 표준 구성(번호 대신 유형, 성취기준·개인정보 꼬리말), 만점 표시, 다시 하기를 새로고침 없이
      테마층 '시소'(연두 #7FB539): 같은 장면에서 앞에 오는 말(주어)이 바뀌면 양 끝 자리가 바뀐다
      2026.10.06 16:15 6차 피동 묶음: 위 화면 표준 v3 맞춤 + 테마층, 실제 조작 버그 검사 통과
-     2026.10.06 17:10 교사 요청: 문장을 먼저 누르지 않고 컵만 누르면 채점, 10초 타이머 없앰(시간 초과 오답 없음) — 실제 조작 검사 27/27 다시 통과 -->
+     2026.10.06 17:10 교사 요청: 문장을 먼저 누르지 않고 컵만 누르면 채점, 10초 타이머 없앰(시간 초과 오답 없음) — 실제 조작 검사 27/27 다시 통과
+     2026.10.07 13:58 끝낸 게임 다시 훑기(실제 조작 재검사): 보완 칸 하나, 엑셀 정답 빨강, 건너뛴 문항까지 채점하면 자동 종료, 결과 보기 확인 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -192,7 +193,7 @@ button{font-family:inherit}
 
    <div class="stage-row"><button class="btn big" id="btnStart" onclick="startGame()">게임 시작하기 ▶<small>58문항</small></button></div>
 
-   <div class="maker">제작 · <b>보라라샘</b> · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.04.16 · <span id="lastMod">최종 수정 2026.10.06 17:10</span></div>
+   <div class="maker">제작 · <b>보라라샘</b> · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.04.16 · <span id="lastMod">최종 수정 2026.10.07 13:58</span></div>
    <div class="privacy" id="privacyOffline"><b>🔒 개인정보 보호 안내</b><br>본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다.<br>게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.</div>
    <div class="privacy" id="privacyOnline" style="display:none"><b>🔒 개인정보 보호 안내</b><br>본 게임의 학습 결과(학번, 이름, 점수, 오답 정보, 학습 소감)는 담당 선생님의 학습 관리용 스프레드시트에 안전하게 전송·저장됩니다.<br>수집된 정보는 학습 지도 목적으로만 사용되며, 제3자에게 제공되지 않습니다.</div>
   </div>
@@ -254,7 +255,6 @@ button{font-family:inherit}
    <div class="rep">
     <div class="box"><h3>✅ 잘하는 유형</h3><div id="repGood"></div></div>
     <div class="box"><h3>📌 보완이 필요한 유형</h3><div id="repBad"></div></div>
-    <div class="box full"><h3>🎯 가장 먼저 공부할 것</h3><div id="repFirst"></div></div>
    </div>
    <div class="inputs">
     <div class="ig"><label for="nameInput">이름<em>(필수)</em></label><input id="nameInput" type="text" maxlength="20" placeholder="이름을 입력하세요"></div>
@@ -270,7 +270,7 @@ button{font-family:inherit}
     <button class="btn sec" onclick="goHome()">⌂ 시작화면으로</button>
    </div>
    <div class="privacy" style="text-align:left" id="endPrivacy">입력하신 이름과 소감은 서버에 저장되지 않으며, 리포트 이미지(JPG) 생성용으로만 쓰입니다.</div>
-   <div class="maker" style="margin-top:12px">제작 · <b>보라라샘</b> · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.04.16 · 최종 수정 2026.10.06 17:10</div>
+   <div class="maker" style="margin-top:12px">제작 · <b>보라라샘</b> · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.04.16 · 최종 수정 2026.10.07 13:58</div>
   </div>
  </div>
 </section>
@@ -282,7 +282,7 @@ button{font-family:inherit}
 
 <script>
 const MADE_DATE='2026.04.16';
-const LAST_MOD='2026.10.06 17:10';
+const LAST_MOD='2026.10.07 13:58';
 // ===== Apps Script 연동 설정 =====
 const GAME_CONFIG = {
   gameCode: "G208",
@@ -497,18 +497,24 @@ function handleCorrect(type){
   combo++; if(combo>maxCombo)maxCombo=combo;
   const pts=BASE+combo; r.gained=pts; score+=pts; lastGradedAt=Date.now();
   updHud(true); loadQuestion(); showCard(pts);
-  advanceTimer=setTimeout(nextQuestion,(combo===3||(combo>=5&&combo%5===0))?1200:900);
+  advanceTimer=setTimeout(autoNext,allGraded()?2000:(combo===3||(combo>=5&&combo%5===0))?1200:900);
 }
 function handleWrong(type){
   const r=rec[currentIdx]; r.st='ng'; r.user=type;
   score=Math.max(0,score-PENALTY); combo=0; lastGradedAt=Date.now();
   updHud(false); playWrongSound(); loadQuestion();
   const c=[...document.querySelectorAll('.cup')].find(x=>x.dataset.type===type); if(c)c.classList.add('shake');
-  advanceTimer=setTimeout(nextQuestion,2500);
+  advanceTimer=setTimeout(autoNext,allGraded()?2000:2500);
 }
 function updHud(pulse){$('hudN').textContent=combo;const h=$('hud');h.classList.toggle('live',combo>=1);if(pulse){h.classList.remove('pulse');void h.offsetWidth;h.classList.add('pulse');}
   if(screen==='game'&&gameData.length)$('bandR').textContent='문항 '+(currentIdx+1)+' / '+gameData.length+' · '+score+'점';}
-function nextQuestion(){ if(ended)return; cbHide(); currentIdx++; loadQuestion(); }
+function allGraded(){return rec.length>0&&rec.every(r=>r.st!=='todo');}
+// 채점 뒤 저절로 넘김: 모두 채점됐으면 결과 화면, 마지막 문항이면(남은 문항 있음) 그 자리에 둔다
+function autoNext(){ advanceTimer=null; if(ended||screen!=='game')return; if(allGraded()){endGame();return;} if(currentIdx<gameData.length-1)nextQuestion(); }
+function nextQuestion(){ if(ended)return; cbHide();
+  if(allGraded()){endGame();return;}
+  if(currentIdx>=gameData.length-1){ confirmEnd(); return; }   // 마지막 문항 '결과 보기' — 남은 문항이 있으면 한 번 확인
+  currentIdx++; loadQuestion(); }
 function prevQuestion(){ if(ended)return; cbHide(); if(currentIdx>0){currentIdx--;loadQuestion()} }
 function skipQuestion(){ nextQuestion(); }
 function confirmEnd(){ if(ended)return; if(confirm('게임을 끝낼까요? 풀지 않은 문제는 미응답으로 기록돼요.')) endGame(); }
@@ -540,8 +546,11 @@ function analyze(R){
   else if(R.wrong===0) msg=R.skipped?'남은 문제를 마저 풀어 보세요.':'약점이 보이지 않아요. 다시 섞어서 도전해 보세요.';
   else if(shown.length>=2&&shown.every(k=>R.cats[k].ok/R.cats[k].n<.5)) msg='유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.';
   else { const c=shown.filter(k=>R.cats[k].wrong>0).sort((a,b)=>{const A=R.cats[a],B=R.cats[b];return (B.wrong-A.wrong)||(A.ok/A.n-B.ok/B.n)||(B.n-A.n);});
-    if(c.length) first=c[0]; else msg=R.skipped?'남은 문제를 마저 풀어 보세요.':'틀린 문제는 오답노트의 해설로 확인해 보세요.'; }
+    if(c.length) first=c[0]; else msg='뚜렷하게 약한 유형은 없어요. 틀린 문제는 오답노트의 해설을 확인해 보세요.'; }
   return {good,bad,first,msg};
+}
+// '보완이 필요한 유형' 한 칸 = 가장 먼저 공부할 유형 하나(유형명 n/N) + 판단 방법(tip) (화면연출표준 8-2 v3.3)
+function weakLine(R,A){return A.first?CATEGORIES[A.first].label+' '+R.cats[A.first].ok+'/'+R.cats[A.first].n+' — '+CATEGORIES[A.first].tip:A.msg;
 }
 function fmtTime(ms){const s=Math.round(ms/1000);return Math.floor(s/60)+'분 '+String(s%60).padStart(2,'0')+'초';}
 function pad2(n){return String(n).padStart(2,'0');}
@@ -553,15 +562,14 @@ function endGame(){
   clearTimeout(advanceTimer);advanceTimer=null;cbHide();
   doneAt=new Date(); elapsed=(lastGradedAt||Date.now())-startedAt;   // 소요 시간 = 마지막으로 채점한 시각까지
   const R=calcResult(), A=analyze(R);
-  $('resTitle').textContent= R.skipped ? '여기까지 풀었어요' : '🎉 게임 완료!';
+  $('resTitle').textContent= !R.graded ? '풀어 본 문제가 없어요' : R.skipped ? '여기까지 풀었어요' : '🎉 게임 완료!';
   $('resEmoji').textContent= R.skipped ? '📝' : emojiOf(R.rate);
   $('resScore').innerHTML=score+'점 <small>/ '+MAX_SCORE+'점 만점</small>';
   $('resVerdict').textContent=verdictText(R)+(R.graded?' · 정답률 '+rateText(R):'');
   const st=[['정답',R.correct],['오답',R.wrong],['미응답',R.skipped],['정답률',rateText(R)],['최고 연속',maxCombo],['소요 시간',fmtTime(elapsed)],['푼 문항',R.graded+' / '+R.total],['점수',score]];
   $('statGrid').innerHTML=st.map(s=>'<div class="stat"><b>'+s[1]+'</b><span>'+s[0]+'</span></div>').join('');
   $('repGood').innerHTML=A.good.length?A.good.map(k=>'<span class="chip good">✅ '+CATEGORIES[k].label+' '+R.cats[k].ok+'/'+R.cats[k].n+'</span>').join(''):'<div class="muted">아직 모두 맞힌 유형이 없어요.</div>';
-  $('repBad').innerHTML=A.bad.length?A.bad.map(k=>'<span class="chip bad">📌 '+CATEGORIES[k].label+' '+R.cats[k].ok+'/'+R.cats[k].n+'</span>').join(''):'<div class="muted">정답률 50% 미만인 유형이 없어요.</div>';
-  $('repFirst').innerHTML=A.first?'<b>'+CATEGORIES[A.first].label+'</b> — '+CATEGORIES[A.first].tip:'<span>'+A.msg+'</span>';
+  $('repBad').innerHTML=A.first?'<span class="chip bad">📌 '+CATEGORIES[A.first].label+' '+R.cats[A.first].ok+'/'+R.cats[A.first].n+'</span><p style="margin-top:6px">'+CATEGORIES[A.first].tip+'</p>':'<p>'+A.msg+'</p>';
   show('end');
   sendResult(R);
 }
@@ -657,12 +665,10 @@ function generateReport(){
     y=T(ctx,draw,'총평  '+verdictText(R),P,y,F(700,19),'#3C3489',mw,28)+14;
     y=T(ctx,draw,'잘하는 유형',P,y,F(700,16),'#2E8B57',mw,24);
     y=T(ctx,draw,A.good.length?A.good.map(k=>CATEGORIES[k].label+' '+R.cats[k].ok+'/'+R.cats[k].n).join('   ·   '):'아직 모두 맞힌 유형이 없어요.',P+14,y+2,F(500,15),'#333333',mw-14,23)+10;
-    y=T(ctx,draw,'보완이 필요한 유형',P,y,F(700,16),'#C0392B',mw,24);
-    y=T(ctx,draw,A.bad.length?A.bad.map(k=>CATEGORIES[k].label+' '+R.cats[k].ok+'/'+R.cats[k].n).join('   ·   '):'정답률 50% 미만인 유형이 없어요.',P+14,y+2,F(500,15),'#333333',mw-14,23)+14;
-    const ft=A.first?CATEGORIES[A.first].label+' — '+CATEGORIES[A.first].tip:A.msg, m=document.createElement('canvas').getContext('2d');
+    const ft=weakLine(R,A), m=document.createElement('canvas').getContext('2d');
     let bh=14;bh=T(m,false,'x',0,bh,F(700,16),'',mw-32,24);bh=T(m,false,ft,0,bh+4,F(500,15),'',mw-32,24)+14;
-    if(draw){ctx.fillStyle='#FFFBEF';roundBox(ctx,P,y,mw,bh,14);ctx.fill();ctx.strokeStyle='#F2E2B0';ctx.lineWidth=1.5;roundBox(ctx,P,y,mw,bh,14);ctx.stroke();}
-    let yy=T(ctx,draw,'가장 먼저 공부할 것',P+16,y+14,F(700,16),'#8A6200',mw-32,24); T(ctx,draw,ft,P+16,yy+4,F(500,15),'#333333',mw-32,24); y+=bh+16;
+    if(draw){ctx.fillStyle='#FDF3F2';roundBox(ctx,P,y,mw,bh,14);ctx.fill();ctx.strokeStyle='#F0C9C4';ctx.lineWidth=1.5;roundBox(ctx,P,y,mw,bh,14);ctx.stroke();}
+    let yy=T(ctx,draw,'보완이 필요한 유형',P+16,y+14,F(700,16),'#C0392B',mw-32,24); T(ctx,draw,ft,P+16,yy+4,F(500,15),'#333333',mw-32,24); y+=bh+16;
     if(reflect){y=T(ctx,draw,'학습 소감',P,y,F(700,16),'#3C3489',mw,24);y=T(ctx,draw,reflect,P+14,y+2,F(400,15),'#444444',mw-14,23)+14;}
     return footer(ctx,draw,y+6,W);});
   downloadJPG(cv,name+'_학습리포트_능동피동컵스_'+ts.file+'.jpg');
@@ -670,14 +676,14 @@ function generateReport(){
 
 // ===== 교사용 학습 데이터 엑셀 ('최종 수정' 글자 클릭) =====
 function xe(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function xRow(cells,style){return '<Row>'+cells.map(c=>'<Cell'+(style?' ss:StyleID="'+style+'"':'')+'><Data ss:Type="'+(typeof c==='number'?'Number':'String')+'">'+xe(c)+'</Data></Cell>').join('')+'</Row>';}
-function xSheet(name,cols,head,rows,tail){return '<Worksheet ss:Name="'+xe(name)+'"><Table>'+cols.map(w=>'<Column ss:Width="'+w+'"/>').join('')+xRow(head,'h')+rows.map(r=>xRow(r)).join('')+(tail||[]).map(r=>xRow(r)).join('')+'</Table></Worksheet>';}
+function xRow(cells,style,ans){return '<Row>'+cells.map((c,i)=>'<Cell'+(style?' ss:StyleID="'+style+'"':ans&&ans.indexOf(i)>=0?' ss:StyleID="ans"':'')+'><Data ss:Type="'+(typeof c==='number'?'Number':'String')+'">'+xe(c)+'</Data></Cell>').join('')+'</Row>';}
+function xSheet(name,cols,head,rows,tail,ans){return '<Worksheet ss:Name="'+xe(name)+'"><Table>'+cols.map(w=>'<Column ss:Width="'+w+'"/>').join('')+xRow(head,'h')+rows.map(r=>xRow(r,'',ans)).join('')+(tail||[]).map(r=>xRow(r)).join('')+'</Table></Worksheet>';}
 function downloadTeacherXls(){
   const info=[[],['성취기준',STD_CODE+' '+STD_TEXT],['배점 규칙','정답 = 10점 + 지금까지 이어 맞힌 수 · 오답 -3(0점 하한) · 보기가 둘이라 다시 풀기 없음 · 만점 '+MAX_SCORE+'점'],['총문항 수',data.length+'문항 (능동 '+data.filter(q=>q.a==='능동').length+' · 피동 '+data.filter(q=>q.a==='피동').length+') · 시간 제한 없음 · 판마다 순서를 섞음'],['크레딧','제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com · 제작일 '+MADE_DATE+' · 최종 수정 '+LAST_MOD]];
   const qRows=data.map(q=>[q.id,CATEGORIES[q.a].label,q.q,q.a,q.a==='능동'?'피동':'능동',q.f]);
   const sumRows=CAT_ORDER.map(k=>{const ids=data.filter(q=>q.a===k).map(q=>q.id);return [CATEGORIES[k].label,CATEGORIES[k].desc,ids.length,ids.join(', '),CATEGORIES[k].tip];});
-  const xml='<?xml version="1.0" encoding="UTF-8"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Styles><Style ss:ID="h"><Font ss:Bold="1"/><Interior ss:Color="#EAE5F8" ss:Pattern="Solid"/></Style></Styles>'+
-    xSheet('전체 문항',[40,70,300,50,60,420],['원본 id','유형','문장','정답','오답 보기','해설'],qRows,info)+
+  const xml='<?xml version="1.0" encoding="UTF-8"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Styles><Style ss:ID="h"><Font ss:Bold="1"/><Interior ss:Color="#EAE5F8" ss:Pattern="Solid"/></Style><Style ss:ID="ans"><Font ss:Bold="1" ss:Color="#E00000"/></Style></Styles>'+
+    xSheet('전체 문항',[40,70,300,50,60,420],['원본 id','유형','문장','정답','오답 보기','해설'],qRows,info,[3])+
     xSheet('유형별 요약',[70,240,60,260,420],['유형','설명','문항 수','원본 id','학습 조언(tip)'],sumRows,info)+'</Workbook>';
   const blob=new Blob(['﻿'+xml],{type:'application/vnd.ms-excel'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);
   a.download=GAME_CONFIG.gameCode+'_능동피동컵스_학습데이터목록_'+stamp(new Date()).day+'.xls';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);

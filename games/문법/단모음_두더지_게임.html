@@ -7,7 +7,8 @@
      2026.10.01 13:00 '게임 끝내기' 확인을 브라우저 confirm() 대신 화면 안 확인창으로 (떠 있는 동안 시간·두더지 멈춤, 계속하기·Esc면 이어서) 
      화면 2026.10.05 02:10: 게임 테마층 '두더지 굴 모음 지도'(시작 화면 그림, 모음 사각도). 문항·채점·로직 변경 없음
      2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
-     2026.10.06 17:25 실제 조작 버그 검사·수정: '소리' 버튼을 누른 뒤 Space로 소리가 다시 바뀌던 버그, 연속 카드에 +점수, 중간 종료 제목·총평, 판정 0개 문구, 플레이 크레딧 가운뎃점 -->
+     2026.10.06 17:25 실제 조작 버그 검사·수정: '소리' 버튼을 누른 뒤 Space로 소리가 다시 바뀌던 버그, 연속 카드에 +점수, 중간 종료 제목·총평, 판정 0개 문구, 플레이 크레딧 가운뎃점
+     2026.10.07 13:58 끝낸 게임 다시 훑기(실제 조작 재검사): 보완 칸 하나(모음 하나+tip), 엑셀 정답 빨간 글씨, 0개 판 정답률 – -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -388,7 +389,7 @@ body.playing{overflow:hidden;}
 
    <div class="credit">
     <span class="seg">제작 · 보라라샘</span> · <span class="seg">전주서신중학교 교사</span> · <span class="seg">siaawase@gmail.com</span><br>
-    <span class="seg">제작일 2026.08.13</span> · <span class="seg" id="lastMod">최종 수정 2026.10.06 17:25</span>
+    <span class="seg">제작일 2026.08.13</span> · <span class="seg" id="lastMod">최종 수정 2026.10.07 13:58</span>
    </div>
 
    <div class="privacy" id="privacyOffline">
@@ -476,7 +477,7 @@ body.playing{overflow:hidden;}
 
    <div class="credit">
     <span class="seg">제작 · 보라라샘</span> · <span class="seg">전주서신중학교 교사</span> · <span class="seg">siaawase@gmail.com</span><br>
-    <span class="seg">제작일 2026.08.13</span> · <span class="seg" id="lastMod2">최종 수정 2026.10.06 17:25</span>
+    <span class="seg">제작일 2026.08.13</span> · <span class="seg" id="lastMod2">최종 수정 2026.10.07 13:58</span>
    </div>
   </div>
  </div>
@@ -510,7 +511,7 @@ body.playing{overflow:hidden;}
 
 <script>
 const MADE_DATE = "2026.08.13";
-const LAST_MOD = "2026.10.06 17:25";
+const LAST_MOD = "2026.10.07 13:58";
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -971,14 +972,15 @@ function analyze(){
   const early = S.reason === "quit" && judged > 0;
   let verdict = rate === null ? "풀어 본 문제가 없어요" : early ? (rate >= 70 ? "잘하고 있어요! 남은 문제까지 풀며 좀 더 연습해 보면 어떨까요?" : "좀 더 연습해 보면 어떨까요? 남은 문제까지 풀어 보면 감이 잡혀요.") : gradeText(rate);
   const unfinished = early ? "끝까지 하지 않았어요 (남은 시간 " + fmtTime(S.time) + ")" : "";
-  let firstMsg;
-  if(allWeak) firstMsg = "분류 기준 자체를 다시 익힐 단계예요. 시작 화면의 단모음 표를 먼저 읽어 보세요.";
-  else if(!first && anyErr) firstMsg = "한 번씩만 나온 모음에서 실수했어요. 오답노트의 해설로 그 모음을 복습해 보세요.";
-  else if(!judged) firstMsg = "풀어 본 문제가 없어요.";
-  else if(!first && early) firstMsg = "남은 문제를 마저 풀어 보세요.";
-  else if(!first) firstMsg = S.stage < STAGES.length ? "약점이 보이지 않아요. 다음 단계에 도전해 보세요." : "약점이 보이지 않아요. 다른 분류 기준으로도 도전해 보세요.";
-  else firstMsg = "'" + V_BY_ID[first].ch + "' 판단법 — " + V_BY_ID[first].tip;
-  return { judged, rate, good, weak, allWeak, first, firstMsg, verdict, unfinished };
+  // '보완이 필요한 모음' 한 칸 = 가장 먼저 공부할 모음 하나(n/N) + 판단 방법(tip) (화면연출표준 8-2 v3.3, 교사 결정 2026.10.07)
+  let weakHead = "", weakMsg;
+  if(!judged) weakMsg = "풀어 본 문제가 없어요.";
+  else if(allWeak && anyErr) weakMsg = "분류 기준 자체를 다시 익힐 단계예요. 시작 화면의 단모음 표를 먼저 읽어 보세요.";
+  else if(first){ const r = rows.find(x => x.id === first); weakHead = V_BY_ID[first].ch + " " + r.ok + "/" + r.ap; weakMsg = V_BY_ID[first].tip; }
+  else if(anyErr) weakMsg = "뚜렷하게 약한 유형은 없어요. 틀린 문제는 오답노트의 해설을 확인해 보세요.";
+  else if(early) weakMsg = "남은 문제를 마저 풀어 보세요.";
+  else weakMsg = S.stage < STAGES.length ? "약점이 보이지 않아요. 다음 단계에 도전해 보세요." : "약점이 보이지 않아요. 다른 단계에도 도전해 보세요.";
+  return { judged, rate, good, allWeak, first, weakHead, weakMsg, verdict, unfinished };
 }
 function elapsedSec(){ return Math.round((S.endAt - S.startAt)/1000); }
 function fmtDur(sec){ const m = Math.floor(sec/60), s = sec%60; return (m ? m + "분 " : "") + s + "초"; }
@@ -1005,7 +1007,7 @@ function renderEnd(){
   $("unfinished").style.display = A.unfinished ? "" : "none";
   $("unfinished").textContent = A.unfinished;
   const stats = [
-    ["정답률", A.rate === null ? "—" : A.rate + "%"], ["✅ 바르게 탭", S.correct], ["❌ 잘못 탭", S.wrong],
+    ["정답률", A.rate === null ? "–" : A.rate + "%"], ["✅ 바르게 탭", S.correct], ["❌ 잘못 탭", S.wrong],
     ["👀 놓친 모음", S.missedN], ["🔥 최고 콤보", S.maxCombo], ["⏱ 소요 시간", fmtDur(elapsedSec())]
   ];
   $("statGrid").innerHTML = stats.map(s => '<div class="card"><div class="k">'+s[0]+'</div><div class="v">'+s[1]+'</div></div>').join("");
@@ -1014,9 +1016,7 @@ function renderEnd(){
   let rep = '';
   rep += '<div class="repBox good"><h4>🌟 잘 구별한 모음</h4>' +
     (A.good.length ? A.good.map(r => r.label + ' ' + r.ok + '/' + r.ap).join('&nbsp;&nbsp;·&nbsp;&nbsp;') + '<div style="font-size:12.5px;color:#64748b">(바르게 판단한 횟수 / 나온 횟수)</div>' : '아직 2번 이상 나오고 실수 없는 모음이 없어요.') + '</div>';
-  rep += '<div class="repBox weak"><h4>📌 보완이 필요한 모음</h4>' +
-    (A.weak.length ? A.weak.map(r => r.label + ' ' + r.ok + '/' + r.ap).join('&nbsp;&nbsp;·&nbsp;&nbsp;') : '보완이 필요한 모음이 보이지 않아요.') + '</div>';
-  rep += '<div class="repBox first"><h4>🎯 가장 먼저 공부할 것</h4>' + esc(A.firstMsg) + '</div>';
+  rep += '<div class="repBox weak"><h4>📌 보완이 필요한 모음' + (A.weakHead ? ' · ' + esc(A.weakHead) : '') + '</h4>' + esc(A.weakMsg) + '</div>';
   $("repGrid").innerHTML = rep;
 
   const wrap = $("wrongListWrap");
@@ -1193,7 +1193,7 @@ $("dlWrongBtn").addEventListener("click", () => {
   const name = requireName(); if(!name) return;
   const d = new Doc(960), A = analyze(), X = 48, BW = 960 - 96;
   docHeader(d, "📝 오답노트", name);
-  d.text("정답률 " + (A.rate===null?"—":A.rate+"%") + " · 바르게 탭 " + S.correct + " · 잘못 탭 " + S.wrong + " · 놓친 모음 " + S.missedN, { size:16, color:"#333", gap:12 });
+  d.text("정답률 " + (A.rate===null?"–":A.rate+"%") + " · 바르게 탭 " + S.correct + " · 잘못 탭 " + S.wrong + " · 놓친 모음 " + S.missedN, { size:16, color:"#333", gap:12 });
   const items = [];
   S.wrongLog.forEach(e => items.push({ v:V_BY_ID[e.id], count:e.count, kind:"wrong" }));
   S.missedLog.forEach(e => items.push({ v:V_BY_ID[e.id], count:e.count, kind:"miss" }));
@@ -1229,7 +1229,7 @@ $("dlReportBtn").addEventListener("click", () => {
   const d = new Doc(960), A = analyze(), X = 48, BW = 960 - 96;
   docHeader(d, "📊 학습 결과 분석 리포트", name);
   const stats = [
-    ["최종 점수", S.score + "점"], ["정답률", A.rate===null?"—":A.rate+"%"], ["최고 콤보", S.maxCombo + "콤보"],
+    ["최종 점수", S.score + "점"], ["정답률", A.rate===null?"–":A.rate+"%"], ["최고 콤보", S.maxCombo + "콤보"],
     ["✅ 바르게 탭", S.correct + "개"], ["❌ 잘못 탭 · 👀 놓침", S.wrong + "개 · " + S.missedN + "개"], ["⏱ 소요 시간", fmtDur(elapsedSec())]
   ];
   const cw = (BW - 2*12)/3;
@@ -1254,13 +1254,8 @@ $("dlReportBtn").addEventListener("click", () => {
   });
   d.y += 10;
   d.box(X, BW, "#fef2f2", "#fecaca", 14, () => {
-    d.text("📌 보완이 필요한 모음", { size:18, weight:"bold", color:"#dc2626", x:X+18, gap:2 });
-    d.text(A.weak.length ? A.weak.map(r => r.label + " " + r.ok + "/" + r.ap).join("   ·   ") : "보완이 필요한 모음이 보이지 않아요.", { size:16, color:"#333", x:X+18, maxW:BW-36 });
-  });
-  d.y += 10;
-  d.box(X, BW, "#F7F3FC", "#dcd2f2", 14, () => {
-    d.text("🎯 가장 먼저 공부할 것", { size:18, weight:"bold", color:"#3C3489", x:X+18, gap:2 });
-    d.text(A.firstMsg, { size:16, color:"#333", x:X+18, maxW:BW-36 });
+    d.text("📌 보완이 필요한 모음" + (A.weakHead ? " · " + A.weakHead : ""), { size:18, weight:"bold", color:"#dc2626", x:X+18, gap:2 });
+    d.text(A.weakMsg, { size:16, color:"#333", x:X+18, maxW:BW-36 });
   });
   if(feeling){
     d.y += 10;
@@ -1275,7 +1270,8 @@ $("dlReportBtn").addEventListener("click", () => {
 
 /* ═══════════ 교사용 학습 데이터 엑셀 ('최종 수정' 글자 클릭) ═══════════ */
 function xmlEsc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
-function xRow(cells, style){ return "<Row>" + cells.map(c => '<Cell' + (style?' ss:StyleID="'+style+'"':'') + '><Data ss:Type="' + (typeof c === "number" ? "Number" : "String") + '">' + xmlEsc(c) + "</Data></Cell>").join("") + "</Row>"; }
+// style: 줄 전체 스타일(문자열) 또는 칸별 스타일(배열 — 정답 칸은 "ans": 빨간 굵은 글씨, 교사용 자료 관례)
+function xRow(cells, style){ return "<Row>" + cells.map((c, i) => { const st = Array.isArray(style) ? style[i] : style; return '<Cell' + (st?' ss:StyleID="'+st+'"':'') + '><Data ss:Type="' + (typeof c === "number" ? "Number" : "String") + '">' + xmlEsc(c) + "</Data></Cell>"; }).join("") + "</Row>"; }
 function xSheet(name, widths, rows){
   return '<Worksheet ss:Name="' + xmlEsc(name) + '"><Table>' + widths.map(w => '<Column ss:Width="' + w + '"/>').join("") + rows.join("") + "</Table></Worksheet>";
 }
@@ -1289,14 +1285,14 @@ function downloadTeacherXls(){
     xRow(["크레딧", CREDIT_LINE + " · 제작일 " + MADE_DATE + " · 최종 수정 " + LAST_MOD])
   ];
   const s1 = [xRow(["원본 id","모음","혀의 앞뒤","혀의 높낮이","입술 모양","특성 요약","학습 조언(tip)"], "h")]
-    .concat(VOWELS.map(v => xRow([v.id, v.ch, v.pos + " 모음", v.hgt + "모음", v.lip + " 모음", v.feat, v.tip]))).concat(foot);
+    .concat(VOWELS.map(v => xRow([v.id, v.ch, v.pos + " 모음", v.hgt + "모음", v.lip + " 모음", v.feat, v.tip], [null, null, "ans", "ans", "ans", null, null]))).concat(foot);
   const s2 = [xRow(["기준 코드","분류 기준","기준 종류","해당 모음","해당 모음 수","해당하지 않는 모음"], "h")]
-    .concat(Object.keys(TARGETS).map(k => { const t = TARGETS[k]; return xRow([k, t.label, t.group, t.members.join(" "), t.members.length, t.others.join(" ")]); })).concat(foot);
+    .concat(Object.keys(TARGETS).map(k => { const t = TARGETS[k]; return xRow([k, t.label, t.group, t.members.join(" "), t.members.length, t.others.join(" ")], [null, null, null, "ans", null, null]); })).concat(foot);
   const s3 = [xRow(["단계","난이도","등장 간격(ms)","노출 시간(ms)","동시 최대 두더지","제한 시간","생명","목표 모음 등장 비율"], "h")]
     .concat(STAGES.map(s => xRow([s.n + "단계", s.label, s.spawn, s.visible, s.maxActive, "3분", MAX_LIVES, Math.round(TARGET_RATIO*100) + "%"]))).concat(foot);
   const xml = '<?xml version="1.0" encoding="UTF-8"?><?mso-application progid="Excel.Sheet"?>' +
     '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">' +
-    '<Styles><Style ss:ID="h"><Font ss:Bold="1"/><Interior ss:Color="#EAE5F8" ss:Pattern="Solid"/></Style></Styles>' +
+    '<Styles><Style ss:ID="h"><Font ss:Bold="1"/><Interior ss:Color="#EAE5F8" ss:Pattern="Solid"/></Style><Style ss:ID="ans"><Font ss:Bold="1" ss:Color="#E00000"/></Style></Styles>' +
     xSheet("모음 목록", [50,40,70,70,70,140,420], s1) + xSheet("분류 기준", [60,80,90,120,70,140], s2) + xSheet("규칙·단계 구성", [50,50,90,90,100,60,40,110], s3) +
     "</Workbook>";
   const d = new Date(), p = n => String(n).padStart(2,"0");

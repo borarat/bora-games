@@ -6,7 +6,8 @@
      수정(2026.10.01 16:10): 2015 성취기준 삭제(교사 결정: 2022만)
      2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
      2026.10.07 09:20 테마층 + 실제 조작 버그 검사·수정
-     2026.10.07 10:32 리포트 '보완이 필요한 유형'과 '가장 먼저 공부할 것'을 한 칸으로(유형 하나 + 판단 방법) -->
+     2026.10.07 10:32 리포트 '보완이 필요한 유형'과 '가장 먼저 공부할 것'을 한 칸으로(유형 하나 + 판단 방법)
+     2026.10.07 13:58 끝낸 게임 다시 훑기(실제 조작 재검사): 엑셀 정답 빨강, 첫 시도 오답 후 끝내면 못 맞힘, 유형 구분 문구 조건, 마지막 단계 문구 -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -645,7 +646,7 @@ const MASCOT_B64 = 'iVBORw0KGgoAAAANSUhEUgAAAIQAAACxCAMAAAAyLeWLAAAB/lBMVEUAAABM
    제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com
    ═══════════════════════════════════════════ */
 const MADE_DATE = '2026.09.10';
-const MOD_DATE  = '2026.10.07 10:32';
+const MOD_DATE  = '2026.10.07 13:58';
 
 /* ★★ 시트에서 문법·2학년의 마지막 번호를 확인한 뒤 이 한 줄만 고치면 됩니다 ★★ */
 const GAME_CODE = 'G211';
@@ -1564,6 +1565,7 @@ function checkQ(){
   S.score = Math.max(0, S.score - PENALTY);
 
   if(t === 0){
+    S.lastWrong[idx] = {...S.pick};   // 첫 시도 오답 그대로 끝내면 '못 맞힘'으로 기록할 때 쓴다
     S.wrongPart = wp;
     const wrongs = Object.keys(wp).filter(k=>wp[k]).map(k=>PART_NM[k]);
     Object.keys(wp).forEach(k=>{ if(wp[k]) S.pick[k]=null; });
@@ -1701,7 +1703,7 @@ function startStage(n){
 
 function doStartStage(n){
   S.stage=n; S.score=0; S.combo=0; S.maxCombo=0; S.t0=Date.now(); S.elapsed=0;
-  S.slots={}; S.sel=null; S.tries={}; S.firstOK={}; S.retryOK={};
+  S.slots={}; S.sel=null; S.tries={}; S.firstOK={}; S.retryOK={}; S.lastWrong={};
   S.order=[]; S.pos=0; S.step='cho'; S.pick={cho:null,jung:null,jong:null};
   S.res={}; S.wpAcc={}; S.hint={}; S.locked=false; S.wrongPart={};
   S.round=1; S.r2={}; S.r2val={}; S.r2focus=null;
@@ -1732,7 +1734,7 @@ function verdictText(e){
   return gradeText(e.acc);
 }
 function accText(e){ return e.answered ? e.acc+'%' : '–'; }
-function noWeakText(e){ return e.skipped ? '남은 문제를 마저 풀어 보세요.' : (e.stage < LAST_STAGE ? '약점이 보이지 않아요. 다음 단계에 도전해 보세요.' : '약점이 보이지 않아요. 다른 단계도 다시 도전해 보세요.'); }
+function noWeakText(e){ return e.skipped ? '남은 문제를 마저 풀어 보세요.' : (e.stage < LAST_STAGE ? '약점이 보이지 않아요. 다음 단계에 도전해 보세요.' : '약점이 보이지 않아요. 다른 단계에도 도전해 보세요.'); }
 function gradeEmoji(acc){ return acc>=95?'🏆' : acc>=85?'🎉' : acc>=70?'😊' : acc>=50?'🙂' : '💪'; }
 
 function collectEnd(){
@@ -1777,7 +1779,14 @@ function collectEnd(){
     all.forEach(c=>{
       const placed = c.group ? groupPlaced(c.group).includes(c.text) : (S.slots[c.slot]!==undefined);
       const where = slotLabel(c, st);
-      if(!placed){ skipped++; return; }
+      if(!placed){
+        if((S.tries[c.id]||0)>0){   // 잘못 놓은 뒤 다시 놓지 않고 끝냄 → 못 맞힘(미응답 아님)
+          missed++; addCat(c.cat, false);
+          playedItems.push({ cat:CATLABEL(c.cat), q:'「'+c.text+'」 을(를) 어디에 놓을까?', ans:where, detail:c.detail||'' });
+          wrongItems.push({ cat:CATLABEL(c.cat), q:'「'+c.text+'」', my:'', ans:'정답 자리: '+where, detail:c.detail||'', kind:'wrong' });
+        } else skipped++;
+        return;
+      }
       const first = !!S.firstOK[c.id];
       addCat(c.cat, first);
       if(first) firstRight++; else retryRight++;
@@ -1793,7 +1802,14 @@ function collectEnd(){
         const r = S.r2[i], ps = cv.parts.split(' + '), key = cv.id2;
         const q = '「'+cv.ch+'」 은(는) 어떤 모음자를 합해 만들었을까?';
         const ans = cv.ch+' = '+ps[0]+' + '+ps[1];
-        if(!r){ skipped++; return; }
+        if(!r){
+          if((S.tries[key]||0)>0){   // 틀린 뒤 다시 입력하지 않고 끝냄 → 못 맞힘
+            missed++; addCat(CV_CAT[cv.g], false);
+            playedItems.push({ cat:CATLABEL(CV_CAT[cv.g]), q, ans, detail:cv.detail });
+            wrongItems.push({ cat:CATLABEL(CV_CAT[cv.g]), q:'「'+cv.ch+'」 거꾸로 맞히기', my:'', ans:'정답: '+ans, detail:cv.detail, kind:'wrong' });
+          } else skipped++;
+          return;
+        }
         const first = !!S.firstOK[key];
         addCat(CV_CAT[cv.g], first);
         if(first) firstRight++; else retryRight++;
@@ -1819,7 +1835,7 @@ function reportPick(e){
   const shown = e.cats.filter(c=>c.total>=2);
   const best  = shown.filter(c=>c.rate===100);
   const weak  = shown.filter(c=>c.rate<50);
-  const allLow = shown.length>0 && shown.every(c=>c.rate<50);
+  const allLow = shown.length>=2 && shown.every(c=>c.rate<50);   // 판정한 유형이 하나뿐이면 '유형 구분 자체를…'로 넘겨짚지 않는다
   let first = null;
   const rank = arr => arr.slice().sort((a,b)=> b.wrong-a.wrong || a.rate-b.rate || b.total-a.total)[0];
   const cand2 = shown.filter(c=>c.wrong>0);
@@ -1834,6 +1850,10 @@ let submitted = false;
 function finish(){
   if(END) return;                       // 중복 호출 방지
   S.elapsed = Date.now() - S.t0;
+  // 5단계: 첫 시도에 틀리고 다시 풀지 않은 문항은 미응답이 아니라 '못 맞힘'
+  if(S.stage===5) S.order.forEach(idx=>{ const r=getRes(idx);
+    if((!r || r.status==='skip') && (S.tries[idx]||0)>0)
+      S.res[idx] = {status:'wrong', tries:S.tries[idx], pts:0, pick:(S.lastWrong&&S.lastWrong[idx])||{cho:null,jung:null,jong:null}, wrongPart:S.wpAcc[idx]||{}, hint:!!S.hint[idx]}; });
   END = collectEnd();
   renderEnd();
   if(IS_ONLINE && STUDENT.verified && !submitted){ submitted = true; sendResult(); }
@@ -1871,9 +1891,9 @@ function wrongOriginalIds(){
     all.forEach(c=>{
       const txt = c.ch || c.text;
       const placed = c.group ? groupPlaced(c.group).includes(txt) : (S.slots[c.slot]!==undefined);
-      if(placed && !S.firstOK[c.id]) ids.push(c.id);
+      if((placed || (S.tries[c.id]||0)>0) && !S.firstOK[c.id]) ids.push(c.id);
     });
-    if(END.stage===4) COMBO_V.forEach((cv,i)=>{ if(S.r2[i] && !S.firstOK[cv.id2]) ids.push(cv.id2); });
+    if(END.stage===4) COMBO_V.forEach((cv,i)=>{ if((S.r2[i] || (S.tries[cv.id2]||0)>0) && !S.firstOK[cv.id2]) ids.push(cv.id2); });
   }
   return ids;
 }
@@ -2224,9 +2244,10 @@ function makeReport(){
 
 /* ══════════ 교사용 학습 데이터 목록 (엑셀) ══════════ */
 function xEsc(s){ return String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
-function xRow(cells){ return '<Row>'+cells.map(v=>'<Cell><Data ss:Type="String">'+xEsc(v)+'</Data></Cell>').join('')+'</Row>'; }
-function xSheet(name, rows){
-  return '<Worksheet ss:Name="'+xEsc(name)+'"><Table>'+rows.map(xRow).join('')+'</Table></Worksheet>';
+function xRow(cells, ans){ return '<Row>'+cells.map((v,i)=>'<Cell'+(ans&&ans.indexOf(i)>=0?' ss:StyleID="ans"':'')+'><Data ss:Type="String">'+xEsc(v)+'</Data></Cell>').join('')+'</Row>'; }
+// ansOf(행 번호) → 그 줄의 정답 칸 번호들(머리줄 0과 꼬리 줄은 빈 배열) — 정답 칸 빨간 굵은 글씨
+function xSheet(name, rows, ansOf){
+  return '<Worksheet ss:Name="'+xEsc(name)+'"><Table>'+rows.map((r,i)=>xRow(r, ansOf?ansOf(i):null)).join('')+'</Table></Worksheet>';
 }
 function downloadTeacherXls(){
   const rule = ['배점 규칙','첫 시도 정답 +'+BASE_PT+' · 다시 풀어 맞힘 +'+RETRY_PT+' · 오답 −'+PENALTY+'(하한 0) · 콤보 3~4 +5 / 5이상 +10 · 5단계 체계표 보기 −'+HINT_COST];
@@ -2264,8 +2285,12 @@ function downloadTeacherXls(){
 
   const xml = '<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?>'
     + '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">'
-    + xSheet('1단계 자음자 배치', s1) + xSheet('2단계 이름표', s2) + xSheet('3단계 모음자 배치', s3)
-    + xSheet('4단계 합용자', s4) + xSheet('5단계 낱말 완성', s5) + xSheet('유형별 요약', sum)
+    + '<Styles><Style ss:ID="ans"><Font ss:Bold="1" ss:Color="#E00000"/></Style></Styles>'
+    + xSheet('1단계 자음자 배치', s1, i=>i>=1&&i<=CONS_CARDS.length?[3]:[])
+    + xSheet('2단계 이름표', s2, i=>i>=1&&i<=LABELS.length?[3]:[])
+    + xSheet('3단계 모음자 배치', s3, i=>i>=1&&i<=VOWEL_CARDS.length?[3]:[])
+    + xSheet('4단계 합용자', s4, i=>i>=1&&i<=COMBO_V.length?[3]:[])   // 1라운드 정답 = 글자. 2라운드는 정답(합한 두 글자)이 1라운드 줄의 '합하는 방법'에 있다
+    + xSheet('5단계 낱말 완성', s5, i=>i>=1&&i<=Q5.length?[3,4,5]:[]) + xSheet('유형별 요약', sum)
     + '</Workbook>';
   const n = new Date();
   const fn = GAME_CODE+'_훈민정음제자원리익히기_학습데이터목록_'+n.getFullYear()+pad(n.getMonth()+1)+pad(n.getDate())+'.xls';

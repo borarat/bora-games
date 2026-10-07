@@ -6,7 +6,8 @@
      2026.10.01 13:00 성취기준: 2022 [9국04-01]에 2015 [9국04-02] 병기 (교사 확인)
      2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
      2026.10.06 00:30 게임 테마층(발음 기관 지도 카드·쪽빛 #3F5FA8): 시작 화면 그림·안내 상자 테두리 / 버그: 한 번도 뒤집지 않고 끝내면 '풀어 본 문제가 없어요' 표시(지침 5-3)
-     2026.10.06 00:25 총평: 끝까지 하지 않고 끝내면 정확도가 높아도 '완벽해요' 대신 '좀 더 연습해 보면 어떨까요?'(교사 결정) -->
+     2026.10.06 00:25 총평: 끝까지 하지 않고 끝내면 정확도가 높아도 '완벽해요' 대신 '좀 더 연습해 보면 어떨까요?'(교사 결정)
+     2026.10.07 13:58 끝낸 게임 다시 훑기(실제 조작 재검사): 중간 종료 제목·남은 짝 표기·정확도 –, 엑셀 정답 빨간 글씨, 크레딧 · -->
 <html lang="ko">
 <head>
 <meta charset="utf-8"/>
@@ -211,7 +212,7 @@ button{font-family:var(--font)}
 
    <div class="credit">
     제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-    제작일 2025.11.06 · <span id="lastMod">최종 수정 2026.10.06 00:25</span>
+    제작일 2025.11.06 · <span id="lastMod">최종 수정 2026.10.07 13:58</span>
    </div>
 
    <div class="privacy" id="privacyOffline">
@@ -273,7 +274,7 @@ button{font-family:var(--font)}
   </div>
  </div>
  <div id="comboHud">🔥 <b id="comboNum">0</b></div>
- <div class="game-credit">제작 · 보라라샘 / 2025.11.06</div>
+ <div class="game-credit">제작 · 보라라샘 · 2025.11.06</div>
 </div>
 
 <!-- ===== 종료 화면 ===== -->
@@ -323,7 +324,7 @@ button{font-family:var(--font)}
 
 <script>
 const MADE_DATE = '2025.11.06';
-const LAST_MOD = '2026.10.06 00:25';
+const LAST_MOD = '2026.10.07 13:58';
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -648,15 +649,15 @@ function finish(){
   S.active=false; S.locked=true; S.endTime=Date.now(); clearInterval(S.timer);
   hideFx(); $('comboHud').style.display='none';
   const total=PAIR_TOTAL, right=S.hits, acc=S.moves?Math.round(S.hits/S.moves*100):0;
-  $('endTitle').textContent = complete ? '🎉 19쌍을 모두 찾았어요!' : '🏁 게임을 끝냈어요';
+  $('endTitle').textContent = complete ? '🎉 19쌍을 모두 찾았어요!' : S.moves===0 ? '풀어 본 문제가 없어요' : '여기까지 풀었어요';   // 중간 종료 제목 (화면연출표준 7장)
   // 교사 결정(2026.10.06): 끝까지 하지 않았으면 정확도가 높아도 '완벽해요' 대신 더 연습해 보자는 말
   $('endVerdict').textContent = S.moves===0 ? '풀어 본 문제가 없어요'
     : !complete ? (S.moves>=5 && acc>=40 ? '잘하고 있어요! 남은 짝까지 찾아보며 좀 더 연습해 보면 어떨까요?' : '좀 더 연습해 보면 어떨까요? 남은 짝까지 찾아보면 감이 잡혀요.')
     : (S.moves>=5 ? verdictOf(acc) : '');   // 지침 5-3: 한 번도 짝을 맞춰 보지 않았으면 칭찬 대신 안내
-  $('endSkip').innerHTML = S.left>0 ? `<span class="skipnote">끝까지 풀지 않았어요 · 남은 짝 ${S.left}쌍</span>` : '';
+  $('endSkip').innerHTML = S.left>0 ? `<span class="skipnote">끝까지 풀지 않았어요 (${S.left}짝 남음)</span>` : '';
   $('endScore').innerHTML=`${S.score}<small> / ${MAX_SCORE}</small>`;
   $('endPairs').innerHTML=`${right}<small> / ${total}</small>`;
-  $('endAcc').textContent=S.moves?acc+'%':'-';
+  $('endAcc').textContent=S.moves?acc+'%':'–';
   $('endMoves').textContent=S.moves;
   $('endCombo').textContent=S.maxCombo;
   $('endTime').textContent=fmt(elapsedSec());
@@ -749,7 +750,7 @@ function openReview(){
 function downloadTeacherXls(){
   const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const cell=(v,style)=>`<Cell${style?` ss:StyleID="${style}"`:''}><Data ss:Type="${typeof v==='number'?'Number':'String'}">${esc(v)}</Data></Cell>`;
-  const row=(arr,style)=>`<Row>${arr.map(v=>cell(v,style)).join('')}</Row>`;
+  const row=(arr,style)=>`<Row>${arr.map((v,i)=>cell(v,Array.isArray(style)?style[i]:style)).join('')}</Row>`;   // style 배열이면 칸별(정답 칸 'ans' = 빨간 굵은 글씨)
   const tail=[
     [],
     ['성취기준', STD_LINE],
@@ -759,7 +760,7 @@ function downloadTeacherXls(){
   ];
   let id;
   const s1=[row(['id','유형(조음 위치)','문제(자음 카드)','정답(짝이 되는 위치 카드)','해설'],'h')];
-  Object.values(PLACES).forEach(p=>p.cons.forEach(c=>{ id=CONS_ID[c]; s1.push(row([id,p.label,c,p.label,`${c}${josaEun(c)} ${p.label}: ${p.how}${p.note&&c==='ㅇ'?' ('+p.note+')':''}`])); }));
+  Object.values(PLACES).forEach(p=>p.cons.forEach(c=>{ id=CONS_ID[c]; s1.push(row([id,p.label,c,p.label,`${c}${josaEun(c)} ${p.label}: ${p.how}${p.note&&c==='ㅇ'?' ('+p.note+')':''}`],[0,0,0,'ans',0])); }));
   tail.forEach(t=>s1.push(row(t)));
   const s2=[row(['조음 위치','자음 수','자음','소리 나는 방법'],'h')];
   Object.values(PLACES).forEach(p=>s2.push(row([p.label,p.cons.length,p.cons.join(' '),p.how+(p.note?' ('+p.note+')':'')])));
@@ -768,7 +769,7 @@ function downloadTeacherXls(){
   const xml=`<?xml version="1.0" encoding="UTF-8"?>
 <?mso-application progid="Excel.Sheet"?>
 <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
-<Styles><Style ss:ID="h"><Font ss:Bold="1"/><Interior ss:Color="#EAE5F8" ss:Pattern="Solid"/></Style></Styles>
+<Styles><Style ss:ID="h"><Font ss:Bold="1"/><Interior ss:Color="#EAE5F8" ss:Pattern="Solid"/></Style><Style ss:ID="ans"><Font ss:Bold="1" ss:Color="#E00000"/></Style></Styles>
 <Worksheet ss:Name="카드 구성"><Table>${s1.join('')}</Table></Worksheet>
 <Worksheet ss:Name="유형별 요약"><Table>${s2.join('')}</Table></Worksheet>
 </Workbook>`;
