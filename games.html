@@ -113,11 +113,11 @@
         <p>재미있게 배우고 연습하는 국어 개념</p>
     </div>
     <nav class="nav">
-        <a href="#문법">문법 (16)</a>
-        <a href="#문학">문학 (5)</a>
-        <a href="#읽기">읽기 (2)</a>
-        <a href="#쓰기">쓰기 (2)</a>
-        <a href="#말하기듣기">말하기&듣기 (2)</a>
+        <a href="#문법" data-cat="문법">문법</a>
+        <a href="#문학" data-cat="문학">문학</a>
+        <a href="#읽기" data-cat="읽기">읽기</a>
+        <a href="#쓰기" data-cat="쓰기">쓰기</a>
+        <a href="#말하기듣기" data-cat="말하기듣기">말하기&amp;듣기</a>
     </nav>
 
     <div class="content">
@@ -469,5 +469,14 @@
     <div class="footer">
         보라라랩 국어 에듀테크 연구소 &middot; Powered by GitHub Pages
     </div>
+
+    <script>
+    /* 탭 숫자 자동 세기 — 각 영역 안의 게임 카드 수를 세어 탭 이름 뒤에 붙인다 (2026.10.07) */
+    document.querySelectorAll('.nav a[data-cat]').forEach(function(a){
+      var sec=document.getElementById(a.dataset.cat);
+      var n=sec?sec.querySelectorAll('a.game-card').length:0;
+      a.textContent=a.textContent+' ('+n+')';
+    });
+    </script>
 </body>
 </html>
