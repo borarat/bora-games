@@ -4,7 +4,8 @@
      코드 L201 → L202 · 「사랑손님과 어머니」 발표 1935년 · 1단계 7번/2단계 세트 B: 어머니를 막은 원인 = 법이 없어진 뒤에도 남은 관습(시선)
      3단계 채점: '-기에' 오인(여기에 등) · 공백 든 키워드(남의 눈) · 마름+지주 감점 · '집'/'참' 글자 걸림 고침 · 마스코트 이미지 교체
      2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 / 이전·다음·게임 끝내기 내비게이션 바를 오른쪽으로(교사 요청)
-     2026.10.05 23:50 버그: 답하기 전에 Enter·Space·→ 를 누르면 다음 문항으로 넘어가던 문제 — 채점 뒤에만 넘어가게 -->
+     2026.10.05 23:50 버그: 답하기 전에 Enter·Space·→ 를 누르면 다음 문항으로 넘어가던 문제 — 채점 뒤에만 넘어가게
+     2026.10.07 12:05 8차: 테마층(과녁) + 실제 조작 버그 검사·수정 — 게임 끝내기·마지막 다음 확인, 다시 풀기 대기 문항 = 못 맞힘, 1·2단계 자동 종료, 중간 종료·채점 0개 총평, 리포트 보완 칸 하나, 교사용 엑셀 = '최종 수정' 클릭(마스코트 길게 누르기 폐지)·정답 빨간 글씨, 크레딧 '/' -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -236,6 +237,14 @@ h1{font-size:clamp(22px,4.4vw,30px); color:var(--ink); font-weight:700; letter-s
 @media (prefers-reduced-motion:reduce){
  .shake{animation:none}
 }
+/* ═══ 게임 테마층 · 과녁 맞히기 (2026.10.07) ═══
+   조건이라는 과녁을 정확히 맞히는 장면. 보조색 자주 #8E4A6B. 영역 팔레트·헤더 띠·정답/오답 색·흰 문제 카드·정답 카드는 그대로.
+   이 블록과 시작 화면 SVG를 지우면 원래 모습 */
+:root{--th:#8E4A6B}
+.head .keyArt{margin-left:auto;flex:none;height:110px;width:auto}
+@media (max-width:860px){.head .keyArt{display:none}}
+#start .box{border-left:4px solid var(--th)}
+#start .box h3{color:var(--th)}
 </style>
 </head>
 <body>
@@ -253,6 +262,22 @@ h1{font-size:clamp(22px,4.4vw,30px); color:var(--ink); font-weight:700; letter-s
     <h1>조건 사냥꾼</h1>
     <div class="sub">조건에 맞게, 한 문단으로 — <span style="white-space:nowrap">서논술형 답안 쓰기 훈련</span></div>
    </div>
+   <svg class="keyArt" viewBox="0 0 250 110" aria-hidden="true">
+    <rect x="2" y="2" width="246" height="106" rx="10" fill="#F7EEF2" stroke="#8E4A6B" stroke-width="2"/>
+    <g transform="translate(64 55)">
+     <circle r="40" fill="#fff" stroke="#8E4A6B" stroke-width="3"/>
+     <circle r="28" fill="#F7EEF2" stroke="#8E4A6B" stroke-width="2.5"/>
+     <circle r="16" fill="#fff" stroke="#8E4A6B" stroke-width="2.5"/>
+     <circle r="6" fill="#8E4A6B"/>
+    </g>
+    <line x1="64" y1="55" x2="112" y2="22" stroke="#4a3a42" stroke-width="3" stroke-linecap="round"/>
+    <g stroke="#8E4A6B" stroke-width="3" stroke-linecap="round"><path d="M106 26 l1 -11"/><path d="M106 26 l11 -1"/><path d="M111 22 l1 -11"/><path d="M111 22 l11 -1"/></g>
+    <rect x="136" y="16" width="98" height="78" rx="8" fill="#fff" stroke="#8E4A6B" stroke-width="2"/>
+    <g fill="none" stroke="#2E9B79" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+     <path d="M146 34 l5 5 l9 -10"/><path d="M146 56 l5 5 l9 -10"/><path d="M146 78 l5 5 l9 -10"/>
+    </g>
+    <g fill="#E3CFD8"><rect x="168" y="31" width="56" height="7" rx="3.5"/><rect x="168" y="53" width="48" height="7" rx="3.5"/><rect x="168" y="75" width="52" height="7" rx="3.5"/></g>
+   </svg>
   </div>
 
   <div class="box">
@@ -289,7 +314,7 @@ h1{font-size:clamp(22px,4.4vw,30px); color:var(--ink); font-weight:700; letter-s
 
   <div class="credit">
    제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-   제작일 2026.09.24 · 최종 수정 2026.10.05 23:50
+   제작일 2026.09.24 · <span id="lastMod">최종 수정 2026.10.07 12:05</span>
   </div>
   <div class="privacy" id="privacyOffline">
    <b>🔒 개인정보 보호 안내</b><br>
@@ -334,10 +359,10 @@ h1{font-size:clamp(22px,4.4vw,30px); color:var(--ink); font-weight:700; letter-s
   <div class="nav">
    <button onclick="goPrev()">◀ 이전</button>
    <button onclick="goNext()">다음 ▶</button>
-   <button class="end" onclick="finish()">■ 게임 끝내기</button>
+   <button class="end" onclick="askFinish()">■ 게임 끝내기</button>
   </div>
   <div class="stage" id="stageBody"></div>
-  <div class="pcredit">제작 · 보라라샘 / 2026.09.24</div>
+  <div class="pcredit">제작 · 보라라샘 · 2026.09.24</div>
  </div>
 </div>
 
@@ -372,7 +397,7 @@ h1{font-size:clamp(22px,4.4vw,30px); color:var(--ink); font-weight:700; letter-s
   </div>
   <div class="credit">
    제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-   제작일 2026.09.24 · 최종 수정 2026.10.05 23:50
+   제작일 2026.09.24 · 최종 수정 2026.10.07 12:05
   </div>
  </div>
 </div>
@@ -386,21 +411,13 @@ h1{font-size:clamp(22px,4.4vw,30px); color:var(--ink); font-weight:700; letter-s
  <button class="btn sec" style="width:100%;margin-top:14px" onclick="closeModal('reviewModal')">닫기</button>
 </div></div>
 
-<div class="modal" id="teacherModal"><div class="sheet" style="max-width:400px;text-align:center">
- <h2>학습 데이터 목록</h2>
- <p>전체 문항의 정답과 해설이 담긴 파일을 내려받습니다.</p>
- <div style="display:flex;gap:8px;margin-top:16px">
-  <button class="btn sec" style="flex:1" onclick="closeModal('teacherModal')">취소</button>
-  <button class="btn" style="flex:1" onclick="dlTeacherXls()">내려받기</button>
- </div>
-</div></div>
 
 <script>
 /* ═══════════════════════════════════════════════════════════
    조건 사냥꾼 — L202 · 문학 · 중2 · 서논술형 답안 쓰기 훈련
    ═══════════════════════════════════════════════════════════ */
 const MADE_DATE = '2026.09.24';
-const MOD_DATE  = '2026.10.05 23:50';
+const MOD_DATE  = '2026.10.07 12:05';
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -720,7 +737,7 @@ function comboBonus(streak){ return streak>=5?10 : streak>=3?5 : 0; }
    상태
    ══════════════════════════════════════════════════════════ */
 const R = {};   // id → {first, got, tries, picked, texts, detail, played}
-const S = { stage:0, list:[], i:0, score:0, streak:0, best:0, t0:0, elapsed:0, playedStages:[] };
+const S = { stage:0, list:[], i:0, score:0, streak:0, best:0, t0:0, elapsed:0, playedStages:[], autoT:null };
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -931,7 +948,7 @@ function pick(oi){
     else S.streak=0;
     r.got=base+bonus; r.first=first?S1_BASE:0; r.done=true; r.graded=true; r.picked=oi;
     S.score+=r.got;
-    comboHud(); paintPick(q,r); hud();
+    comboHud(); paintPick(q,r); hud(); autoFinishIfAllDone();
     const milestone = first && (S.streak===3 || (S.streak>=5 && S.streak%5===0));
     if(milestone){
       sFan();
@@ -953,7 +970,7 @@ function pick(oi){
       '<br><span style="font-size:12.5px">한 번 더 고를 수 있어요. 맞히면 '+Math.round(S1_BASE/2)+'점입니다. (Enter · Space)</span></div>';
   } else {
     sNO(); r.got=0; r.first=0; r.done=true; r.graded=true; r.picked=oi; S.streak=0; comboHud();
-    paintPick(q,r); hud();
+    paintPick(q,r); hud(); autoFinishIfAllDone();
     cbShow('오답','해설을 읽고 넘어가요','info',850);
   }
 }
@@ -1003,7 +1020,7 @@ function gradeKeyword(){
       return;
     }
     r.got=g.s; r.done=true; r.res=g;
-    S.score+=r.got; sOK(); paintKeyword(q,r); hud();
+    S.score+=r.got; sOK(); paintKeyword(q,r); hud(); autoFinishIfAllDone();
     cbShow('정답!','+'+r.got,'');
     return;
   }
@@ -1012,7 +1029,7 @@ function gradeKeyword(){
   S.score+=r.got; hud();
   if(g.s===S2_BASE){ sPart(); cbShow('다시 풀어 맞힘','+'+r.got,'retry'); }
   else { sNO(); cbShow('부분 정답',r.got+'점 / '+S2_BASE+'점','info',850); }
-  paintKeyword(q,r);
+  paintKeyword(q,r); autoFinishIfAllDone();
 }
 function paintKeyword(q,r,retry){
   const g=r.res||scoreKeyword(q,r.sel);
@@ -1105,8 +1122,23 @@ function finalizePending(){
 function goNext(){
   if(cbShown()){ cbHide(); }
   finalizePending();
-  if(S.i>=S.list.length-1){ finish(); return; }
+  if(S.i>=S.list.length-1){ askFinish(true); return; }
   S.i++; render();
+}
+// 남은 문항이 있으면 한 번 확인한 뒤 끝낸다 (지침 6-1). 마지막 문항에서 모두 채점됐으면 바로 결과
+function askFinish(fromLast){
+  const left=S.list.filter(q=>{ const r=R[q.id]; return !r||(!r.graded&&!(r.tries>0)); }).length;
+  if(!(fromLast&&left===0)){
+    const msg=left>0?'아직 풀지 않은 문항이 '+left+'개 있어요.\n지금 끝낼까요? (남은 문항은 미응답으로 기록돼요)':'지금까지 푼 결과로 게임을 끝낼까요?';
+    if(!confirm(msg)) return;
+  }
+  finalizePending(); finish();
+}
+// 1·2단계는 모든 문항이 채점되면 자동으로 끝낸다 (화면연출표준 7장). 3단계는 고쳐 쓰고 다시 채점하는 설계라 자동 종료하지 않는다
+function autoFinishIfAllDone(){
+  if(S.stage===3 || !S.list.every(q=>R[q.id]&&R[q.id].done)) return;
+  clearTimeout(S.autoT); const L=S.list;
+  S.autoT=setTimeout(()=>{ if(S.list===L && $('play').classList.contains('on')) finish(); },2200);
 }
 function goPrev(){ finalizePending(); if(S.i>0){ S.i--; render(); } }
 document.addEventListener('keydown',e=>{
@@ -1148,9 +1180,21 @@ function stats(){
     const sorted=cats.filter(c=>c.pct<100).sort((a,b)=>(b.max-b.got)-(a.max-a.got) || a.pct-b.pct || b.max-a.max);
     firstStudy=sorted[0]||null;
   }
-  const allLow = cats.length>0 && cats.every(c=>c.pct<50);
+  const allLow = cats.length>=2 && cats.every(c=>c.pct<50);   // 판정한 유형이 하나뿐이면 넘겨짚지 않는다
   const verdict = rate>=95?'완벽해요!' : rate>=85?'아주 잘했어요' : rate>=70?'잘하고 있어요' : rate>=50?'기본은 잡혔어요' : '다시 한 번 도전해요';
-  return {graded,skipped,notYet,firstSum,baseSum,rate,fullFirst,retryOk,wrong,cats,good,weak,firstStudy,allLow,verdict};
+  // 총평 (화면연출표준 7장): 채점 0개 / 중간 종료 / 끝까지
+  const vtext = !graded.length ? '풀어 본 문제가 없어요'
+              : skipped.length ? (rate>=70?'잘하고 있어요! 남은 문제까지 풀며 좀 더 연습해 보면 어떨까요?':'좀 더 연습해 보면 어떨까요? 남은 문제까지 풀어 보면 감이 잡혀요.')
+              : verdict;
+  const rateText = graded.length ? rate+'%' : '–';
+  return {graded,skipped,notYet,firstSum,baseSum,rate,rateText,fullFirst,retryOk,wrong,cats,good,weak,firstStudy,allLow,verdict,vtext};
+}
+// '보완이 필요한 유형' 한 칸 = 가장 먼저 공부할 유형 하나 + 판단 방법(tip) (교사 결정 2026.10.07 — 두 칸이 서로 어긋나지 않게)
+function weakText(st){
+  if(st.allLow) return '유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.';
+  if(st.firstStudy){ const c=st.firstStudy; return CATEGORIES[c.k].label+' ('+c.got+'/'+c.max+'점) — '+CATEGORIES[c.k].tip; }
+  if(st.wrong+st.retryOk>0) return '뚜렷하게 약한 유형은 없어요. 틀린 문항은 오답노트의 해설을 확인해 보세요.';
+  return st.skipped.length ? '남은 문제를 마저 풀어 보세요.' : (S.stage<STAGES.length ? '약점이 보이지 않아요. 다음 단계에 도전해 보세요.' : '약점이 보이지 않아요. 다른 단계에도 도전해 보세요.');
 }
 function eraseHtml(){
   const sets=S3.filter(q=>R[q.id]&&R[q.id].done);
@@ -1179,18 +1223,19 @@ function eraseHtml(){
    종료 화면
    ══════════════════════════════════════════════════════════ */
 function finish(){
+  clearTimeout(S.autoT);
   closeBanner();
   S.elapsed=Date.now()-(S.t0||Date.now());
   const st=stats();
   $('endStageBadge').textContent=S.stage+'단계 '+STAGES[S.stage-1].name;
   $('endScore').textContent=S.score;
   $('endVerdict').innerHTML=
-    (st.skipped.length?'<div style="color:var(--warn);font-size:14px;font-weight:700;margin-bottom:4px">끝까지 풀지 않았어요 (이 단계에서 '+st.skipped.length+'문항 안 풀었어요)</div>':'')+
-    esc(st.verdict)+
+    (st.graded.length&&st.skipped.length?'<div style="font-size:22px;font-weight:700;margin-bottom:4px">여기까지 풀었어요</div><div style="color:var(--warn);font-size:14px;font-weight:700;margin-bottom:4px">끝까지 풀지 않았어요 ('+st.skipped.length+'문항 남음)</div>':'')+
+    esc(st.vtext)+
     (st.notYet.length?'<div style="color:var(--ink2);font-size:13px;font-weight:500;margin-top:4px">아직 풀지 않은 단계가 있어요 ('+st.notYet.length+'문항)</div>':'');
   const mm=Math.floor(S.elapsed/60000), ss=Math.round(S.elapsed%60000/1000);
   $('endStats').innerHTML=[
-   ['정답률',st.rate+'%'],['첫 시도 만점',st.fullFirst+'문항'],['다시 풀어 맞힘',st.retryOk+'문항'],
+   ['정답률',st.rateText],['첫 시도 만점',st.fullFirst+'문항'],['다시 풀어 맞힘',st.retryOk+'문항'],
    ['못 맞힘',st.wrong+'문항'],['미응답',st.skipped.length+'문항'],['최고 콤보',S.best],
    ['소요 시간',mm+'분 '+ss+'초']
   ].map(([l,v])=>'<div class="stat"><b>'+esc(String(v))+'</b><span>'+l+'</span></div>').join('');
@@ -1200,10 +1245,7 @@ function finish(){
   if(!st.cats.length) tr+='<p>진단할 만큼 문항을 풀지 않았어요. 한 단계를 끝까지 풀어 보세요.</p>';
   else {
     tr+='<p><b>잘하는 유형</b> — '+(st.good.length?st.good.map(c=>esc(CATEGORIES[c.k].label)+' '+c.n+'/'+c.n).join(' · '):'아직 없어요')+'</p>';
-    tr+='<p><b>보완이 필요한 유형</b> — '+(st.weak.length?st.weak.map(c=>esc(CATEGORIES[c.k].label)+' '+c.got+'/'+c.max+'점').join(' · '):'없어요')+'</p>';
-    if(st.allLow) tr+='<p style="margin-top:7px"><b>가장 먼저 공부할 것</b><br>유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.</p>';
-    else if(st.firstStudy) tr+='<p style="margin-top:7px"><b>가장 먼저 공부할 것 — '+esc(CATEGORIES[st.firstStudy.k].label)+'</b><br>'+esc(CATEGORIES[st.firstStudy.k].tip)+'</p>';
-    else tr+='<p style="margin-top:7px"><b>가장 먼저 공부할 것</b><br>약점이 보이지 않아요. 다음 단계에 도전해 보세요.</p>';
+    tr+='<p style="margin-top:7px"><b>보완이 필요한 유형</b><br>'+esc(weakText(st))+'</p>';
   }
   tr+='<p style="margin-top:8px;font-size:12.5px;color:var(--ink2)"><b>[9국05-05]</b> 작품에 반영된 사회·문화적 상황을 이해하며 작품을 감상한다.</p>';
   $('typeReport').innerHTML=tr;
@@ -1251,24 +1293,16 @@ function openReview(){
 }
 
 /* ══════════════════════════════════════════════════════════
-   마스코트 길게 누르기 → 교사용 엑셀
+   교사용 엑셀 — 크레딧의 '최종 수정' 글자 클릭 (화면연출표준 9장 · 마스코트 길게 누르기 폐지)
    ══════════════════════════════════════════════════════════ */
-(function(){
-  const m=$('mascot'); if(!m) return;
-  let timer=null;
-  const start=e=>{ e.preventDefault(); timer=setTimeout(()=>{ timer=null; $('teacherModal').classList.add('on'); },2000); };
-  const cancel=()=>{ if(timer){ clearTimeout(timer); timer=null; } };
-  m.addEventListener('pointerdown',start);
-  ['pointerup','pointerleave','pointercancel'].forEach(ev=>m.addEventListener(ev,cancel));
-  m.addEventListener('contextmenu',e=>e.preventDefault());
-})();
+(function(){ const t=$('lastMod'); if(!t) return; t.style.cursor='default'; t.addEventListener('click',()=>dlTeacherXls()); })();
 function xmlEsc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function sheet(name,rows){
-  return '<Worksheet ss:Name="'+xmlEsc(name)+'"><Table>'+rows.map(r=>'<Row>'+r.map(c=>
-    '<Cell><Data ss:Type="String">'+xmlEsc(c==null?'':c)+'</Data></Cell>').join('')+'</Row>').join('')+'</Table></Worksheet>';
+// red: 정답 열 번호 — 교사용 자료의 정답은 빨간 글씨 (머리줄 제외)
+function sheet(name,rows,red){
+  return '<Worksheet ss:Name="'+xmlEsc(name)+'"><Table>'+rows.map((r,ri)=>'<Row>'+r.map((c,ci)=>
+    '<Cell'+(ri>0&&red&&red.indexOf(ci)>=0?' ss:StyleID="ans"':'')+'><Data ss:Type="String">'+xmlEsc(c==null?'':c)+'</Data></Cell>').join('')+'</Row>').join('')+'</Table></Worksheet>';
 }
 function dlTeacherXls(){
-  closeModal('teacherModal');
   const r1=[['원본 id','유형','문제(조건·예문)','정답','해설']];
   S1.forEach(q=>r1.push([q.id,CATEGORIES[q.cat].label,(q.cond?'[조건] '+q.cond+' / ':'')+String(q.ask).replace(/<[^>]+>/g,' '),
     q.opts.filter(o=>o.ok).map(o=>o.t).join(''),q.detail||'']));
@@ -1298,7 +1332,8 @@ function dlTeacherXls(){
   r4.push(['크레딧','제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com · 최종 수정 '+MOD_DATE]);
   const xml='<?xml version="1.0" encoding="UTF-8"?>\n<?mso-application progid="Excel.Sheet"?>\n'+
    '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">'+
-   sheet('1단계 조건사냥',r1)+sheet('2단계 키워드사냥',r2)+sheet('3단계 한문단쓰기',r3)+sheet('자료 원문',r5)+sheet('유형별 요약',r4)+'</Workbook>';
+   '<Styles><Style ss:ID="ans"><Font ss:Bold="1" ss:Color="#E00000"/></Style></Styles>'+
+   sheet('1단계 조건사냥',r1,[3])+sheet('2단계 키워드사냥',r2,[5])+sheet('3단계 한문단쓰기',r3,[7])+sheet('자료 원문',r5)+sheet('유형별 요약',r4)+'</Workbook>';
   const a=document.createElement('a');
   a.href='data:application/vnd.ms-excel;charset=utf-8,'+encodeURIComponent(xml);
   a.download='L202_조건사냥꾼_학습데이터목록_'+ymd()+'.xls'; a.click();
@@ -1347,7 +1382,7 @@ function foot(c,W,H){
   c.fillStyle='#8aa8a0'; c.font='400 11.5px '+CF;
   let y=H-46;
   y=txt(c,'🔒 '+(IS_ONLINE?PRIV_ON:PRIV_OFF),36,y,W-72,15,true);
-  c.fillText('제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com · 최종 수정 '+MOD_DATE,36,H-16);
+  c.fillText('제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com · 제작일 '+MADE_DATE+' · 최종 수정 '+MOD_DATE,36,H-16);
 }
 function dlWrong(){
   const nm=needName(); if(!nm) return;
@@ -1360,12 +1395,12 @@ function dlWrong(){
     if(paint){
       head(c,W,'오답노트 — 조건 사냥꾼','문학 · 서논술형 답안 쓰기 · '+S.stage+'단계 '+STAGES[S.stage-1].name);
       c.fillStyle='#0F6E56'; c.font='700 15px '+CF;
-      c.fillText(nm+'  ·  '+dateStr()+'  ·  '+S.score+' / '+MAX_TOTAL+'점  ·  정답률 '+st.rate+'%',36,116);
+      c.fillText(nm+'  ·  '+dateStr()+'  ·  '+S.score+' / '+MAX_TOTAL+'점  ·  정답률 '+st.rateText,36,116);
       c.fillStyle='#5b6b70'; c.font='400 13px '+CF;
       c.fillText('첫 시도 정답 '+st.fullFirst+' · 다시 풀어 맞힘 '+st.retryOk+' · 못 맞힘 '+st.wrong+' · 미응답 '+st.skipped.length,36,140);
     }
     if(!bad.length){
-      if(paint){ c.fillStyle='#15803d'; c.font='700 18px '+CF; c.fillText('틀린 문항이 없습니다. 훌륭해요!',40,y+16); }
+      if(paint){ c.fillStyle='#15803d'; c.font='700 18px '+CF; c.fillText(!st.graded.length?'풀어 본 문제가 없어요.':st.skipped.length?'푼 문제는 모두 첫 시도에 맞혔어요. (미응답 '+st.skipped.length+'문항)':'틀린 문항이 없습니다. 훌륭해요!',40,y+16); }
       return y+64;
     }
     bad.forEach(q=>{
@@ -1423,11 +1458,11 @@ function dlReport(){
       c.fillStyle='#0F6E56'; c.font='700 17px '+CF; c.fillText(nm,36,118);
       c.fillStyle='#5b6b70'; c.font='400 13.5px '+CF; c.fillText(dateStr(),36,142);
       c.fillStyle='#2E9B79'; c.font='700 40px '+CF; c.fillText(S.score+' 점',W-250,132);
-      c.fillStyle='#8aa8a0'; c.font='400 13.5px '+CF; c.fillText(MAX_TOTAL+'점 만점 · 정답률 '+st.rate+'%',W-250,154);
+      c.fillStyle='#8aa8a0'; c.font='400 13.5px '+CF; c.fillText(MAX_TOTAL+'점 만점 · 정답률 '+st.rateText,W-250,154);
     }
     y=186;
     const mm=Math.floor(S.elapsed/60000), ss=Math.round(S.elapsed%60000/1000);
-    const cells=[['정답률',st.rate+'%'],['첫 시도 정답',st.fullFirst+''],['다시 풀어 맞힘',st.retryOk+''],
+    const cells=[['정답률',st.rateText],['첫 시도 정답',st.fullFirst+''],['다시 풀어 맞힘',st.retryOk+''],
                  ['못 맞힘',st.wrong+''],['미응답',st.skipped.length+''],['최고 콤보',S.best+''],['소요 시간',mm+'분 '+ss+'초']];
     if(paint){
       const bw=(W-72)/cells.length;
@@ -1440,9 +1475,15 @@ function dlReport(){
       });
     }
     y+=76;
-    if(paint){ c.fillStyle='#0F6E56'; c.font='700 16px '+CF;
-      c.fillText('총평 — '+st.verdict+(st.skipped.length?'  (끝까지 풀지 않았어요 · '+st.skipped.length+'문항 남음)':''),36,y); }
-    y+=30;
+    // 중간 종료면 '끝까지 풀지 않았어요' 줄을 총평 위에 따로 둔다 (겹치지 않게 두 번의 그리기에서 같은 높이를 쓴다)
+    if(st.graded.length&&st.skipped.length){
+      if(paint){ c.fillStyle='#b45309'; c.font='700 14px '+CF; c.fillText('끝까지 풀지 않았어요 ('+st.skipped.length+'문항 남음)',36,y); }
+      y+=26;
+    }
+    { const pr=document.createElement('canvas').getContext('2d'); pr.font='700 16px '+CF;
+      if(paint){ c.fillStyle='#0F6E56'; c.font='700 16px '+CF; txt(c,'총평 — '+st.vtext,36,y,W-72,22,true); }
+      y=txt(pr,'총평 — '+st.vtext,36,y,W-72,22,false); }
+    y+=8;
     const box=(title,body,bg,fg)=>{
       c.font='400 13.5px '+CF;
       const inner=[]; let h=0;
@@ -1455,13 +1496,9 @@ function dlReport(){
     };
     if(st.cats.length){
       box('잘하는 유형', st.good.length?st.good.map(cc=>CATEGORIES[cc.k].label+' '+cc.n+'/'+cc.n).join('   ·   '):'아직 없어요. 한 유형이라도 전부 맞히는 것을 목표로 해 보세요.','#F0FDF4','#15803d');
-      box('보완이 필요한 유형', st.weak.length?st.weak.map(cc=>CATEGORIES[cc.k].label+' '+cc.got+'/'+cc.max+'점').join('   ·   '):'없어요. 고르게 잘했습니다.','#FEF2F2','#dc2626');
-      const t = st.allLow ? '유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.'
-              : st.firstStudy ? CATEGORIES[st.firstStudy.k].label+' — '+CATEGORIES[st.firstStudy.k].tip
-              : '약점이 보이지 않아요. 다음 단계에 도전해 보세요.';
-      box('가장 먼저 공부할 것', t, '#FFFBEB','#b45309');
+      box('보완이 필요한 유형', weakText(st), '#FEF2F2','#dc2626');
     } else {
-      box('진단','진단할 만큼 문항을 풀지 않았어요. 한 단계를 끝까지 풀어 보세요.','#FFFBEB','#b45309');
+      box('진단', st.graded.length?'진단할 만큼 문항을 풀지 않았어요. 한 단계를 끝까지 풀어 보세요.':'풀어 본 문제가 없어요. 시작 화면에서 다시 도전해 보세요.','#FFFBEB','#b45309');
     }
     if(refl) box('학습 소감', refl, '#F2FBF7','#0F6E56');
     if(paint){ c.fillStyle='#5b6b70'; c.font='400 12px '+CF;
