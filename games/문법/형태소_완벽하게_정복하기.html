@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="ko">
+<!-- 새 게임 2026.10.07 — G106 형태소 완벽하게 정복하기 (문법 · 1학년, 게임 코드 임시 — 시트 번호 확인 필요)
+     기획: 학생은 이 게임에서 '뜻이 남는가'를 판단하며 문장에 빗금을 넣어 형태소로 나누고(조작 = 개념 수행), 형태소를 자립·의존 × 실질·형식 2×2 판에 놓는다
+     원본: 교사 학습지 「형태소 완벽하게 정복하기」(단어·형태소 칸 + 자립·의존·실질·형식 4칸) — 4칸을 2×2 판으로 바꿔 한 형태소를 한 번만 놓게 함
+     단계(교사 결정 2026.10.07): 기본(형태소 나누기 → 분류) · 심화 1(단어 나누기 → 형태소 → 분류) · 심화 2(받침 '음절 풀기'가 필요한 문장) · 주제 통합(심화 1 + 품사)
+     판정 기준: 비상교육(박현숙) 국어 1-2 지도서 147~151쪽 — 접사는 의존·형식, '잠'은 한 형태소, 합성어는 어근끼리 나눔, 붙임표 표기
+               현재의 '-는-/-ㄴ-'은 '-었-'처럼 따로 나눔(교사 결정 2026.10.07) / 줄어든 말·ㄹ 탈락·불규칙 활용·'이다'·'있다'·'-하다' 파생어는 문장에서 뺌
+     한 판 더: 단계마다 문장 풀을 셔플백으로 돌려 판마다 다른 문장(빠른 학생용, 교사 결정 2026.10.07)
+     수정 2026.10.07 12:08 (교사 요청): 누른 빗금 진한 노랑·빠짐 파랑, 띄어 쓴 자리에 고정 회색 막대, 정답에 형태소·단어 개수와 내가 나눈 개수,
+       분류 화면 기준 1·2 줄바꿈, 판 머리말 '실질 형태소' 한 줄, 자립·형식 칸에 채점 뒤 '자립 형태소는 모두 실질' 안내,
+       잘못 놓은 형태소 표시 '내 답: ○○', 마우스로 놓은 뒤 다음 형태소를 자동으로 고르지 않음(다른 형태소가 엉뚱한 칸에 들어가던 문제),
+       한 판 더는 그 단계 문장을 모두 만날 때까지(기본 4판 · 심화 1 3판 · 심화 2 3판 · 주제 통합 3판)
+     수정 2026.10.07 12:23 (교사 결정): 한 판 더는 모든 단계 최대 3판(기본 25문장 가운데 24문장), 기본 단계 시작 때 '형태소를 가르는 두 기준' 배너
+     수정 2026.10.07 12:44 (교사 결정): 심화 2에 '갔다·잤다·샀다·섰다' 4문장 추가(받침 ㅆ = -았-/-었-, 받침만 떼면 어간이 남는 줄어든 말만 · 왔다·했다·셨다는 계속 뺌), 한 판 더 버튼에 '조금 더 연습해 보고 싶은 사람' 안내
+     재설계 2026.10.07 13:08 (교사 결정): 심화 1(단어까지) 삭제 → 기본 · 심화(음절 풀기) · 주제 통합 세 단계
+       주제 통합 순서 = 형태소 나누기 → 분류 → 단어 나누기 → 품사 (형태소 묶음 / 단어 묶음). 단어 줄 위에 앞에서 푼 형태소 줄을 남겨 비교
+       단어 줄과 형태소 줄은 서로 독립(앞 단계 경계를 넘겨받지 않음), 띄어 쓴 자리도 학생이 직접 자름
+       문장: 주제 통합에서 기본과 거의 같은 3문장(405 산딸기·406 풋사과·412 헛기침) 빼고 옛 심화 1 문장 9개를 옮겨 품사를 붙임(18문장). 옛 심화 1의 나머지 7문장 삭제
+       심화 첫 판에 줄어든 말(갔다·잤다·샀다·섰다) 2문장을 반드시 넣음. 주제 통합에서 처음 단어 단계로 넘어갈 때 '단어' 배너
+     수정 2026.10.07 13:24 (교사 요청): 분류·품사에서 놓지 않은 첫 형태소(단어)를 자동으로 고름('놓을 차례' 표시, 0.25초 안 두 번 클릭은 무시), 띄어 쓴 자리 간격 64px, 형태소 나누기 정답을 붙임표 표기로
+     수정 2026.10.07 2026.10.07 23:11 (교사 요청): 지금 하는 단계 알약을 주황으로 채우고 크게(▶ 표시)
+-->
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>형태소 완벽하게 정복하기 · 보라라샘</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+html{color-scheme:light}
+:root{
+  --bg:#F7F3FC;--card:#fff;--pri:#7C5CBF;--ink:#3C3489;--line:#EAE5F8;--pri-l:#EFE9FA;--pri-m:#CFC0F0;
+  --text:#333344;--muted:#7a7894;--ok:#2f9e44;--wd:#1F8A80;--wd-l:#E3F4F2;--cut:#E09A00;--miss:#1c7ed6;--ok-l:#e3f6e7;--ng:#d6455d;--ng-l:#fde8ec;--warn:#e8890c;--warn-l:#fff3df;
+  --shadow:0 4px 16px rgba(100,80,160,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR','Malgun Gothic','맑은 고딕',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;word-break:keep-all;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+button{font-family:inherit}
+/* ── 영역 헤더 띠 ── */
+.band{height:40px;background:var(--pri);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 18px;font-weight:700;font-size:16px;border-radius:12px 12px 0 0}
+.band .goal{font-weight:500}
+.band .bl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.band .br{white-space:nowrap;display:flex;align-items:center;gap:10px}
+.band .badge{background:rgba(255,255,255,.22);border-radius:999px;padding:3px 12px;font-size:13px;font-weight:500;white-space:nowrap}
+@media(max-width:600px){.band .goal{display:none}.band .sname{display:none}}
+/* ── 시작 화면 ── */
+#start{width:100%;max-width:1160px;padding:0 16px 60px}
+.scard{background:#fff;border:1px solid var(--line);border-top:none;border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+.sIn{padding:48px 28px 22px}
+.shead{display:flex;align-items:center;gap:16px;margin-bottom:14px}
+.shead img{height:90px;border-radius:12px;flex-shrink:0}
+.stitle{font-size:clamp(26px,3.4vw,34px);font-weight:700;color:var(--ink);line-height:1.3;letter-spacing:-.5px}
+.ssub{font-size:.95rem;color:var(--muted);margin-top:4px}
+.keyArt{margin-left:auto;flex:0 0 auto;height:118px;width:auto}
+@media(max-width:860px){.keyArt{display:none}}
+.std{background:var(--pri-l);border:1.5px solid var(--pri-m);border-left:4px solid var(--th);border-radius:10px;padding:8px 14px;margin-bottom:12px;font-size:.88rem;color:var(--ink);font-weight:700;line-height:1.6}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.box{background:#fbf9fe;border:1.5px solid var(--line);border-radius:12px;padding:12px 16px}
+.box h3{font-size:.95rem;color:var(--ink);margin-bottom:6px}
+.box .c{font-size:.86rem;line-height:1.75;color:#4a4860}
+.box .c b{color:var(--ink)}
+.box .c .eg{color:var(--th);font-weight:700}
+.crit{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:.86rem;line-height:1.7;color:#4a4860}
+.crit b{color:var(--ink)}
+.score-info{font-size:.82rem;color:var(--muted);line-height:1.65;margin-bottom:12px;padding:8px 12px;background:#fbf9fe;border-radius:8px;border:1px solid var(--line)}
+.score-info strong{color:var(--ink)}
+.stage-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.stage-btn{border:none;border-radius:12px;padding:14px 10px 12px;cursor:pointer;font-weight:700;font-size:1.02rem;color:#fff;box-shadow:var(--shadow);text-align:center;background:var(--pri);transition:transform .15s}
+.stage-btn:hover{transform:translateY(-2px)}
+.stage-btn:nth-child(2){background:#5f46a8}.stage-btn:nth-child(3){background:#2A8C8C}
+.stage-btn small{display:block;font-size:.76rem;font-weight:400;opacity:.92;margin-top:4px;line-height:1.5}
+.credit{font-size:.8rem;color:var(--muted);text-align:center;padding-top:10px;border-top:1px solid var(--line);line-height:1.6}
+.privacy{margin-top:12px;padding:10px 14px;background:#fbf9fe;border:1px solid var(--line);border-radius:10px;font-size:.76rem;color:var(--muted);line-height:1.6}
+.privacy b{color:var(--ink)}
+/* ── 문제 화면 ── */
+#play{display:none;width:100%;max-width:1180px;padding:10px 16px 18px;min-height:100vh;align-content:center}
+#play.on{display:grid;grid-template-columns:1fr 92px;grid-template-areas:"top top""main side";gap:10px}
+.top{grid-area:top;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+.pbar{height:6px;background:var(--line)}.pbar i{display:block;height:100%;background:var(--pri);transition:width .3s}
+.combo{background:rgba(255,255,255,.22);padding:1px 10px;border-radius:20px;font-size:.9rem;display:inline-block}
+.combo.hid{display:none}.combo.pulse{animation:pulse .5s}@keyframes pulse{50%{transform:scale(1.25)}}
+.main{grid-area:main;background:#fff;border:1.5px solid var(--pri-m);border-radius:14px;padding:14px 18px 14px;box-shadow:var(--shadow);min-width:0}
+.side{grid-area:side;display:flex;flex-direction:column;gap:8px;position:sticky;top:12px;align-self:start}
+.nav{background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:12px 6px;font-size:.8rem;font-weight:700;color:var(--ink);cursor:pointer;line-height:1.5;word-break:keep-all;min-height:44px}
+.nav:hover:not(:disabled){background:var(--pri-l);border-color:var(--pri)}
+.nav:disabled{opacity:.3;cursor:not-allowed}
+.nav.fin{background:var(--pri);border-color:var(--pri);color:#fff}
+.steps{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+.st{font-size:.82rem;padding:3px 11px;border-radius:999px;background:#f2eff8;color:#8a87a3;font-weight:700;border:1.5px solid transparent}
+/* 지금 하는 단계 — 다른 계열 색(주황)으로 채우고 크게 (교사 요청 2026.10.07) */
+.st.now{background:#E8750C;color:#fff;border-color:#E8750C;font-size:1.05rem;padding:6px 18px;box-shadow:0 3px 10px rgba(232,117,12,.35)}
+.st.now:before{content:'▶ ';font-size:.8em}
+.st.ok{background:var(--ok-l);color:#25803a}.st.rt{background:#e6f0fb;color:#1c6ec0}.st.ng{background:var(--ng-l);color:#b8324a}
+.ins{font-size:clamp(15px,1.45vw,17px);color:#4a4860;margin-bottom:10px;line-height:1.55}
+.ins b{color:var(--ink)}
+.crit2{display:flex;flex-direction:column;gap:1px;margin-top:4px;padding:5px 12px;border-left:4px solid var(--pri);background:var(--pri-l);border-radius:0 8px 8px 0;font-size:.95em}
+/* 문장 띠 (나누기) */
+.strip{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;gap:6px 0;padding:16px 8px 10px;background:#fcfbff;border:1.5px dashed var(--pri-m);border-radius:12px;margin-bottom:10px}
+.eo{display:flex;align-items:flex-start}
+.syl{display:flex;flex-direction:column;align-items:center}
+.ch{font-size:clamp(28px,3.1vw,38px);font-weight:700;color:var(--ink);line-height:56px;height:56px;min-width:clamp(30px,3.2vw,40px);text-align:center}
+.ch.jm{color:var(--th);font-size:clamp(22px,2.4vw,30px)}
+.unp{margin-top:2px;font-size:.7rem;padding:1px 6px;border-radius:6px;border:1px solid var(--pri-m);background:#fff;color:#6a5aa8;cursor:pointer;min-height:22px;white-space:nowrap}
+.unp.on{background:var(--th);border-color:var(--th);color:#fff}
+.unp:disabled{opacity:.45;cursor:default}
+.gap{width:22px;height:56px;border:none;background:transparent;cursor:pointer;position:relative;flex-shrink:0;padding:0}
+.gap:before{content:'';position:absolute;left:10px;top:12px;bottom:12px;border-left:2px dashed #ddd6ee}
+.gap:hover:not(:disabled):before{border-left-color:var(--pri)}
+.gap.cut:before{left:2px;top:4px;bottom:4px;border:none;width:18px;background:linear-gradient(to top right,transparent 40%,var(--cut) 41%,var(--cut) 61%,transparent 62%)}
+.gap.sp{width:64px}
+.gap.sp:before{left:31px}
+.gap.sp.cut:before,.gap.sp.miss:before,.gap.sp.extra:before{left:23px}
+.prevrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:6px 12px;margin-bottom:6px;border-radius:10px;background:var(--pri-l);font-size:clamp(17px,1.7vw,20px);color:var(--ink);font-weight:700}
+.prevrow .rl{font-size:.8em;color:#fff;background:var(--pri);border-radius:999px;padding:1px 10px}.prevrow .rc{font-size:.8em;color:var(--muted);font-weight:500;margin-left:auto}
+.gap.lock{cursor:default}
+.gap.lock:before{left:2px;top:4px;bottom:4px;border:none;width:18px;background:linear-gradient(to top right,transparent 40%,var(--wd) 41%,var(--wd) 61%,transparent 62%)}
+.gap.lock:after{content:'단어';position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--wd);font-weight:700;white-space:nowrap}
+.gap:disabled{cursor:default}
+.gap.ok:before{background:linear-gradient(to top right,transparent 40%,var(--ok) 41%,var(--ok) 61%,transparent 62%)}
+.gap.miss:before{left:2px;top:4px;bottom:4px;border:none;width:18px;background:linear-gradient(to top right,transparent 40%,var(--miss) 41%,var(--miss) 61%,transparent 62%)}
+.gap.miss:after{content:'빠짐';position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--miss);font-weight:700;white-space:nowrap}
+.gap.extra:before{left:4px;top:6px;bottom:6px;border:none;width:14px;background:linear-gradient(to top right,transparent 44%,#c9c3d8 45%,#c9c3d8 57%,transparent 58%)}
+.gap.extra:after{content:'✕';position:absolute;top:-12px;left:50%;transform:translateX(-50%);font-size:12px;color:var(--ng);font-weight:700}
+.shead2{font-size:clamp(18px,1.8vw,21px);color:var(--ink);margin-bottom:4px;padding:6px 12px;border-radius:10px;background:var(--pri-l)}
+.shead2 b{font-size:1.1em}.shead2 span{font-size:.8em;color:#55536e}
+.shead2.w{background:var(--wd-l);color:#0f5f58}.shead2.w b{color:var(--wd)}
+.strip.w{border-color:var(--wd);border-style:solid;background:#f6fcfb}
+.legend{font-size:.8rem;color:var(--muted);text-align:center;margin:-4px 0 8px}
+.legend .k{display:inline-block;margin:0 6px}
+/* 2×2 판 (분류) */
+.ctx{font-size:clamp(17px,1.7vw,20px);color:#55536e;text-align:center;margin-bottom:6px}
+.ctx b{color:var(--ink)}
+.ctx .cn{font-size:.85em;color:var(--muted)}
+.tray{min-height:52px;display:flex;flex-wrap:wrap;gap:8px;padding-top:16px!important;justify-content:center;align-items:center;padding:8px;border:1.5px dashed var(--pri-m);border-radius:12px;background:#fcfbff;margin-bottom:8px;cursor:pointer}
+.tray .empty{font-size:.85rem;color:var(--muted)}
+.tile{min-width:48px;min-height:42px;padding:2px 11px;border-radius:10px;border:2px solid var(--pri-m);background:#fff;font-size:clamp(19px,1.9vw,23px);font-weight:700;color:var(--ink);cursor:pointer;box-shadow:0 2px 6px rgba(100,80,160,.12);position:relative}
+.tile.sel{border-color:var(--cut);background:#FFF6DC;box-shadow:0 0 0 4px rgba(224,154,0,.35)}
+.tile.sel:after{content:'놓을 차례';position:absolute;top:-17px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:700;color:#a86f00;white-space:nowrap}
+.tile:disabled{cursor:default}
+.tile.bad{border-color:var(--ng);background:var(--ng-l)}
+.tile .my{display:block;font-size:.62rem;color:var(--ng);font-weight:700;margin-top:1px}
+.board{display:grid;grid-template-columns:112px 1fr 1fr;grid-template-rows:auto 1fr 1fr;gap:5px}
+.bh small{font-weight:500;font-size:.78rem}
+.bh{padding-top:4px!important;padding-bottom:4px!important;font-size:.92rem;font-weight:700;color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:var(--pri-l);border-radius:8px;padding:6px 4px;line-height:1.35}
+.cell{min-height:60px;border:2px solid var(--line);border-radius:12px;background:#fff;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;padding:18px 8px 5px;position:relative;cursor:pointer;text-align:left}
+.cell:hover:not(.lockd){border-color:var(--pri-m);background:#fcfbff}
+.cell .note{font-size:.85rem;color:var(--muted);align-self:center;margin:auto}
+.cell .num{position:absolute;top:3px;left:8px;font-size:.72rem;color:#a9a4c2;font-weight:700}
+.cell.lockd{cursor:default}
+/* 품사 */
+.words{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:10px}
+.wd{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:64px;padding:6px 10px;border-radius:10px;border:2px solid var(--pri-m);background:#fff;cursor:pointer}
+.wd .w{font-size:clamp(19px,1.9vw,23px);font-weight:700;color:var(--ink)}
+.wd .p{font-size:.82rem;min-height:18px;color:var(--th);font-weight:700}
+.wd.sel{border-color:var(--cut);background:#FFF6DC;box-shadow:0 0 0 4px rgba(224,154,0,.35)}
+.wd.bad{border-color:var(--ng);background:var(--ng-l)}.wd.bad .p s{color:var(--ng)}
+.wd:disabled{cursor:default}
+.posbtns{display:grid;grid-template-columns:repeat(9,1fr);gap:6px;margin-bottom:8px}
+.pb{min-height:44px;border-radius:10px;border:1.5px solid var(--line);background:#fbf9fe;font-size:.95rem;font-weight:700;color:var(--ink);cursor:pointer}
+.pb:hover:not(:disabled){background:var(--pri-l);border-color:var(--pri)}
+.pb:disabled{opacity:.4;cursor:default}
+/* 행동 버튼·피드백 */
+.acts{display:flex;gap:8px;justify-content:center;margin:6px 0 2px}
+.act{min-width:150px;min-height:46px;border-radius:12px;border:2px solid var(--pri);background:var(--pri);color:#fff;font-size:1.05rem;font-weight:700;cursor:pointer;padding:0 18px}
+.act.sec{background:#fff;color:var(--pri)}
+.act.rt{background:var(--warn-l);border-color:#f2c48a;color:#b4600b}
+.fb{display:none;margin-top:8px;border-radius:12px;padding:9px 14px;font-weight:700;font-size:1.02rem;line-height:1.5}
+.fb.on{display:block}.fb.ok{background:var(--ok-l);color:#25803a;border:1.5px solid #b5e2bf}.fb.ng{background:var(--ng-l);color:#b8324a;border:1.5px solid #f3bcc7}
+.fb.ng.shake{animation:shake .4s}@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.hint{display:none;margin-top:8px;background:#fff0e0;border:1.5px solid #f8d4a8;border-radius:12px;padding:9px 14px;font-size:1rem;line-height:1.6;color:#8a5a20}
+.hint.on{display:block}.hint b{color:#c07020}
+.det{display:none;margin-top:8px;background:#fbf9fe;border:1.5px solid var(--pri-m);border-radius:12px;padding:10px 14px;font-size:1rem;line-height:1.7;color:var(--text)}
+.det.on{display:block}.det .lb{font-weight:700;color:var(--ink);margin-bottom:2px}
+.det .an{color:#25803a;font-weight:700}
+.det .cnt{display:inline-block;background:var(--ok-l);color:#25803a;border-radius:999px;padding:0 10px}
+.det .wnote{margin-top:6px;padding-top:6px;border-top:1px dashed var(--line);font-size:.95rem;color:#0f5f58}.det .wnote b{color:var(--wd)}
+.det .mine{color:#b8324a;font-size:.92rem;margin-top:2px}
+@media(max-width:760px){
+  .gap.sp{width:36px}.gap.sp:before{left:17px}.gap.sp.cut:before,.gap.sp.miss:before,.gap.sp.extra:before{left:9px}
+  #play.on{grid-template-columns:1fr;grid-template-areas:"top""main""side"}
+  .side{flex-direction:row;position:static}.side .nav{flex:1}
+  .posbtns{grid-template-columns:repeat(5,1fr)}
+  .board{grid-template-columns:56px 1fr 1fr}.bh small,.bh .lg{display:none}
+  .cols{grid-template-columns:1fr}.stage-btns{grid-template-columns:1fr 1fr}.sIn{padding:40px 16px 18px}
+  .strip{gap:4px 0}.gap{width:20px}
+}
+@media(max-height:740px){.st.now{padding:3px 16px}.cell{min-height:54px}.crit2{padding:3px 12px}.main{padding:10px 16px}.ins,.steps{margin-bottom:5px}.ctx{margin-bottom:4px}.det,.fb,.hint{margin-top:6px;padding-top:7px;padding-bottom:7px}#play{padding-top:6px}}
+.icredit{position:fixed;right:12px;bottom:8px;font-size:.68rem;color:var(--muted);opacity:.45;pointer-events:none;display:none}
+.icredit.on{display:block}
+/* ── 종료 화면 ── */
+#end{display:none;width:100%;max-width:1100px;padding:12px 16px 60px}
+#end.on{display:block}
+.ecard{background:#fff;border:1.5px solid var(--line);border-radius:18px;padding:24px 24px 22px;box-shadow:var(--shadow)}
+.etop{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:center;margin-bottom:14px}
+.eL{text-align:center}.eemo{font-size:2.3rem}.etit{font-size:1.35rem;font-weight:700;color:var(--ink);margin:2px 0 4px;line-height:1.45}
+.edesc{color:var(--muted);font-size:.9rem;line-height:1.6}
+.eR{text-align:center}.escore{font-size:2.5rem;font-weight:700;color:var(--pri);line-height:1.1}
+.elab{color:var(--muted);font-size:.86rem;margin:2px 0 10px}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.sb{border-radius:10px;padding:8px 4px;text-align:center}.sb .v{font-size:1.3rem;font-weight:700}.sb .l{font-size:.74rem;color:var(--muted)}
+.sb.g{background:var(--ok-l)}.sb.g .v{color:#25803a}.sb.b{background:#e6f0fb}.sb.b .v{color:#1c6ec0}.sb.r{background:var(--ng-l)}.sb.r .v{color:#b8324a}.sb.y{background:#fff7d6}.sb.y .v{color:#a07c00}.sb.o{background:#ffe8da}.sb.o .v{color:#c4651d}
+.erate{margin-top:8px;font-size:.9rem;color:var(--ink);font-weight:700;line-height:1.5}
+.inp{background:#fbf9fe;border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;margin-top:6px}
+.inp label{display:block;font-size:.88rem;font-weight:700;color:var(--ink);margin-bottom:4px}
+.inp input,.inp textarea{width:100%;border:1.5px solid var(--line);border-radius:8px;padding:8px 10px;font-family:inherit;font-size:.98rem;color:var(--text);margin-bottom:10px;background:#fff}
+.inp textarea{height:60px;resize:vertical}
+.emeta{font-size:.84rem;color:var(--muted);margin-bottom:8px}
+.epriv{font-size:.75rem;color:var(--muted);line-height:1.5;margin-bottom:10px}
+.dls{display:flex;gap:10px}
+.dl{flex:1;min-height:46px;border-radius:12px;border:2px solid;font-size:.95rem;font-weight:700;cursor:pointer;color:#fff}
+.dl.n{background:#e8944a;border-color:#e8944a}.dl.r{background:#3d9e90;border-color:#3d9e90}
+.dl:disabled{opacity:.4;cursor:not-allowed}
+.erow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.eb{flex:1;min-width:140px;border-radius:12px;padding:12px 10px;font-size:.95rem;font-weight:700;cursor:pointer;min-height:46px}
+.eb small{display:block;font-size:.76rem;font-weight:500;color:var(--muted);margin-top:1px}
+.eb.pri{background:var(--pri);border:2px solid var(--pri);color:#fff}.eb.sec{background:#fff;border:2px solid var(--pri-m);color:#5a3d9e}
+.wl{margin-top:16px}
+.wlt{font-size:1.05rem;font-weight:700;color:var(--ink);margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid var(--ng-l)}
+.wi{background:var(--ng-l);border:1.5px solid #f3bcc7;border-radius:10px;padding:10px 14px;margin-bottom:8px;font-size:.92rem;line-height:1.6}
+.wi .tg{display:inline-block;font-size:.82rem;font-weight:700;color:#b8324a;background:rgba(255,255,255,.7);padding:1px 9px;border-radius:8px;margin-bottom:4px}
+.wi .q{font-weight:700;color:var(--ink)}.wi .my{color:#b8324a}.wi .an{color:#25803a;font-weight:700}.wi .d{color:#64748b;font-size:.86rem}
+.allok{text-align:center;padding:14px;border-radius:10px;font-weight:700}
+@media(max-width:760px){.etop{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}}
+/* ── 오늘 나온 문제 ── */
+.modal{position:fixed;inset:0;background:rgba(30,20,60,.45);display:none;align-items:center;justify-content:center;z-index:600;padding:16px}
+.modal.on{display:flex}
+.modal .mb{background:#fff;border-radius:16px;max-width:860px;width:100%;max-height:86vh;overflow:auto;padding:20px 22px}
+.modal h2{font-size:1.15rem;color:var(--ink);margin-bottom:8px}
+.modal .intro{max-width:720px;padding:24px 28px}
+.intro .c{font-size:1.08rem;line-height:1.8;color:#4a4860}
+.intro .c p{margin:4px 0}.intro .c b{color:var(--ink)}.intro .eg{color:var(--th);font-weight:700}
+.intro .ik.w{border-left-color:var(--wd);background:var(--wd-l)}
+.intro .cmp{margin:8px 0;padding:8px 14px;border:1.5px solid var(--line);border-radius:10px;font-size:1.1rem;line-height:1.9}
+.intro .cmp small{color:var(--muted);font-size:.8em}
+.intro .tg{display:inline-block;font-size:.8rem;color:#fff;border-radius:999px;padding:1px 10px;margin-right:8px;vertical-align:2px}.intro .tg.w{background:var(--wd)}.intro .tg.m{background:var(--pri)}
+.intro .ik{display:flex;flex-wrap:wrap;gap:2px 14px;margin:8px 0;padding:8px 14px;border-left:4px solid var(--pri);background:var(--pri-l);border-radius:0 10px 10px 0;font-size:1.12rem}
+.rv{border-top:1px solid var(--line);padding:10px 0;font-size:.92rem;line-height:1.65}
+.rv .tg{font-size:.75rem;color:#fff;background:var(--pri);border-radius:999px;padding:1px 8px;margin-right:6px}
+.rv .a{color:#25803a;font-weight:700}.rv .d{color:#64748b;font-size:.86rem}.rv .s{font-size:.8rem;color:var(--muted)}
+#toast{position:fixed;top:72px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;font-weight:700;font-size:.9rem;padding:8px 20px;border-radius:30px;z-index:9500;opacity:0;transition:opacity .3s;pointer-events:none}
+#toast.on{opacity:1}
+/* ═══ 정답 배너 — 깔끔한 카드형 (2026.10.05 교사 결정) ═══
+   초록 카드 하나가 떴다가 약 1초 뒤 사라진다. 화면 어둡게·광선·이모지 낙하 없음.
+   3연속은 주황 카드, 5·10·15…연속에만 작은 색종이. 다시 풀어 맞힘은 작은 파란 카드 */
+#cbn{position:fixed;left:50%;top:44%;z-index:9000;pointer-events:none;opacity:0;transform:translate(-50%,-50%) scale(.6);padding:18px 48px;border-radius:20px;background:linear-gradient(135deg,#2f9e44,#69db7c);color:#fff;font-family:'Noto Sans KR','Malgun Gothic','맑은 고딕',sans-serif;font-size:clamp(28px,4vw,44px);font-weight:700;line-height:1.2;text-align:center;white-space:nowrap;box-shadow:0 14px 34px rgba(0,0,0,.25)}
+#cbn .s{display:block;font-size:.5em;font-weight:500;margin-top:4px}
+#cbn.show{animation:cbnPop 1.1s ease forwards}
+#cbn.combo{background:linear-gradient(135deg,#e8590c,#fab005)}
+#cbn.info{font-size:clamp(20px,2.6vw,28px);padding:12px 30px;background:linear-gradient(135deg,#6a4fb3,#9b84d6)}
+#cbn.retry{font-size:clamp(20px,2.6vw,28px);padding:12px 30px;background:linear-gradient(135deg,#1c7ed6,#74c0fc)}
+@keyframes cbnPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}30%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(.92)}}
+#cbnFx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:8999}
+@media (prefers-reduced-motion:reduce){#cbn.show{animation:none!important;opacity:1!important;transform:translate(-50%,-50%)!important}}
+/* ═══ 게임 테마층 · 종이 띠와 가위 (2026.10.07) ═══
+   문장 = 글자가 적힌 종이 띠, 형태소 나누기 = 뜻이 남는 곳만 가위로 자르기. 보조색 청록 #2A8C8C (빨강 계열 아님).
+   영역 팔레트·헤더 띠·정답/오답 색은 그대로. 이 블록과 시작 화면 SVG를 지우면 기본 모습 */
+:root{--th:#2A8C8C;--th-soft:#DDF0F0}
+.strip{background:repeating-linear-gradient(0deg,#fcfbff 0,#fcfbff 27px,#f3f0fa 28px)}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+
+<!-- ===== 시작 화면 ===== -->
+<div id="start">
+<div class="scard">
+  <div class="band"><span>문법</span><span class="badge" id="mBadge">💻 노트북 권장</span></div>
+  <div class="sIn">
+  <div class="shead">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAACxCAMAAAAyLeWLAAAB/lBMVEUAAABMNSXZ1s7hupPcto7alVnNxba4uryMqcKptsLQiEyTp7jTmmfXpXTkwZxGLBvipW3i2snLeDWcscPUrIR8osLnx6NqSDBNMR7FvbLb0b2telCoq6vGxsb7+vqth2eHm6ivpJaMZ0rhmlvgnWGLeGm2g1ipmozGfUJtWEjTgTySlpVaRDS2lHXo6OeVhXbk4dl0UjmdsL6+wL1ELiDFbCd4mraGWDe8wcLGxsaXc1Z4ZVZ8oL77+vo6JhhiPSWoq6uTjIa4urzZ1s6DXELwsnh6bWK8dTuSYzwIBQUbFRNuOBZ3Qh3groDi0rsqHRdMNSWcoJuvpJbFvbLi2sl1nsKSlpWzajKptsLawZ7Nxbbo6OdtWEiLeGmpmowxIyF7c2l+lJ2BTSeTjIa2WBG8YhyjbUXd4eLk4dk8MS1ELiBlT0B4ZVaVhXaTp7imf2GvpJbAZh3An4De3+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADGtm7NAAAAgHRSTlMA///////////////////////////////////////////////////////////////////////////c////3P//3P/c3P///////////////9z/3Nzc/9z/3P/c3Nzc3P/////c/////9z/3P/c3Nz/oP///wAAAAAAAAAAAAAAAKaTQcIAABeqSURBVHja7VwHd+JItl4kUUpVKCAjhMjYYINxTh2me3q6e3vyvNnZ3dmcw8vx/5/z7r1VEghjLLfp3XPeebVjaANWffrud0PdKvYHP/j/sa3xC5Ml7cmrSdLRnvxdAPwjm+wdVPIRH+wN/sZAnhwfVJpepTi8SnzMPvqbQdg79C4q68fhr/8mED5+VvEqm8bBJx8cw68r9w7v4DcfFMJP72EhG3u//GAQXv+wHIRKpXn4iw+E4buDshhwfCBFxg/BUPnnD4Hhk8oD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" alt="보라라샘" style="height:90px;border-radius:12px"/>
+    <div>
+      <div class="stitle">형태소 완벽하게 정복하기</div>
+      <div class="ssub">문장을 형태소로 나누고, 자립·의존과 실질·형식으로 분류해 보세요.</div>
+    </div>
+    <svg class="keyArt" viewBox="0 0 320 120" aria-hidden="true" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-weight="700" text-anchor="middle">
+      <g transform="rotate(-4 160 60)">
+        <rect x="14" y="34" width="70" height="46" rx="4" fill="#fff" stroke="#2A8C8C" stroke-width="2"/>
+        <rect x="92" y="34" width="120" height="46" rx="4" fill="#fff" stroke="#2A8C8C" stroke-width="2"/>
+        <rect x="220" y="34" width="70" height="46" rx="4" fill="#fff" stroke="#2A8C8C" stroke-width="2"/>
+        <text x="49" y="67" font-size="26" fill="#3C3489">손</text>
+        <text x="152" y="67" font-size="26" fill="#3C3489">수건</text>
+        <text x="255" y="67" font-size="26" fill="#3C3489">이</text>
+        <g stroke="#2A8C8C" stroke-width="2" stroke-dasharray="4 4"><path d="M88 22V92"/><path d="M216 22V92"/></g>
+      </g>
+      <g transform="translate(232 6) rotate(28)" fill="none" stroke="#3C3489" stroke-width="2.4">
+        <circle cx="0" cy="0" r="8"/><circle cx="0" cy="22" r="8"/>
+        <path d="M6 5L40 18M6 17L40 4" stroke-linecap="round"/>
+      </g>
+      <text x="160" y="112" font-size="12" fill="#2A8C8C">뜻이 남는 곳까지만 자른다</text>
+    </svg>
+  </div>
+
+  <div class="std">📋 성취기준<br>(2022) [9국04-02] 단어의 짜임을 분석하여 새말 형성의 원리를 이해한다.</div>
+
+  <div class="cols">
+    <div class="box"><h3>🎮 게임 방법</h3><div class="c">
+      글자 사이를 누르면 빗금(/)이 들어가 그 자리가 잘립니다. 띄어 쓴 곳도 직접 잘라요.<br>
+      다 나누었으면 <b>확인</b>을 누르세요.<br>
+      형태소를 하나 고른 뒤 2×2 판의 알맞은 칸을 누르세요(숫자 키 1~4).<br>
+      <b>심화</b>는 받침을 떼어 보는 <b>음절 풀기</b> 버튼을 씁니다.<br>
+      <b>주제 통합</b>은 형태소를 다룬 뒤, 같은 문장을 단어로 나누고 품사를 고릅니다.<br>
+      더 연습하고 싶으면 <b>한 판 더</b>로 다른 문장을 풀어요(단계마다 최대 3판).
+    </div></div>
+    <div class="box"><h3>📘 형태소를 가르는 두 기준</h3><div class="c">
+      <b>형태소</b>는 뜻을 가진 가장 작은 말의 단위입니다. <span class="eg">손수건이 → 손 / 수건 / 이</span><br>
+      <b>단어</b>는 홀로 쓰일 수 있는 말과, 그 말에 붙어 쉽게 분리되는 말(조사)입니다.<br>
+      <b>기준 1</b> 홀로 쓰일 수 있는가? → 자립 형태소 / 의존 형태소<br>
+      <b>기준 2</b> 실질적인 의미가 있는가? → 실질 형태소 / 형식 형태소<br>
+      홀로 쓰일 수 없는 형태소는 붙임표(-)로 적습니다. <span class="eg">먹-, -었-, -다, 풋-</span>
+    </div></div>
+  </div>
+
+  <div class="score-info">
+    한 문장 안의 단계(단어 · 형태소 · 분류 · 품사)가 하나씩 문제입니다.<br>
+    첫 시도 정답 <strong>+10점</strong> · 틀리면 <strong>−5점</strong>(0점 하한) · 연속 정답 3·4번째 <strong>+5</strong>, 5번째부터 <strong>+10</strong> · 힌트를 보고 다시 풀어 맞히면 <strong>+5</strong><br>
+    한 판 만점 <strong id="maxInfo"></strong> · ⌨️ 채점 뒤 Enter · Space · → 다음, ← 이전 문장
+  </div>
+
+  <div class="stage-btns">
+    <button class="stage-btn" onclick="startStage(0)">기본<small>형태소 나누기 → 분류<br><span class="sn"></span></small></button>
+    <button class="stage-btn" onclick="startStage(1)">심화 · 음절 풀기<small>받침을 떼어 나누기 → 분류<br><span class="sn"></span></small></button>
+    <button class="stage-btn" onclick="startStage(2)">주제 통합 · 단어와 품사<small>형태소 → 분류 → 단어 → 품사<br><span class="sn"></span></small></button>
+  </div>
+
+  <div class="credit">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.10.07 · <span id="lastMod">최종 수정 2026.10.07 23:11</span></div>
+  <div class="privacy" id="privacyOffline"><b>🔒 개인정보 보호 안내</b><br>본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다.<br>게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.</div>
+  <div class="privacy" id="privacyOnline" style="display:none"><b>🔒 개인정보 보호 안내</b><br>본 게임의 학습 결과(학번, 이름, 점수, 오답 정보, 학습 소감)는 담당 선생님의 학습 관리용 스프레드시트에 안전하게 전송·저장됩니다.<br>수집된 정보는 학습 지도 목적으로만 사용되며, 제3자에게 제공되지 않습니다.</div>
+  </div>
+</div>
+</div>
+
+<div id="loginOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;justify-content:center;align-items:center">
+ <div style="background:#fff;border-radius:20px;padding:32px;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center">
+  <div style="font-size:36px;margin-bottom:8px">🔑</div>
+  <h2 style="font-size:20px;margin-bottom:4px;color:var(--ink)">학생 인증</h2>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:20px">학번과 이름을 입력하면 게임을 시작할 수 있어요.</p>
+  <div style="text-align:left;margin-bottom:12px"><label style="font-size:13px;font-weight:700;color:var(--ink)">학번 (5자리)</label><input id="loginId" type="text" maxlength="5" inputmode="numeric" placeholder="예: 10101" style="width:100%;padding:10px 14px;border:2px solid var(--line);border-radius:10px;font-size:16px;margin-top:4px;box-sizing:border-box"></div>
+  <div style="text-align:left;margin-bottom:16px"><label style="font-size:13px;font-weight:700;color:var(--ink)">이름</label><input id="loginName" type="text" maxlength="10" placeholder="예: 김민준" style="width:100%;padding:10px 14px;border:2px solid var(--line);border-radius:10px;font-size:16px;margin-top:4px;box-sizing:border-box"></div>
+  <div id="loginMsg" style="font-size:13px;color:var(--ng);min-height:20px;margin-bottom:12px"></div>
+  <button id="loginBtn" onclick="doLogin()" style="width:100%;padding:12px;background:var(--pri);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer">확인</button>
+  <div id="loginSpinner" style="display:none;margin-top:12px"><div style="width:28px;height:28px;border:3px solid var(--line);border-top-color:var(--pri);border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto"></div><style>@keyframes spin{to{transform:rotate(360deg)}}</style></div>
+ </div>
+</div>
+
+<!-- ===== 문제 화면 ===== -->
+<div id="play">
+  <div class="top">
+    <div class="band"><span class="bl">문법<span class="goal"> · 문장을 형태소로 나누고 형태소의 종류를 가른다</span></span><span class="br"><span class="combo hid" id="combo">🔥 <span id="comboV">0</span></span><span id="bandR"></span></span></div>
+    <div class="pbar"><i id="pfill" style="width:0"></i></div>
+  </div>
+  <div class="main" id="main"></div>
+  <div class="side">
+    <button class="nav" id="prevBtn" data-nav="-1">◀ 이전<br>문장</button>
+    <button class="nav" id="nextBtn" data-nav="1">다음<br>문장 ▶</button>
+    <button class="nav fin" id="finBtn">게임<br>끝내기</button>
+  </div>
+</div>
+
+<!-- ===== 종료 화면 ===== -->
+<div id="end">
+<div class="ecard">
+  <div class="etop">
+    <div class="eL"><div class="eemo" id="eEmo">🎉</div><div class="etit" id="eTit">학습 완료!</div><div class="edesc" id="eDesc"></div></div>
+    <div class="eR">
+      <div class="escore" id="eScore">0</div><div class="elab" id="eLab"></div>
+      <div class="stats">
+        <div class="sb g"><div class="v" id="sF">0</div><div class="l">첫 시도 정답</div></div>
+        <div class="sb b"><div class="v" id="sR">0</div><div class="l">다시 풀어 맞힘</div></div>
+        <div class="sb r"><div class="v" id="sM">0</div><div class="l">못 맞힘</div></div>
+        <div class="sb y"><div class="v" id="sS">0</div><div class="l">미응답</div></div>
+        <div class="sb o"><div class="v" id="sC">0</div><div class="l">최고 콤보</div></div>
+      </div>
+      <div class="erate" id="eRate"></div>
+    </div>
+  </div>
+  <div class="inp">
+    <div class="emeta" id="eMeta"></div>
+    <label for="inName">✏️ 이름 (필수)</label>
+    <input id="inName" type="text" maxlength="10" placeholder="실명을 쓰세요"/>
+    <label for="inCmt">💬 학습 소감</label>
+    <textarea id="inCmt" placeholder="(선택) 오늘 학습 소감을 적어 보세요"></textarea>
+    <div class="epriv" id="endPrivacy">🔒 입력하신 이름과 소감은 서버에 저장되지 않으며, 리포트 이미지(JPG) 생성용으로만 쓰입니다. 소감은 쓰지 않아도 저장할 수 있어요.</div>
+    <div class="dls"><button class="dl n" id="btnNote" disabled>📝 오답노트 JPG</button><button class="dl r" id="btnRep" disabled>📊 학습 리포트 JPG</button></div>
+  </div>
+  <div class="erow">
+    <button class="eb pri" id="btnNext">다음 단계로 ▶</button>
+    <button class="eb sec" id="btnMore">🔄 한 판 더</button>
+    <button class="eb sec" id="btnHome">🏠 시작화면으로</button>
+    <button class="eb sec" id="btnToday">📖 오늘 나온 문제 모두 보기</button>
+  </div>
+  <div class="wl" id="wl"></div>
+</div>
+</div>
+
+<div class="icredit" id="icredit">제작 · 보라라샘 · 2026.10.07</div>
+<div id="cbn"></div><canvas id="cbnFx"></canvas>
+<div class="modal" id="mIntro"><div class="mb intro"><div id="introMorph"><h2>📘 시작하기 전에 — 형태소를 가르는 두 기준</h2>
+  <div class="c">
+    <p><b>형태소</b>는 뜻을 가진 가장 작은 말의 단위입니다. <span class="eg">손수건이 → 손 / 수건 / 이</span></p>
+    <p><b>단어</b>는 홀로 쓰일 수 있는 말과, 그 말에 붙어 쉽게 분리되는 말(조사)입니다.</p>
+    <div class="ik"><div><b>기준 1</b> 홀로 쓰일 수 있는가?</div><div>→ <b>자립</b> 형태소 / <b>의존</b> 형태소</div></div>
+    <div class="ik"><div><b>기준 2</b> 실질적인 의미가 있는가?</div><div>→ <b>실질</b> 형태소 / <b>형식</b> 형태소</div></div>
+    <p>홀로 쓰일 수 없는 형태소는 붙임표(-)로 적습니다. <span class="eg">먹-, -었-, -다, 풋-</span></p>
+  </div></div>
+  <div id="introWord" style="display:none"><h2>📗 이제 단어로 나눠요</h2>
+  <div class="c">
+    <div class="ik w"><div><b>단어</b>는 홀로 쓰일 수 있는 가장 작은 말의 단위,<br>또는 홀로 쓸 수 있는 말에 붙어 앞말과 쉽게 분리되는 말(조사)입니다.</div></div>
+    <p>방금 형태소로 나눈 문장을, 이번에는 <b>단어</b>로 나눕니다.</p>
+    <p>단어로 나눌 때는 <b>띄어 쓴 곳</b>과 <b>조사 앞</b>만 자릅니다.</p>
+    <p>어간과 어미는 붙여 둬요. <span class="eg">하고, 먹었다</span>는 단어 하나예요.</p>
+    <div class="cmp"><div><span class="tg m">형태소</span> 손 / 수건 / 이 / 예쁘- / -다 <small>(5개)</small></div><div><span class="tg w">단어</span> 손수건 / 이 / 예쁘다 <small>(3개)</small></div></div>
+    <p>단어로 나눈 뒤에는 단어마다 품사를 고릅니다.</p>
+  </div></div>
+  <div style="text-align:center;margin-top:14px"><button class="eb pri" style="flex:none;min-width:200px" id="btnIntro">알겠어요 (Enter)</button></div></div></div>
+<div class="modal" id="mToday"><div class="mb"><h2>📖 오늘 나온 문제</h2><div id="todayList"></div><div style="text-align:right;margin-top:12px"><button class="eb pri" style="flex:none;min-width:100px" id="btnClose">닫기</button></div></div></div>
+
+<script>
+/* ═══ 1. 설정 ═══ */
+const MADE_DATE='2026.10.07', MOD_DATE='2026.10.07 23:11';
+const GAME_CONFIG = {
+  gameCode: "G106",
+  gameName: "형태소 완벽하게 정복하기",
+  webAppUrl: "https://script.google.com/macros/s/AKfycbzgq9yT5svpFzeFwW5p2pWOpL-lKpj5_RldoJejFT1EOk1Osjcf6hDx85jGQzvr5rU0ww/exec"
+};
+const params = new URLSearchParams(location.search);
+const TEACHER_KEY = params.get("key");
+const IS_ONLINE = !!TEACHER_KEY;
+let STUDENT = { id: "", name: "", className: "", verified: false };
+let pendingStage = 0;
+async function verifyStudent(studentId, studentName) {
+  if (!IS_ONLINE) return { status: "ok" };
+  try {
+    const res = await fetch(GAME_CONFIG.webAppUrl, {method: "POST", headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ action: "verify", teacherKey: TEACHER_KEY, studentId, studentName })});
+    return await res.json();
+  } catch (e) { return { status: "error", message: "서버에 연결할 수 없습니다. 인터넷 연결을 확인해주세요." }; }
+}
+function notifyGameStart(studentId, studentName, className) {
+  if (!IS_ONLINE) return;
+  fetch(GAME_CONFIG.webAppUrl, {method: "POST", headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify({ action: "start", teacherKey: TEACHER_KEY, gameCode: GAME_CONFIG.gameCode, studentId, studentName, className })}).catch(() => {});
+}
+async function submitResult(resultData) {
+  if (!IS_ONLINE) return { status: "ok" };
+  try {
+    const res = await fetch(GAME_CONFIG.webAppUrl, {method: "POST", headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ action: "submit", teacherKey: TEACHER_KEY, gameCode: GAME_CONFIG.gameCode, gameName: GAME_CONFIG.gameName, ...resultData })});
+    return await res.json();
+  } catch (e) { return { status: "error", message: "결과 전송에 실패했습니다." }; }
+}
+
+const STD_TEXT='(2022) [9국04-02] 단어의 짜임을 분석하여 새말 형성의 원리를 이해한다.';
+/* 점수 규칙 (지침 5-1·5-4) */
+const BASE=10, PENALTY=5, RETRY_PT=5;
+function comboBonus(c){return c>=5?10:c>=3?5:0}
+function stageMax(n){return n*BASE+(n>=4?10+10*(n-4):n===3?5:0)}
+/* 단계 — per: 한 판의 문장 수, steps: 한 문장 안의 문제 순서 */
+const STAGES=[
+  {name:'기본',tag:'기본',steps:['split','cls'],per:8,unpack:false},
+  {name:'심화 · 음절 풀기',tag:'심화음절풀기',steps:['split','cls'],per:6,unpack:true,must:{cat:'past',n:2}},
+  {name:'주제 통합 · 단어와 품사',tag:'주제통합단어와품사',steps:['split','cls','word','pos'],per:5,unpack:false},
+];
+const STEP_NAME={word:'단어로 나누기',split:'형태소로 나누기',cls:'형태소 분류',pos:'품사 고르기'};
+const STEP_CODE={word:'W',split:'M',cls:'C',pos:'P'};
+const CELLS={IS:'자립·실질',IF:'자립·형식',DS:'의존·실질',DF:'의존·형식'};
+const CELL_KEYS=['IS','IF','DS','DF'];
+const POS_LIST=['명사','대명사','수사','동사','형용사','관형사','부사','조사','감탄사'];
+
+/* ═══ 2. 유형 마스터 — 리포트의 유형(문제 단계 + 분류한 형태소 종류) ═══ */
+const CATEGORIES={
+  split:{label:'형태소 나누기',tip:"형태소 나누기 — '-다'를 떼어 어간과 어미를 가르고, 체언 뒤의 조사를 떼어 보세요. 더 나누었을 때 뜻이 사라지면 거기서 멈춥니다."},
+  word:{label:'단어 나누기',tip:"단어 나누기 — 조사는 홀로 쓰이지 못해도 앞말과 쉽게 떨어지므로 한 단어로 셉니다. 어미는 어간과 떨어지지 않으므로 '먹었다'는 한 단어입니다."},
+  pos:{label:'품사 고르기',tip:"품사 — 어미가 붙어 모양이 바뀌면 동사·형용사입니다. '-는다/-ㄴ다'를 붙여 말이 되면 동사, 어색하면 형용사입니다. 모양이 바뀌지 않고 체언을 꾸미면 관형사, 용언을 꾸미면 부사입니다."},
+  k_N:{label:'분류 · 체언(명사·대명사)',tip:"체언 — 명사·대명사는 홀로 쓰이고 실질적 의미가 있어 자립·실질 형태소입니다. 조사를 떼고 남은 말이 홀로 쓰이는지 확인하세요."},
+  k_M:{label:'분류 · 꾸며 주는 말(부사·관형사)',tip:"꾸며 주는 말 — '매우', '새'처럼 띄어 쓴 말은 홀로 쓰이고 뜻이 있으므로 자립·실질 형태소입니다. 꾸며 준다고 형식 형태소가 되지 않습니다."},
+  k_J:{label:'분류 · 조사',tip:"조사 — 홀로 쓰이지 못하고(의존) 앞말과의 관계만 나타내므로(형식) 의존·형식 형태소입니다. 단어로는 인정하지만 형태소로는 의존입니다."},
+  k_S:{label:'분류 · 어간',tip:"어간 — '먹-'처럼 뜻은 있지만 어미 없이 홀로 쓰이지 못하므로 의존·실질 형태소입니다. '홀로 쓰이나?'와 '뜻이 있나?'를 따로 물어보세요."},
+  k_E:{label:'분류 · 어미',tip:"어미 — '-었-', '-ㄴ-', '-다', '-은'처럼 어간 뒤에 붙어 시제나 문장의 끝, 꾸밈을 나타내므로 의존·형식 형태소입니다."},
+  k_A:{label:'분류 · 접사',tip:"접사 — '풋-', '맨-', '-꾼'처럼 뜻을 더해 주더라도 홀로 쓰이지 못하고 어근의 뜻을 제한할 뿐이므로 의존·형식 형태소입니다."},
+};
+const KIND_CAT={N:'k_N',M:'k_M',J:'k_J',S:'k_S',P:'k_E',E:'k_E',AP:'k_A',AS:'k_A'};
+const FOCUS={compound:'합성어 속 형태소',affix:'접사',stem:'어간',ending:'어미',josa:'조사',pre:'현재의 -는-·-ㄴ-',past:'과거의 -았-·-었-(ㅆ)',adn:'꾸미는 어미 -ㄴ·-ㄹ',modifier:'꾸며 주는 말'};
+
+/* ═══ 3. 문항 데이터 (QUESTIONS) ═══
+   m: 형태소 분석. 형태소는 '글자:종류', 형태소 사이는 빈칸, 어절 사이는 ' / '
+      종류 — N 체언(명사·대명사) · M 수식언(부사·관형사) · J 조사 · S 어간
+             P 선어말 어미(-었-, -는-, -ㄴ-, -으시-) — 'ㅆ=았:P'처럼 겉모양=본디 모양으로 쓸 수 있다(갔다) · E 어말 어미(-다, -고, -은, -ㄴ, -ㄹ)
+             AP 접두사(풋-, 맨-) · AS 접미사(-꾼, -들, -개, -님)
+      받침 하나가 형태소인 경우(스친다의 ㄴ)는 '스치:S ㄴ:P 다:E'처럼 받침 글자만 따로 쓴다
+   pos: 주제 통합 단계의 품사 — 단어 순서대로(조사는 앞말과 떼어 한 단어)
+   hs: 이 문항의 힌트(hint)가 어느 문제 단계용인지 (없으면 형태소 나누기·분류·품사 공통)
+   단어 나누기 정답은 m에서 만든다: 조사(J) 앞에서만 끊는다 */
+const QUESTIONS = [
+// ── 1단계 · 기본 (형태소 나누기 → 형태소 분류) ──
+{id:101,stage:1,cat:'compound',text:'달빛이 밝다.',m:'달:N 빛:N 이:J / 밝:S 다:E',
+ hint:"'달빛'을 '달'과 '빛'으로 나누어도 둘 다 뜻이 남아 있나요?",
+ detail:"'달빛'은 '달'과 '빛'이 합쳐진 말이라 둘 다 뜻을 가진 형태소입니다. '밝다'는 뜻을 가진 '밝-'과 문장을 끝내는 '-다'로 나뉩니다. '밝-'은 실질적 의미가 있지만 홀로 쓰이지 못해 의존·실질 형태소입니다.",
+ edge:false,src:'교사 제공(학습지)'},
+{id:102,stage:1,cat:'compound',text:'산딸기가 달다.',m:'산:N 딸기:N 가:J / 달:S 다:E',
+ hint:"'딸기'를 '딸'과 '기'로 나누면 뜻이 남나요? '산'은 어떤가요?",
+ detail:"'산딸기'는 '산'과 '딸기'로 나뉩니다. '딸기'를 '딸'과 '기'로 더 나누면 원래 뜻이 사라지므로 여기서 멈춥니다. '달-'(어간)과 '-다'(어미)는 둘 다 홀로 쓰이지 못하는 의존 형태소입니다.",
+ edge:false,src:'교사 제공(학습지)'},
+{id:103,stage:1,cat:'compound',text:'동생이 방에서 낮잠을 자다.',m:'동생:N 이:J / 방:N 에서:J / 낮:N 잠:N 을:J / 자:S 다:E',
+ hint:"'낮잠'은 '낮'과 '잠' 가운데 어느 쪽을 떼어도 뜻이 남나요?",
+ detail:"'낮잠'은 '낮'과 '잠'이 합쳐진 말입니다(교과서도 '잠꾸러기'의 '잠'을 어근으로 듭니다). '에서'는 장소를 나타내는 조사로, 홀로 쓰이지 못하고 문법적 기능만 하므로 의존·형식 형태소입니다.",
+ edge:false,src:'교사 제공(학습지·지도서 147쪽)'},
+{id:104,stage:1,cat:'affix',text:'아이가 맨발로 뛰었다.',m:'아이:N 가:J / 맨:AP 발:N 로:J / 뛰:S 었:P 다:E',
+ hint:"'맨-'만 따로 떼어 홀로 쓸 수 있나요? '맨-'을 빼도 '발'은 뜻이 있나요?",
+ detail:"'맨발'은 '다른 것이 없는'이라는 뜻을 더하는 접두사 '맨-'과 '발'로 나뉩니다. 접사는 뜻을 보태지만 홀로 쓰이지 못하고 어근의 뜻을 제한할 뿐이라 의존·형식 형태소입니다. '뛰었다'의 '-었-'은 과거를 나타내는 어미입니다.",
+ edge:true,src:'교사 제공(학습지·지도서 151쪽)'},
+{id:105,stage:1,cat:'affix',text:'사냥꾼이 산토끼를 잡았다.',m:'사냥:N 꾼:AS 이:J / 산:N 토끼:N 를:J / 잡:S 았:P 다:E',
+ hint:"'사냥꾼'에서 '-꾼'만 따로 쓸 수 있나요? '나무꾼', '장사꾼'과 비교해 보세요.",
+ detail:"'-꾼'은 '그 일을 하는 사람'이라는 뜻을 더하는 접미사라 의존·형식 형태소입니다. '산토끼'는 '산'과 '토끼' 두 어근이 합쳐진 말이라 둘 다 자립·실질 형태소입니다.",
+ edge:true,src:'교사 제공(학습지·지도서 151쪽)'},
+{id:106,stage:1,cat:'ending',text:'우리는 물고기를 잡으며 놀았다.',m:'우리:N 는:J / 물:N 고기:N 를:J / 잡:S 으며:E / 놀:S 았:P 다:E',
+ hint:"'잡으며'의 '-으며'를 '-고'로 바꿔 보세요. 바꿀 수 있는 부분이 하나의 형태소입니다.",
+ detail:"'잡으며'는 어간 '잡-'과 어미 '-으며'로 나뉩니다. '놀았다'는 '놀-', 과거의 '-았-', 문장을 끝내는 '-다' 세 형태소입니다. '우리는'의 '는'은 체언 뒤에 붙은 조사입니다.",
+ edge:false,src:'교사 제공(학습지)'},
+{id:107,stage:1,cat:'ending',text:'나는 넓은 바다를 보았다.',m:'나:N 는:J / 넓:S 은:E / 바다:N 를:J / 보:S 았:P 다:E',
+ hint:"'넓은'을 '넓다'와 비교해 보세요. 그대로인 부분과 바뀐 부분은 어디인가요?",
+ detail:"'넓은'은 어간 '넓-'에 뒤의 명사를 꾸미게 하는 어미 '-은'이 붙은 말입니다. '넓-'은 뜻이 있지만 홀로 쓰이지 못하므로 의존·실질, '-은'은 문법적 기능만 하므로 의존·형식 형태소입니다.",
+ edge:false,src:'교사 제공(학습지)'},
+{id:108,stage:1,cat:'affix',text:'언니가 풋사과를 먹고 활짝 웃었다.',m:'언니:N 가:J / 풋:AP 사과:N 를:J / 먹:S 고:E / 활짝:M / 웃:S 었:P 다:E',
+ hint:"'풋-'은 홀로 쓰일 수 있나요? '활짝'은 어떤가요?",
+ detail:"'풋-'은 '덜 익은'이라는 뜻을 더하는 접두사라 의존·형식 형태소입니다. '활짝'은 다른 말에 기대지 않고 홀로 쓰이며 실질적 의미가 있어 자립·실질 형태소입니다. 꾸며 주는 말도 홀로 쓰이면 자립 형태소입니다.",
+ edge:true,src:'교사 제공(학습지·지도서 151쪽)'},
+{id:109,stage:1,cat:'josa',text:'나는 친구와 이야기를 하며 자리에 앉았다.',m:'나:N 는:J / 친구:N 와:J / 이야기:N 를:J / 하:S 며:E / 자리:N 에:J / 앉:S 았:P 다:E',
+ hint:"체언 뒤에 붙은 조사를 하나씩 떼어 보세요. 모두 몇 개인가요?",
+ detail:"'는, 와, 를, 에'는 모두 체언 뒤에 붙어 문법적 관계를 나타내는 조사로 의존·형식 형태소입니다. '이야기'는 나누면 원래 뜻이 사라지므로 한 형태소입니다. '하며'는 '하-'와 '-며'로 나뉩니다.",
+ edge:false,src:'교사 제공(학습지)'},
+{id:110,stage:1,cat:'compound',text:'누나가 김밥을 먹다.',m:'누나:N 가:J / 김:N 밥:N 을:J / 먹:S 다:E',
+ hint:"'김밥'을 둘로 나누어도 각각 뜻이 살아 있나요?",
+ detail:"교과서에 나온 문장입니다. '김밥'은 '김'과 '밥'으로 나누어도 둘 다 뜻이 있으므로 두 형태소입니다. 단어로는 '김밥' 하나지만 형태소로는 둘이라는 점이 단어와 형태소의 차이입니다.",
+ edge:false,src:'교사 제공(지도서 149쪽)'},
+{id:111,stage:1,cat:'affix',text:'풋과일이 매우 시다.',m:'풋:AP 과일:N 이:J / 매우:M / 시:S 다:E',
+ hint:"'시다'에서 '-다'를 떼면 무엇이 남나요? 한 글자라도 뜻이 있나요?",
+ detail:"교과서에 나온 문장입니다. '풋과일'은 접두사 '풋-'과 '과일'로, '시다'는 어간 '시-'와 어미 '-다'로 나뉩니다. '시-'는 한 글자지만 '맛이 시다'는 뜻을 담고 있어 실질 형태소입니다.",
+ edge:true,src:'교사 제공(지도서 150쪽)'},
+{id:112,stage:1,cat:'stem',text:'가을바람이 차다.',m:'가을:N 바람:N 이:J / 차:S 다:E',
+ hint:"'차-'에 두 가지를 따로 물어보세요. 홀로 쓰일 수 있나요? 실질적인 의미가 있나요?",
+ detail:"교과서에 나온 문장입니다. '차-'는 '차다'의 뜻을 지녀 실질 형태소이지만, '-다' 같은 어미 없이는 쓰일 수 없어 의존 형태소입니다. 용언의 어간은 모두 의존·실질 형태소입니다.",
+ edge:false,src:'교사 제공(지도서 151쪽)'},
+{id:113,stage:1,cat:'ending',text:'강에 물안개가 끼었다.',m:'강:N 에:J / 물:N 안개:N 가:J / 끼:S 었:P 다:E',
+ hint:"'끼었다'에서 '-었-'을 빼면 뜻이 어떻게 달라지나요?",
+ detail:"교과서에 나온 문장입니다. '-었-'을 빼면 '끼다'가 되어 과거의 뜻이 사라집니다. 이렇게 넣고 빼면서 뜻 차이가 생기는 '-었-'은 하나의 형태소이고, 문법적 의미만 더하므로 의존·형식 형태소입니다.",
+ edge:false,src:'교사 제공(지도서 151쪽)'},
+{id:114,stage:1,cat:'stem',text:'아기가 엄마 손을 잡았다.',m:'아기:N 가:J / 엄마:N / 손:N 을:J / 잡:S 았:P 다:E',
+ hint:"'잡았다'를 '놀았다'와 비교해 보세요. 바뀌는 부분과 그대로인 부분은 어디인가요?",
+ detail:"'잡았다'의 '잡-'을 '놀-'로 바꿀 수 있으므로 '잡-'은 하나의 형태소입니다. 남은 '-았-'과 '-다'도 각각 과거, 문장 끝냄을 나타내는 형태소입니다. '엄마'는 조사 없이 쓰였어도 홀로 쓰이는 자립·실질 형태소입니다.",
+ edge:false,src:'교사 제공(지도서 150쪽 원리)'},
+{id:115,stage:1,cat:'stem',text:'형은 키가 크고 동생은 작다.',m:'형:N 은:J / 키:N 가:J / 크:S 고:E / 동생:N 은:J / 작:S 다:E',
+ hint:"'크고'의 '크-'는 홀로 쓰일 수 있나요? '키'는 어떤가요?",
+ detail:"'키'는 홀로 쓰이는 명사라 자립·실질 형태소지만, '크-'는 '-고', '-다' 같은 어미가 붙어야만 쓰여서 의존·실질 형태소입니다. 두 '은'은 앞말에 붙은 조사입니다.",
+ edge:false,src:'교사 제공(지도서 151쪽 원리)'},
+{id:116,stage:1,cat:'compound',text:'꽃밭에 나비가 많다.',m:'꽃:N 밭:N 에:J / 나비:N 가:J / 많:S 다:E',
+ hint:"'꽃밭'의 '밭'을 '잎'으로 바꿔 보세요. 다른 말로 바꿀 수 있는 부분이 형태소입니다.",
+ detail:"'꽃밭'은 '꽃'과 '밭'이 합쳐진 말로, '꽃잎', '보리밭'처럼 각 부분을 다른 말로 바꿀 수 있어 두 형태소입니다. '많-'은 뜻이 있지만 어미 없이 쓰이지 못하는 어간입니다.",
+ edge:false,src:'교사 제공(지도서 150쪽 원리)'},
+{id:117,stage:1,cat:'pre',text:'우리 집 개가 밥을 먹는다.',m:'우리:N / 집:N / 개:N 가:J / 밥:N 을:J / 먹:S 는:P 다:E',
+ hint:"'먹는다'와 '먹었다'를 비교해 보세요. '-었-'이 있던 자리에 무엇이 있나요?",
+ detail:"'먹는다'의 '-는-'은 '먹었다'의 '-었-'과 같은 자리에서 지금 일어나는 일(현재)을 나타냅니다. 그래서 '-었-'처럼 따로 떼어 '먹-', '-는-', '-다' 세 형태소로 나눕니다.",
+ edge:true,src:'교사 결정(-는- 따로 나눔, 2026.10.07)'},
+{id:118,stage:1,cat:'modifier',text:'아빠가 새 옷을 입었다.',m:'아빠:N 가:J / 새:M / 옷:N 을:J / 입:S 었:P 다:E',
+ hint:"'새'는 앞뒤 말과 띄어 쓴 말인가요? 다른 말에 기대어야 쓰이나요?",
+ detail:"'새'는 '옷'을 꾸미는 말로, 띄어 쓰는 하나의 단어입니다. 홀로 쓰이고 실질적 의미가 있으므로 자립·실질 형태소입니다. 꾸며 주는 말이라고 해서 형식 형태소가 되지는 않습니다.",
+ edge:false,src:'교사 제공(지도서 151쪽 원리)'},
+{id:119,stage:1,cat:'modifier',text:'아이가 모든 문제를 풀었다.',m:'아이:N 가:J / 모든:M / 문제:N 를:J / 풀:S 었:P 다:E',
+ hint:"'모든'은 '넓은'처럼 '-다'를 붙인 기본형이 있나요? 모양이 바뀌는 말인가요?",
+ detail:"'모든'은 늘 이 모양으로만 쓰이는 관형사라 더 나눌 수 없는 한 형태소이고, 홀로 쓰이므로 자립·실질 형태소입니다. '넓은'은 '넓다'가 있어 '넓-'과 '-은'으로 나뉘는 것과 다릅니다. '풀었다'는 '풀-', '-었-', '-다'입니다.",
+ edge:false,src:'기억(미확인) — 관형사 판정'},
+{id:120,stage:1,cat:'affix',text:'아이들이 마당에서 공을 잡았다.',m:'아이:N 들:AS 이:J / 마당:N 에서:J / 공:N 을:J / 잡:S 았:P 다:E',
+ hint:"'아이들'의 '-들'은 홀로 쓰일 수 있나요? 뒤에 조사가 또 붙어 있나요?",
+ detail:"'-들'은 '여럿'이라는 뜻을 더하는 접미사로, 홀로 쓰이지 못하는 의존·형식 형태소입니다. '아이들이'처럼 '-들' 뒤에 조사 '이'가 따로 붙는 것을 보면 '-들'은 조사가 아니라 낱말 안에 붙은 접사임을 알 수 있습니다.",
+ edge:true,src:'교사 제공(지도서 151쪽 원리)'},
+{id:121,stage:1,cat:'stem',text:'하늘이 맑고 높다.',m:'하늘:N 이:J / 맑:S 고:E / 높:S 다:E',
+ hint:"'맑고', '맑다', '맑은'을 나란히 놓아 보세요. 늘 그대로인 부분은 어디까지인가요?",
+ detail:"'맑고', '맑다', '맑은'에서 늘 그대로인 '맑-'이 어간이고, 바뀌는 '-고', '-다'가 어미입니다. 어간은 의존·실질, 어미는 의존·형식 형태소입니다.",
+ edge:false,src:'교사 제공(지도서 150쪽 원리)'},
+{id:122,stage:1,cat:'josa',text:'삼촌이 시장에서 수박을 들었다.',m:'삼촌:N 이:J / 시장:N 에서:J / 수박:N 을:J / 들:S 었:P 다:E',
+ hint:"'들었다'를 '잡았다'와 비교해 보세요. 같은 자리에 오는 부분은 어디인가요?",
+ detail:"'들었다'는 '잡았다'처럼 어간('들-'), 과거('-었-'), 문장 끝('-다')으로 나뉩니다. '삼촌', '시장', '수박'은 둘로 나누면 원래 뜻이 사라지므로 각각 한 형태소로 봅니다. '이, 에서, 을'은 조사입니다.",
+ edge:false,src:'교사 제공(지도서 150쪽 원리)'},
+{id:123,stage:1,cat:'affix',text:'햇밤이 아주 굵다.',m:'햇:AP 밤:N 이:J / 아주:M / 굵:S 다:E',
+ hint:"'햇-'은 하늘의 '해'라는 명사인가요, '그해에 난'이라는 뜻을 더하는 말인가요?",
+ detail:"'햇밤'의 '햇-'은 '그해에 난'이라는 뜻을 더하는 접두사입니다(햇감자, 햇나물). 접사이므로 의존·형식 형태소입니다. '햇살'의 '해'(명사)와 헷갈리지 않게, 뒤의 말이 '그해에 난 것'을 뜻하는지 보세요.",
+ edge:true,src:'기준표 2-1'},
+{id:124,stage:1,cat:'affix',text:'형이 헛기침을 하였다.',m:'형:N 이:J / 헛:AP 기침:N 을:J / 하:S 였:P 다:E',
+ hint:"'헛-'을 떼어도 '기침'은 뜻이 있나요? '헛-'만 따로 쓸 수 있나요?",
+ detail:"'헛-'은 '이유 없는, 보람 없는'이라는 뜻을 더하는 접두사로 의존·형식 형태소입니다. '하였다'의 '-였-'은 '-었-'과 같은 과거의 형태소가 '하-' 뒤에서 '-였-'으로 나타난 것입니다.",
+ edge:true,src:'기준표 2-1'},
+{id:125,stage:1,cat:'affix',text:'엄마가 덮개로 냄비를 덮었다.',m:'엄마:N 가:J / 덮:S 개:AS 로:J / 냄비:N 를:J / 덮:S 었:P 다:E',
+ hint:"두 번 나오는 '덮'은 같은 형태소인가요? '덮개'의 '-개'는 홀로 쓰일 수 있나요?",
+ detail:"'덮개'는 어간 '덮-'에 '그런 일을 하는 도구'라는 뜻을 더하는 접미사 '-개'가 붙은 말입니다(교과서의 '지우개'와 같은 짜임). '덮-'은 두 번 모두 의존·실질, '-개'는 의존·형식 형태소입니다.",
+ edge:true,src:'기준표 2-1·지도서 150쪽'},
+
+// ── 2단계 · 심화 · 음절 풀기 (받침을 떼는 형태소 나누기 → 형태소 분류) — 첫 판에 줄어든 말(cat:'past') 2문장 ──
+{id:301,stage:2,cat:'pre',text:'봄바람이 얼굴을 스친다.',m:'봄:N 바람:N 이:J / 얼굴:N 을:J / 스치:S ㄴ:P 다:E',
+ hint:"'스친다'와 '스쳤다'를 비교해 보세요. '친' 글자의 받침 'ㄴ'은 어떤 뜻을 더하나요?",
+ detail:"'스친다'의 받침 'ㄴ'은 '스쳤다'의 '-었-'과 같은 자리에서 현재를 나타내는 선어말 어미 '-ㄴ-'입니다. 그래서 '친'을 '치'와 'ㄴ'으로 풀어 '스치-', '-ㄴ-', '-다'로 나눕니다.",
+ edge:false,src:'교사 제공(학습지)·교사 결정(-ㄴ-)'},
+{id:302,stage:2,cat:'adn',text:'작은 새가 나무 위에서 노래를 부른다.',m:'작:S 은:E / 새:N 가:J / 나무:N / 위:N 에서:J / 노래:N 를:J / 부르:S ㄴ:P 다:E',
+ hint:"'작은'의 '-은'과 '부른다'의 'ㄴ'은 같은 일을 하나요? 뒤에 오는 것이 명사인지 '-다'인지 보세요.",
+ detail:"'작은'의 '-은'은 뒤의 명사 '새'를 꾸미게 하는 어미라 '작-'과 '-은'으로 끝납니다. '부른다'의 'ㄴ'은 뒤에 '-다'가 오며 현재를 나타내는 '-ㄴ-'이므로 '른'을 풀어 '부르-', '-ㄴ-', '-다'로 나눕니다.",
+ edge:true,src:'교사 제공(학습지)·교사 결정(-ㄴ-)'},
+{id:303,stage:2,cat:'pre',text:'별이 밤하늘에 빛난다.',m:'별:N 이:J / 밤:N 하늘:N 에:J / 빛:N 나:S ㄴ:P 다:E',
+ hint:"'빛난다'에서 '빛'은 홀로 쓰일 수 있나요? '난' 글자는 풀어 볼 필요가 있나요?",
+ detail:"'빛나다'는 명사 '빛'과 '나다'가 합쳐진 말이라 '빛'은 자립·실질, '나-'는 의존·실질 형태소입니다. '난'의 받침 'ㄴ'은 현재를 나타내는 '-ㄴ-'이므로 '나'와 'ㄴ'으로 풀어 나눕니다.",
+ edge:false,src:'교사 결정(-ㄴ-)'},
+{id:304,stage:2,cat:'pre',text:'나는 매일 아침 우유를 마신다.',m:'나:N 는:J / 매일:M / 아침:N / 우유:N 를:J / 마시:S ㄴ:P 다:E',
+ hint:"'마신다'를 '마셨다'와 비교해 보세요. 어느 글자를 풀어야 할까요?",
+ detail:"'마신다'의 '신'에 들어 있는 받침 'ㄴ'이 현재를 나타내는 '-ㄴ-'입니다. '신'을 '시'와 'ㄴ'으로 풀면 어간 '마시-'가 온전히 드러납니다. '매일', '아침'은 홀로 쓰이는 자립·실질 형태소입니다.",
+ edge:false,src:'교사 결정(-ㄴ-)'},
+{id:305,stage:2,cat:'adn',text:'큰 배가 바다를 건넌다.',m:'크:S ㄴ:E / 배:N 가:J / 바다:N 를:J / 건너:S ㄴ:P 다:E',
+ hint:"'큰'의 'ㄴ'과 '건넌다'의 'ㄴ' 뒤에는 각각 무엇이 오나요? 명사인가요, '-다'인가요?",
+ detail:"'큰'은 '크-'에 명사 '배'를 꾸미게 하는 어미 '-ㄴ'이 붙은 말이고, '건넌다'의 'ㄴ'은 '-다' 앞에서 현재를 나타내는 '-ㄴ-'입니다. 둘 다 받침을 풀어 나누지만 하는 일이 다른 형태소입니다.",
+ edge:true,src:'교사 결정(-ㄴ-)'},
+{id:306,stage:2,cat:'adn',text:'동생이 예쁜 꽃을 그린다.',m:'동생:N 이:J / 예쁘:S ㄴ:E / 꽃:N 을:J / 그리:S ㄴ:P 다:E',
+ hint:"'예쁜'은 '예쁘다'에서, '그린다'는 '그리다'에서 왔습니다. 두 받침 'ㄴ'은 각각 무슨 일을 하나요?",
+ detail:"'예쁜'의 'ㄴ'은 뒤의 '꽃'을 꾸미게 하는 어미 '-ㄴ', '그린다'의 'ㄴ'은 현재를 나타내는 '-ㄴ-'입니다. '꽃'은 받침이 있지만 '꼬'와 'ㅊ'으로 풀면 뜻이 사라지므로 풀지 않습니다.",
+ edge:true,src:'교사 결정(-ㄴ-)'},
+{id:307,stage:2,cat:'adn',text:'아이가 맑은 물을 마신다.',m:'아이:N 가:J / 맑:S 은:E / 물:N 을:J / 마시:S ㄴ:P 다:E',
+ hint:"'맑은'은 글자 사이에서 나뉘고, '마신다'는 글자 안에서 나뉩니다. 어느 글자를 풀어야 할까요?",
+ detail:"'맑은'은 '맑-'과 '-은'이 글자 경계에서 나뉘므로 풀 필요가 없습니다. '마신다'는 '신'의 받침 'ㄴ'이 현재의 '-ㄴ-'이라 '신'을 풀어야 '마시-'가 드러납니다. '물'의 받침은 풀면 뜻이 사라집니다.",
+ edge:true,src:'교사 결정(-ㄴ-)'},
+{id:308,stage:2,cat:'pre',text:'형은 내일 서울에 간다.',m:'형:N 은:J / 내일:M / 서울:N 에:J / 가:S ㄴ:P 다:E',
+ hint:"'간다'를 '가고', '가자'와 비교해 보세요. 늘 그대로 남는 부분은 무엇인가요?",
+ detail:"'가고', '가자'에서 늘 남는 부분은 '가-'입니다. '간다'의 받침 'ㄴ'은 현재를 나타내는 '-ㄴ-'이므로 '간'을 '가'와 'ㄴ'으로 풀어 '가-', '-ㄴ-', '-다'로 나눕니다.",
+ edge:false,src:'교사 결정(-ㄴ-)'},
+{id:309,stage:2,cat:'adn',text:'나는 갈 곳이 많다.',m:'나:N 는:J / 가:S ㄹ:E / 곳:N 이:J / 많:S 다:E',
+ hint:"'갈'의 받침 'ㄹ'은 뒤의 '곳'과 어떤 관계인가요?",
+ detail:"'갈'은 어간 '가-'에 뒤의 명사 '곳'을 꾸미게 하는 어미 '-ㄹ'이 붙은 말입니다. '갈'을 '가'와 'ㄹ'로 풀어 '가-'와 '-ㄹ'로 나눕니다. '곳'과 '많-'의 받침은 풀면 뜻이 사라지므로 그대로 둡니다.",
+ edge:true,src:'기억(미확인) — 관형사형 어미 -ㄹ'},
+{id:310,stage:2,cat:'pre',text:'언니가 거울을 본다.',m:'언니:N 가:J / 거울:N 을:J / 보:S ㄴ:P 다:E',
+ hint:"'본다'와 '보았다'를 비교해 보세요. '-았-'이 있던 자리에 무엇이 있나요?",
+ detail:"'보았다'의 '-았-' 자리에 '본다'에서는 받침 'ㄴ'(현재의 '-ㄴ-')이 들어 있습니다. '본'을 '보'와 'ㄴ'으로 풀면 '보-', '-ㄴ-', '-다' 세 형태소가 됩니다. '거울'은 풀면 뜻이 사라지므로 한 형태소입니다.",
+ edge:false,src:'교사 결정(-ㄴ-)'},
+{id:311,stage:2,cat:'pre',text:'아기가 엄마 품에서 잔다.',m:'아기:N 가:J / 엄마:N / 품:N 에서:J / 자:S ㄴ:P 다:E',
+ hint:"'잔다'의 어간은 무엇인가요? '자고', '자니'와 비교해 보세요.",
+ detail:"'자고', '자니'에서 늘 남는 '자-'가 어간입니다. '잔다'의 받침 'ㄴ'은 현재의 '-ㄴ-'이므로 '잔'을 풀어 '자-', '-ㄴ-', '-다'로 나눕니다. '품'의 받침 'ㅁ'은 풀면 뜻이 사라지므로 풀지 않습니다.",
+ edge:false,src:'교사 결정(-ㄴ-)'},
+{id:312,stage:2,cat:'adn',text:'친구가 준 선물이 예쁘다.',m:'친구:N 가:J / 주:S ㄴ:E / 선물:N 이:J / 예쁘:S 다:E',
+ hint:"'준'의 'ㄴ' 뒤에는 '-다'가 오나요, 명사가 오나요?",
+ detail:"'준'은 '주-'에 뒤의 '선물'을 꾸미게 하는 어미 '-ㄴ'이 붙은 말이라 '주-'와 '-ㄴ'으로 나눕니다. '예쁘다'는 받침이 없어 풀 글자가 없고 '예쁘-'와 '-다'로 나뉩니다. 현재의 '-ㄴ-'은 '예쁘다'처럼 상태를 나타내는 말에는 붙지 않습니다.",
+ edge:true,src:'교사 결정(-ㄴ-)'},
+{id:313,stage:2,cat:'pre',text:'파도가 높게 친다.',m:'파도:N 가:J / 높:S 게:E / 치:S ㄴ:P 다:E',
+ hint:"'높게'와 '친다' 가운데 글자를 풀어야 하는 말은 어느 것인가요?",
+ detail:"'높게'는 '높-'과 '-게'가 글자 경계에서 나뉘어 풀 필요가 없습니다. '친다'는 '친'의 받침 'ㄴ'이 현재의 '-ㄴ-'이라 '치'와 'ㄴ'으로 풀어 '치-', '-ㄴ-', '-다'로 나눕니다.",
+ edge:false,src:'교사 결정(-ㄴ-)'},
+{id:314,stage:2,cat:'pre',text:'우리는 버스를 기다린다.',m:'우리:N 는:J / 버스:N 를:J / 기다리:S ㄴ:P 다:E',
+ hint:"'기다린다'를 '기다리고'와 비교해 보세요. 어간은 어디까지인가요?",
+ detail:"'기다리고'에서 '-고'를 떼면 어간 '기다리-'가 남습니다. '기다린다'는 '린'의 받침 'ㄴ'이 현재의 '-ㄴ-'이므로 '린'을 풀어야 어간 '기다리-'가 온전히 나옵니다. '기다리-'는 세 글자지만 한 형태소입니다.",
+ edge:false,src:'교사 결정(-ㄴ-)'},
+{id:315,stage:2,cat:'pre',text:'선생님께서 책을 읽으신다.',m:'선생:N 님:AS 께서:J / 책:N 을:J / 읽:S 으시:P ㄴ:P 다:E',
+ hint:"'읽으신다'에는 '읽는다'에 없는 형태소가 하나 더 있습니다. 높임의 뜻을 더하는 부분은 어디인가요?",
+ detail:"'-으시-'는 문장의 주체를 높이는 선어말 어미이고, 받침 'ㄴ'은 현재의 '-ㄴ-'입니다. 그래서 '읽-', '-으시-', '-ㄴ-', '-다' 네 형태소입니다. '선생님'의 '-님'은 높임의 뜻을 더하는 접미사로 의존·형식 형태소입니다.",
+ edge:true,src:'기억(미확인) — -으시-'},
+{id:316,stage:2,cat:'adn',text:'누나가 큰 사과를 고른다.',m:'누나:N 가:J / 크:S ㄴ:E / 사과:N 를:J / 고르:S ㄴ:P 다:E',
+ hint:"같은 받침 'ㄴ'이 두 번 나옵니다. 하나는 명사를 꾸미고, 하나는 현재를 나타냅니다. 각각 어디인가요?",
+ detail:"'큰'의 'ㄴ'은 '사과'를 꾸미게 하는 어미 '-ㄴ', '고른다'의 'ㄴ'은 '-다' 앞에서 현재를 나타내는 '-ㄴ-'입니다. 두 글자 모두 받침을 풀어서 나눕니다.",
+ edge:true,src:'교사 결정(-ㄴ-)'},
+{id:317,stage:2,cat:'adn',text:'나는 쉴 시간이 없다.',m:'나:N 는:J / 쉬:S ㄹ:E / 시간:N 이:J / 없:S 다:E',
+ hint:"'쉴'의 받침 'ㄹ' 뒤에는 무엇이 오나요? '없다'의 받침도 풀어야 할까요?",
+ detail:"'쉴'은 '쉬-'에 뒤의 '시간'을 꾸미게 하는 어미 '-ㄹ'이 붙은 말이라 '쉬'와 'ㄹ'로 풀어 나눕니다. '없다'의 받침은 풀면 '어'만 남아 뜻이 사라지므로 '없-'은 한 형태소입니다.",
+ edge:true,src:'기억(미확인) — 관형사형 어미 -ㄹ'},
+{id:318,stage:2,cat:'past',text:'형은 어제 서울에 갔다.',m:'형:N 은:J / 어제:M / 서울:N 에:J / 가:S ㅆ=았:P 다:E',
+ hint:"'갔다'를 '간다'와 비교해 보세요. 받침 'ㄴ' 자리에 받침 'ㅆ'이 왔습니다. 'ㅆ'은 어떤 뜻을 더하나요?",
+ detail:"'갔다'는 '가-'에 과거를 나타내는 '-았-'과 '-다'가 붙은 말입니다. '가-'와 '-았-'이 만나면서 'ㅏ'가 겹쳐 하나만 남아 '갔'이 되었습니다. 그래서 '갔'을 풀면 '가'와 받침 'ㅆ'이 나오고, 이 'ㅆ'이 '-았-'입니다.",
+ edge:false,src:'교사 결정(줄어든 말 가운데 받침만 떼면 어간이 남는 것, 2026.10.07)'},
+{id:319,stage:2,cat:'past',text:'아기가 엄마 품에서 잤다.',m:'아기:N 가:J / 엄마:N / 품:N 에서:J / 자:S ㅆ=았:P 다:E',
+ hint:"'잤다'와 '잔다'를 나란히 놓아 보세요. 두 받침은 각각 언제의 일을 나타내나요?",
+ detail:"'잔다'의 받침 'ㄴ'은 현재의 '-ㄴ-', '잤다'의 받침 'ㅆ'은 과거의 '-았-'입니다. '자-'와 '-았-'이 만나 'ㅏ'가 하나만 남았기 때문에, '잤'을 '자'와 'ㅆ'으로 풀어야 '자-', '-았-', '-다' 세 형태소가 드러납니다.",
+ edge:false,src:'교사 결정(줄어든 말 가운데 받침만 떼면 어간이 남는 것, 2026.10.07)'},
+{id:320,stage:2,cat:'past',text:'누나가 시장에서 사과를 샀다.',m:'누나:N 가:J / 시장:N 에서:J / 사과:N 를:J / 사:S ㅆ=았:P 다:E',
+ hint:"'샀다'와 '사고', '사니'를 비교해 보세요. 늘 남는 부분은 어디까지이고, 받침 'ㅆ'은 무엇일까요?",
+ detail:"'사고', '사니'에서 늘 남는 '사-'가 어간입니다. '샀다'는 '사-'에 과거의 '-았-'이 붙으며 'ㅏ'가 하나로 줄어든 말이라, '샀'을 '사'와 'ㅆ'으로 풀면 '사-', '-았-', '-다'로 나뉩니다. '사과'의 '사'와는 다른 형태소입니다.",
+ edge:true,src:'교사 결정(줄어든 말 가운데 받침만 떼면 어간이 남는 것, 2026.10.07)'},
+{id:321,stage:2,cat:'past',text:'버스가 정류장 앞에 섰다.',m:'버스:N 가:J / 정류장:N / 앞:N 에:J / 서:S ㅆ=었:P 다:E',
+ hint:"'섰다'의 어간은 무엇인가요? '서고', '서니'와 비교해 보세요.",
+ detail:"'섰다'는 '서-'에 과거의 '-었-'이 붙으며 'ㅓ'가 겹쳐 하나만 남은 말입니다. '섰'을 '서'와 'ㅆ'으로 풀면 '서-', '-었-', '-다' 세 형태소가 됩니다. '-았-'과 '-었-'은 앞 모음에 따라 골라 쓰는 같은 과거의 형태소입니다.",
+ edge:false,src:'교사 결정(줄어든 말 가운데 받침만 떼면 어간이 남는 것, 2026.10.07)'},
+
+// ── 3단계 · 주제 통합 (형태소 나누기 → 형태소 분류 → 단어 나누기 → 품사) — hs:'word'는 힌트가 단어 나누기용 ──
+{id:202,stage:3,cat:'josa',text:'나는 친구와 공원에서 놀았다.',m:'나:N 는:J / 친구:N 와:J / 공원:N 에서:J / 놀:S 았:P 다:E',pos:'대명사 조사 명사 조사 명사 조사 동사',hs:'word',
+ hint:"'놀았다'를 단어로 나눌 때는 몇 개인가요? 형태소로 나눌 때는요?",
+ detail:"'놀았다'는 단어로는 하나지만 형태소로는 '놀-', '-았-', '-다' 셋입니다. 조사 '는, 와, 에서'는 각각 하나의 단어이자 하나의 형태소입니다.",
+ edge:false,src:'품사 기억(미확인) · 단어 교사 제공(지도서 147·149쪽)'},
+{id:203,stage:3,cat:'josa',text:'우리는 숙제를 하고 밥을 먹었다.',m:'우리:N 는:J / 숙제:N 를:J / 하:S 고:E / 밥:N 을:J / 먹:S 었:P 다:E',pos:'대명사 조사 명사 조사 동사 명사 조사 동사',hs:'word',
+ hint:"'하고'의 '-고'는 앞말과 쉽게 떨어지나요, 어간에 붙어야만 쓰이나요?",
+ detail:"'하고'의 '-고'는 어간 '하-'에 붙는 어미라서 '하고'가 한 단어입니다. '를, 을'처럼 체언 뒤에 붙는 조사만 따로 단어로 셉니다.",
+ edge:false,src:'품사 기억(미확인) · 단어 교사 제공(지도서 147쪽)'},
+{id:204,stage:3,cat:'josa',text:'언니가 동생에게 사과를 주었다.',m:'언니:N 가:J / 동생:N 에게:J / 사과:N 를:J / 주:S 었:P 다:E',pos:'명사 조사 명사 조사 명사 조사 동사',hs:'word',
+ hint:"'에게'를 떼어도 앞말 '동생'의 뜻이 그대로 남나요?",
+ detail:"'에게'는 '동생' 뒤에 붙어 받는 사람을 나타내는 조사입니다. 떼어도 '동생'의 뜻이 그대로 남으므로 따로 한 단어로 셉니다. '주었다'는 한 단어이고, 형태소는 '주-', '-었-', '-다' 셋입니다.",
+ edge:false,src:'품사 기억(미확인) · 단어 교사 제공(지도서 147쪽)'},
+{id:206,stage:3,cat:'josa',text:'꽃이 들에도 산에도 피었다.',m:'꽃:N 이:J / 들:N 에:J 도:J / 산:N 에:J 도:J / 피:S 었:P 다:E',pos:'명사 조사 명사 조사 조사 명사 조사 조사 동사',hs:'word',
+ hint:"'에도'는 조사가 하나인가요, 둘인가요? '에'와 '도'를 하나씩 빼 보세요.",
+ detail:"'에도'는 장소를 나타내는 '에'와 '역시'의 뜻을 더하는 '도', 두 조사가 겹친 것입니다. 조사는 하나하나가 단어이므로 '들 | 에 | 도'로 나눕니다.",
+ edge:false,src:'품사 기억(미확인) · 단어 기억(미확인) — 조사 겹침'},
+{id:207,stage:3,cat:'josa',text:'고양이가 의자 밑에서 졸았다.',m:'고양이:N 가:J / 의자:N / 밑:N 에서:J / 졸:S 았:P 다:E',pos:'명사 조사 명사 명사 조사 동사',hs:'word',
+ hint:"'의자'와 '밑' 사이에 조사가 있나요? 조사가 없어도 각각 홀로 쓰이는 말인가요?",
+ detail:"'의자 밑'은 조사 없이 띄어 쓴 두 명사입니다. 둘 다 홀로 쓰이므로 각각 한 단어이자 자립·실질 형태소입니다. '고양이'를 더 나누면 뜻이 사라집니다.",
+ edge:false,src:'품사 기억(미확인) · 단어 교사 제공(지도서 147쪽)'},
+{id:209,stage:3,cat:'pre',text:'언니는 풋고추를 잘 먹는다.',m:'언니:N 는:J / 풋:AP 고추:N 를:J / 잘:M / 먹:S 는:P 다:E',pos:'명사 조사 명사 조사 부사 동사',hs:'word',
+ hint:"'먹는다'의 '는'과 '언니는'의 '는'은 같은 말인가요? 각각 어디에 붙어 있는지 보세요.",
+ detail:"'언니는'의 '는'은 체언 뒤에 붙은 조사라 따로 한 단어입니다. '먹는다'의 '-는-'은 어간 '먹-' 뒤에서 현재를 나타내는 어미라 '먹는다' 안에 남습니다. 모양이 같아도 붙는 자리가 다르면 다른 형태소입니다.",
+ edge:true,src:'품사 기억(미확인) · 단어 기준표 2-1·교사 결정(-는-)'},
+{id:212,stage:3,cat:'modifier',text:'형이 동생과 함께 산을 넘었다.',m:'형:N 이:J / 동생:N 과:J / 함께:M / 산:N 을:J / 넘:S 었:P 다:E',pos:'명사 조사 명사 조사 부사 명사 조사 동사',hs:'word',
+ hint:"'함께'는 앞말에 붙어 있나요, 띄어 쓴 말인가요?",
+ detail:"'과'는 '동생'에 붙은 조사지만, '함께'는 띄어 쓴 부사로 홀로 쓰이는 자립·실질 형태소입니다. '과'와 '함께'를 묶어 하나로 보지 않습니다.",
+ edge:false,src:'품사 기억(미확인) · 단어 교사 제공(지도서 147쪽)'},
+{id:214,stage:3,cat:'josa',text:'아빠는 아침마다 신문을 읽는다.',m:'아빠:N 는:J / 아침:N 마다:J / 신문:N 을:J / 읽:S 는:P 다:E',pos:'명사 조사 명사 조사 명사 조사 동사',hs:'word',
+ hint:"'마다'를 떼어도 앞말 '아침'의 뜻이 그대로 남나요?",
+ detail:"'마다'는 '하나하나 빠짐없이'라는 뜻을 더하는 조사입니다. 앞말 '아침'과 쉽게 떨어지므로 한 단어로 셉니다. '읽는다'의 '-는-'은 현재를 나타내는 어미라 '읽는다' 안에 남습니다.",
+ edge:false,src:'품사 기억(미확인) · 단어 교사 제공(지도서 147쪽)'},
+{id:216,stage:3,cat:'affix',text:'형이 덧신을 신고 마당을 쓸었다.',m:'형:N 이:J / 덧:AP 신:N 을:J / 신:S 고:E / 마당:N 을:J / 쓸:S 었:P 다:E',pos:'명사 조사 명사 조사 동사 명사 조사 동사',hs:'word',
+ hint:"'덧신'의 '신'과 '신고'의 '신'은 같은 형태소인가요? 하나는 홀로 쓰이고, 하나는 어미가 붙어야 쓰입니다.",
+ detail:"'덧신'의 '신'은 신발을 뜻하는 명사(자립·실질)이고, '신고'의 '신-'은 '신다'의 어간(의존·실질)입니다. '덧-'은 '겹쳐 신는'의 뜻을 더하는 접두사로 의존·형식 형태소입니다.",
+ edge:true,src:'품사 기억(미확인) · 단어 기준표 2-1'},
+{id:401,stage:3,cat:'modifier',text:'새 친구가 활짝 웃었다.',m:'새:M / 친구:N 가:J / 활짝:M / 웃:S 었:P 다:E',pos:'관형사 명사 조사 부사 동사',
+ hint:"'새'와 '활짝'은 둘 다 꾸며 주는 말입니다. 각각 무엇을 꾸미나요?",
+ detail:"'새'는 체언 '친구'를 꾸미므로 관형사, '활짝'은 용언 '웃었다'를 꾸미므로 부사입니다. 둘 다 홀로 쓰이는 자립·실질 형태소입니다.",
+ edge:false,src:'기억(미확인) — 품사'},
+{id:402,stage:3,cat:'adn',text:'형은 맑은 하늘을 보았다.',m:'형:N 은:J / 맑:S 은:E / 하늘:N 을:J / 보:S 았:P 다:E',pos:'명사 조사 형용사 명사 조사 동사',
+ hint:"'맑은'은 '하늘'을 꾸미지만 관형사가 아닙니다. '-다'를 붙인 기본형으로 바꾸면 무엇이 되나요?",
+ detail:"'맑은'은 '맑다'의 어간 '맑-'에 어미 '-은'이 붙은 말로, 모양이 바뀌므로 형용사입니다. 관형사는 '새, 모든'처럼 모양이 바뀌지 않습니다.",
+ edge:true,src:'기억(미확인) — 품사'},
+{id:403,stage:3,cat:'modifier',text:'저 아이가 공을 잡았다.',m:'저:M / 아이:N 가:J / 공:N 을:J / 잡:S 았:P 다:E',pos:'관형사 명사 조사 명사 조사 동사',
+ hint:"'저'는 여기서 말하는 사람 자신을 가리키나요, '아이'를 꾸미며 가리키나요?",
+ detail:"'저 아이'의 '저'는 뒤의 체언 '아이'를 꾸며 어느 아이인지 가리키므로 관형사입니다. '저는 학생이에요'처럼 조사가 붙어 자신을 가리키면 대명사입니다.",
+ edge:true,src:'기억(미확인) — 품사'},
+{id:404,stage:3,cat:'josa',text:'나는 친구에게 편지를 받았다.',m:'나:N 는:J / 친구:N 에게:J / 편지:N 를:J / 받:S 았:P 다:E',pos:'대명사 조사 명사 조사 명사 조사 동사',
+ hint:"'나'와 '친구'는 둘 다 사람을 가리킵니다. 이름 대신 가리키는 말은 어느 쪽인가요?",
+ detail:"'나'는 이름을 대신해 말하는 사람을 가리키는 대명사이고, '친구'는 대상의 이름을 나타내는 명사입니다. 둘 다 홀로 쓰이는 자립·실질 형태소입니다.",
+ edge:false,src:'기억(미확인) — 품사'},
+{id:407,stage:3,cat:'modifier',text:'우리는 모든 옷을 상자에 넣었다.',m:'우리:N 는:J / 모든:M / 옷:N 을:J / 상자:N 에:J / 넣:S 었:P 다:E',pos:'대명사 조사 관형사 명사 조사 명사 조사 동사',
+ hint:"'모든'은 '맑은'처럼 '-다'를 붙인 기본형이 있나요? 모양이 바뀌는 말인가요?",
+ detail:"'모든'은 늘 이 모양으로만 쓰이며 체언 '옷'을 꾸미므로 관형사입니다. '맑은'처럼 어미가 붙어 모양이 바뀌는 말과 구별하세요. '우리'는 대명사입니다.",
+ edge:false,src:'기억(미확인) — 품사'},
+{id:408,stage:3,cat:'affix',text:'사냥꾼이 숲에서 곰을 보았다.',m:'사냥:N 꾼:AS 이:J / 숲:N 에서:J / 곰:N 을:J / 보:S 았:P 다:E',pos:'명사 조사 명사 조사 명사 조사 동사',
+ hint:"'-꾼'은 따로 단어가 되나요? '사냥꾼' 전체는 어떤 품사인가요?",
+ detail:"'사냥꾼'은 명사 '사냥'에 접미사 '-꾼'이 붙어 만들어진 명사입니다. 접사는 따로 단어가 되지 않으므로 품사를 매기지 않고, 단어 안의 형태소로만 셉니다.",
+ edge:true,src:'교사 제공(지도서 151쪽)'},
+{id:409,stage:3,cat:'stem',text:'하늘이 맑고 바람이 차다.',m:'하늘:N 이:J / 맑:S 고:E / 바람:N 이:J / 차:S 다:E',pos:'명사 조사 형용사 명사 조사 형용사',
+ hint:"이 '차다'는 '공을 차다'의 차다인가요, '물이 차다'의 차다인가요?",
+ detail:"여기서 '차다'는 바람이 차가운 상태를 나타내므로 형용사입니다. '공을 찬다'의 '차다'는 움직임이라 동사입니다. '맑고'도 상태를 나타내는 형용사입니다.",
+ edge:true,src:'기준표 2-3'},
+{id:410,stage:3,cat:'ending',text:'아이들이 아주 크게 웃었다.',m:'아이:N 들:AS 이:J / 아주:M / 크:S 게:E / 웃:S 었:P 다:E',pos:'명사 조사 부사 형용사 동사',
+ hint:"'크게'는 '웃었다'를 꾸밉니다. 그렇다면 부사일까요? '-다'를 붙인 기본형으로 바꿔 보세요.",
+ detail:"'크게'는 '크다'의 어간 '크-'에 어미 '-게'가 붙은 말이라 품사는 형용사입니다. 꾸미는 역할을 해도 어미가 붙어 모양이 바뀌는 말은 부사가 아닙니다. '아주'는 모양이 바뀌지 않는 부사입니다.",
+ edge:true,src:'기억(미확인) — 품사'},
+{id:411,stage:3,cat:'stem',text:'동생이 새 신을 신었다.',m:'동생:N 이:J / 새:M / 신:N 을:J / 신:S 었:P 다:E',pos:'명사 조사 관형사 명사 조사 동사',
+ hint:"같은 '신'이 두 번 나옵니다. 하나는 신는 물건, 하나는 신는 동작입니다.",
+ detail:"'신을'의 '신'은 신발을 뜻하는 명사이고, '신었다'의 '신-'은 '신다'의 어간이라 '신었다'는 동사입니다. 모양이 같아도 하는 일이 다르면 품사가 다릅니다. '새'는 '신'을 꾸미는 관형사입니다.",
+ edge:true,src:'기억(미확인) — 품사'},
+];
+
+
+/* ═══ 형태소 분석 도우미 — 받침 풀기·경계 계산 ═══ */
+const JONG='ㄱㄲㄳㄴㄵㄶㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄㅅㅆㅇㅈㅊㅋㅌㅍㅎ'; // 받침 순서(1부터)
+function isSyl(ch){const c=ch.charCodeAt(0);return c>=0xAC00&&c<=0xD7A3}
+function jongOf(ch){return (ch.charCodeAt(0)-0xAC00)%28}
+function stripJong(ch){const c=ch.charCodeAt(0)-0xAC00;return String.fromCharCode(0xAC00+c-c%28)}
+function addJong(ch,j){const k=JONG.indexOf(j)+1;if(k<1||!isSyl(ch)||jongOf(ch))return null;return String.fromCharCode(ch.charCodeAt(0)+k)}
+// 글자 하나 → 잘게 나눈 단위(받침이 있으면 [받침 뺀 글자, 받침])
+function fineOfSyl(ch){if(!isSyl(ch))return[ch];const j=jongOf(ch);return j?[stripJong(ch),JONG[j-1]]:[ch]}
+function fineOf(str){const o=[];for(const ch of str){if(JONG.includes(ch))o.push(ch);else o.push(...fineOfSyl(ch))}return o}
+// 형태소 글자들을 이어 붙여 실제 표기로 (받침 글자는 앞 글자에 붙인다)
+function compose(parts){let s='';for(const p of parts)for(const ch of p){if(JONG.includes(ch)&&s){const n=addJong(s[s.length-1],ch);if(n){s=s.slice(0,-1)+n;continue}}s+=ch}return s}
+const KIND={N:{cell:'IS',lab:'체언'},M:{cell:'IS',lab:'수식언'},J:{cell:'DF',lab:'조사'},S:{cell:'DS',lab:'어간'},P:{cell:'DF',lab:'어미'},E:{cell:'DF',lab:'어미'},AP:{cell:'DF',lab:'접사'},AS:{cell:'DF',lab:'접사'}};
+// base: 겉모양과 형태소 모양이 다를 때의 본디 모양 (갔다의 'ㅆ' = '-았-') → '-았-(ㅆ)'
+function notate(t,k,base){const s=base||t,n=k==='S'||k==='AP'?s+'-':k==='P'?'-'+s+'-':k==='E'||k==='AS'?'-'+s:s;return base?`${n}(${t})`:n}
+// m 문자열 → 어절 목록 [{text, morphs:[{t,k}], fine:[단위], mb:Set(형태소 경계), wb:Set(단어 경계), words:[...]}]
+function parseM(m){
+  return m.split(' / ').map(seg=>{
+    const morphs=seg.trim().split(/\s+/).map(x=>{const i=x.lastIndexOf(':'),body=x.slice(0,i),j=body.indexOf('=');return j<0?{t:body,k:x.slice(i+1)}:{t:body.slice(0,j),base:body.slice(j+1),k:x.slice(i+1)}});
+    const text=compose(morphs.map(x=>x.t)),fine=fineOf(text);
+    const mb=new Set(),wb=new Set(),words=[];let pos=0,cur=[];
+    morphs.forEach((x,i)=>{
+      const n=fineOf(x.t).length;
+      if(i>0){mb.add(pos);if(x.k==='J'){wb.add(pos)}}
+      if(i>0&&x.k==='J'){words.push(cur);cur=[]}
+      // 조사 뒤에 조사가 아닌 것이 오면 새 단어 (조사 + 용언은 이어 쓰지 않으므로 실제로는 나오지 않음)
+      if(i>0&&x.k!=='J'&&morphs[i-1].k==='J'){words.push(cur);cur=[];wb.add(pos)}
+      cur.push(x);pos+=n;
+    });
+    words.push(cur);
+    return{text,morphs,fine,mb,wb,words:words.map(w=>({t:compose(w.map(x=>x.t)),morphs:w}))};
+  });
+}
+// 받침이 있는 글자의 '받침 앞' 경계 위치 (어절 안 fine 인덱스)
+function sylMap(text){const out=[];let p=0;for(const ch of text){const f=fineOfSyl(ch);out.push({ch,start:p,len:f.length,inner:f.length>1?p+1:null});p+=f.length}return out}
+
+
+/* ═══ 4. 상태와 계산 ═══ */
+const POOLS=STAGES.map((_,i)=>QUESTIONS.filter(q=>q.stage===i+1));
+let LAST_ROUND=STAGES.map(()=>[]);
+/* 한 판 더 — 단계마다 문장 풀을 다 풀 때까지만 (교사 결정 2026.10.07).
+   아직 안 나온 문장을 먼저 내고, 마지막 판에서 모자라는 자리는 이미 푼 문장으로 채운다 */
+const SEEN=STAGES.map(()=>new Set()),ROUND=STAGES.map(()=>0);
+const MAX_ROUNDS=3; // 한 판 더는 단계마다 최대 3판 (교사 결정 2026.10.07)
+function roundsNeeded(si){return Math.min(MAX_ROUNDS,Math.ceil(POOLS[si].length/STAGES[si].per))}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function edgeCount(si){const P=POOLS[si],r=P.filter(q=>q.edge).length/P.length;return Math.min(P.filter(q=>q.edge).length,Math.max(2,Math.round(STAGES[si].per*r)))}
+function buildRound(si){
+  const P=POOLS[si],n=STAGES[si].per,e=edgeCount(si),seen=SEEN[si],last=new Set(LAST_ROUND[si]),pick=[];
+  const un=shuffle(P.filter(q=>!seen.has(q.id))),old=shuffle(P.filter(q=>seen.has(q.id)&&!last.has(q.id))).concat(shuffle(P.filter(q=>last.has(q.id))));
+  const take=(arr,f,k)=>{for(const q of arr){if(pick.length>=n||k<=0)break;if(f(q)&&!pick.includes(q)){pick.push(q);k--}}};
+  const edges=()=>pick.filter(q=>q.edge).length;
+  const must=STAGES[si].must;if(must&&ROUND[si]===0)take(un,q=>q.cat===must.cat,must.n); // 심화 첫 판에는 줄어든 말 2문장 (교사 결정 2026.10.07)
+  take(un,q=>q.edge,e-edges());take(un,q=>!q.edge,n-pick.length);take(un,()=>true,n-pick.length);
+  take(old,q=>q.edge,e-edges());take(old,()=>true,n-pick.length);
+  pick.forEach(q=>seen.add(q.id));LAST_ROUND[si]=pick.map(q=>q.id);ROUND[si]++;return shuffle(pick)}
+function roundUnits(si){return STAGES[si].per*STAGES[si].steps.length}
+
+let S=null; // 한 판의 상태
+function makeItem(q){
+  const E=parseM(q.m),tiles=[],words=[];
+  E.forEach((e,ei)=>{e.morphs.forEach(x=>tiles.push({t:x.t,k:x.k,base:x.base,e:ei}));e.words.forEach(w=>words.push({t:w.t,morphs:w.morphs}))});
+  const pos=q.pos?q.pos.split(' '):null;
+  const wAns=new Set(),mAns=new Set();E.forEach((e,ei)=>{e.wb.forEach(k=>wAns.add(ei+':'+k));e.mb.forEach(k=>mAns.add(ei+':'+k));if(ei<E.length-1){wAns.add('S:'+ei);mAns.add('S:'+ei)}}); // 'S:어절' = 띄어 쓴 자리 — 학생이 직접 자른다
+  return{q:Object.assign({},q),E,tiles,words,pos,wAns,mAns,
+    cutsW:new Set(),cutsM:new Set(),unp:new Set(),cls:tiles.map(()=>null),pa:words.map(()=>null),sel:-1,psel:-1,view:0,u:{}};
+}
+function doStartStage(si,more){
+  if(!more){SEEN[si]=new Set();ROUND[si]=0}   // 시작 화면·다음 단계에서 들어오면 처음부터
+  const st=STAGES[si],qs=buildRound(si);
+  S={si,items:qs.map(makeItem),units:[],cur:0,score:0,combo:0,maxCombo:0,t0:Date.now(),tLast:0,ended:false,round:ROUND[si],rounds:roundsNeeded(si),allSeen:ROUND[si]>=roundsNeeded(si)};
+  S.items.forEach((it,qi)=>st.steps.forEach(step=>{const u={qi,step,state:null,pend:0,mine:null,firstTiles:null};it.u[step]=u;S.units.push(u)}));
+  cbHide();
+  $('combo').classList.add('hid');
+  $('start').style.display='none';$('end').classList.remove('on');$('play').classList.add('on');$('icredit').classList.add('on');
+  enterItem();render();window.scrollTo(0,0);
+  // 기본 단계를 새로 시작할 때 두 기준을 한 번 더 보여 준다 (교사 요청 2026.10.07). 한 판 더에는 띄우지 않는다
+  // 단계를 새로 시작할 때: 기본은 두 기준, 단어 나누기가 있는 단계는 단어의 정의 (교사 요청 2026.10.07). 한 판 더에는 띄우지 않는다
+  if(!more&&si===0)openIntro('morph');
+}
+function curStepIdx(it){const st=STAGES[S.si].steps;for(let i=0;i<st.length;i++)if(it.u[st[i]].state==null)return i;return -1}
+function itemDone(it){return curStepIdx(it)<0}
+
+/* 결과 계산 — 결과 화면·리포트·오답노트·전송이 모두 이 함수를 쓴다 (지침 5-5) */
+function calcStats(){
+  const R={total:S.units.length,first:0,retryOk:0,miss:0,skipped:0,graded:0,rate:0,byType:{},max:stageMax(S.units.length),sentences:S.items.length};
+  const bt=k=>R.byType[k]||(R.byType[k]={graded:0,first:0});
+  S.units.forEach(u=>{
+    if(u.state==null){R.skipped++;return}
+    R.graded++;
+    if(u.state===true)R.first++;else if(u.state==='r')R.retryOk++;else R.miss++;
+    if(u.step==='cls'){(u.firstTiles||[]).forEach(t=>{const b=bt(KIND_CAT[t.k]);b.graded++;if(t.ok)b.first++})}
+    else{const b=bt(u.step);b.graded++;if(u.state===true)b.first++}
+  });
+  R.rate=R.graded?Math.round(R.first/R.graded*100):0;
+  return R;
+}
+function verdict(R){
+  if(!R.graded)return{emoji:'📝',title:'풀어 본 문제가 없어요'};
+  const r=R.first/R.graded;
+  let v=r>=.95?{emoji:'🏆',title:'완벽해요!'}:r>=.85?{emoji:'🎉',title:'아주 잘했어요'}:r>=.7?{emoji:'😊',title:'잘하고 있어요'}:r>=.5?{emoji:'🙂',title:'기본은 잡혔어요'}:{emoji:'💪',title:'다시 한 번 도전해요'};
+  if(R.skipped)v={emoji:'📝',title:`끝까지 풀지 않았어요 (${R.skipped}문제 남음) · `+(r>=.7?'잘하고 있어요! 남은 문제까지 풀며 좀 더 연습해 보면 어떨까요?':'좀 더 연습해 보면 어떨까요? 남은 문제까지 풀어 보면 감이 잡혀요.'),head:'여기까지 풀었어요'};
+  return v;
+}
+
+/* ═══ 5. 화면 로직 ═══ */
+function $(id){return document.getElementById(id)}
+function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function showToast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),1800)}
+function updBand(){
+  const st=STAGES[S.si];$('bandR').innerHTML=`<span class="sname">${st.name} · </span>문장 ${S.cur+1} / ${S.items.length} · ${S.score}점`;
+  const doneU=S.units.filter(u=>u.state!=null).length;$('pfill').style.width=(doneU/S.units.length*100)+'%';
+}
+// 잘게 나눈 단위를 경계마다 끊고, 조각마다 받침을 합쳐 보여 준다. 띄어 쓴 자리도 경계이므로 모든 조각을 ' / '로 잇는다
+function segParts(E,set){const parts=[];let cur=[];E.forEach((e,ei)=>{if(ei>0){if(set.has('S:'+(ei-1))){parts.push(cur);cur=[]}else cur.push(' ')}e.fine.forEach((u,p)=>{if(p>0&&set.has(ei+':'+p)){parts.push(cur);cur=[]}cur.push(u)})});parts.push(cur);return parts.map(c=>compose(c))}
+function segPretty(E,set){return segParts(E,set).join(' / ')}
+function morphNote(it){return it.tiles.map(x=>notate(x.t,x.k,x.base)).join(' / ')}
+function wordText(it){return it.words.map(w=>w.t).join(' / ')}
+function clsAnswer(it){const g={IS:[],DS:[],DF:[]};it.tiles.forEach(t=>g[KIND[t.k].cell].push(notate(t.t,t.k,t.base)));return `자립·실질: ${g.IS.join(', ')||'—'} · 의존·실질: ${g.DS.join(', ')||'—'} · 의존·형식: ${g.DF.join(', ')||'—'}`}
+function posAnswer(it){return it.words.map((w,i)=>`${w.t}(${it.pos[i]})`).join(' ')}
+// 형태소 나누기 정답은 교과서처럼 붙임표로 적는다(먹- / -는- / -다, 교사 요청 2026.10.07). 분류 화면의 문장 줄과 타일은 붙임표 없이 둔다
+function ansText(it,step){return step==='word'?wordText(it)+` (단어 ${it.words.length}개)`:step==='split'?morphNote(it)+` (형태소 ${it.tiles.length}개)`:step==='cls'?clsAnswer(it):posAnswer(it)}
+function myText(it,u){
+  if(u.state==null)return'미응답';const m=u.mine;if(!m)return'—';
+  if(u.step==='word'||u.step==='split'){const mp=segParts(it.E,new Set(m));return mp.join(' / ')+` (${mp.length}개)`}
+  if(u.step==='cls'){const bad=it.tiles.map((t,i)=>({t,c:m[i]})).filter(x=>x.c!==KIND[x.t.k].cell);return bad.length?'잘못 놓은 형태소 — '+bad.map(x=>`${x.t.t}(${CELLS[x.c]||'안 놓음'})`).join(', '):'모두 맞게 놓음'}
+  const bad=it.words.map((w,i)=>({w,p:m[i],a:it.pos[i]})).filter(x=>x.p!==x.a);return bad.length?'잘못 고른 단어 — '+bad.map(x=>`${x.w.t}(${x.p||'안 고름'})`).join(', '):'모두 맞게 고름';
+}
+
+function render(){
+  const it=S.items[S.cur],st=STAGES[S.si];
+  if(it.view>=st.steps.length)it.view=st.steps.length-1;
+  const step=st.steps[it.view],u=it.u[step];
+  updBand();
+  $('prevBtn').disabled=S.cur===0;$('nextBtn').disabled=S.cur>=S.items.length-1;
+  const lock=u.state!=null||u.pend===1;
+  let h='<div class="steps">'+st.steps.map((s,i)=>{const x=it.u[s];const c=i===it.view?'now':x.state===true?'ok':x.state==='r'?'rt':x.state===false?'ng':'';return `<span class="st ${c}">${i+1} ${STEP_NAME[s]}${x.state===true?' ✓':x.state==='r'?' ↺':x.state===false?' ✕':''}</span>`}).join('')+'</div>';
+  if(step==='word'||step==='split')h+=renderStrip(it,step,u,lock);
+  else if(step==='cls')h+=renderBoard(it,u,lock);
+  else h+=renderPos(it,u,lock);
+  // 행동 버튼
+  h+='<div class="acts">';
+  if(u.pend===1)h+='<button class="act rt" data-act="retry">↺ 다시 풀기 (Enter)</button>';
+  else if(u.state==null)h+='<button class="act" data-act="check">확인</button>';
+  else{const last=it.view===st.steps.length-1;h+=`<button class="act sec" data-act="next">${last?(S.cur<S.items.length-1?'다음 문장 ▶':'다음 ▶'):'다음 단계 ▶'} (Enter)</button>`}
+  h+='</div><div class="fb" id="fb"></div><div class="hint" id="hint"></div><div class="det" id="det"></div>';
+  $('main').innerHTML=h;
+  // 피드백 복원
+  if(u.pend===1){showFb(false,'틀렸어요 — 힌트를 보고 다시 풀어 보세요.');showHint(it,u)}
+  else if(u.state!=null){
+    showFb(u.state!==false,u.state===true?'정답!':u.state==='r'?'다시 풀어 맞혔어요':'정답을 확인하세요');
+    showDet(it,step);
+  }
+}
+function renderStrip(it,step,u,lock){
+  const st=STAGES[S.si],isW=step==='word',done=u.state!=null;
+  const cuts=isW?it.cutsW:it.cutsM,ans=isW?it.wAns:it.mAns,canUnp=!isW&&st.unpack;
+  const mine=done&&u.mine?new Set(u.mine):cuts;
+  let h='';
+  // 단어 줄을 풀 때는 앞에서 푼 형태소 줄을 위에 남겨 두어 둘을 비교하게 한다 (교과서 149쪽처럼 두 줄)
+  if(isW)h+=`<div class="prevrow"><span class="rl m">🔍 형태소</span><span class="rt">${esc(morphNote(it))}</span><span class="rc">형태소 ${it.tiles.length}개</span></div>`;
+  h+=isW?`<div class="shead2 w">📗 <b>단어</b>로 나누기 <span>— 홀로 쓰이는 말과 조사만 떼어요. 어간과 어미는 붙여 둬요.</span></div>`
+        :`<div class="shead2">🔍 <b>형태소</b>로 나누기 <span>— 뜻을 가진 가장 작은 단위까지 잘라요.</span></div>`;
+  h+=`<div class="ins">${isW?'단어와 단어':'형태소와 형태소'} 사이를 누르세요. <b>띄어 쓴 곳도</b> 직접 잘라야 해요.${canUnp?'<br>받침을 떼어야 하면 글자 아래 <b>음절 풀기</b>를 누르세요.':''}</div>`;
+  h+=`<div class="strip${isW?' w':''}">`;
+  it.E.forEach((e,ei)=>{
+    const sm=sylMap(e.text);h+='<div class="eo">';
+    sm.forEach((s,si)=>{
+      const key=ei+':'+si;
+      const showUnp=s.inner!=null&&(it.unp.has(key)||(done&&(ans.has(ei+':'+s.inner)||mine.has(ei+':'+s.inner))));
+      h+='<div class="syl"><div style="display:flex">';
+      if(showUnp){const f=fineOfSyl(s.ch);h+=`<span class="ch">${f[0]}</span>`+gapHtml(ei+':'+s.inner,mine,ans,lock,done)+`<span class="ch jm">${f[1]}</span>`}
+      else h+=`<span class="ch">${s.ch}</span>`;
+      h+='</div>';
+      if(canUnp&&s.inner!=null){const on=it.unp.has(key);h+=`<button class="unp${on?' on':''}" data-act="unp" data-k="${key}" ${lock?'disabled':''}>${on?'합치기':'음절 풀기'}</button>`}
+      h+='</div>';
+      if(si<sm.length-1)h+=gapHtml(ei+':'+(s.start+s.len),mine,ans,lock,done);
+    });
+    h+='</div>';
+    if(ei<it.E.length-1)h+=gapHtml('S:'+ei,mine,ans,lock,done,' sp');
+  });
+  h+='</div>';
+  if(done&&u.state!==true)h+='<div class="legend"><span class="k" style="color:#2f9e44">／ 맞게 나눔</span><span class="k" style="color:#1c7ed6">／ 빠짐 = 더 나눠야 할 곳</span><span class="k" style="color:#d6455d">✕ 나누지 않아야 할 곳</span></div>';
+  return h;
+}
+function gapHtml(id,mine,ans,lock,done,extra){
+  let c='gap'+(extra||'');
+  if(done){const a=ans.has(id),m=mine.has(id);c+=a&&m?' cut ok':a?' miss':m?' extra':''}
+  else if(mine.has(id))c+=' cut';
+  return `<button class="${c}" data-act="gap" data-k="${id}" ${lock?'disabled':''} aria-label="자르기"></button>`;
+}
+function renderBoard(it,u,lock){
+  const done=u.state!=null,mine=done&&u.mine?u.mine:it.cls;
+  const place=i=>done?KIND[it.tiles[i].k].cell:mine[i];
+  const tileH=i=>{const t=it.tiles[i],bad=done&&mine[i]!==KIND[t.k].cell;
+    return `<button class="tile${it.sel===i&&!lock?' sel':''}${bad?' bad':''}" data-act="tile" data-i="${i}" ${lock?'disabled':''}>${done?esc(notate(t.t,t.k,t.base)):esc(t.t)}${bad?`<span class="my">❌ 내 답: ${mine[i]?CELLS[mine[i]]:'안 놓음'}</span>`:''}</button>`};
+  let h=`<div class="ins"><b style="color:#a86f00">놓을 차례</b>인 형태소의 알맞은 칸을 누르세요. 다른 형태소를 먼저 놓으려면 그 형태소를 누르세요.<div class="crit2"><span><b>기준 1</b> 홀로 쓰일 수 있나? → 자립 / 의존</span><span><b>기준 2</b> 실질적인 의미가 있나? → 실질 / 형식</span></div></div>`;
+  h+=`<div class="ctx">${esc(it.q.text)} → <b>${esc(segPretty(it.E,it.mAns))}</b> <span class="cn">(형태소 ${it.tiles.length}개)</span></div>`;
+  const tray=it.tiles.map((_,i)=>i).filter(i=>place(i)==null);
+  if(!done)h+=`<div class="tray" data-act="tray">${tray.length?tray.map(tileH).join(''):'<span class="empty">모두 놓았어요. 확인을 누르세요.</span>'}</div>`;
+  h+='<div class="board"><div></div><div class="bh"><div>실질<span class="lg"> 형태소</span></div><small>실질적인 의미가 있다</small></div><div class="bh"><div>형식<span class="lg"> 형태소</span></div><small>문법적 기능을 한다</small></div>';
+  [['IS','IF','자립','홀로 쓰인다'],['DS','DF','의존','기대어 쓰인다']].forEach(([a,b,lab,sub])=>{
+    h+=`<div class="bh"><div>${lab}<span class="lg"> 형태소</span></div><small>${sub}</small></div>`;
+    [a,b].forEach(c=>{const n=CELL_KEYS.indexOf(c)+1;h+=`<div class="cell${lock?' lockd':''}" data-act="cell" data-c="${c}"><span class="num">${n}</span>${it.tiles.map((_,i)=>i).filter(i=>place(i)===c).map(tileH).join('')}${done&&c==='IF'?'<span class="note">자립 형태소는 모두 실질 형태소예요</span>':''}</div>`});
+  });
+  h+='</div>';
+  return h;
+}
+function renderPos(it,u,lock){
+  const done=u.state!=null,mine=done&&u.mine?u.mine:it.pa;
+  let h=`<div class="ins">노랗게 표시된 단어의 품사를 누르세요. 조사도 한 단어입니다.</div>`;
+  h+='<div class="words">'+it.words.map((w,i)=>{const bad=done&&mine[i]!==it.pos[i];
+    const p=done?(bad?`<s>${mine[i]||'—'}</s> ${it.pos[i]}`:it.pos[i]):(mine[i]||'');
+    return `<button class="wd${it.psel===i&&!lock?' sel':''}${bad?' bad':''}" data-act="word" data-i="${i}" ${lock?'disabled':''}><span class="w">${esc(w.t)}</span><span class="p">${p}</span></button>`}).join('')+'</div>';
+  h+='<div class="posbtns">'+POS_LIST.map(p=>`<button class="pb" data-act="pos" data-p="${p}" ${lock?'disabled':''}>${p}</button>`).join('')+'</div>';
+  return h;
+}
+function showFb(ok,msg,shake){const f=$('fb');if(!f)return;f.textContent=(ok?'✅ ':'❌ ')+msg;f.className='fb on '+(ok?'ok':'ng')+(shake&&!ok?' shake':'')}
+const STEP_HINT={word:"조사만 앞말과 떼어 보세요. 어미는 어간에 붙인 채로 한 단어입니다.",split:"더 나누면 뜻이 사라지는 곳은 없나요? '-다'를 떼어 어간과 어미를 가르고, 체언 뒤의 조사를 떼어 보세요.",
+  cls:"형태소마다 두 질문을 따로 해 보세요. 홀로 쓰일 수 있나? 실질적인 의미가 있나?",pos:"'-는다/-ㄴ다'를 붙여 보세요. 모양이 바뀌지 않는 말이면 체언을 꾸미는지(관형사), 용언을 꾸미는지(부사) 보세요."};
+function showHint(it,u){const h=$('hint');if(!h)return;
+  // 주제 통합 문장의 힌트는 품사·분류를 묻는 질문이라, 나누기 단계에서는 나누기 기준을 보여 준다
+  const q=it.q.hs?(u.step===it.q.hs?it.q.hint:STEP_HINT[u.step]):STAGES[S.si].steps.includes('pos')&&(u.step==='word'||u.step==='split')?STEP_HINT[u.step]:it.q.hint;
+  h.innerHTML=`<b>💡 힌트</b> ${esc(diagnose(it,u))}<br>${esc(q)}`;h.classList.add('on')}
+function showDet(it,step){
+  const d=$('det');if(!d)return;const st=STAGES[S.si],last=st.steps.indexOf(step)===st.steps.length-1;
+  // 분류·품사는 판(단어 카드) 자체가 정답을 보여 주므로 해설만 둔다
+  const unit=step==='word'?'단어':'형태소',cnt=step==='word'?it.words.length:it.tiles.length,u=it.u[step];
+  let h=step==='cls'||step==='pos'?'':`<div class="lb">정답 — ${STEP_NAME[step]} · <span class="cnt">${unit} ${cnt}개</span></div><div class="an">${esc(step==='word'?wordText(it):morphNote(it))}</div>`;
+  if(h&&u.state!==true&&u.mine){const mp=segParts(it.E,new Set(u.mine));h+=`<div class="mine">내가 나눈 것 · ${unit} ${mp.length}개 — ${esc(mp.join(' / '))}</div>`}
+  if(step==='word'){const multi=it.words.filter(w=>w.morphs.length>1);
+    h+=`<div class="wnote">단어는 홀로 쓰이는 말과, 앞말에 붙어 쉽게 떨어지는 조사예요. `+(multi.length?`${multi.map(w=>`'${esc(w.t)}'`).join(', ')}처럼 형태소로는 나뉘는 말(${multi.map(w=>esc(w.morphs.map(x=>x.t).join('/'))).join(', ')})도 단어로는 하나예요.`:'')+` <b>형태소 ${it.tiles.length}개 · 단어 ${it.words.length}개</b></div>`}
+  if(last)h+=`<div${h?' style="margin-top:4px"':''}>${esc(it.q.detail)}</div>`;
+  if(!h)return;
+  d.innerHTML=h;d.classList.add('on');
+}
+/* 오답 진단 — 정답을 알려 주지 않고 무엇이 몇 개 틀렸는지만 */
+function diagnose(it,u){
+  const spMiss=[...(u.step==='word'?it.wAns:it.mAns)].filter(x=>x[0]==='S'&&!(u.mine||[]).includes(x)).length;
+  const spMsg=spMiss&&(u.step==='word'||u.step==='split')?`띄어 쓴 곳 가운데 자르지 않은 곳이 ${spMiss}곳 있어요.`:'';
+  if(u.step==='word'){const m=new Set(u.mine||[]);let miss=0,inner=0,odd=0;
+    it.wAns.forEach(x=>{if(!m.has(x)&&x[0]!=='S')miss++});m.forEach(x=>{if(!it.wAns.has(x)){if(it.mAns.has(x))inner++;else odd++}});
+    return [spMsg,miss?`조사를 떼지 않은 곳이 ${miss}곳 있어요.`:'',inner?`단어 안(어간과 어미, 합성어, 접사 사이)을 자른 곳이 ${inner}곳 있어요. 형태소로는 나뉘지만 단어로는 붙여 둬요.`:'',odd?`뜻이 없는 곳을 자른 곳이 ${odd}곳 있어요.`:''].filter(Boolean).join(' ')}
+  if(u.step==='word'||u.step==='split'){const ans=u.step==='word'?it.wAns:it.mAns,m=new Set(u.mine||[]);
+    let miss=0,extra=0;ans.forEach(x=>{if(!m.has(x)&&x[0]!=='S')miss++});m.forEach(x=>{if(!ans.has(x))extra++});
+    return [spMsg,(miss||extra)?[miss?`더 나눠야 할 곳이 ${miss}곳`:'',extra?`나누지 않아야 할 곳이 ${extra}곳`:''].filter(Boolean).join(', ')+' 있어요.':''].filter(Boolean).join(' ')}
+  if(u.step==='cls'){let a=0,b=0,none=0;it.tiles.forEach((t,i)=>{const c=u.mine[i],r=KIND[t.k].cell;if(!c){none++;return}if(c[0]!==r[0])a++;if(c[1]!==r[1])b++});
+    return [a?`자립·의존을 잘못 고른 형태소 ${a}개`:'',b?`실질·형식을 잘못 고른 형태소 ${b}개`:''].filter(Boolean).join(', ')+'가 있어요. 형태소마다 두 질문을 따로 해 보세요.'}
+  const n=it.words.filter((w,i)=>u.mine[i]!==it.pos[i]).length;return `품사를 잘못 고른 단어가 ${n}개 있어요.`;
+}
+
+/* 채점 */
+function submitStep(){
+  const it=S.items[S.cur],st=STAGES[S.si],step=st.steps[it.view],u=it.u[step];
+  if(u.state!=null||u.pend===1)return;
+  let ok;
+  if(step==='word'||step==='split'){
+    const cuts=step==='word'?it.cutsW:it.cutsM,ans=step==='word'?it.wAns:it.mAns;
+    const full=new Set(cuts);
+    u.mine=[...full];ok=full.size===ans.size&&[...ans].every(x=>full.has(x));
+  } else if(step==='cls'){
+    if(it.cls.some(c=>c==null)){showToast('모든 형태소를 칸에 놓아 주세요!');return}
+    u.mine=it.cls.slice();ok=it.tiles.every((t,i)=>it.cls[i]===KIND[t.k].cell);
+    if(!u.firstTiles)u.firstTiles=it.tiles.map((t,i)=>({k:t.k,ok:it.cls[i]===KIND[t.k].cell}));
+  } else {
+    if(it.pa.some(p=>p==null)){showToast('모든 단어의 품사를 골라 주세요!');return}
+    u.mine=it.pa.slice();ok=it.words.every((w,i)=>it.pa[i]===it.pos[i]);
+  }
+  processAnswer(it,u,ok);
+}
+function processAnswer(it,u,ok){
+  const isR=u.pend===2;S.tLast=Date.now();let msg;
+  if(ok&&!isR){u.state=true;u.pend=0;S.combo++;if(S.combo>S.maxCombo)S.maxCombo=S.combo;const b=comboBonus(S.combo);S.score+=BASE+b;
+    if(S.combo>=2){const c=$('combo');c.classList.remove('hid');$('comboV').textContent=S.combo;c.classList.remove('pulse');void c.offsetWidth;c.classList.add('pulse')}
+    msg=`정답! +${BASE+b}점${b?' · 연속 보너스 +'+b:''}`}
+  else if(ok){u.state='r';u.pend=0;S.score+=RETRY_PT;msg=`다시 풀어 맞혔어요! +${RETRY_PT}점`}
+  else if(!isR){u.pend=1;S.combo=0;S.score=Math.max(0,S.score-PENALTY);$('combo').classList.add('hid');msg=`틀렸어요! −${PENALTY}점 — 힌트를 보고 다시 풀어 보세요. (Enter)`}
+  else{u.state=false;u.pend=0;msg='다시 틀렸어요 — 정답과 해설을 확인하세요.'}
+  render();
+  showFb(ok,msg,true);
+  if(u.state===true){celebrate(S.combo,BASE+comboBonus(S.combo))}
+  else if(u.state==='r'){playCorrect();cbShow('다시 풀어 맞힘','+'+RETRY_PT,'retry',900)}
+  else playWrong();
+  if(S.units.every(x=>x.state!=null))setTimeout(()=>{if(S&&!S.ended&&S.units.every(x=>x.state!=null))finish()},1500);
+}
+function doRetry(){
+  const it=S.items[S.cur],step=STAGES[S.si].steps[it.view],u=it.u[step];if(u.pend!==1)return;
+  u.pend=2;
+  it.sel=-1;it.psel=-1; // 다시 풀기: 모두 놓여 있으니 고쳐 놓을 형태소를 직접 고른다
+  render();
+}
+function goNext(){
+  const it=S.items[S.cur],st=STAGES[S.si];
+  if(it.view<st.steps.length-1&&it.u[st.steps[it.view]].state!=null){it.view++;autoSel(it);render();
+    // 단어 단계로 넘어갈 때: 단계를 시작한 판에서 처음이면 '단어' 배너, 그 뒤로는 작은 안내 카드
+    if(st.steps[it.view]==='word'){if(S.round===1&&!S.wordIntro){S.wordIntro=true;openIntro('word')}else cbShow('이제 단어로 나눠요','조사만 떼어요','info',1000)}return}
+  if(S.cur<S.items.length-1){S.cur++;enterItem();render();return}
+  const k=S.items.findIndex(x=>!itemDone(x));if(k>=0){S.cur=k;enterItem();render()}
+}
+function enterItem(){const it=S.items[S.cur],c=curStepIdx(it);it.view=c<0?STAGES[S.si].steps.length-1:c;autoSel(it)}
+// 놓지 않은 첫 형태소(단어)를 자동으로 고른다 — 칸만 차례로 누르면 된다 (교사 요청 2026.10.07)
+function autoSel(it){it.sel=it.cls.findIndex(c=>c==null);it.psel=it.pa.findIndex(p=>p==null)}
+let lastPlace=0; // 칸을 빠르게 두 번 누르면 다음 형태소까지 같은 칸에 들어가던 문제를 막는다
+function tooFast(){const n=Date.now();if(n-lastPlace<250)return true;lastPlace=n;return false}
+function navigate(d){const n=S.cur+d;if(n<0||n>=S.items.length)return;cbHide();S.cur=n;enterItem();render()}
+
+/* 화면 조작 — 이벤트는 처음 한 번만 붙인다 (지침 6-2) */
+$('main').addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b||!S)return;
+  if(b.tagName==='BUTTON')b.blur();
+  const it=S.items[S.cur],st=STAGES[S.si],step=st.steps[it.view],u=it.u[step],lock=u.state!=null||u.pend===1;
+  const act=b.dataset.act;
+  if(act==='check'){submitStep();return}
+  if(act==='retry'){doRetry();return}
+  if(act==='next'){goNext();return}
+  if(lock)return;
+  if(act==='gap'){const set=step==='word'?it.cutsW:it.cutsM,k=b.dataset.k;set.has(k)?set.delete(k):set.add(k);render();return}
+  if(act==='unp'){const k=b.dataset.k;if(it.unp.has(k)){it.unp.delete(k);const[ei,si]=k.split(':').map(Number);const s=sylMap(it.E[ei].text)[si];it.cutsM.delete(ei+':'+s.inner)}else it.unp.add(k);render();return}
+  if(act==='tile'){const i=+b.dataset.i;
+    it.sel=i;render();return}
+  if(act==='cell'){if(it.sel<0){showToast('먼저 형태소를 고르세요');return}if(tooFast())return;it.cls[it.sel]=b.dataset.c;it.sel=it.cls.findIndex(c=>c==null);render();return}
+  if(act==='tray'){if(it.sel>=0&&it.cls[it.sel]!=null){it.cls[it.sel]=null;render()}return}
+  if(act==='word'){it.psel=+b.dataset.i;render();return}
+  if(act==='pos'){if(it.psel<0){showToast('먼저 단어를 고르세요');return}if(tooFast())return;it.pa[it.psel]=b.dataset.p;it.psel=it.pa.findIndex(p=>p==null);render();return}
+});
+document.querySelector('.side').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!S)return;b.blur();
+  if(b.dataset.nav)navigate(+b.dataset.nav);else if(b.id==='finBtn')finishGame()});
+
+/* 키보드 (지침 6-1) — 게임 중에만, 채점이 끝난 문제에서만 다음으로. 버튼에 남은 포커스로 다시 눌리지 않게 막는다 */
+document.addEventListener('keydown',e=>{
+  if($('mIntro').classList.contains('on')){if(['Enter',' ','Escape'].includes(e.key)){e.preventDefault();if(!e.repeat)closeIntro()}return}
+  if($('mToday').classList.contains('on')){if(e.key==='Escape')closeToday();return}
+  if(!$('play').classList.contains('on')||!S)return;
+  const tg=e.target&&e.target.tagName;if(tg==='INPUT'||tg==='TEXTAREA')return;
+  const it=S.items[S.cur],st=STAGES[S.si],step=st.steps[it.view],u=it.u[step];
+  if(e.key==='Enter'||e.key===' '||e.key==='ArrowRight'){
+    e.preventDefault();
+    if(cbShown())cbHide();
+    if(e.repeat)return;
+    if(u.pend===1)doRetry();
+    else if(u.state!=null)goNext();
+  } else if(e.key==='ArrowLeft'){e.preventDefault();navigate(-1)}
+  else if(/^[1-4]$/.test(e.key)&&step==='cls'&&u.state==null&&u.pend!==1){
+    // 숫자 키: 고른 형태소(없으면 아직 놓지 않은 첫 형태소)를 놓고, 키보드로 이어 놓을 수 있게 다음 것을 고른다
+    const i=it.sel>=0?it.sel:it.cls.findIndex(c=>c==null);if(i<0)return;
+    e.preventDefault();it.cls[i]=CELL_KEYS[+e.key-1];it.sel=it.cls.findIndex(c=>c==null);render()}
+},true);
+document.addEventListener('keyup',e=>{if(e.key===' '&&$('play').classList.contains('on')&&e.target&&e.target.tagName==='BUTTON')e.preventDefault()},true);
+
+/* 끝내기 */
+function finishGame(){
+  if(!confirm('게임을 끝낼까요? 풀지 않은 문제는 미응답으로 기록됩니다.'))return;
+  // 한 번 틀리고 다시 풀지 않은 문제는 '못 맞힘', 아예 손대지 않은 문제는 미응답 (지침 5-3)
+  S.units.forEach(u=>{if(u.state==null&&u.pend){u.state=false;u.pend=0}});
+  finish();
+}
+function finish(){
+  if(S.ended)return;S.ended=true;cbHide();
+  $('play').classList.remove('on');$('icredit').classList.remove('on');$('end').classList.add('on');
+  const R=calcStats(),V=verdict(R),st=STAGES[S.si],end=new Date(S.tLast||Date.now());S.endAt=end;
+  $('eEmo').textContent=V.emoji;$('eTit').textContent=V.head||V.title;
+  $('eDesc').innerHTML=`${esc(st.name)} · ${S.round}판 / ${S.rounds}판 · ${R.sentences}문장 ${R.total}문제<br>`+(S.allSeen?`<b>이 단계의 ${S.rounds}판을 모두 마쳤어요.</b>`:'형태소의 뜻과 쓰임을 따져 보았나요?');
+  $('eScore').textContent=S.score+'점';$('eLab').textContent=`${st.name} 최종 점수 (만점 ${R.max}점)`;
+  $('sF').textContent=R.first;$('sR').textContent=R.retryOk;$('sM').textContent=R.miss;$('sS').textContent=R.skipped;$('sC').textContent=S.maxCombo;
+  $('eRate').textContent=R.graded?(V.head?V.title+' · ':'')+`첫 시도 정답률 ${R.rate}% (${R.first}/${R.graded})`:'';
+  $('eMeta').textContent=`완료 ${fmtDT(end)} · 걸린 시간 ${fmtDur(elapsed())} (마지막으로 채점한 때까지)`;
+  const hasNext=S.si<STAGES.length-1;
+  $('btnNext').style.display=hasNext?'':'none';$('btnNext').textContent='다음 단계로 ▶';$('btnNext').title=hasNext?STAGES[S.si+1].name:'';
+  const more=!S.allSeen;$('btnMore').style.display=more?'':'none';$('btnMore').innerHTML=`🔄 한 판 더 <small>조금 더 연습해 보고 싶은 사람 · ${S.round+1}/${S.rounds}판</small>`;
+  $('btnMore').className='eb sec';$('btnHome').className=hasNext?'eb sec':'eb pri';
+  // 못 맞힌 문제 + 미응답
+  const wl=wrongList(),box=$('wl');
+  if(!R.graded)box.innerHTML='<div class="allok" style="background:#ffe8da;color:#a0602a">풀어 본 문제가 없어요.</div>';
+  else if(!wl.length)box.innerHTML='<div class="allok" style="background:var(--ok-l);color:#25803a">🎊 틀리거나 남긴 문제가 없어요!</div>';
+  else box.innerHTML=`<div class="wlt">❌ 못 맞힌 문제 · 미응답 다시 보기 <span style="font-size:.8rem;font-weight:400;color:var(--muted)">(못 맞힘 ${R.miss} · 미응답 ${R.skipped})</span></div>`+wl.map(({it,us,skip})=>`<div class="wi"><span class="tg">${us.map(u=>STEP_NAME[u.step]).join(' · ')}${skip?' · 미응답':''}</span><div class="q">${esc(it.q.text)}</div>${skip?'':`<div class="my">내 답: ${esc(myText(it,us[0]))}</div>`}${us.map(u=>`<div class="an">정답${us.length>1?'('+STEP_NAME[u.step]+')':''}: ${esc(ansText(it,u.step))}</div>`).join('')}<div class="d">${esc(it.q.detail)}</div></div>`).join('');
+  if(IS_ONLINE&&STUDENT.verified){const n=$('inName');n.value=STUDENT.name;n.readOnly=true;n.style.background='#f0ede5';sendResult()}
+  updDl();window.scrollTo(0,0);
+}
+function wrongList(){ // [{it, us:[단계...], skip}] — 못 맞힌 단계는 하나씩, 풀지 않은 단계는 문장마다 묶는다
+  const out=[];S.items.forEach((it,qi)=>{const us=STAGES[S.si].steps.map(s=>it.u[s]);
+    us.filter(u=>u.state===false).forEach(u=>out.push({it,us:[u],skip:false}));
+    const sk=us.filter(u=>u.state==null);if(sk.length)out.push({it,us:sk,skip:true})});
+  return out}
+function elapsed(){return Math.max(0,Math.round(((S.tLast||Date.now())-S.t0)/1000))}
+function pad(n){return String(n).padStart(2,'0')}
+function fmtDT(d){return `${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`}
+function fileDT(d){return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}`}
+function fmtDur(s){const m=Math.floor(s/60),x=s%60;return m?`${m}분 ${x}초`:`${x}초`}
+function updDl(){const ok=$('inName').value.trim().length>0;$('btnNote').disabled=!ok;$('btnRep').disabled=!ok}
+function sendResult(){
+  const R=calcStats();
+  const wrongItems=S.units.filter(u=>u.state!=null&&u.state!==true).map(u=>S.items[u.qi].q.id+STEP_CODE[u.step]).join(',');
+  submitResult({studentId:STUDENT.id,studentName:STUDENT.name,className:STUDENT.className,
+    totalQuestions:R.total,correctCount:R.first,retryCorrectCount:R.retryOk,score:S.score,
+    elapsedSeconds:elapsed(),answeredCount:R.graded,skippedCount:R.skipped,stage:S.si+1,
+    wrongItems,reflection:''}).then(res=>{
+    const old=$('sendMsg');if(old)old.remove();const el=document.createElement('div');el.id='sendMsg';
+    el.style.cssText='margin:0 0 10px;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:600;text-align:center;';
+    if(res.status==='ok'){el.style.background='#e8f5e9';el.style.color='#2e7d32';el.textContent='✅ 결과가 선생님께 전송되었습니다.'}
+    else{el.style.background='#ffebee';el.style.color='#c62828';el.innerHTML='❌ 전송 실패 <button onclick="sendResult()" style="margin-left:8px;padding:4px 12px;border:1px solid #c62828;border-radius:6px;background:#fff;color:#c62828;cursor:pointer;font-size:12px;">재전송</button>'}
+    $('endPrivacy').after(el)});
+}
+
+/* 소리 (WebAudio) */
+const AudioCtx=window.AudioContext||window.webkitAudioContext;let actx;
+function ac(){if(!actx)actx=new AudioCtx();return actx}
+function tone(fs,type,step,len,vol){try{const c=ac();fs.forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.value=f;o.connect(g);g.connect(c.destination);const t=c.currentTime+i*step;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+len);o.start(t);o.stop(t+len+.02)})}catch(e){}}
+function playCorrect(){tone([523,659,784],'sine',.1,.3,.22)}
+function playWrong(){tone([220,180],'sawtooth',.15,.3,.16)}
+function playCombo(){tone([523,659,784,1047],'sine',.08,.2,.15)}
+function sfxFan(){tone([523,659,784,1047,1319],'triangle',.09,.25,.12)}
+/* ═══ 정답 배너 — 깔끔한 카드형 (2026.10.05 교사 결정) ═══
+   cbShow(큰 글자, 작은 글자, 종류) 종류: '' 정답(초록) · 'combo' 연속(주황) · 'retry' 다시 풀어 맞힘(파랑)
+   cbCelebrate(연속 수, 얻은 점수) — 첫 시도 정답 때 부른다. 5·10·15…연속에만 작은 색종이 */
+let cbTimer=null,cbRun=0;
+function cbShow(main,sub,kind,ms){const b=$('cbn');if(!b)return;b.className='';b.innerHTML='';b.appendChild(document.createTextNode(main));if(sub){const s=document.createElement('span');s.className='s';s.textContent=sub;b.appendChild(s)}void b.offsetWidth;b.style.animationDuration=(ms||1100)+'ms';b.className='show'+(kind?' '+kind:'');clearTimeout(cbTimer);cbTimer=setTimeout(cbHide,(ms||1100)+30)}
+function cbHide(){const b=$('cbn');if(b)b.className='';clearTimeout(cbTimer);cbRun++;const cv=$('cbnFx');if(cv)cv.getContext('2d').clearRect(0,0,cv.width,cv.height)}
+function cbShown(){const b=$('cbn');return !!(b&&b.classList.contains('show'))}
+function cbConfetti(){if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;const cv=$('cbnFx');if(!cv)return;const c=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;
+  const cols=['#2f9e44','#fab005','#e8590c','#7c5cbf','#1c7ed6'],ps=[],x0=innerWidth/2,y0=innerHeight*.44;
+  for(let i=0;i<28;i++)ps.push({x:x0,y:y0,vx:(Math.random()-.5)*10,vy:-Math.random()*8-3,s:4+Math.random()*4,c:cols[i%cols.length],r:Math.random()*6});
+  const run=++cbRun,t0=performance.now();(function f(t){if(run!==cbRun)return;c.clearRect(0,0,cv.width,cv.height);ps.forEach(p=>{p.vy+=.4;p.x+=p.vx;p.y+=p.vy;p.r+=.2;c.save();c.translate(p.x,p.y);c.rotate(p.r);c.fillStyle=p.c;c.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);c.restore()});if(t-t0<900)requestAnimationFrame(f);else c.clearRect(0,0,cv.width,cv.height)})(t0)}
+function cbCelebrate(n,pts){const sub=pts!=null&&pts!==''?'+'+pts:'';
+  if(n>=5&&n%5===0){cbShow(n+'연속 정답!',sub,'combo');cbConfetti()}
+  else if(n===3)cbShow('3연속 정답!',sub,'combo');
+  else cbShow('정답!',sub,'')}
+function celebrate(n,pts){if(n>=5&&n%5===0)sfxFan();else if(n===3)playCombo();else playCorrect();cbCelebrate(n,pts)}
+
+/* ═══ 오답노트·리포트 JPG (화면연출표준 8장) ═══ */
+const PRIV_OFF='🔒 개인정보 보호 안내 — 본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다. 게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.';
+const PRIV_ON='🔒 개인정보 보호 안내 — 본 게임의 학습 결과(학번, 이름, 점수, 오답 정보, 학습 소감)는 담당 선생님의 학습 관리용 스프레드시트에 안전하게 전송·저장됩니다. 수집된 정보는 학습 지도 목적으로만 사용되며, 제3자에게 제공되지 않습니다.';
+const CREDIT='제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com';
+const FF="'Malgun Gothic','맑은 고딕','Apple SD Gothic Neo',sans-serif";
+function roundBox(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.lineTo(x+w-r,y);c.quadraticCurveTo(x+w,y,x+w,y+r);c.lineTo(x+w,y+h-r);c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);c.lineTo(x+r,y+h);c.quadraticCurveTo(x,y+h,x,y+h-r);c.lineTo(x,y+r);c.quadraticCurveTo(x,y,x+r,y);c.closePath()}
+function lines(c,t,mw){const out=[];String(t).split('\n').forEach(par=>{let ln='';for(const ch of par){const ts=ln+ch;if(c.measureText(ts).width>mw&&ln){out.push(ln);ln=ch}else ln=ts}out.push(ln)});return out}
+function saveJpg(cv,name){const a=document.createElement('a');a.href=cv.toDataURL('image/jpeg',.92);a.download=name;document.body.appendChild(a);a.click();a.remove()}
+function drawDoc(blocks,W){
+  const P=36,IW=W-P*2-40,mc=document.createElement('canvas').getContext('2d');
+  const rg=b=>b.rule?Math.max(14,Math.round(b.lh*.7)):0;
+  let H=P+30;blocks.forEach(b=>{mc.font=b.f;b.ls=lines(mc,b.t,IW);H+=b.ls.length*b.lh+(b.gap||0)+rg(b)});H+=P+10;
+  const cv=document.createElement('canvas');cv.width=W;cv.height=H;const c=cv.getContext('2d');
+  c.fillStyle='#F7F3FC';c.fillRect(0,0,W,H);c.fillStyle='#fff';roundBox(c,P-16,P-16,W-(P-16)*2,H-(P-16)*2,14);c.fill();
+  let y=P+30;c.textBaseline='alphabetic';blocks.forEach(b=>{
+    if(b.rule){c.strokeStyle='#EAE5F8';c.lineWidth=1;c.beginPath();c.moveTo(P+4,y-8);c.lineTo(W-P-4,y-8);c.stroke();y+=rg(b)}
+    c.font=b.f;c.fillStyle=b.c||'#333344';b.ls.forEach(l=>{c.fillText(l,P+4,y);y+=b.lh});y+=(b.gap||0)});
+  return cv;
+}
+function needName(){const n=$('inName').value.trim();if(!n){showToast('이름을 먼저 쓰세요');$('inName').focus()}return n}
+function downloadWrongNote(){
+  const nm=needName();if(!nm)return;const R=calcStats(),d=S.endAt||new Date(),wl=wrongList(),st=STAGES[S.si];
+  const B=[{t:`📝 오답노트 — ${GAME_CONFIG.gameName} · ${st.name}`,f:`bold 20px ${FF}`,lh:28,c:'#3C3489',gap:4},
+    {t:`이름 ${nm} · 완료 ${fmtDT(d)} · ${S.round}/${S.rounds}판 · 점수 ${S.score}점 / 만점 ${R.max}점`,f:`14px ${FF}`,lh:20},
+    {t:`첫 시도 정답 ${R.first} · 다시 풀어 맞힘 ${R.retryOk} · 못 맞힘 ${R.miss} · 미응답 ${R.skipped}`,f:`14px ${FF}`,lh:20,gap:10}];
+  if(!R.graded)B.push({t:'풀어 본 문제가 없어요.',f:`bold 16px ${FF}`,lh:24,c:'#c06020',rule:1});
+  else if(!wl.length)B.push({t:'🎊 틀리거나 남긴 문제가 없어요! 한 판 더 하거나 다음 단계에 도전해 보세요.',f:`bold 16px ${FF}`,lh:24,c:'#25803a',rule:1});
+  else wl.forEach(({it,us,skip})=>{
+    B.push({t:`[${us.map(u=>STEP_NAME[u.step]).join(' · ')}]${skip?' · 미응답':''}`,f:`bold 14px ${FF}`,lh:20,c:'#b8324a',rule:1});
+    B.push({t:it.q.text,f:`bold 16px ${FF}`,lh:23,gap:2});
+    if(!skip)B.push({t:`내 답: ${myText(it,us[0])}`,f:`13px ${FF}`,lh:19,c:'#b8324a'});
+    us.forEach(u=>B.push({t:`✅ 정답${us.length>1?'('+STEP_NAME[u.step]+')':''}: ${ansText(it,u.step)}`,f:`bold 15px ${FF}`,lh:22,c:'#25803a'}));
+    B.push({t:`해설: ${it.q.detail}`,f:`13px ${FF}`,lh:19,c:'#64748b',gap:8});
+  });
+  B.push({t:`성취기준 ${STD_TEXT}`,f:`11.5px ${FF}`,lh:17,c:'#8888aa',rule:1});
+  B.push({t:IS_ONLINE?PRIV_ON:PRIV_OFF,f:`11.5px ${FF}`,lh:17,c:'#8888aa'});
+  B.push({t:CREDIT,f:`11.5px ${FF}`,lh:17,c:'#8888aa'});
+  saveJpg(drawDoc(B,860),`${nm}_오답노트_${st.tag}_${fileDT(d)}.jpg`);
+}
+function downloadReport(){
+  const nm=needName();if(!nm)return;const cm=$('inCmt').value.trim(),R=calcStats(),d=S.endAt||new Date(),st=STAGES[S.si];
+  const B=[{t:`📊 학습 결과 분석 리포트 — ${GAME_CONFIG.gameName}`,f:`bold 20px ${FF}`,lh:28,c:'#3C3489',gap:2},
+    {t:`${st.name} · ${S.round}/${S.rounds}판 · 이름 ${nm} · ${fmtDT(d)}`,f:`14px ${FF}`,lh:20,gap:8}];
+  if(!R.graded)B.push({t:'풀어 본 문제가 없어요.',f:`bold 18px ${FF}`,lh:26,c:'#c06020',rule:1});
+  else{
+    B.push({t:`${S.score}점 / 만점 ${R.max}점`,f:`bold 30px ${FF}`,lh:38,c:'#7C5CBF',rule:1});
+    B.push({t:`${R.sentences}문장 ${R.total}문제 · 첫 시도 정답 ${R.first} · 다시 풀어 맞힘 ${R.retryOk} · 못 맞힘 ${R.miss} · 미응답 ${R.skipped} · 최고 콤보 ${S.maxCombo} · 걸린 시간 ${fmtDur(elapsed())}`,f:`14px ${FF}`,lh:20});
+    B.push({t:`첫 시도 정답률 ${R.rate}% (${R.first}/${R.graded}) — ${verdict(R).title}`,f:`bold 15px ${FF}`,lh:22,gap:8});
+    const cats=Object.keys(R.byType).filter(k=>R.byType[k].graded>=2),rate=k=>R.byType[k].first/R.byType[k].graded;
+    const lab=k=>`${CATEGORIES[k].label} ${R.byType[k].first}/${R.byType[k].graded}`,good=cats.filter(k=>rate(k)===1),weak=cats.filter(k=>rate(k)<.5);
+    if(cats.length&&cats.every(k=>rate(k)<.5))B.push({t:'유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 두 기준 설명을 먼저 읽어 보세요.',f:`bold 14px ${FF}`,lh:21,c:'#b8324a',rule:1,gap:6});
+    else{B.push({t:`✅ 잘하는 유형  ${good.length?good.map(lab).join(' · '):'—'}`,f:`bold 14px ${FF}`,lh:21,c:'#25803a',rule:1});
+      B.push({t:`⚠️ 보완이 필요한 유형  ${weak.length?weak.map(lab).join(' · '):'—'}`,f:`bold 14px ${FF}`,lh:21,c:'#b8324a',gap:6})}
+    const miss=k=>R.byType[k].graded-R.byType[k].first;
+    const cand=cats.filter(k=>miss(k)>0).sort((a,b)=>miss(b)-miss(a)||rate(a)-rate(b)||R.byType[b].graded-R.byType[a].graded);
+    if(R.miss+R.retryOk===0)B.push({t:R.skipped?'남은 문제를 마저 풀어 보세요.':'약점이 보이지 않아요. 한 판 더 하거나 다음 단계에 도전해 보세요.',f:`bold 14px ${FF}`,lh:21,c:'#25803a',gap:6});
+    else if(cand.length){B.push({t:'🎯 가장 먼저 공부할 것',f:`bold 14px ${FF}`,lh:21,c:'#3C3489'});B.push({t:CATEGORIES[cand[0]].tip,f:`14px ${FF}`,lh:21,gap:6})}
+    else if(R.skipped)B.push({t:'🎯 가장 먼저 공부할 것 — 남은 문제를 마저 풀어 보세요.',f:`bold 14px ${FF}`,lh:21,c:'#3C3489',gap:6});
+  }
+  if(cm){B.push({t:'💬 학습 소감',f:`bold 14px ${FF}`,lh:21,rule:1});B.push({t:cm,f:`14px ${FF}`,lh:21,c:'#5b5670',gap:6})}
+  B.push({t:`성취기준 ${STD_TEXT}`,f:`11.5px ${FF}`,lh:17,c:'#8888aa',rule:1});
+  B.push({t:IS_ONLINE?PRIV_ON:PRIV_OFF,f:`11.5px ${FF}`,lh:17,c:'#8888aa'});
+  B.push({t:CREDIT,f:`11.5px ${FF}`,lh:17,c:'#8888aa'});
+  saveJpg(drawDoc(B,860),`${nm}_학습리포트_${st.tag}_${fileDT(d)}.jpg`);
+}
+/* 오늘 나온 문제 (이번 판 출제분만) */
+function openToday(){const sym=u=>u.state===true?'✓':u.state==='r'?'↺':u.state===false?'✕':'미응답';
+  $('todayList').innerHTML=S.items.map(it=>`<div class="rv"><span class="tg">${FOCUS[it.q.cat]||''}</span><b>${esc(it.q.text)}</b>
+    <div class="s">${STAGES[S.si].steps.map(s=>`${STEP_NAME[s]} ${sym(it.u[s])}`).join(' · ')}</div>
+    ${STAGES[S.si].steps.map(s=>`<div class="a">${STEP_NAME[s]}: ${esc(ansText(it,s))}</div>`).join('')}<div class="d">${esc(it.q.detail)}</div></div>`).join('');
+  $('mToday').classList.add('on')}
+function openIntro(k){$('introMorph').style.display=k==='morph'?'':'none';$('introWord').style.display=k==='word'?'':'none';$('mIntro').classList.add('on')}
+function closeIntro(){$('mIntro').classList.remove('on');if(S&&S.units.every(u=>u.state==null&&!u.pend))S.t0=Date.now()}  // 아직 아무것도 풀지 않았으면 걸린 시간은 배너를 닫은 때부터
+function closeToday(){$('mToday').classList.remove('on')}
+/* 교사용 학습 데이터 목록 ('최종 수정' 글자 클릭) */
+function downloadTeacherXls(){
+  const row=(cells,th)=>'<tr>'+cells.map(x=>`<${th?'th':'td'} style="mso-number-format:'\\@';vertical-align:top">${esc(x)}</${th?'th':'td'}>`).join('')+'</tr>';
+  let h='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8"></head><body><table border="1">';
+  h+=row(['원본 id','단계','초점','경계 사례','문장','단어 나누기','형태소 나누기(붙임표)','형태소 수','자립·실질','의존·실질','의존·형식','품사','힌트','해설','판정 근거'],1);
+  QUESTIONS.forEach(q=>{const it=makeItem(q),g={IS:[],DS:[],DF:[]};it.tiles.forEach(t=>g[KIND[t.k].cell].push(notate(t.t,t.k,t.base)));
+    h+=row([q.id,STAGES[q.stage-1].name,FOCUS[q.cat]||q.cat,q.edge?'경계':'',q.text,wordText(it),morphNote(it),it.tiles.length,g.IS.join(', '),g.DS.join(', '),g.DF.join(', '),it.pos?posAnswer(it):'—',q.hint,q.detail,q.src])});
+  h+='</table><br><table border="1">'+row(['단계','문장 풀','경계 사례','한 판 문장 수','한 판 문제 수','한 판 만점'],1);
+  STAGES.forEach((st,i)=>{const P=POOLS[i];h+=row([st.name,P.length,P.filter(q=>q.edge).length,st.per,roundUnits(i),stageMax(roundUnits(i))])});
+  h+='</table><br><table border="1">'+row(['성취기준',STD_TEXT])+row(['배점',`첫 시도 정답 ${BASE}점 · 틀리면 −${PENALTY}점(0점 하한) · 3~4번째 연속 +5 · 5번째부터 +10 · 다시 풀어 맞힘 ${RETRY_PT}점(모든 문제 1회) · 한 문장 안의 단계가 하나씩 문제`])+row(['출제',"단계마다 셔플백 — 판마다 다른 문장, 경계 사례를 판마다 일정 수 넣음"])+row(['총문항 수',`${QUESTIONS.length}문장 (단계별 ${POOLS.map(p=>p.length).join('/')})`])+row(['크레딧',`${CREDIT} · 제작일 ${MADE_DATE} · 최종 수정 ${MOD_DATE}`])+'</table></body></html>';
+  const d=new Date(),blob=new Blob(['\ufeff'+h],{type:'application/vnd.ms-excel'}),a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download=`G106_형태소완벽하게정복하기_학습데이터목록_${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}.xls`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+
+/* 화면 전환 */
+function goStart(){cbHide();$('mIntro').classList.remove('on');$('end').classList.remove('on');$('play').classList.remove('on');$('icredit').classList.remove('on');$('start').style.display='';window.scrollTo(0,0)}
+
+/* ═══ 6. 앱스크립트 연동 (시작 래퍼) ═══ */
+async function doLogin(){
+  const idVal=$('loginId').value.trim(),nameVal=$('loginName').value.trim(),msg=$('loginMsg');
+  if(!idVal||idVal.length!==5||!/^\d{5}$/.test(idVal)){msg.textContent='학번은 5자리 숫자여야 합니다.';return}
+  if(!nameVal){msg.textContent='이름을 입력하세요.';return}
+  msg.textContent='';$('loginBtn').style.display='none';$('loginSpinner').style.display='block';
+  const result=await verifyStudent(idVal,nameVal);
+  $('loginBtn').style.display='block';$('loginSpinner').style.display='none';
+  if(result.status==='ok'){STUDENT={id:idVal,name:nameVal,className:result.className||'',verified:true};$('loginOverlay').style.display='none';notifyGameStart(STUDENT.id,STUDENT.name,STUDENT.className);doStartStage(pendingStage)}
+  else msg.textContent=result.message||'인증에 실패했습니다.';
+}
+function startStage(n,more){
+  if(IS_ONLINE&&!STUDENT.verified){pendingStage=n;$('loginOverlay').style.display='flex';$('loginId').focus();return}
+  if(IS_ONLINE&&STUDENT.verified)notifyGameStart(STUDENT.id,STUDENT.name,STUDENT.className);
+  doStartStage(n,more);
+}
+
+/* 초기화 (한 번만) */
+$('inName').addEventListener('input',updDl);
+$('btnNote').addEventListener('click',downloadWrongNote);
+$('btnRep').addEventListener('click',downloadReport);
+$('btnNext').addEventListener('click',()=>startStage(S.si+1));
+$('btnMore').addEventListener('click',()=>startStage(S.si,true));
+$('btnHome').addEventListener('click',goStart);
+$('btnToday').addEventListener('click',openToday);
+$('btnClose').addEventListener('click',closeToday);
+$('btnIntro').addEventListener('click',e=>{e.currentTarget.blur();closeIntro()});
+(function(){const t=$('lastMod');if(t){t.style.cursor='default';t.addEventListener('click',downloadTeacherXls)}})();
+$('maxInfo').textContent=STAGES.map((st,i)=>`${st.name.split(' · ')[0]} ${stageMax(roundUnits(i))}점`).join(' · ');
+document.querySelectorAll('.stage-btn .sn').forEach((el,i)=>el.textContent=`한 판 ${STAGES[i].per}문장 · 최대 ${roundsNeeded(i)}판`);
+if(IS_ONLINE){
+  $('privacyOffline').style.display='none';$('privacyOnline').style.display='block';
+  $('endPrivacy').textContent='학습 결과는 담당 선생님의 학습 관리 시스템에 자동 전송됩니다. 이름과 소감은 리포트 이미지(JPG) 생성에도 사용됩니다.';
+}
+</script>
+</body>
+</html>
