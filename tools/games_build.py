@@ -12,6 +12,21 @@ for r in rows:
 AREA={'G':'문법','L':'문학','R':'읽기','W':'쓰기','S':'말하기듣기'}
 AREA_LABEL={'문법':'문법','문학':'문학','읽기':'읽기','쓰기':'쓰기','말하기듣기':'말하기·듣기'}
 GRADE={'1':'1학년','2':'2학년','3':'3학년','4':'학년 무관'}
+# 표시 학년 — 목록에 보이는 학년(게임 코드와 무관, 내년 교육과정 통일 때 여기만 고친다). 한 게임에 여럿 가능, '4'=학년 무관
+BOTH_STD={'9국04-01','9국02-05'}  # 음운·논증은 두 학년에 걸침
+GRADE_OVERRIDE={  # 교사 확정 2026.10.08
+ 'G209':['2'],'G210':['2'],'G211':['2'],   # 한글 창제원리 3종 → 2학년 전용
+ 'L201':['4'],                              # 원미동 어휘 원정대 → 학년 무관
+ 'L302':['2','3'],'L303':['2','3'],         # 꺼삐딴 리 2종 → 2·3학년
+}
+def grades_of(c,std):
+    if c in GRADE_OVERRIDE: return GRADE_OVERRIDE[c]
+    g=c[1]
+    if g=='4': return ['4']
+    if any(s in BOTH_STD for s in std) and g in '23': return ['2','3']
+    return [g]
+def grade_label(gs):
+    return '학년 무관' if gs==['4'] else '·'.join(gs)+'학년'
 DEV={'💻📱 노트북·모바일':('M1','노트북·모바일'),'💻 노트북 권장':('M2','노트북 권장'),'💻 노트북 전용':('M3','노트북 전용')}
 # 성취기준 원문 (목록 머리말에 쓰던 것 + 교육과정 원문)
 STD={
@@ -27,7 +42,8 @@ games=[]
 for r in rows:
     c=r['code'];a=AREA[c[0]];g=c[1]
     dev=DEV.get(r['badge'],('M2','노트북 권장'))
-    games.append(dict(title=r['title'],desc=r['desc'],href=r['href'],emoji=r['emoji'],code=c,area=a,grade=g,std=r['std'],dev=dev[0],devLabel=dev[1]))
+    gs=grades_of(c,r['std'])
+    games.append(dict(title=r['title'],desc=r['desc'],href=r['href'],emoji=r['emoji'],code=c,area=a,grades=gs,gradeLabel=grade_label(gs),std=r['std'],dev=dev[0],devLabel=dev[1]))
 # 영역 안에서는 성취기준 → 코드 순으로
 order={a:i for i,a in enumerate(areas)}
 games.sort(key=lambda x:(order[x['area']],x['std'][0] if x['std'] else 'zz',x['code']))
@@ -35,11 +51,11 @@ def esc(s):return html.escape(s,quote=True)
 cards=[]
 for x in games:
     std=' '.join(f'<span class="std" title="{esc(STD.get(s,""))}">{s}</span>' for s in x['std'])
-    cards.append(f'''      <a class="card a-{x['area']}" href="{esc(x['href'])}" data-area="{x['area']}" data-grade="{x['grade']}" data-dev="{x['dev']}" data-text="{esc((x['title']+' '+x['desc']+' '+' '.join(x['std'])+' '+x['code']).lower())}">
+    cards.append(f'''      <a class="card a-{x['area']}" href="{esc(x['href'])}" data-area="{x['area']}" data-grade="{' '.join(x['grades'])}" data-dev="{x['dev']}" data-text="{esc((x['title']+' '+x['desc']+' '+' '.join(x['std'])+' '+x['code']).lower())}">
         <div class="top"><span class="emoji">{x['emoji']}</span><span class="code">{x['code']}</span></div>
         <div class="title">{esc(x['title'])}</div>
         <div class="desc">{esc(x['desc'])}</div>
-        <div class="meta"><span class="tag grade">{GRADE[x['grade']]}</span><span class="tag dev d-{x['dev']}">{x['devLabel']}</span>{std}</div>
+        <div class="meta"><span class="tag grade">{x['gradeLabel']}</span><span class="tag dev d-{x['dev']}">{x['devLabel']}</span>{std}</div>
       </a>''')
 sections=[]
 for a in areas:
@@ -170,13 +186,14 @@ a{{color:inherit;text-decoration:none}}
   var q=document.getElementById('q'),box=document.getElementById('searchBox'),st={{area:'',grade:'',dev:'',q:''}};
   function readHash(){{var h=location.hash.replace(/^#/,'');if(!h)return;if(!h.includes('='))h='area='+h;h.split('&').forEach(function(p){{var kv=p.split('=');if(kv[0] in st)st[kv[0]]=decodeURIComponent(kv[1]||'')}})}}
   function writeHash(){{var ps=[];for(var k in st)if(st[k])ps.push(k+'='+encodeURIComponent(st[k]));var h=ps.length?'#'+ps.join('&'):'';if(h!==location.hash)history.replaceState(null,'',location.pathname+h)}}
-  function match(c,skip){{var t=c.dataset;return (skip==='area'||!st.area||t.area===st.area)&&(skip==='grade'||!st.grade||t.grade===st.grade)&&(skip==='dev'||!st.dev||t.dev===st.dev)&&(!st.q||t.text.indexOf(st.q)>=0)}}
+  function inc(field,v){{return (' '+field+' ').indexOf(' '+v+' ')>=0}}
+  function match(c,skip){{var t=c.dataset;return (skip==='area'||!st.area||inc(t.area,st.area))&&(skip==='grade'||!st.grade||inc(t.grade,st.grade))&&(skip==='dev'||!st.dev||inc(t.dev,st.dev))&&(!st.q||t.text.indexOf(st.q)>=0)}}
   function apply(){{
     var n=0;cards.forEach(function(c){{var ok=match(c);c.classList.toggle('hide',!ok);if(ok)n++}});
     document.querySelectorAll('.area').forEach(function(s){{var k=s.querySelectorAll('.card:not(.hide)').length;s.classList.toggle('empty',!k);s.querySelector('.cnt').textContent=k+'개'}});
     document.getElementById('shown').textContent=n;document.getElementById('none').classList.toggle('on',!n);
     var f=!!(st.area||st.grade||st.dev||st.q);document.getElementById('status').classList.toggle('filtered',f);
-    chips.forEach(function(ch){{var k=ch.dataset.f;ch.classList.toggle('on',st[k]===ch.dataset.v);var sp=ch.querySelector('.n');if(sp&&ch.dataset.v){{sp.textContent=' '+cards.filter(function(c){{return match(c,k)&&c.dataset[k]===ch.dataset.v}}).length}}}});
+    chips.forEach(function(ch){{var k=ch.dataset.f;ch.classList.toggle('on',st[k]===ch.dataset.v);var sp=ch.querySelector('.n');if(sp&&ch.dataset.v){{sp.textContent=' '+cards.filter(function(c){{return match(c,k)&&inc(c.dataset[k],ch.dataset.v)}}).length}}}});
     box.classList.toggle('has',!!st.q);writeHash();
   }}
   chips.forEach(function(ch){{ch.addEventListener('click',function(){{st[ch.dataset.f]=ch.dataset.v;apply()}})}});
