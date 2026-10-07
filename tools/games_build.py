@@ -27,6 +27,37 @@ def grades_of(c,std):
     return [g]
 def grade_label(gs):
     return '학년 무관' if gs==['4'] else '·'.join(gs)+'학년'
+
+# 성취기준 2022 원문(배치표)·묶음 제목 — 목록을 성취기준별로 묶는다
+STD2022={
+ '9국01-04':('공감하며 대화','상대의 말을 경청하고 상대의 감정과 입장에 공감하는 반응을 보이며 대화한다.'),
+ '9국01-06':('발표','다양한 자료를 재구성하여 내용을 체계적으로 조직하고 청중이 이해하기 쉽게 발표한다.'),
+ '9국01-09':('갈등 조정','서로의 감정이나 바라는 바를 진솔하게 표현하면서 갈등을 조정한다.'),
+ '9국02-05':('설명·논증 방법','글에 사용된 다양한 설명 방법과 논증 방법을 파악하고, 그 타당성을 평가하며 읽는다.'),
+ '9국03-01':('설명하는 글','대상의 특성에 적합한 설명 방법을 활용하여 글을 쓴다.'),
+ '9국03-03':('주장하는 글','주장을 뒷받침할 수 있는 타당한 근거를 들고 적절한 표현을 사용하여 주장하는 글을 쓴다.'),
+ '9국03-07':('복합양식 자료로 쓰기','복합양식 자료를 활용하여 내용을 생성하고 글의 유형을 고려하여 내용을 조직하며 글을 쓴다.'),
+ '9국03-08':('고쳐쓰기','쓰기 과정과 전략을 점검·조정하며 글을 쓰고, 독자를 고려하여 글을 고쳐 쓴다.'),
+ '9국04-01':('음운·문자 체계','국어의 음운 체계와 문자 체계를 이해하고 국어생활에 활용한다.'),
+ '9국04-02':('단어의 형성','단어의 짜임을 분석하여 새말 형성의 원리를 이해한다.'),
+ '9국04-03':('품사','품사의 종류와 특성을 이해하고 국어 자료를 분석한다.'),
+ '9국04-04':('문장의 짜임','문장의 짜임을 이해하고 표현 효과를 고려하여 문장을 구성한다.'),
+ '9국04-05':('피동·인용 표현','피동 표현과 인용 표현의 의도와 효과를 분석하고 상황에 맞게 활용한다.'),
+ '9국05-02':('갈등','갈등의 진행과 해결 과정을 파악하며 작품을 감상한다.'),
+ '9국05-04':('서술자와 시점','보는 이나 말하는 이의 특성과 효과를 파악하며 작품을 감상한다.'),
+ '9국05-05':('사회·문화적 상황','작품에 반영된 사회·문화적 상황을 이해하며 작품을 감상한다.'),
+ '9국05-06':('개성적 표현','자신의 경험을 개성적인 발상과 표현으로 형상화한다.'),
+ '9국05-08':('작품 해석과 비교','근거를 바탕으로 작품을 해석하고, 다른 해석들과 비교하여 자신의 해석을 평가한다.'),
+}
+HANGUL={'G209','G210','G211'}  # 한글 창제 원리 — 코드는 9국04-01이지만 음운 체계와 따로 묶는다(교사 큐레이션)
+def group_of(c,std):
+    if c in HANGUL: return '한글'
+    return std[0] if std else 'none'
+def group_meta(gid):  # (정렬키, 코드표시, 주제, 원문)
+    if gid=='한글': return ('9국04-05a','9국04-01','한글 창제 원리','한글의 창제 원리와 제자 원리를 이해한다. (문자 체계, 9국04-01)')
+    if gid=='none': return ('zzz','','그 외','성취기준을 아직 정하지 않은 게임')
+    t=STD2022.get(gid,('',''))
+    return (gid,gid,t[0],t[1])
 DEV={'💻📱 노트북·모바일':('M1','노트북·모바일'),'💻 노트북 권장':('M2','노트북 권장'),'💻 노트북 전용':('M3','노트북 전용')}
 # 성취기준 원문 (목록 머리말에 쓰던 것 + 교육과정 원문)
 STD={
@@ -48,23 +79,34 @@ for r in rows:
 order={a:i for i,a in enumerate(areas)}
 games.sort(key=lambda x:(order[x['area']],x['std'][0] if x['std'] else 'zz',x['code']))
 def esc(s):return html.escape(s,quote=True)
-cards=[]
 for x in games:
-    std=' '.join(f'<span class="std" title="{esc(STD.get(s,""))}">{s}</span>' for s in x['std'])
-    cards.append(f'''      <a class="card a-{x['area']}" href="{esc(x['href'])}" data-area="{x['area']}" data-grade="{' '.join(x['grades'])}" data-dev="{x['dev']}" data-text="{esc((x['title']+' '+x['desc']+' '+' '.join(x['std'])+' '+x['code']).lower())}">
-        <div class="top"><span class="emoji">{x['emoji']}</span><span class="code">{x['code']}</span></div>
-        <div class="title">{esc(x['title'])}</div>
-        <div class="desc">{esc(x['desc'])}</div>
-        <div class="meta"><span class="tag grade">{x['gradeLabel']}</span><span class="tag dev d-{x['dev']}">{x['devLabel']}</span>{std}</div>
-      </a>''')
+    x['group']=group_of(x['code'],x['std'])
+def card_html(x):
+    std=' '.join(f'<span class="std" title="{esc(STD2022.get(s,("",""))[1])}">{s}</span>' for s in x['std'])
+    return f'''        <a class="card a-{x['area']}" href="{esc(x['href'])}" data-area="{x['area']}" data-grade="{' '.join(x['grades'])}" data-dev="{x['dev']}" data-text="{esc((x['title']+' '+x['desc']+' '+' '.join(x['std'])+' '+x['code']).lower())}">
+          <div class="top"><span class="emoji">{x['emoji']}</span><span class="code">{x['code']}</span></div>
+          <div class="title">{esc(x['title'])}</div>
+          <div class="desc">{esc(x['desc'])}</div>
+          <div class="meta"><span class="tag grade">{x['gradeLabel']}</span><span class="tag dev d-{x['dev']}">{x['devLabel']}</span>{std}</div>
+        </a>'''
 sections=[]
 for a in areas:
-    cs=[c for c,x in zip(cards,games) if x['area']==a]
+    ags=[x for x in games if x['area']==a]
+    gids=sorted(set(x['group'] for x in ags),key=lambda g:group_meta(g)[0])
+    subs=[]
+    for gid in gids:
+        gm=group_meta(gid);members=[x for x in ags if x['group']==gid]
+        members.sort(key=lambda x:x['code'])
+        head=f'<span class="scode">{gm[1]}</span>' if gm[1] else ''
+        subs.append(f'''      <div class="sub">
+        <div class="subh">{head}<span class="stopic">{esc(gm[2])}</span><span class="stext">{esc(gm[3])}</span><span class="subcnt"></span></div>
+        <div class="grid">
+{chr(10).join(card_html(x) for x in members)}
+        </div>
+      </div>''')
     sections.append(f'''    <section class="area" id="{a}" data-area="{a}">
       <h2><span class="dot"></span>{AREA_LABEL[a]} <span class="cnt"></span></h2>
-      <div class="grid">
-{chr(10).join(cs)}
-      </div>
+{chr(10).join(subs)}
     </section>''')
 page=f'''<!DOCTYPE html>
 <html lang="ko">
@@ -118,6 +160,14 @@ a{{color:inherit;text-decoration:none}}
 .area h2 .cnt{{font-family:'Gaegu',cursive;font-size:1.1rem;color:var(--ink2);font-weight:400}}
 .area[data-area="문법"]{{--c:var(--c-문법);--l:var(--l-문법)}}.area[data-area="문학"]{{--c:var(--c-문학);--l:var(--l-문학)}}.area[data-area="읽기"]{{--c:var(--c-읽기);--l:var(--l-읽기)}}.area[data-area="쓰기"]{{--c:var(--c-쓰기);--l:var(--l-쓰기)}}.area[data-area="말하기듣기"]{{--c:var(--c-말하기듣기);--l:var(--l-말하기듣기)}}
 .area.empty{{display:none}}
+.sub{{margin-bottom:1.3rem}}
+.sub.empty{{display:none}}
+.subh{{display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap;margin:.2rem 0 .7rem;padding-left:.1rem}}
+.subh .scode{{font-family:'Jua',sans-serif;font-size:.88rem;color:var(--c);background:var(--l);border-radius:8px;padding:.12rem .55rem}}
+.subh .stopic{{font-weight:700;color:var(--ink);font-size:1.02rem}}
+.subh .stext{{font-size:.9rem;color:var(--ink2)}}
+.subh .subcnt{{font-size:.85rem;color:var(--ink2);font-family:'Gaegu',cursive}}
+@media(max-width:600px){{.subh .stext{{width:100%}}}}
 .grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:.9rem}}
 /* 카드 */
 .card{{background:#fff;border:1.5px solid var(--line);border-top:5px solid var(--c);border-radius:14px;padding:.95rem 1rem 1rem;display:flex;flex-direction:column;gap:.35rem;box-shadow:0 2px 8px rgba(36,50,74,.05);transition:transform .15s,box-shadow .15s}}
@@ -190,6 +240,7 @@ a{{color:inherit;text-decoration:none}}
   function match(c,skip){{var t=c.dataset;return (skip==='area'||!st.area||inc(t.area,st.area))&&(skip==='grade'||!st.grade||inc(t.grade,st.grade))&&(skip==='dev'||!st.dev||inc(t.dev,st.dev))&&(!st.q||t.text.indexOf(st.q)>=0)}}
   function apply(){{
     var n=0;cards.forEach(function(c){{var ok=match(c);c.classList.toggle('hide',!ok);if(ok)n++}});
+    document.querySelectorAll('.sub').forEach(function(s){{var k=s.querySelectorAll('.card:not(.hide)').length;s.classList.toggle('empty',!k);var c=s.querySelector('.subcnt');if(c)c.textContent=k+'개'}});
     document.querySelectorAll('.area').forEach(function(s){{var k=s.querySelectorAll('.card:not(.hide)').length;s.classList.toggle('empty',!k);s.querySelector('.cnt').textContent=k+'개'}});
     document.getElementById('shown').textContent=n;document.getElementById('none').classList.toggle('on',!n);
     var f=!!(st.area||st.grade||st.dev||st.q);document.getElementById('status').classList.toggle('filtered',f);
