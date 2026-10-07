@@ -9,7 +9,8 @@
      2026.10.06 00:30 버그 검사(실제 입력): 이전·다음 버튼 클릭 뒤 Enter·Space로 답하기 전 넘어가던 문제, 다시 풀기가 끝없이 되던 것을 1회로(두 번 틀리면 정답·해설 공개), 모든 문항 채점 뒤 자동 종료, 풀어 본 문제가 없을 때 축하·정답률 문구 대신 '풀어 본 문제가 없어요', 오답 목록 '내 답'이 다시 풀어 맞힌 정답으로 바뀌던 것, 보기 글자 낱말 중간 줄바꿈
      2026.10.06 00:45 버그: 온라인 모드에서도 JPG 꼬리말에 오프라인 개인정보 문구가 나오던 문제
      2026.10.06 00:25 종료 제목: 중간에 끝내면 '정비 완료!' 대신 '정비 중단 · 다음에 이어서 정비해요'(교사 결정)
-     2026.10.06 00:30 총평: 끝까지 풀지 않으면 '완벽해요/약점이 보이지 않아요' 대신 더 연습해 보자는 말 / 버그: 정답 카드가 떠 있을 때 끝내면 종료 화면에 카드가 남던 문제 -->
+     2026.10.06 00:30 총평: 끝까지 풀지 않으면 '완벽해요/약점이 보이지 않아요' 대신 더 연습해 보자는 말 / 버그: 정답 카드가 떠 있을 때 끝내면 종료 화면에 카드가 남던 문제
+     2026.10.08 01:05 10차: 테마층(정비소 공구판) + 실제 조작 버그 검사·수정 — 채점0 제목·보완 유형 한 칸·결과 보기 확인·엑셀 정답 빨강 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -188,6 +189,14 @@ h1 .mark{color:var(--pt-deep)}
   .body-pad{padding:0 14px 18px}
   .head-row{margin-top:28px}
 }
+/* ═══ 게임 테마층 · 정비소 공구판 (2026.10.08) ═══
+   구멍 뚫린 공구판에 렌치와 사진·도표 카드가 걸린 정비소 장면. 보조색 청록 #2A8C8C. 영역 팔레트·헤더 띠·정답/오답 색·흰 문제 카드·정답 카드는 그대로.
+   이 블록과 시작 화면 SVG를 지우면 원래 모습 */
+:root{--th:#2A8C8C}
+.head-row .keyArt{margin-left:auto;flex:none;height:118px;width:auto}
+@media (max-width:860px){.head-row .keyArt{display:none}}
+#startScreen .std-box,#startScreen .panel{border-left:4px solid var(--th)}
+#startScreen .std-box b,#startScreen .panel h3{color:var(--th)}
 </style>
 </head>
 <body>
@@ -207,6 +216,44 @@ h1 .mark{color:var(--pt-deep)}
         <h1>복합양식 자료 <span class="mark">정비소</span></h1>
         <p class="subtitle">글의 목적과 주제에 맞게 복합양식 자료를 선별하고 활용하는 방법을 익혀요.</p>
       </div>
+      <svg class="keyArt" viewBox="0 0 264 122" aria-hidden="true">
+        <rect x="2" y="2" width="260" height="118" rx="10" fill="#EAF4F4" stroke="#2A8C8C" stroke-width="2"/>
+        <g fill="#C6E0E0">
+          <circle cx="20" cy="16" r="2.4"/><circle cx="42" cy="16" r="2.4"/><circle cx="64" cy="16" r="2.4"/><circle cx="86" cy="16" r="2.4"/><circle cx="108" cy="16" r="2.4"/><circle cx="130" cy="16" r="2.4"/><circle cx="152" cy="16" r="2.4"/><circle cx="174" cy="16" r="2.4"/><circle cx="196" cy="16" r="2.4"/><circle cx="218" cy="16" r="2.4"/><circle cx="240" cy="16" r="2.4"/>
+          <circle cx="20" cy="106" r="2.4"/><circle cx="42" cy="106" r="2.4"/><circle cx="64" cy="106" r="2.4"/><circle cx="86" cy="106" r="2.4"/><circle cx="108" cy="106" r="2.4"/><circle cx="130" cy="106" r="2.4"/><circle cx="152" cy="106" r="2.4"/><circle cx="174" cy="106" r="2.4"/><circle cx="196" cy="106" r="2.4"/><circle cx="218" cy="106" r="2.4"/><circle cx="240" cy="106" r="2.4"/>
+          <circle cx="20" cy="38" r="2.4"/><circle cx="20" cy="61" r="2.4"/><circle cx="20" cy="84" r="2.4"/>
+          <circle cx="240" cy="38" r="2.4"/><circle cx="240" cy="61" r="2.4"/><circle cx="240" cy="84" r="2.4"/>
+        </g>
+        <!-- 렌치 -->
+        <circle cx="50" cy="22" r="3" fill="#6f6470"/>
+        <g transform="rotate(10 50 22)">
+          <circle cx="50" cy="30" r="13" fill="#2A8C8C"/>
+          <rect x="45" y="15" width="10" height="15" rx="1.5" fill="#EAF4F4"/>
+          <rect x="45" y="38" width="10" height="52" rx="5" fill="#2A8C8C"/>
+          <circle cx="50" cy="94" r="10" fill="#2A8C8C"/>
+          <circle cx="50" cy="94" r="4.5" fill="#EAF4F4"/>
+        </g>
+        <!-- 사진 카드 -->
+        <g transform="rotate(-4 120 60)">
+          <rect x="84" y="28" width="72" height="66" rx="6" fill="#fff" stroke="#2A8C8C" stroke-width="2"/>
+          <rect x="91" y="35" width="58" height="40" rx="3" fill="#D3E9E9"/>
+          <circle cx="135" cy="46" r="5.5" fill="#fff"/>
+          <path d="M91 75 L108 54 L119 66 L127 58 L149 75 Z" fill="#2A8C8C"/>
+          <rect x="91" y="81" width="38" height="5" rx="2.5" fill="#D9D3D7"/>
+          <rect x="114" y="22" width="12" height="12" rx="2" fill="#6f6470"/>
+        </g>
+        <!-- 도표 카드 -->
+        <g transform="rotate(4 208 62)">
+          <rect x="172" y="32" width="72" height="62" rx="6" fill="#fff" stroke="#2A8C8C" stroke-width="2"/>
+          <line x1="181" y1="84" x2="236" y2="84" stroke="#9a8f98" stroke-width="2" stroke-linecap="round"/>
+          <line x1="181" y1="44" x2="181" y2="84" stroke="#9a8f98" stroke-width="2" stroke-linecap="round"/>
+          <rect x="187" y="66" width="9" height="18" rx="1.5" fill="#9CCACA"/>
+          <rect x="200" y="58" width="9" height="26" rx="1.5" fill="#6AB0B0"/>
+          <rect x="213" y="50" width="9" height="34" rx="1.5" fill="#2A8C8C"/>
+          <rect x="226" y="43" width="7" height="41" rx="1.5" fill="#1F6E6E"/>
+          <rect x="202" y="26" width="12" height="12" rx="2" fill="#6f6470"/>
+        </g>
+      </svg>
     </div>
     <div class="std-box">📎 <b>성취기준</b> [9국03-07] 복합양식 자료를 활용하여 내용을 생성하고 글의 유형을 고려하여 내용을 조직하며 글을 쓴다.</div>
     <div class="grid2">
@@ -216,7 +263,7 @@ h1 .mark{color:var(--pt-deep)}
           <li>단계를 고르면 문항이 하나씩 나옵니다.</li>
           <li>선택지를 눌러 답을 고르고, 해설을 읽은 뒤 다음으로 넘어갑니다.</li>
           <li>틀리면 힌트를 보고 한 번 더 풀 수 있어요.</li>
-          <li>오른쪽 사이드바에서 이전·다음·끝내기를 언제든 누를 수 있습니다.</li>
+          <li>오른쪽 사이드바에서 이전·다음·게임 끝내기를 언제든 누를 수 있습니다.</li>
         </ul>
         <h3 style="margin-top:10px">📦 복합양식 자료의 유형</h3>
         <div class="types-grid">
@@ -251,7 +298,7 @@ h1 .mark{color:var(--pt-deep)}
     <button class="start-go" id="startGo" disabled>학습 시작하기 ▶</button>
     <div class="credit">
       제작 · <b>보라라샘</b> · 전주서신중학교 교사 · siaawase@gmail.com<br>
-      제작일 2026.07.23 · <span id="lastMod">최종 수정 2026.10.06 00:30</span>
+      제작일 2026.07.23 · <span id="lastMod">최종 수정 2026.10.08 01:05</span>
     </div>
     <div class="privacy" id="privacyOffline">
       🔒 <b>개인정보 보호 안내</b><br>
@@ -323,7 +370,7 @@ h1 .mark{color:var(--pt-deep)}
       <button class="hint-btn" id="hintBtn">💡 힌트 보기</button>
       <div class="hint-box" id="hintBox"></div>
       <div class="feedback" id="feedback"></div>
-      <div class="game-footer">제작 · 보라라샘 / 2026.07.23</div>
+      <div class="game-footer">제작 · 보라라샘 · 2026.07.23</div>
     </div>
   </div>
 </div>
@@ -374,7 +421,7 @@ h1 .mark{color:var(--pt-deep)}
 
 </div>
 <script>
-const MADE_DATE="2026.07.23", LAST_MOD="2026.10.06 00:30";
+const MADE_DATE="2026.07.23", LAST_MOD="2026.10.08 01:05";
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -788,10 +835,17 @@ $("hintBtn").addEventListener("click",()=>{
   $("hintBox").style.display="block";$("hintBox").innerHTML='<b>💡 힌트 ·</b> '+S.items[S.idx].hint;
   $("hintBtn").style.display="none";
 });
-function goNext(){if(S.idx<S.items.length-1){S.idx++;renderQuestion()}else finishStage()}
+function goNext(){if(S.idx<S.items.length-1){S.idx++;renderQuestion()}else askFinish(false)}
+// 남은 문항이 있으면 한 번 확인하고 끝낸다(마지막 문항 '결과 보기'·Enter도 같음). '게임 끝내기'는 언제나 한 번 확인
+function askFinish(fromQuit){
+  const left=S.answered.filter(a=>!a).length;
+  if(left>0){if(!confirm("아직 "+left+"문항이 남았어요. 게임을 끝낼까요?\n(남은 문항은 미응답으로 기록돼요)"))return;}
+  else if(fromQuit&&!confirm("게임을 끝내고 결과를 볼까요?"))return;
+  finishStage();
+}
 $("btnPrev").addEventListener("click",()=>{if(S.idx>0){S.idx--;renderQuestion()}});
 $("btnNext").addEventListener("click",goNext);
-$("btnQuit").addEventListener("click",()=>{if(confirm("게임을 끝내고 결과를 볼까요?"))finishStage()});
+$("btnQuit").addEventListener("click",()=>askFinish(true));
 document.addEventListener("keydown",e=>{
   if(!$("gameScreen").classList.contains("active"))return;
   if(e.key==="Enter"||e.key===" "||e.key==="ArrowRight"){
@@ -820,7 +874,13 @@ function verdictText(st){
   if(!st.skipped)return grade(st.acc);
   return st.acc>=70?"잘하고 있어요! 남은 문제까지 풀며 좀 더 연습해 보면 어떨까요?":"좀 더 연습해 보면 어떨까요? 남은 문제까지 풀어 보면 감이 잡혀요.";
 }
-function noWeakText(st){return st.skipped?"남은 문제를 마저 풀어 보세요.":"약점이 보이지 않아요. 다음 단계에 도전해 보세요."}
+function noWeakText(st){return st.skipped?"남은 문제를 마저 풀어 보세요.":(S.stageIdx<STAGES.length-1?"약점이 보이지 않아요. 다음 단계에 도전해 보세요.":"약점이 보이지 않아요. 다른 단계에도 도전해 보세요.")}
+// '보완이 필요한 유형' 한 칸 = 가장 먼저 공부할 유형 하나 + 판단 방법(tip) (화면연출표준 8-2 v3.3) — 화면 리포트와 리포트 JPG가 함께 쓴다
+function weakSection(st,an){
+  if(an.allLow&&an.totalWrong>0)return{title:"보완이 필요한 유형",body:"유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요."};
+  if(an.first)return{title:"보완이 필요한 유형 · "+CATEGORIES[an.first.c].label+" "+an.first.ok+"/"+an.first.n,body:CATEGORIES[an.first.c].tip};
+  return{title:"보완이 필요한 유형",body:an.totalWrong>0?"뚜렷하게 약한 유형은 없어요. 틀린 문제는 오답노트의 해설을 확인해 보세요.":noWeakText(st)};
+}
 function grade(acc){
   if(acc>=95)return"완벽해요!";
   if(acc>=85)return"아주 잘했어요";
@@ -838,30 +898,31 @@ function catStats(){
   return m;
 }
 function analyze(){
-  const m=catStats(),good=[],weak=[],all=[];
+  const m=catStats(),good=[],shown=[];let totalWrong=0;
   for(const[c,v]of Object.entries(m)){
-    const pct=v.ok/v.n*100;all.push({c,...v,pct});
-    if(v.n<2)continue;
+    totalWrong+=v.n-v.ok;
+    if(v.n<2)continue;   // 2문항 이상 푼 유형만 판정
+    const pct=v.ok/v.n*100;shown.push({c,...v,pct});
     if(pct===100)good.push({c,...v});
-    else if(pct<50)weak.push({c,...v});
   }
-  const wrongCats=all.filter(x=>x.n-x.ok>0).sort((a,b)=>(b.n-b.ok)-(a.n-a.ok)||a.pct-b.pct||b.n-a.n);
-  const allBad=all.length>0&&all.every(x=>x.pct<50);
-  return{good,weak,first:wrongCats[0]||null,allBad};
+  const first=shown.filter(x=>x.n-x.ok>0).sort((a,b)=>(b.n-b.ok)-(a.n-a.ok)||a.pct-b.pct||b.n-a.n)[0]||null;
+  const allLow=shown.length>=2&&shown.every(x=>x.pct<50);   // 판정한 유형이 하나뿐이면 '유형 구분 자체를…'로 넘겨짚지 않는다
+  return{good,first,allLow,totalWrong};
 }
 
 /* ═══ 종료 ═══ */
 function finishStage(){
   clearTimeout(finTimer);finTimer=null;
+  if(!$("gameScreen").classList.contains("active"))return;   // 한 판에 한 번만 끝낸다(결과 전송 한 번)
   if(typeof cbHide==='function')cbHide();   // 정답 카드가 떠 있을 때 끝내도 종료 화면에 남지 않게
   const stage=STAGES[S.stageIdx];
   S.elapsed=Date.now()-(S.startTime||Date.now());
   const sec=Math.round(S.elapsed/1000),mm=Math.floor(sec/60),ss=sec%60;
   const st=stats();
-  $("endTitle").textContent=stage.ico+" "+stage.label+(st.skipped>0?" — 정비 중단 · 다음에 이어서 정비해요":" — 정비 완료!");   // 교사 결정(2026.10.06): 중간에 끝내면 정비 중단
+  $("endTitle").textContent=stage.ico+" "+stage.label+(!st.answered?" — 풀어 본 문제가 없어요":st.skipped>0?" — 정비 중단 · 다음에 이어서 정비해요":" — 정비 완료!");   // 교사 결정(2026.10.06): 중간에 끝내면 정비 중단
   $("finalScore").textContent=S.score;
   document.querySelector("#finalScore").nextElementSibling.textContent="점수 / "+S.max;
-  $("finalAcc").textContent=st.answered?st.acc+"%":"—";
+  $("finalAcc").textContent=st.answered?st.acc+"%":"–";
   $("endBandRight").textContent=S.score+" / "+S.max+"점";
   const d=new Date();
   const dateStr=d.getFullYear()+"."+p2(d.getMonth()+1)+"."+p2(d.getDate())+" "+p2(d.getHours())+":"+p2(d.getMinutes());
@@ -875,7 +936,7 @@ function finishStage(){
   $("noteTitle").innerHTML='📒 오답노트 · <span style="color:var(--pt-deep)">'+stage.label+'</span>';
   const list=$("noteList");
   if(!st.answered)list.innerHTML='<div class="perfect">📝 풀어 본 문제가 없어요.</div>';
-  else if(wrongs.length===0)list.innerHTML='<div class="perfect">🎉 축하해요! 푼 문제를 모두 첫 시도에 맞혔어요.</div>';
+  else if(wrongs.length===0)list.innerHTML=st.skipped?'<div class="perfect">푼 문제는 모두 첫 시도에 맞혔어요.</div>':'<div class="perfect">🎉 축하해요! 푼 문제를 모두 첫 시도에 맞혔어요.</div>';
   else list.innerHTML=wrongs.map(({it,a})=>{
     const ansTxt=it.opts[it.answer],picks=a.tried&&a.tried.length?a.tried:(a.chosen>=0?[a.chosen]:[]),chose=picks.length?picks.map(i=>it.opts[i]).join(" → "):"(고르지 않음)";
     return '<div class="note-item"><span class="note-kind">'+CATEGORIES[it.cat].label+'</span><div class="nq">'+it.q+
@@ -889,6 +950,7 @@ function finishStage(){
   nb.onclick=()=>startStage(S.stageIdx+1);
   $("retryBtn").className=hasNext?"btn sec":"btn";
   // ── 연동 모드: 결과 전송 ──
+  const oldSend=$("sendMsg");if(oldSend)oldSend.remove();   // 다시 하기로 여러 판 해도 전송 안내는 하나만
   if(IS_ONLINE&&STUDENT.verified){
     const nameInput=$("noteName");nameInput.value=STUDENT.name;nameInput.readOnly=true;nameInput.style.background="#f6f0f3";
     const wrongItems=S.items.map((it,i)=>{const a=S.answered[i];return(a&&!a.firstOk)?it.id:null}).filter(x=>x!==null).join(",");
@@ -899,7 +961,7 @@ function finishStage(){
       accuracy:st.acc,maxCombo:S.maxCombo,elapsedSeconds:Math.round(S.elapsed/1000),
       wrongItems:wrongItems,reflection:""
     }).then(res=>{
-      const el=document.createElement("div");
+      const el=document.createElement("div");el.id="sendMsg";
       el.style.cssText="margin-top:8px;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:600;text-align:center;";
       if(res.status==="ok"){el.style.background="#e8f5e9";el.style.color="#2e7d32";el.textContent="✅ 결과가 선생님께 전송되었습니다.";}
       else{el.style.background="#ffebee";el.style.color="#c62828";el.textContent="❌ 전송에 실패했습니다. 인터넷 연결을 확인해 주세요.";}
@@ -930,10 +992,8 @@ function buildReport(stage,st){
   if(st.skipped)msg+='⏸️ <b>끝까지 풀지 않았어요 ('+st.skipped+'문항 남음)</b><br>';
   msg+='🏁 <b>'+verdictText(st)+'</b><br>';
   if(an.good.length)msg+='✅ <b>잘하는 유형</b>: '+an.good.map(g=>CATEGORIES[g.c].label+" "+g.ok+"/"+g.n).join(", ")+'<br>';
-  if(an.weak.length)msg+='📌 <b>보완이 필요한 유형</b>: '+an.weak.map(g=>CATEGORIES[g.c].label+" "+g.ok+"/"+g.n).join(", ")+'<br>';
-  if(an.allBad)msg+='🧭 <b>가장 먼저 공부할 것</b>: 유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.';
-  else if(an.first)msg+='🧭 <b>가장 먼저 공부할 것 — '+CATEGORIES[an.first.c].label+'</b><br>'+CATEGORIES[an.first.c].tip;
-  else msg+='🧭 '+noWeakText(st);
+  const ws=weakSection(st,an);
+  msg+='📌 <b>'+ws.title+'</b><br>'+ws.body;
   html+='<div class="report-msg">'+msg+'</div>';
   $("reportArea").innerHTML=html;
 }
@@ -995,7 +1055,7 @@ function downloadNote(){
   headFoot(ctx,W,H,"📒 복합양식 자료 정비소 — 오답노트",name);
   let y=124;
   if(!stats().answered){ctx.fillStyle="#993556";ctx.font="bold 18px system-ui";ctx.fillText("📝 풀어 본 문제가 없어요.",pad,y+30);}
-  else if(!wrongs.length){ctx.fillStyle="#2f9e57";ctx.font="bold 18px system-ui";ctx.fillText("🎉 푼 문제를 모두 첫 시도에 맞혔어요!",pad,y+30);}
+  else if(!wrongs.length){ctx.fillStyle="#2f9e57";ctx.font="bold 18px system-ui";ctx.fillText(stats().skipped?"푼 문제는 모두 첫 시도에 맞혔어요.":"🎉 푼 문제를 모두 첫 시도에 맞혔어요!",pad,y+30);}
   else blocks.forEach(b=>{
     ctx.fillStyle="#ffffff";ctx.strokeStyle="#FAE4EC";ctx.fillRect(pad,y,W-2*pad,b.h);ctx.strokeRect(pad,y,W-2*pad,b.h);
     ctx.fillStyle="#d2483f";ctx.fillRect(pad,y,4,b.h);
@@ -1015,11 +1075,11 @@ function downloadReportImg(){
   const W=860,pad=40,cv=document.createElement("canvas"),ctx=cv.getContext("2d");
   const inner=W-2*pad-20;
   const rows=Object.entries(m).filter(([c,v])=>v.n>=2);
-  const tipText=an.allBad?"유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요."
-    :(an.first?CATEGORIES[an.first.c].tip:noWeakText(st));
-  const tipLines=wrap(ctx,tipText,inner-20,"13.5px system-ui");
+  const ws=weakSection(st,an);
+  const tipLines=wrap(ctx,ws.body,inner-20,"13.5px system-ui");
   const feelLines=feeling?wrap(ctx,feeling,inner-20,"13.5px system-ui"):[];
   const stdLines=wrap(ctx,"성취기준 "+STD_CODE+" "+STD_TEXT,inner,"12px system-ui");
+  const verdLines=st.answered?wrap(ctx,"🏁 "+(st.skipped?"끝까지 풀지 않았어요 ("+st.skipped+"문항 남음) · ":"")+verdictText(st),inner,"bold 15px system-ui"):[];
   if(!st.answered){   // 채점된 문항이 없으면 결과 대신 안내만 (지침 5-3)
     cv.width=W;cv.height=270+stdLines.length*17;
     headFoot(ctx,W,cv.height,"📊 복합양식 자료 정비소 — 학습 결과 분석 리포트",name);
@@ -1028,7 +1088,7 @@ function downloadReportImg(){
     ctx.fillStyle="#8a7f88";ctx.font="12px system-ui";stdLines.forEach(l=>{ctx.fillText(l,pad,y);y+=17});
     save(cv,fname("학습리포트"));return;
   }
-  const H=150+70+rows.length*34+40+ (an.good.length?22:0) + (an.weak.length?22:0) +30+tipLines.length*20+
+  const H=150+70+(verdLines.length-1)*22+rows.length*34+40+ (an.good.length?22:0) +30+tipLines.length*20+
     (feelLines.length?30+feelLines.length*20:0)+stdLines.length*17+80;
   cv.width=W;cv.height=H;
   headFoot(ctx,W,H,"📊 복합양식 자료 정비소 — 학습 결과 분석 리포트",name);
@@ -1039,7 +1099,7 @@ function downloadReportImg(){
   ctx.fillText("첫 시도 정답 "+st.firstOk+" · 다시 풀어 맞힘 "+st.retryOk+" · 못 맞힘 "+st.missed+
     (st.skipped?" · 미응답 "+st.skipped:"")+" · 최고 콤보 "+S.maxCombo+" · 소요 시간 "+(window._meta?window._meta.elapsed:""),pad,y);y+=26;
   ctx.fillStyle="#993556";ctx.font="bold 15px system-ui";
-  ctx.fillText("🏁 "+(st.skipped?"끝까지 풀지 않았어요 ("+st.skipped+"문항 남음) · ":"")+verdictText(st),pad,y);y+=28;
+  verdLines.forEach((l,i)=>{ctx.fillText(l,pad,y);y+=(i<verdLines.length-1?22:28)});
   rows.forEach(([c,v])=>{
     const pct=Math.round(v.ok/v.n*100);
     ctx.fillStyle="#3a2f36";ctx.font="bold 14px system-ui";ctx.fillText(CATEGORIES[c].label,pad,y);
@@ -1053,11 +1113,9 @@ function downloadReportImg(){
   y+=8;
   if(an.good.length){ctx.fillStyle="#2f9e57";ctx.font="bold 13.5px system-ui";
     ctx.fillText("✅ 잘하는 유형: "+an.good.map(g=>CATEGORIES[g.c].label+" "+g.ok+"/"+g.n).join(", "),pad,y);y+=22;}
-  if(an.weak.length){ctx.fillStyle="#d2483f";ctx.font="bold 13.5px system-ui";
-    ctx.fillText("📌 보완이 필요한 유형: "+an.weak.map(g=>CATEGORIES[g.c].label+" "+g.ok+"/"+g.n).join(", "),pad,y);y+=22;}
   y+=8;
   ctx.fillStyle="#993556";ctx.font="bold 14px system-ui";
-  ctx.fillText("🧭 가장 먼저 공부할 것"+(an.first&&!an.allBad?" — "+CATEGORIES[an.first.c].label:""),pad,y);y+=22;
+  ctx.fillText("📌 "+ws.title,pad,y);y+=22;
   ctx.fillStyle="#4a404a";ctx.font="13.5px system-ui";tipLines.forEach(l=>{ctx.fillText(l,pad+8,y);y+=20});
   if(feelLines.length){
     y+=14;ctx.fillStyle="#993556";ctx.font="bold 14px system-ui";ctx.fillText("💬 학습 소감",pad,y);y+=22;
@@ -1080,7 +1138,7 @@ function downloadTeacherXls(){
     st.items.forEach(it=>{
       const sit=it.sit?"[상황] 주제:"+it.sit.theme+" / 유형:"+it.sit.type+" / 목적:"+it.sit.purpose+" / 독자:"+it.sit.audience+" — ":"";
       rows+='<tr><td>'+it.id+'</td><td>'+esc(CATEGORIES[it.cat].label)+'</td><td>'+esc(sit+it.q)+
-        '</td><td>'+esc(it.opts[it.answer])+'</td><td>'+esc(it.explain)+'</td></tr>';
+        '</td><td style="color:#E00000;font-weight:bold">'+esc(it.opts[it.answer])+'</td><td>'+esc(it.explain)+'</td></tr>';
     });
     const sum={};st.items.forEach(it=>{sum[it.cat]=(sum[it.cat]||0)+1});
     let srows='<tr><th>유형</th><th>문항 수</th><th>학습 조언(tip)</th></tr>';

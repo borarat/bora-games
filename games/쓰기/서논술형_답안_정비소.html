@@ -6,7 +6,8 @@
            내용 조건이 하나도 없으면 형식 조건도 불인정, 1-5 교훈은 '내용+맺는 말'이 한 문장에, 1-5 비교는 인물+행동,
            동의어 보강(부지런히·성실히·열심히, 미래·앞날·나중 등) / 후속: 뒤 서술어에 걸린 부정은 무시, 이중 부정(모른 척하지 않)은 긍정, 1-5 일반 진술형 교훈 인정·게으르는 금지 틀과 함께만, 1-2 '믿을 수 없' 인정
      문항: 1-5 진단 해설 — 베낀 부분은 조건 ②(까닭)
-     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 -->
+     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
+     2026.10.08 01:05 10차: 테마층(답안 점검대) + 실제 조작 버그 검사·수정 — 중간 종료 총평·끝내기 확인·포커스·엑셀 '최종 수정' 진입·정답 빨강 -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -62,7 +63,7 @@ h1{font-size:clamp(23px,4.6vw,31px); color:var(--ink); font-weight:700; letter-s
 .flow .st span{font-size:12px; color:var(--ink2); line-height:1.55}
 .flow .st span b{display:inline; font-size:inherit; margin:0; color:var(--acc)}
 .flow .ar{color:var(--acc); font-weight:700; font-size:17px}
-@media (max-width:620px){.flow{grid-template-columns:1fr} .flow .ar{transform:rotate(90deg)}}
+@media (max-width:620px){.flow{grid-template-columns:1fr} .flow .ar{transform:rotate(90deg); justify-self:center}}
 .types{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:8px; margin-top:16px}
 .tcard{border:1px solid var(--line); border-radius:10px; padding:10px 12px; background:#fff}
 .tcard b{font-size:13px; color:var(--ink); display:block; margin-bottom:2px}
@@ -425,6 +426,14 @@ textarea.pulse{box-shadow:0 0 0 4px rgba(212,113,143,.35)!important; border-colo
   .pr-meth{color:#666; font-weight:400} .pr-muted{color:#888}
   .pr-foot{margin-top:14px; border-top:1px solid #ddd; padding-top:6px; font-size:8.5pt; color:#777}
 }
+/* ═══ 게임 테마층 · 답안 점검대 (2026.10.08) ═══
+   클립보드에 끼운 체크 목록과 줄만 그은 답안지를 하나씩 짚어 보는 점검대. 보조색 올리브 #6E8B3D. 영역 팔레트·헤더 띠·정답/오답 색·흰 문제 카드·정답 카드는 그대로.
+   이 블록과 시작 화면 SVG를 지우면 원래 모습 */
+:root{--th:#6E8B3D}
+.head .keyArt{margin-left:auto;flex:none;height:116px;width:auto}
+@media (max-width:860px){.head .keyArt{display:none}}
+#start .box{border-left:4px solid var(--th)}
+#start .box h3{color:var(--th)}
 </style>
 </head>
 <body>
@@ -439,6 +448,22 @@ textarea.pulse{box-shadow:0 0 0 4px rgba(212,113,143,.35)!important; border-colo
     <h1>서논술형 답안 정비소</h1>
     <div class="sub">부족한 답안을 진단하고 고쳐 쓴다 — <span style="white-space:nowrap">서논술형 평가 대비 연습</span></div>
    </div>
+   <svg class="keyArt" viewBox="0 0 250 116" aria-hidden="true">
+    <rect x="2" y="2" width="246" height="112" rx="10" fill="#F2F5EC" stroke="#6E8B3D" stroke-width="2"/>
+    <g transform="rotate(-4 182 62)">
+     <rect x="138" y="18" width="88" height="88" rx="4" fill="#fff" stroke="#B9C6A3" stroke-width="1.5"/>
+     <line x1="150" y1="18" x2="150" y2="106" stroke="#D9E2C9" stroke-width="1.5"/>
+     <g stroke="#C9D4B6" stroke-width="1.5"><line x1="154" y1="34" x2="218" y2="34"/><line x1="154" y1="46" x2="218" y2="46"/><line x1="154" y1="58" x2="218" y2="58"/><line x1="154" y1="70" x2="218" y2="70"/><line x1="154" y1="82" x2="218" y2="82"/><line x1="154" y1="94" x2="218" y2="94"/></g>
+    </g>
+    <rect x="22" y="16" width="100" height="92" rx="7" fill="#8A6A45" stroke="#6E5236" stroke-width="1.5"/>
+    <rect x="30" y="26" width="84" height="76" rx="3" fill="#fff"/>
+    <rect x="52" y="10" width="40" height="16" rx="4" fill="#6E8B3D"/>
+    <rect x="62" y="6" width="20" height="8" rx="4" fill="none" stroke="#6E8B3D" stroke-width="3"/>
+    <g fill="none" stroke="#6E8B3D" stroke-width="2"><rect x="38" y="38" width="12" height="12" rx="2"/><rect x="38" y="60" width="12" height="12" rx="2"/><rect x="38" y="82" width="12" height="12" rx="2"/></g>
+    <g fill="none" stroke="#6E8B3D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M40 44 l4 4 l8 -10"/><path d="M40 66 l4 4 l8 -10"/></g>
+    <g fill="#DCE4CC"><rect x="58" y="41" width="46" height="6" rx="3"/><rect x="58" y="63" width="40" height="6" rx="3"/><rect x="58" y="85" width="44" height="6" rx="3"/></g>
+    <g transform="rotate(38 128 82)"><rect x="96" y="77" width="56" height="9" rx="2" fill="#6E8B3D"/><rect x="146" y="77" width="8" height="9" fill="#C8B79A"/><path d="M154 77 l9 4.5 l-9 4.5 z" fill="#E8DCC4"/><path d="M160 79.5 l3 2 l-3 2 z" fill="#4a4a40"/><rect x="92" y="77" width="6" height="9" rx="2" fill="#B9C6A3"/></g>
+   </svg>
   </div>
 
   <div class="box">
@@ -488,7 +513,7 @@ textarea.pulse{box-shadow:0 0 0 4px rgba(212,113,143,.35)!important; border-colo
 
   <div class="credit">
    제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-   제작일 2026.09.27 · 최종 수정 2026.10.05 03:00
+   제작일 2026.09.27 · <span id="lastMod">최종 수정 2026.10.08 01:05</span>
   </div>
   <div class="privacy" id="privacyOffline">
    <b>🔒 개인정보 보호 안내</b><br>
@@ -532,10 +557,10 @@ textarea.pulse{box-shadow:0 0 0 4px rgba(212,113,143,.35)!important; border-colo
   <div class="nav">
    <button onclick="goPrev()">◀ 이전</button>
    <button onclick="goNext()">다음 ▶</button>
-   <button class="end" onclick="finish()">■ 게임 끝내기</button>
+   <button class="end" onclick="askFinish(false)">■ 게임 끝내기</button>
   </div>
   <div class="stage" id="stageBody"></div>
-  <div class="pcredit">제작 · 보라라샘 / 2026.09.27</div>
+  <div class="pcredit">제작 · 보라라샘 · 2026.09.27</div>
  </div>
 </div>
 
@@ -569,7 +594,7 @@ textarea.pulse{box-shadow:0 0 0 4px rgba(212,113,143,.35)!important; border-colo
   </div>
   <div class="credit">
    제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-   제작일 2026.09.27 · 최종 수정 2026.10.05 03:00
+   제작일 2026.09.27 · 최종 수정 2026.10.08 01:05
   </div>
  </div>
 </div>
@@ -584,14 +609,6 @@ textarea.pulse{box-shadow:0 0 0 4px rgba(212,113,143,.35)!important; border-colo
  <button class="btn sec" style="width:100%;margin-top:14px" onclick="closeModal('reviewModal')">닫기</button>
 </div></div>
 
-<div class="modal" id="teacherModal"><div class="sheet" style="max-width:400px;text-align:center">
- <h2>학습 데이터 목록</h2>
- <p>전체 문항의 정답과 해설이 담긴 파일을 내려받습니다.</p>
- <div style="display:flex;gap:8px;margin-top:16px">
-  <button class="btn sec" style="flex:1" onclick="closeModal('teacherModal')">취소</button>
-  <button class="btn" style="flex:1" onclick="dlTeacherXls()">내려받기</button>
- </div>
-</div></div>
 
 <script>
 /* ══════════════════════════════════════════════════════════
@@ -1039,7 +1056,7 @@ if(typeof module!=='undefined') module.exports={gradeText,copyHit,checkCond,eval
    서논술형 답안 정비소 v11 — 엔진
    ══════════════════════════════════════════════════════════ */
 const MADE_DATE = '2026.09.27';
-const MOD_DATE  = '2026.10.05 03:00';
+const MOD_DATE  = '2026.10.08 01:05';
 
 const GAME_CONFIG = {
   gameCode: "W401",
@@ -1090,7 +1107,7 @@ document.querySelectorAll('.endMax').forEach(e=>e.textContent=MAX_TOTAL);
 /* ══════════ 상태 ══════════ */
 const R = {};
 const S = { stage:1, list:[], i:0, phase:'diag', score:0, streak:0, best:0, t0:0, elapsed:0 };
-function freshR(){ return {dTries:0,sel:[],selFirst:null,dFirst:0,dGot:0,dDone:false,
+function freshR(){ return {dTries:0,sel:[],selFirst:null,dFirst:0,dGot:0,dDone:false,dRetryOk:false,
   fixText:'',fixGot:0,fixFirst:0,fixTries:0,det:null,graded:false,self:[],showModel:false,
   cloze:false,clozeOpen:false,clozeVals:[],clozeOk:null,usedCloze:false,modelSeen:false,lastKey:'',
   firstHits:null,bestHits:null,bestText:'',firstStyle:false,firstCopy:false}; }
@@ -1260,7 +1277,7 @@ function submitDiag(){
     return;
   }
   r.dGot = e===0 ? Math.round(DIAG_PT/2) : Math.max(0,Math.round((DIAG_PT-2*e)/2));
-  r.dDone=true; S.score+=r.dGot; paintDiag(q,r); hud();
+  r.dDone=true; r.dRetryOk=(e===0); S.score+=r.dGot; paintDiag(q,r); hud();
   if(e===0){ sPart(); cbShow('다시 풀어 맞힘','+'+r.dGot,'retry'); }
   else { sNO(); cbShow('해설을 확인해요','진단 '+r.dGot+'점','info',850); }
 }
@@ -1451,8 +1468,17 @@ function goNext(){
   if(cbShown()) closeBanner();
   if(S.phase==='diag' && R[S.list[S.i].id].dDone){ toFix(); return; }
   finalizePending();
-  if(S.i>=S.list.length-1){ finish(); return; }
+  if(S.i>=S.list.length-1){ askFinish(true); return; }
   S.i++; S.phase='diag'; render();
+}
+// 남은 문제가 있으면 한 번 확인한 뒤 끝낸다 (지침 6-1). 마지막 문제에서 모두 풀었으면 바로 결과
+function askFinish(fromLast){
+  const left=S.list.filter(q=>{ const r=R[q.id]; return !r||!r.graded; }).length;
+  if(!(fromLast&&left===0)){
+    const msg=left>0?'아직 풀지 않은 문제가 '+left+'개 있어요.\n지금 끝낼까요? (남은 문제는 미응답으로 기록돼요)':'지금까지 푼 결과로 게임을 끝낼까요?';
+    if(!confirm(msg)) return;
+  }
+  finish();
 }
 function goPrev(){
   if(S.phase==='fix'){ toDiag(); return; }
@@ -1468,8 +1494,8 @@ document.addEventListener('keydown',e=>{
   // 이 문항에서 할 일을 마쳤는가 — 마쳤을 때만 키보드로 다음으로 넘어간다
   const fixDone=r.det&&((r.det.hits.every(Boolean)&&!r.det.fatal)||r.showModel);
   const done = S.phase==='diag' ? r.dDone : fixDone;
+  if(tag==='TEXTAREA'||tag==='INPUT') return;               // 입력칸의 띄어쓰기·Enter는 그대로 (배너가 떠 있어도)
   if(go&&cbShown()){ e.preventDefault(); closeBanner(); if(done) goNext(); return; }
-  if(tag==='TEXTAREA'||tag==='INPUT') return;
   if(tag==='BUTTON'&&e.key!=='ArrowRight') return;          // 버튼에 포커스가 있으면 그 버튼이 눌린다
   if(go){
     e.preventDefault();
@@ -1477,6 +1503,8 @@ document.addEventListener('keydown',e=>{
     if(done) goNext();
   } else if(e.key==='ArrowLeft'){ e.preventDefault(); goPrev(); }
 });
+// 마우스로 누른 버튼에 포커스가 남으면 Enter·Space가 그 버튼을 다시 누른다 → 마우스 클릭 뒤에는 포커스를 놓는다 (키보드로 누른 것은 그대로)
+document.addEventListener('click',e=>{ const b=e.target.closest&&e.target.closest('button'); if(b&&e.detail>0&&document.activeElement===b) b.blur(); });
 /* 결과는 푼 단계 전체의 누적이다 — 표기도 그에 맞춘다 */
 function playedStages(){ const a=STAGES.filter(st=>st.items.some(q=>R[q.id]&&R[q.id].graded)).map(st=>st.n); return a.length?a:[S.stage]; }
 function stageLabel(){ const a=playedStages(); return a.length>1? a.join('·')+'단계 누적' : a[0]+'단계'; }
@@ -1507,7 +1535,7 @@ function stats(){
   const types={}; Object.keys(CTYPES).forEach(k=>types[k]={n:0,first:0,best:0});
   let noFix=0, falsePick=0, styleN=0, copyN=0, fixFull=0;
   graded.forEach(q=>{ const r=R[q.id];
-    d.n++; if(r.dFirst===DIAG_PT) d.exact++; else if(r.dGot>0) d.retry++; else d.fail++;
+    d.n++; if(r.dFirst===DIAG_PT) d.exact++; else if(r.dRetryOk) d.retry++; else d.fail++;
     const sf=r.selFirst||[]; q.opts.forEach((o,k)=>{ if(!o[1]&&sf.indexOf(k)>=0) falsePick++; });
     if(!r.firstHits){ noFix++; return; }
     if(r.firstStyle) styleN++; if(r.firstCopy) copyN++;
@@ -1523,7 +1551,13 @@ function stats(){
   const judged=cats.filter(x=>x.n>=2);
   const lowers=judged.filter(x=>x.pct<100).sort((a,b)=>a.pct-b.pct||b.n-a.n);
   const verdict = rate>=95?'완벽해요!' : rate>=85?'아주 잘했어요' : rate>=70?'잘하고 있어요' : rate>=50?'기본은 잡혔어요' : '다시 한 번 도전해요';
-  return {graded,skipped,notYet,noFix,d,c,m,cats,firstStudy:lowers[0]||null,diagRate,condRate,rate,verdict,falsePick,styleN,copyN,fixFull};
+  // 총평 (화면연출표준 7장): 채점 0개 / 중간 종료 / 끝까지 — 끝까지 하지 않았으면 칭찬·완료 문구를 쓰지 않는다
+  const title = !graded.length ? '풀어 본 문제가 없어요' : skipped.length ? '여기까지 풀었어요' : '';
+  const vtext = !graded.length ? ''
+              : skipped.length ? (rate>=70?'잘하고 있어요! 남은 문제까지 풀며 좀 더 연습해 보면 어떨까요?':'좀 더 연습해 보면 어떨까요? 남은 문제까지 풀어 보면 감이 잡혀요.')
+              : verdict;
+  const pctOf = v => graded.length ? v+'%' : '–';
+  return {graded,skipped,notYet,noFix,d,c,m,cats,firstStudy:lowers[0]||null,diagRate,condRate,rate,verdict,title,vtext,pctOf,falsePick,styleN,copyN,fixFull};
 }
 function band(x){ if(x.n<2) return {t:'판단하기엔 문제가 적어요',c:'nb'}; if(x.pct===100) return {t:'✅ 잘하고 있어요',c:'ok'};
   if(x.pct>=50) return {t:'🔸 조금 더',c:'mid'}; return {t:'🔻 보완이 필요해요',c:'low'}; }
@@ -1555,8 +1589,9 @@ function finish(){
   $('endScore').textContent=S.score;
   document.querySelectorAll('.endMax').forEach(e=>e.textContent=MAXP);
   const sn=skipNote(st);
-  $('endVerdict').innerHTML=(sn?'<div style="color:var(--warn);font-size:14px;font-weight:700;margin-bottom:4px">'+esc(sn)+'</div>':'')+esc(st.verdict)+
-    '<div style="color:var(--sub);font-size:13px;font-weight:500;margin-top:4px">진단 정확도 '+st.diagRate+'% · 첫 답안 조건 충족 '+st.condRate+'%</div>';
+  $('endVerdict').innerHTML=(st.title?'<div style="font-size:22px;font-weight:700;margin-bottom:4px">'+esc(st.title)+'</div>':'')+
+    (sn&&st.graded.length?'<div style="color:var(--warn);font-size:14px;font-weight:700;margin-bottom:4px">'+esc(sn)+'</div>':'')+esc(st.vtext)+
+    '<div style="color:var(--sub);font-size:13px;font-weight:500;margin-top:4px">진단 정확도 '+st.pctOf(st.diagRate)+' · 첫 답안 조건 충족 '+(st.c.firstN?st.condRate+'%':'–')+'</div>';
   const cells=[['진단 첫 시도 정확',st.d.exact+' / '+st.d.n],['첫 답안 조건',st.c.firstOK+' / '+st.c.firstN],['최종 조건',st.c.bestOK+' / '+st.c.firstN],
     ['혼자 힘으로 완성',st.m.self]];
   if(st.m.cloze) cells.push(['빈칸 채우기',st.m.cloze]);
@@ -1616,8 +1651,8 @@ function pdfHtml(nm){
     ['혼자 힘으로 완성',st.m.self+'문제'],['빈칸 채우기',st.m.cloze+'문제'],['모범 답안 보고 확정',st.m.model+'문제']];
   if(st.skipped.length) cells.push(['미응답',st.skipped.length+'문제']);
   h+='<div class="pr-cells">'+cells.map(([l,v])=>'<div><b>'+esc(v)+'</b><span>'+l+'</span></div>').join('')+'</div>';
-  h+='<div class="pr-verdict">'+(sn?'<em>'+esc(sn)+'</em><br>':'')+'총평 — '+esc(st.verdict)+
-     ' <span>(진단 정확도 '+st.diagRate+'% · 첫 답안 조건 충족 '+st.condRate+'%)</span></div>';
+  h+='<div class="pr-verdict">'+(st.title?esc(st.title)+'<br>':'')+(sn&&st.graded.length?'<em>'+esc(sn)+'</em><br>':'')+(st.vtext?'총평 — '+esc(st.vtext):'')+
+     ' <span>(진단 정확도 '+st.pctOf(st.diagRate)+' · 첫 답안 조건 충족 '+(st.c.firstN?st.condRate+'%':'–')+')</span></div>';
   h+='<h2>조건 종류별 분석 <span>고쳐 쓴 첫 답안에서 조건을 채운 비율</span></h2>';
   h+=st.cats.length?'<table class="pr-tab"><tr><th>조건 종류</th><th>첫 답안</th><th>최종</th><th>판정</th></tr>'+
     st.cats.map(x=>{ const b=band(x); return '<tr><td>'+esc(CTYPES[x.k].label)+'</td><td>'+x.first+' / '+x.n+'</td><td>'+x.best+' / '+x.n+'</td><td class="'+b.c+'">'+b.t+'</td></tr>'; }).join('')+'</table>'
@@ -1631,14 +1666,14 @@ function pdfHtml(nm){
   const list=ITEMS.filter(q=>R[q.id]);
   h+='<div class="pr-break"></div><h1>문제별 기록</h1>';
   h+='<table class="pr-tab"><tr><th>문제</th><th>진단</th><th>첫 답안</th><th>최종</th><th>방법</th><th>점수</th></tr>'+list.map(q=>{ const r=R[q.id];
-    const dg=!r.graded?'풀지 않음':r.dFirst===DIAG_PT?'✅ 첫 시도':r.dGot>0?'🔁 다시 풀어':'❌';
+    const dg=!r.graded?'풀지 않음':r.dFirst===DIAG_PT?'✅ 첫 시도':r.dRetryOk?'🔁 다시 풀어':'❌ 못 맞힘';
     const f=r.firstHits?r.firstHits.filter(Boolean).length+' / '+q.fix.length:'—', b=r.bestHits?r.bestHits.filter(Boolean).length+' / '+q.fix.length:'—';
     return '<tr><td>'+esc(q.id)+' '+esc(q.title.split(' —')[0])+'</td><td>'+dg+'</td><td>'+f+'</td><td>'+b+'</td><td>'+methodOf(q)+'</td><td>'+(r.dGot+r.fixGot)+' / '+itemPt(q)+'</td></tr>'; }).join('')+'</table>';
   list.forEach(q=>{ const r=R[q.id];
     h+='<div class="pr-item"><h3>'+q.stage+'단계 · '+esc(q.title)+'</h3>'+
       '<p><b>문제</b> '+esc(q.ask)+'</p>';
     if(!r.graded){ h+='<p class="pr-muted">풀지 않은 문제예요.</p></div>'; return; }
-    h+='<p><b>진단</b> '+(r.dFirst===DIAG_PT?'첫 시도에 정확히 찾음':r.dGot>0?'다시 풀어 찾음':'찾지 못함')+
+    h+='<p><b>진단</b> '+(r.dFirst===DIAG_PT?'첫 시도에 정확히 찾음':r.dRetryOk?'다시 풀어 찾음':'찾지 못함')+
        ' — 부족한 곳: '+q.opts.filter(o=>o[1]).map(o=>esc(o[0])).join(' / ')+'</p>';
     if(r.firstHits){
       h+='<table class="pr-cond"><tr><th>조건</th><th>종류</th><th>첫 답안</th><th>최종</th></tr>'+q.fix.map((f,i)=>
@@ -1672,31 +1707,25 @@ function openReview(){
   $('reviewModal').classList.add('on');
 }
 
-/* ══════════ 마스코트 롱프레스 → 교사용 엑셀 ══════════ */
-(function(){
-  const m=$('mascot'); if(!m) return; let timer=null;
-  const start=e=>{ e.preventDefault(); timer=setTimeout(()=>{ timer=null; $('teacherModal').classList.add('on'); },2000); };
-  const cancel=()=>{ if(timer){ clearTimeout(timer); timer=null; } };
-  m.addEventListener('pointerdown',start);
-  ['pointerup','pointerleave','pointercancel'].forEach(ev=>m.addEventListener(ev,cancel));
-  m.addEventListener('contextmenu',e=>e.preventDefault());
-})();
+/* ══════════ 교사용 엑셀 — 크레딧의 '최종 수정' 글자 클릭 (화면연출표준 9장 · 마스코트 길게 누르기 폐지) ══════════ */
+(function(){ const t=$('lastMod'); if(!t) return; t.style.cursor='default'; t.addEventListener('click',()=>dlTeacherXls()); })();
 function xmlEsc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function sheet(name,rows){ return '<Worksheet ss:Name="'+xmlEsc(name)+'"><Table>'+rows.map(r=>'<Row>'+r.map(c=>
-  '<Cell><Data ss:Type="String">'+xmlEsc(c==null?'':c)+'</Data></Cell>').join('')+'</Row>').join('')+'</Table></Worksheet>'; }
+// red: 정답 열 번호 — 교사용 자료의 정답은 빨간 글씨 (머리줄 제외)
+function sheet(name,rows,red){ return '<Worksheet ss:Name="'+xmlEsc(name)+'"><Table>'+rows.map((r,ri)=>'<Row>'+r.map((c,ci)=>
+  '<Cell'+(ri>0&&red&&red.indexOf(ci)>=0?' ss:StyleID="ans"':'')+'><Data ss:Type="String">'+xmlEsc(c==null?'':c)+'</Data></Cell>').join('')+'</Row>').join('')+'</Table></Worksheet>'; }
 function fixRule(c){ return '['+CTYPES[c.k].label+'] '+(c.t==='sent'?('마침표로 끝나는 문장 '+(c.n||2)+'개 이상') : c.t==='para'?'줄바꿈·번호 없음' : c.t==='count'?('다음 중 '+c.n+'개 이상: '+c.w.join(' | ')) :
   (c.t==='all'?c.g.map(g=>'('+g.join(' | ')+')').join(' 그리고 ')+(c.alt?c.alt.map(gs=>' 또는 '+gs.map(g=>'('+g.join(' | ')+')').join(' 그리고 ')).join(''):'')+(c.same?' — 한 문장 안에서':'') : c.w.join(' | '))+(c.nocopy?' (지문 베끼기면 불인정)':'')+
   (c.k!=='form'?(c.neg===false?' · 부정 표현 검사 안 함':' · 낱말 뒤에 부정 표현이 오면 불인정'):'')); }
 function dlTeacherXls(){
-  closeModal('teacherModal');
   const sheets=[];
   STAGES.forEach(st=>{
-    const rows=[['원본 id','제목','지문','자료','문제','조건','부족한 답안','진단 선택지 (✔=부족한 곳)','모범 답안','고쳐 쓰기 채점 (조건별)']];
+    const rows=[['원본 id','제목','지문','자료','문제','조건','부족한 답안','진단 정답 (✔ 부족한 곳)','진단 오답 선택지 (✘ 답안이 잘한 부분)','모범 답안','고쳐 쓰기 채점 (조건별 인정 답)']];
     st.items.forEach(q=>rows.push([q.id,q.title,q.passage,q.extra?q.extra.text:'',q.ask,
       q.conds.map((c,k)=>CIRC[k]+' '+c).join('  '),q.bad,
-      q.opts.map(o=>(o[1]?'✔ ':'✘ ')+o[0]+' — '+o[2]).join('  /  '),
+      q.opts.filter(o=>o[1]).map(o=>'✔ '+o[0]+' — '+o[2]).join('  /  '),
+      q.opts.filter(o=>!o[1]).map(o=>'✘ '+o[0]+' — '+o[2]).join('  /  '),
       q.model.join('  ||  '), q.fix.map(c=>c.l+': '+fixRule(c)).join('  /  ')]));
-    sheets.push(sheet(st.name+' 문항',rows));
+    sheets.push(sheet(st.name+' 문항',rows,[7,9,10]));
   });
   const r2=[['결함 코드','결함 이름','학습 조언(tip)','진단 정답 선택지 수']];
   Object.keys(TAGS).forEach(k=>{ let n=0; ITEMS.forEach(q=>q.opts.forEach(o=>{ if(o[1]&&o[3]===k) n++; }));
@@ -1710,7 +1739,8 @@ function dlTeacherXls(){
   r2.push(['크레딧','제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com · 최종 수정 '+MOD_DATE]);
   sheets.push(sheet('결함 유형·배점',r2));
   const xml='<?xml version="1.0" encoding="UTF-8"?>\n<?mso-application progid="Excel.Sheet"?>\n'+
-   '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">'+sheets.join('')+'</Workbook>';
+   '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">'+
+   '<Styles><Style ss:ID="ans"><Font ss:Bold="1" ss:Color="#E00000"/></Style></Styles>'+sheets.join('')+'</Workbook>';
   const a=document.createElement('a'); a.href='data:application/vnd.ms-excel;charset=utf-8,'+encodeURIComponent(xml);
   a.download='W401_답안정비소_학습데이터목록_'+ymd()+'.xls'; a.click();
 }

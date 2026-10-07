@@ -5,7 +5,8 @@
      문항: 기본 16 고치기 전 글을 결론이 근거 사이에 끼인 글로(실제로 고칠 점이 있게)
      설명: 재구성 = 문장의 순서를 바꾸거나, 긴 문장을 나누거나 짧은 문장을 합치는 등 글의 짜임을 다시 짜는 것(교사 결정) — 시작 화면 칩·유형 설명·팁·힌트 통일
      확인: 직접 쓰기는 추가·삭제·대치·재구성만 정답(첨가·재배열 등 오답) — 기존 채점 그대로 맞음
-     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 -->
+     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
+     2026.10.08 01:05 10차: 테마층(교정 원고) + 실제 조작 버그 검사·수정 — 중간 종료 총평·보완 칸 하나·엑셀 정답 빨강·확인창·자동 종료·못 맞힘 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -246,11 +247,19 @@ mark.hl-move{background:#EAE5F8;color:#6748A8;font-weight:600;box-shadow:inset 0
   .pbody{flex-direction:column;align-items:stretch}
   .nav{width:100%;border-left:none;border-top:1px solid var(--line);flex-direction:row;padding:10px 12px}
   .nav button{flex:1;padding:13px 2px;min-height:46px;font-size:13px}
-  .nav .quit .wide{display:none}
   #start .inner{padding:34px 18px 44px}
   .titlerow{flex-direction:column;gap:10px}
   .content{padding:16px}
 }
+
+/* ═══ 게임 테마층 · 교정 원고 (2026.10.08) ═══
+   원고지 칸 위에 교정 부호를 그어 가며 연필로 글을 다듬는 장면. 보조색 회갈 #7A6A5A. 영역 팔레트·헤더 띠·정답/오답 색·흰 문제 카드·정답 카드는 그대로.
+   이 블록과 시작 화면 SVG를 지우면 원래 모습 */
+:root{--th:#7A6A5A}
+.titlerow .keyArt{margin-left:auto;flex:none;height:116px;width:auto}
+@media (max-width:860px){.titlerow .keyArt{display:none}}
+#start .std,#start .panel{border-left:4px solid var(--th)}
+#start .panel h3{color:var(--th)}
 </style>
 </head>
 <body>
@@ -271,6 +280,35 @@ mark.hl-move{background:#EAE5F8;color:#6748A8;font-weight:600;box-shadow:inset 0
           <div class="s-title">고쳐쓰기의 원리</div>
           <div class="s-sub">추가 · 삭제 · 대치 · 재구성으로 글을 다듬어요</div>
         </div>
+        <svg class="keyArt" viewBox="0 0 264 120" aria-hidden="true">
+          <rect x="2" y="2" width="260" height="116" rx="10" fill="#F5F1EC" stroke="#7A6A5A" stroke-width="2"/>
+          <rect x="14" y="14" width="184" height="92" rx="4" fill="#fff" stroke="#D8CEC3" stroke-width="1.5"/>
+          <g fill="none" stroke="#D8CEC3" stroke-width="1.2">
+            <rect x="22" y="30" width="168" height="20"/><rect x="22" y="72" width="168" height="20"/>
+            <path d="M43 30v20M64 30v20M85 30v20M106 30v20M127 30v20M148 30v20M169 30v20"/>
+            <path d="M43 72v20M64 72v20M85 72v20M106 72v20M127 72v20M148 72v20M169 72v20"/>
+          </g>
+          <g fill="#E3DBD1">
+            <rect x="26" y="36" width="13" height="8" rx="2"/><rect x="47" y="36" width="13" height="8" rx="2"/><rect x="68" y="36" width="13" height="8" rx="2"/>
+            <rect x="110" y="36" width="13" height="8" rx="2"/><rect x="131" y="36" width="13" height="8" rx="2"/><rect x="152" y="36" width="13" height="8" rx="2"/><rect x="173" y="36" width="13" height="8" rx="2"/>
+            <rect x="26" y="78" width="13" height="8" rx="2"/><rect x="47" y="78" width="13" height="8" rx="2"/><rect x="68" y="78" width="13" height="8" rx="2"/><rect x="89" y="78" width="13" height="8" rx="2"/>
+            <rect x="131" y="78" width="13" height="8" rx="2"/><rect x="152" y="78" width="13" height="8" rx="2"/>
+          </g>
+          <rect x="88" y="17" width="26" height="10" rx="3" fill="#fff" stroke="#7A6A5A" stroke-width="1.6"/>
+          <g fill="none" stroke="#7A6A5A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M80 52 l5 7 l5 -7"/><path d="M85 52 C85 38 92 32 98 27"/>
+            <path d="M108 40 H165 q8 0 8 -7 q0 -6 -5 -6 q-5 0 -4 6 q1 6 10 7"/>
+            <path d="M28 72 q0 -9 11 -9 q11 0 11 9 v12 q0 9 11 9 q11 0 11 -9"/>
+          </g>
+          <g transform="translate(232 70) rotate(32)">
+            <rect x="-7" y="-46" width="14" height="10" rx="2" fill="#CFC5BA"/>
+            <rect x="-7" y="-37" width="14" height="4" fill="#9A8C7E"/>
+            <rect x="-7" y="-33" width="14" height="52" fill="#7A6A5A"/>
+            <rect x="-2" y="-33" width="4" height="52" fill="#8E7F70"/>
+            <path d="M-7 19 L0 37 L7 19 Z" fill="#EBDDC8"/>
+            <path d="M-2.4 31 L0 37 L2.4 31 Z" fill="#4A4038"/>
+          </g>
+        </svg>
       </div>
 
       <div class="std">
@@ -314,7 +352,7 @@ mark.hl-move{background:#EAE5F8;color:#6748A8;font-weight:600;box-shadow:inset 0
 
       <div class="credit">
         제작 · <b>보라라샘</b> · 전주서신중학교 교사 · siaawase@gmail.com<br>
-        제작일 2026.06.16 · <span id="lastMod">최종 수정 2026.10.05 03:00</span>
+        제작일 2026.06.16 · <span id="lastMod">최종 수정 2026.10.08 01:05</span>
       </div>
 
       <div class="privacy" id="privacyOffline">
@@ -367,10 +405,10 @@ mark.hl-move{background:#EAE5F8;color:#6748A8;font-weight:600;box-shadow:inset 0
           <button class="hintbtn" id="hintBtn" onclick="showHintManual()">💡 힌트</button>
           <button class="prev" id="prevBtn" onclick="go(-1)">◀ 이전</button>
           <button class="next" id="nextBtn" onclick="go(1)">다음 ▶</button>
-          <button class="quit" onclick="finish()"><span class="wide">게임 </span>끝내기</button>
+          <button class="quit" onclick="askFinish(true)">게임 끝내기</button>
         </div>
       </div>
-      <div class="pcredit">제작 · 보라라샘 / 2026.06.16</div>
+      <div class="pcredit">제작 · 보라라샘 · 2026.06.16</div>
     </div>
   </section>
 
@@ -392,7 +430,6 @@ mark.hl-move{background:#EAE5F8;color:#6748A8;font-weight:600;box-shadow:inset 0
           <div class="nums" id="repNums"></div>
           <div class="verdict" id="repVerdict"></div>
           <div class="catbox" id="repCats"></div>
-          <div class="advice" id="repAdvice"></div>
         </div>
       </div>
 
@@ -435,7 +472,7 @@ mark.hl-move{background:#EAE5F8;color:#6748A8;font-weight:600;box-shadow:inset 0
 <div id="cbn"></div><canvas id="cbnFx"></canvas>
 <script>
 const MADE_DATE='2026.06.16';
-const LAST_MOD='최종 수정 2026.10.05 03:00';
+const LAST_MOD='최종 수정 2026.10.08 01:05';
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -679,7 +716,7 @@ const STD_CODE='[9국03-08]';
 const STD_TEXT='쓰기 과정과 전략을 점검·조정하며 글을 쓰고, 독자를 고려하여 글을 고쳐 쓴다.';
 
 /* ===================== 상태 ===================== */
-const S={stage:1, items:[], st:[], idx:0, score:0, combo:0, maxCombo:0, t0:0, elapsed:0, ended:false};
+const S={stage:1, items:[], st:[], idx:0, score:0, combo:0, maxCombo:0, t0:0, elapsed:0, ended:false, run:0, autoT:null};
 let flashReveal=false;
 const $=id=>document.getElementById(id);
 function stage(){ return STAGES[S.stage-1]; }
@@ -754,7 +791,7 @@ function startStage(n){
 }
 
 function doStartStage(n){
-  ac(); hideBanner();
+  ac(); hideBanner(); clearTimeout(S.autoT); S.run++;
   S.stage=n; S.idx=0; S.score=0; S.combo=0; S.maxCombo=0; S.ended=false;
   S.t0=Date.now(); S.elapsed=0;
   const g=stage();
@@ -763,7 +800,7 @@ function doStartStage(n){
     S.st=S.items.map(()=>({revealed:false,picked:null,tries:0,result:null,done:false}));
   }else{
     S.items=shuffle(g.data).map(q=>{const opts=shuffle([q.prob,...q.dist]);return {...q,opts,ansPos:opts.indexOf(q.prob)};});
-    S.st=S.items.map(()=>({s1:{tries:0,solved:false,shown:false},s2:{tries:0,solved:false,shown:false,val:''},result:null,done:false}));
+    S.st=S.items.map(()=>({s1:{tries:0,solved:false,shown:false,bad:-1},s2:{tries:0,solved:false,shown:false,val:'',bad:''},result:null,done:false}));
   }
   show('play'); updateBar(); render();
 }
@@ -780,7 +817,7 @@ function go(d){
   hideBanner();
   const ni=S.idx+d;
   if(ni<0)return;
-  if(ni>=S.items.length){finish();return;}
+  if(ni>=S.items.length){askFinish(false);return;}
   S.idx=ni;updateBar();render();
 }
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
@@ -805,6 +842,21 @@ function award(first){
   }
 }
 function penalty(){ S.combo=0; S.score=Math.max(0,S.score-3); }
+/* 모든 문항이 채점되면 약 2초 뒤 결과 화면 (2026.10.08). 다시 하기·시작화면 이동으로 판이 바뀌면 무효 */
+function checkAllDone(){
+  if(S.ended||!S.st.every(x=>x.done))return;
+  clearTimeout(S.autoT);
+  const run=S.run;
+  S.autoT=setTimeout(()=>{ if(run===S.run&&!S.ended&&$('play').classList.contains('on')) finish(); },2000);
+}
+/* '게임 끝내기'는 한 번 확인한다. 마지막 문항의 '결과 보기'는 남은 문항이 있을 때만 확인한다 */
+function askFinish(always){
+  if(S.ended){show('end');return;}
+  const left=S.st.filter(x=>!x.done).length;
+  if(left>0){ if(!confirm('아직 '+left+'문항이 남았어요. 게임을 끝낼까요?\n(남은 문항은 미응답으로 기록돼요)'))return; }
+  else if(always){ if(!confirm('지금까지 푼 결과로 게임을 끝낼까요?'))return; }
+  finish();
+}
 function celebrate(pt){
   const c=S.combo;
   if(c===3) sCombo3();
@@ -838,7 +890,8 @@ function renderBasic(){
     let cls='opt';
     if(st.done){cls+=' lock'; if(pos===q.ansPos)cls+=' correct'; else if(st.picked===pos)cls+=' wrong';}
     else if(!revealed) cls+=' pending';
-    const dis = st.done || !revealed;
+    else if(st.tries>0&&st.picked===pos) cls+=' wrong';
+    const dis = st.done || !revealed || (st.tries>0&&st.picked===pos);
     h+=`<button class="${cls}" ${dis?'disabled':''} onclick="pickBasic(${pos})"><span class="mk">${'①②③④'[pos]}</span>${esc(q.opts[oi])}</button>`;
   });
   h+=`</div><div class="fb hintbox" id="hint"></div><div class="fb tipbox" id="tip"></div>`;
@@ -859,6 +912,7 @@ function castMagic(){
 function pickBasic(pos){
   const q=S.items[S.idx], st=S.st[S.idx];
   if(st.done)return;
+  if(st.tries>0&&st.picked===pos)return;   // 이미 틀린 보기를 다시 눌러도 또 감점하지 않는다
   st.tries++;
   if(pos===q.ansPos){
     st.picked=pos; st.done=true;
@@ -867,7 +921,7 @@ function pickBasic(pos){
     const a=award(first);
     if(first) celebrate(a.pt);
     else { sOk(); cbShow('다시 풀어 맞힘','+'+a.pt,'retry'); }
-    hideHint(); updateBar(); render();
+    hideHint(); updateBar(); render(); checkAllDone();
   }else{
     sNo(); penalty(); st.picked=pos;
     const btns=document.querySelectorAll('#opts .opt');
@@ -875,8 +929,9 @@ function pickBasic(pos){
     setTimeout(()=>btns[pos].classList.remove('shake'),400);
     if(st.tries>=2){
       st.done=true; st.result='miss';
-      updateBar(); render();
+      updateBar(); render(); checkAllDone();
     }else{
+      btns[pos].disabled=true;
       showHint(`다시 한 번 생각해 봐요! <b>덧붙였으면 추가, 뺐으면 삭제, 낱말을 바꿨으면 대치, 자리를 옮기거나 문장을 나누고 합쳤으면 재구성</b>이에요. 수정 전·후에서 무엇이 달라졌는지 견주어 보세요.`);
       updateBar();
     }
@@ -893,7 +948,7 @@ function renderChal(){
     h+=`<div class="solved-line"><span class="ck">${st.s1.shown?'✎ 문제점':'✓ 문제점'}</span> ${esc(q.prob)}</div>`;
   }else{
     h+=`<div class="sa-q"><span class="step">1단계</span> 이 글의 문제점은 무엇일까요?</div><div class="opts" id="opts">`;
-    q.opts.forEach((o,pos)=>{h+=`<button class="opt" onclick="pickChal(${pos})"><span class="mk">${'①②③④'[pos]}</span>${esc(o)}</button>`;});
+    q.opts.forEach((o,pos)=>{const bad=st.s1.bad===pos;h+=`<button class="opt${bad?' wrong':''}" ${bad?'disabled':''} onclick="pickChal(${pos})"><span class="mk">${'①②③④'[pos]}</span>${esc(o)}</button>`;});
     h+=`</div>`;
   }
 
@@ -922,26 +977,27 @@ function chalSettle(){
   const st=S.st[S.idx];
   if(!(st.s1.solved&&st.s2.solved)||st.done)return;
   st.done=true;
-  if(st.s1.shown||st.s2.shown){ st.result='miss'; S.combo=0; updateBar(); render(); return; }
+  if(st.s1.shown||st.s2.shown){ st.result='miss'; S.combo=0; updateBar(); render(); checkAllDone(); return; }
   const first = st.s1.tries===1 && st.s2.tries===1;
   st.result = first?'first':'retry';
   const a=award(first);
   if(first) celebrate(a.pt);
   else { sOk(); cbShow('다시 풀어 맞힘','+'+a.pt,'retry'); }
-  updateBar(); render();
+  updateBar(); render(); checkAllDone();
 }
 
 function pickChal(pos){
   const q=S.items[S.idx], st=S.st[S.idx];
   if(st.s1.solved)return;
+  if(st.s1.bad===pos)return;   // 이미 틀린 보기를 다시 눌러도 또 감점하지 않는다
   st.s1.tries++;
   if(pos===q.ansPos){
     sOk(); st.s1.solved=true; hideHint(); render();
     const i=$('saInput'); if(i)i.focus();
   }else{
-    sNo(); penalty();
+    sNo(); penalty(); st.s1.bad=pos;
     const btns=document.querySelectorAll('#opts .opt');
-    btns[pos].classList.add('wrong','shake');
+    btns[pos].classList.add('wrong','shake'); btns[pos].disabled=true;
     setTimeout(()=>btns[pos].classList.remove('shake'),400);
     if(st.s1.tries>=2){
       st.s1.solved=true; st.s1.shown=true; updateBar(); render();
@@ -960,12 +1016,13 @@ function submitChal(){
   const inp=$('saInput'); if(!inp)return;
   const val=(inp.value||'').trim();
   if(!val)return;
+  if(st.s2.bad&&normalize(val)===st.s2.bad){ inp.select(); return; }   // 방금 틀린 답을 그대로 다시 내도 또 감점하지 않는다
   st.s2.tries++; st.s2.val=val;
   if(normalize(val)===CATEGORIES[q.cat].label){
     inp.classList.add('ok'); inp.disabled=true;
     st.s2.solved=true; hideHint(); chalSettle();
   }else{
-    sNo(); penalty();
+    sNo(); penalty(); st.s2.bad=normalize(val);
     inp.classList.add('no'); setTimeout(()=>inp.classList.remove('no'),700);
     if(st.s2.tries>=2){
       st.s2.solved=true; st.s2.shown=true; updateBar(); chalSettle();
@@ -1012,6 +1069,12 @@ document.addEventListener('keydown',e=>{
   }
 });
 
+/* 마우스로 누른 버튼에 포커스가 남아 Enter·Space로 다시 눌리지 않게 (2026.10.08) */
+document.addEventListener('click',e=>{
+  const b=e.target&&e.target.closest?e.target.closest('button'):null;
+  if(b&&e.detail>0) setTimeout(()=>{ if(document.activeElement===b) b.blur(); },0);
+},true);
+
 /* ===================== 결과 계산 ===================== */
 function pad2(n){return String(n).padStart(2,'0');}
 function stamp(d){d=d||new Date();return `${d.getFullYear()}.${pad2(d.getMonth()+1)}.${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;}
@@ -1030,15 +1093,23 @@ function analyze(){
   });
   const answered=first+retry+miss;
   const rate=answered?Math.round(first/answered*100):0;
-  const verdict = answered===0 ? '아직 푼 문항이 없어요'
-    : rate>=95?'완벽해요!' : rate>=85?'아주 잘했어요' : rate>=70?'잘하고 있어요'
-    : rate>=50?'기본은 잡혔어요' : '다시 한 번 도전해요';
+  const rateTxt=answered?rate+'%':'–';
+  // 총평 (화면연출표준 7장): 채점 0개 / 중간 종료 / 끝까지
+  const full = answered>0 && skip===0;
+  let title, verdict;
+  if(answered===0){ title='풀어 본 문제가 없어요'; verdict='풀어 본 문제가 없어요'; }
+  else if(!full){ title='여기까지 풀었어요';
+    verdict = rate>=70 ? '잘하고 있어요! 남은 문제까지 풀며 좀 더 연습해 보면 어떨까요?' : '좀 더 연습해 보면 어떨까요? 남은 문제까지 풀어 보면 감이 잡혀요.'; }
+  else { title=null;
+    verdict = rate>=95?'완벽해요!' : rate>=85?'아주 잘했어요' : rate>=70?'잘하고 있어요'
+      : rate>=50?'기본은 잡혔어요' : '다시 한 번 도전해요'; }
   const graded=CAT_KEYS.filter(k=>cat[k].n>=2);
   const good=graded.filter(k=>cat[k].ok===cat[k].n);
   const weak=graded.filter(k=>cat[k].ok/cat[k].n<0.5);
   let focus=null, allWeak=false;
   const wrongTotal=answered-first;
-  if(graded.length&&graded.every(k=>cat[k].ok/cat[k].n<0.5)) allWeak=true;
+  // 판정한 유형이 2개 이상이고 모두 50% 미만일 때만 '유형 구분 자체를…'
+  if(graded.length>=2&&graded.every(k=>cat[k].ok/cat[k].n<0.5)) allWeak=true;
   if(wrongTotal>0&&!allWeak){
     const cand=CAT_KEYS.filter(k=>cat[k].n>=2&&cat[k].ok<cat[k].n);
     cand.sort((a,b)=>{
@@ -1050,8 +1121,16 @@ function analyze(){
     });
     focus=cand[0]||null;
   }
-  const fewData = wrongTotal>0 && !focus && !allWeak;
-  return {first,retry,miss,skip,answered,rate,verdict,cat,good,weak,focus,allWeak,fewData,wrongTotal,
+  // '보완이 필요한 유형' 한 칸 = 가장 먼저 공부할 유형 하나 + 판단 방법(tip) (표준 8-2, v3.3)
+  const lastStage = S.stage>=STAGES.length;
+  let weakHead='', weakText;
+  if(answered===0) weakText='풀어 본 문제가 없어요.';
+  else if(allWeak) weakText='유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.';
+  else if(focus){ weakHead=`${CATEGORIES[focus].label} ${cat[focus].ok}/${cat[focus].n}`; weakText=CATEGORIES[focus].tip; }
+  else if(wrongTotal>0) weakText='뚜렷하게 약한 유형은 없어요. 틀린 문제는 오답노트의 해설을 확인해 보세요.';
+  else if(!full) weakText='남은 문제를 마저 풀어 보세요.';
+  else weakText = lastStage ? '약점이 보이지 않아요. 다른 단계에도 도전해 보세요.' : '약점이 보이지 않아요. 다음 단계에 도전해 보세요.';
+  return {first,retry,miss,skip,answered,rate,rateTxt,full,title,verdict,cat,good,weak,focus,allWeak,wrongTotal,weakHead,weakText,
     total:S.items.length,max:g.max,score:S.score,elapsed:S.elapsed,maxCombo:S.maxCombo};
 }
 
@@ -1064,7 +1143,13 @@ function wrongList(){
 /* ===================== 종료 ===================== */
 function finish(){
   if(S.ended){show('end');return;}
-  S.ended=true; hideBanner(); sEnd();
+  S.ended=true; hideBanner(); sEnd(); clearTimeout(S.autoT);
+  // 한 번 틀린 뒤 다시 풀지 않고 끝낸 문항은 '미응답'이 아니라 '못 맞힘'
+  S.st.forEach(st=>{
+    if(st.done)return;
+    const tried = stage().key==='basic' ? st.tries>0 : (st.s1.tries>(st.s1.solved&&!st.s1.shown?1:0) || st.s2.tries>0 || st.s1.shown);
+    if(tried){ st.done=true; st.result='miss'; }
+  });
   S.elapsed=Math.round((Date.now()-S.t0)/1000);
   const A=analyze(), g=stage();
   renderReport(A);
@@ -1077,7 +1162,7 @@ function finish(){
 
   if(IS_ONLINE&&STUDENT.verified){
     const nameInput=$('inName'); nameInput.value=STUDENT.name; nameInput.readOnly=true; nameInput.style.background='#f4eef1';
-    const wrongItems=S.items.map((q,i)=>(S.st[i].result&&S.st[i].result!=='first')?q.id:null).filter(x=>x!==null).join(',');
+    const wrongItems=S.items.map((q,i)=>(S.st[i].result&&S.st[i].result!=='first')?q.id:null).filter(x=>x!==null).sort((a,b)=>a-b).join(',');
     submitResult({
       stage:g.name,
       studentId:STUDENT.id,
@@ -1087,13 +1172,15 @@ function finish(){
       answeredCount:A.answered,
       skippedCount:A.skip,
       correctCount:A.first,
+      retryCorrectCount:A.retry,
       score:S.score,
       maxScore:g.max,
       elapsedSeconds:S.elapsed,
       wrongItems:wrongItems,
       reflection:''
     }).then(res=>{
-      const el=document.createElement('div');
+      document.querySelectorAll('.send-msg').forEach(x=>x.remove());
+      const el=document.createElement('div'); el.className='send-msg';
       el.style.cssText='margin-top:8px;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:600;text-align:center;';
       if(res.status==='ok'){el.style.background='#e8f5e9';el.style.color='#2e7d32';el.textContent='✅ 결과가 선생님께 전송되었습니다.';}
       else{el.style.background='#ffebee';el.style.color='#c62828';el.textContent='❌ 결과 전송에 실패했습니다. 인터넷 연결을 확인해 주세요.';}
@@ -1106,37 +1193,30 @@ function finish(){
 function renderReport(A){
   const g=stage();
   $('endMeta').textContent=`${S.score} / ${g.max}점`;
-  $('repTitle').textContent=`고쳐쓰기의 원리 · ${g.name} 학습 리포트`;
-  $('repSub').textContent=`${stamp()} · 소요 시간 ${mmss(A.elapsed)}`;
+  $('repTitle').textContent= A.title ? A.title : `고쳐쓰기의 원리 · ${g.name} 학습 리포트`;
+  $('repSub').textContent=(A.title?`고쳐쓰기의 원리 · ${g.name} · `:'')+`${stamp()} · 소요 시간 ${mmss(A.elapsed)}`;
   $('repNums').innerHTML=[
     ['최종 점수',`${S.score} <span style="font-size:13px">/ ${g.max}</span>`],
-    ['정답률',`${A.rate}%`],
+    ['정답률',A.rateTxt],
     ['첫 시도 정답',`${A.first}`],
     ['다시 풀어 맞힘',`${A.retry}`],
     ['못 맞힘',`${A.miss}`],
     ['미응답',`${A.skip}`],
     ['최고 콤보',`${A.maxCombo}`]
   ].map(([k,v])=>`<div class="num"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
-  $('repVerdict').innerHTML = (A.skip>0?`끝까지 풀지 않았어요 (${A.skip}문항 남음)<br>`:'')+A.verdict
-    +`<div style="font-size:12.5px;font-weight:500;color:#8b7f85;margin-top:5px">첫 시도 정답 ${A.first} · 다시 풀어 맞힘 ${A.retry} · 못 맞힘 ${A.miss}</div>`;
+  $('repVerdict').innerHTML = (A.answered>0&&A.skip>0?`끝까지 풀지 않았어요 (${A.skip}문항 남음)<br>`:'')+A.verdict
+    +`<div style="font-size:12.5px;font-weight:500;color:#8b7f85;margin-top:5px">첫 시도 정답 ${A.first} · 다시 풀어 맞힘 ${A.retry} · 못 맞힘 ${A.miss} · 미응답 ${A.skip}</div>`;
   const line=k=>`${CATEGORIES[k].emo} ${CATEGORIES[k].label} ${A.cat[k].ok}/${A.cat[k].n}`;
-  const weakHtml = A.allWeak ? '<span style="color:#8b7f85">유형을 가리기 전에 유형 구분 자체를 다시 익힐 단계예요.</span>'
-    : (A.weak.length?A.weak.map(line).join('<br>'):'<span style="color:#8b7f85">없어요</span>');
+  const weakHtml = (A.weakHead?`<b>${CATEGORIES[A.focus].emo} ${esc(A.weakHead)}</b><br>`:'')
+    + `<span style="color:${A.weakHead?'var(--body)':'#8b7f85'}">${esc(A.weakText)}</span>`;
   $('repCats').innerHTML=
     `<div class="catcard"><h4>👍 잘하는 유형</h4>${A.good.length?A.good.map(line).join('<br>'):'<span style="color:#8b7f85">아직 없어요</span>'}</div>`+
     `<div class="catcard"><h4>📌 보완이 필요한 유형</h4>${weakHtml}</div>`;
-  let ad;
-  if(A.answered===0) ad='<b>아직 푼 문항이 없어요.</b> 시작화면으로 돌아가 한 문항씩 풀어 보세요.';
-  else if(A.allWeak) ad='<b>가장 먼저 공부할 것 —</b> 유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.';
-  else if(A.fewData) ad='<b>가장 먼저 공부할 것 —</b> 틀린 문항이 적어 약점 유형을 가리기 어려워요. 오답노트의 유형 라벨과 해설을 먼저 읽어 보세요.';
-  else if(!A.focus) ad='<b>가장 먼저 공부할 것 —</b> 약점이 보이지 않아요. 다음 단계에 도전해 보세요.';
-  else ad=`<b>가장 먼저 공부할 것 — ${CATEGORIES[A.focus].emo} ${CATEGORIES[A.focus].label}</b><br>${CATEGORIES[A.focus].tip}`;
-  $('repAdvice').innerHTML=ad;
 }
 
 function nextStage(){ startStage(S.stage+1); }
 function restart(){ startStage(S.stage); }
-function toHome(){ hideBanner(); show('start'); }
+function toHome(){ hideBanner(); clearTimeout(S.autoT); S.run++; show('start'); }
 
 /* ===================== 오늘 나온 문제 모두 보기 ===================== */
 function openReview(){
@@ -1280,9 +1360,15 @@ function downloadNote(){
     {t:'sub',text:`${name}   ·   ${g.name}   ·   ${stamp(now)}`},
     {t:'rule'}
   ];
-  if(wrong.length===0){
+  const A=analyze();
+  if(A.answered>0&&A.skip>0) blocks.push({t:'body',text:`여기까지 풀었어요 · 끝까지 풀지 않았어요 (${A.skip}문항 남음)`,col:'#993556'});
+  if(A.answered===0){
+    blocks.push({t:'head',text:'풀어 본 문제가 없어요',col:'#8b7f85'});
+  }else if(wrong.length===0&&!A.full){
+    blocks.push({t:'body',text:'남은 문제를 마저 풀어 보세요.'});
+  }else if(wrong.length===0){
     blocks.push({t:'head',text:'🌟 틀리거나 헤맨 문항이 없어요!',col:'#2E9B79'});
-    blocks.push({t:'body',text:'고쳐쓰기의 네 가지 원리를 정확하게 구분했습니다. 다음 단계에 도전해 보세요.'});
+    blocks.push({t:'body',text:'고쳐쓰기의 네 가지 원리를 정확하게 구분했습니다. '+(S.stage>=STAGES.length?'다른 단계에도 도전해 보세요.':'다음 단계에 도전해 보세요.')});
   }else{
     blocks.push({t:'body',text:`틀리거나 다시 풀어 맞힌 문항 ${wrong.length}개예요. 유형을 보며 복습해 보세요.`,col:'#8b7f85'});
     blocks.push({t:'space',h:6});
@@ -1317,29 +1403,23 @@ function downloadReport(){
   const feel=($('inFeel').value||'').trim();
   const line=k=>`${CATEGORIES[k].label} ${A.cat[k].ok}/${A.cat[k].n}`;
   const blocks=[
-    {t:'title',text:'고쳐쓰기의 원리 · 학습 결과 분석 리포트'},
+    {t:'title',text:A.title?`고쳐쓰기의 원리 · ${A.title}`:'고쳐쓰기의 원리 · 학습 결과 분석 리포트'},
     {t:'sub',text:`${name}   ·   ${g.name}   ·   ${stamp(now)}`},
     {t:'rule'},
     {t:'stats',items:[
-      ['최종 점수',`${S.score}/${g.max}`],['정답률',`${A.rate}%`],
+      ['최종 점수',`${S.score}/${g.max}`],['정답률',A.rateTxt],
       ['첫 시도 정답',`${A.first}`],['다시 풀어 맞힘',`${A.retry}`],
       ['못 맞힘',`${A.miss}`],['미응답',`${A.skip}`],
       ['최고 콤보',`${A.maxCombo}`],['소요 시간',`${mmss(A.elapsed)}`]
     ]},
     {t:'space',h:8},
-    {t:'box',text:(A.skip>0?`끝까지 풀지 않았어요 (${A.skip}문항 남음)\n`:'')+A.verdict,
+    {t:'box',text:(A.answered>0&&A.skip>0?`끝까지 풀지 않았어요 (${A.skip}문항 남음)\n`:'')+A.verdict,
       bg:'#FDF5F8',bd:'#FAE4EC',col:'#993556'},
     {t:'head',text:'👍 잘하는 유형'},
     {t:'body',text:A.good.length?A.good.map(line).join('    '):'아직 없어요'},
-    {t:'head',text:'📌 보완이 필요한 유형'},
-    {t:'body',text:A.allWeak?'유형을 가리기 전에 유형 구분 자체를 다시 익힐 단계예요.':(A.weak.length?A.weak.map(line).join('    '):'없어요')},
-    {t:'head',text:'🎯 가장 먼저 공부할 것'}
+    {t:'head',text:'📌 보완이 필요한 유형'+(A.weakHead?' · '+A.weakHead:'')},
+    {t:'box',text:A.weakText}
   ];
-  if(A.answered===0) blocks.push({t:'body',text:'아직 푼 문항이 없어요. 한 문항씩 다시 풀어 보세요.'});
-  else if(A.allWeak) blocks.push({t:'box',text:'유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.'});
-  else if(A.fewData) blocks.push({t:'box',text:'틀린 문항이 적어 약점 유형을 가리기 어려워요. 오답노트의 유형 라벨과 해설을 먼저 읽어 보세요.'});
-  else if(!A.focus) blocks.push({t:'box',text:'약점이 보이지 않아요. 다음 단계에 도전해 보세요.',bg:'#E4F4EE',bd:'#BFE5D6',col:'#1F7A5E'});
-  else blocks.push({t:'box',text:`${CATEGORIES[A.focus].label} — ${CATEGORIES[A.focus].tip}`});
   if(feel){blocks.push({t:'head',text:'✍️ 학습 소감'});blocks.push({t:'body',text:feel});}
   blocks.push({t:'rule'});
   blocks.push({t:'small',text:`성취기준 ${STD_CODE} ${STD_TEXT}`});
@@ -1350,8 +1430,9 @@ function downloadReport(){
 
 /* ===================== 교사용 학습 데이터 목록 (엑셀) ===================== */
 function xe(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/\n/g,' ');}
-function xRow(cells){return '<Row>'+cells.map(c=>`<Cell><Data ss:Type="String">${xe(c)}</Data></Cell>`).join('')+'</Row>';}
-function xSheet(nm,rows){return `<Worksheet ss:Name="${xe(nm)}"><Table>`+rows.map(xRow).join('')+`</Table></Worksheet>`;}
+// 정답 열(정답 유형·정답)은 빨간 굵은 글씨 — 머리줄 제외 (교사용 자료 관례)
+function xRow(cells,ans){return '<Row>'+cells.map((c,i)=>`<Cell${ans&&ans.indexOf(i)>=0?' ss:StyleID="ans"':''}><Data ss:Type="String">${xe(c)}</Data></Cell>`).join('')+'</Row>';}
+function xSheet(nm,rows){return `<Worksheet ss:Name="${xe(nm)}"><Table>`+rows.map(r=>Array.isArray(r)?xRow(r):xRow(r.c,r.ans)).join('')+`</Table></Worksheet>`;}
 function downloadTeacherXls(){
   const sheets=[];
   STAGES.forEach(g=>{
@@ -1359,9 +1440,9 @@ function downloadTeacherXls(){
     g.data.forEach(q=>{
       const C=CATEGORIES[q.cat];
       if(g.key==='basic'){
-        rows.push([q.id,C.label,'[수정 전] '+plain(q.before)+'  →  [수정 후] '+plain(q.after),q.opts[q.ans],q.e]);
+        rows.push({c:[q.id,C.label,'[수정 전] '+plain(q.before)+'  →  [수정 후] '+plain(q.after),q.opts[q.ans],q.e],ans:[1,3]});
       }else{
-        rows.push([q.id,C.label,plain(q.text),'문제점: '+q.prob+' / 방법: '+q.method+' / 원리: '+C.label,q.e]);
+        rows.push({c:[q.id,C.label,plain(q.text),'문제점: '+q.prob+' / 방법: '+q.method+' / 원리: '+C.label,q.e],ans:[1,3]});
       }
     });
     rows.push([]);
@@ -1384,6 +1465,7 @@ function downloadTeacherXls(){
   sheets.push(xSheet('유형별 요약',sum));
   const xml=`<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?>`+
     `<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">`+
+    `<Styles><Style ss:ID="ans"><Font ss:Bold="1" ss:Color="#E00000"/></Style></Styles>`+
     sheets.join('')+`</Workbook>`;
   const blob=new Blob(['\ufeff'+xml],{type:'application/vnd.ms-excel;charset=utf-8'});
   const d=new Date();
