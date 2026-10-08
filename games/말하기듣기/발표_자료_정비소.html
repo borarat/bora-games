@@ -4,7 +4,12 @@
      문항: 도표 = 숫자를 칸에 정리한 표(교사 결정)로 통일 — 식물 #14·미세 먼지 #13 보기·해설, #8 해설, #12 발문·해설, 도표 그림 2개를 표 모양으로
      문항: 미세 먼지 #5 보기 '다이어그램' → '그래프'(정답 하나로)
      채점: 교사 전송 오답 목록(wrongItems)을 오답노트와 같은 범위(첫 시도에 틀린 문항)로
-     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 -->
+     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
+     12차: 테마층(슬라이드 작업대) + 실제 조작 버그 검사·수정 — 중간 종료·채점 0개 총평, 보완 칸 하나, 엑셀 정답 빨강, 자동 종료·확인창·재감점·포커스
+     2026.10.08 12:25 12차: 테마층(슬라이드 작업대, 보조색 회청) + 실제 조작 버그 검사·수정 — 중간 종료·채점 0개 총평, 보완 칸 하나, 엑셀 정답 빨강, 자동 종료·확인창·재감점·포커스 -->
+<!-- 2026.10.08 12차 세부: 끝내기 '여기까지 풀었어요'·'풀어 본 문제가 없어요'(정답률 –, 오답노트 칭찬 없음) / '가장 먼저 공부할 것'을 '보완이 필요한 유형' 한 칸으로(화면·리포트 JPG)
+     엑셀 정답 열 #E00000 굵게 / 마지막 채점 2초 뒤 자동 종료·한 판 한 번만 전송 / '결과 보기'에 남은 문항 확인 / 이미 틀린 보기·같은 오답 입력은 다시 감점 안 함
+     마우스로 누른 버튼 포커스 풀기 / 플레이 크레딧 '/' → '·' / 판정 유형 하나뿐이면 '유형 구분 자체를…' 안 씀 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -256,6 +261,15 @@
   .rv .rq{font-size:14px;font-weight:700;color:var(--ink);line-height:1.5;}
   .rv .ra{font-size:13.5px;color:#1F6E3E;margin-top:5px;line-height:1.5;}
   .rv .re{font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.55;}
+
+/* ═══ 게임 테마층 · 슬라이드 작업대 (2026.10.08) ═══
+   내려 건 스크린의 빈 슬라이드에 막대 몇 개, 레이저 포인터로 한 곳을 짚는 발표 준비 장면. 보조색 회청 #5F7C8A. 영역 팔레트·헤더 띠·정답/오답 색·흰 문제 카드·정답 카드는 그대로.
+   이 블록과 시작 화면 SVG를 지우면 원래 모습 */
+:root{--th:#5F7C8A}
+.title-row .keyArt{margin-left:auto;flex:none;height:112px;width:auto}
+@media (max-width:860px){.title-row .keyArt{display:none}}
+#startScreen .panel{border-left:4px solid var(--th)}
+#startScreen .panel h3{color:var(--th)}
 </style>
 </head>
 <body>
@@ -275,6 +289,31 @@
             <h1>발표 자료 <span class="mark">정비소</span></h1>
             <p class="subtitle">정해진 발표 상황에 맞게, 수집한 자료를 살펴보고 청중을 위해 재구성해요.</p>
           </div>
+          <svg class="keyArt" viewBox="0 0 250 116" aria-hidden="true">
+            <!-- 스크린 롤러와 스크린 -->
+            <rect x="12" y="3" width="172" height="9" rx="4.5" fill="#5F7C8A"/>
+            <rect x="20" y="11" width="156" height="88" rx="3" fill="#fff" stroke="#5F7C8A" stroke-width="2"/>
+            <!-- 빈 슬라이드: 제목 자리와 막대 -->
+            <rect x="34" y="22" width="62" height="6" rx="3" fill="#D5E0E5"/>
+            <rect x="34" y="32" width="38" height="4" rx="2" fill="#E4ECEF"/>
+            <line x1="36" y1="88" x2="160" y2="88" stroke="#9FB3BD" stroke-width="2" stroke-linecap="round"/>
+            <rect x="46" y="62" width="18" height="26" rx="2" fill="#C3D3DA"/>
+            <rect x="74" y="50" width="18" height="38" rx="2" fill="#9DB4BF"/>
+            <rect x="102" y="57" width="18" height="31" rx="2" fill="#C3D3DA"/>
+            <rect x="130" y="40" width="18" height="48" rx="2" fill="#5F7C8A"/>
+            <!-- 스크린 손잡이 끈 -->
+            <line x1="98" y1="99" x2="98" y2="107" stroke="#9FB3BD" stroke-width="2"/>
+            <circle cx="98" cy="109.5" r="3" fill="#5F7C8A"/>
+            <!-- 레이저 포인터와 빛점 -->
+            <line x1="203" y1="77" x2="141" y2="35" stroke="#F58A2E" stroke-width="1.6" stroke-dasharray="3 3" stroke-linecap="round"/>
+            <circle cx="139" cy="34" r="7" fill="#F58A2E" opacity=".22"/>
+            <circle cx="139" cy="34" r="3.2" fill="#F58A2E"/>
+            <g transform="rotate(34 222 90)">
+              <rect x="206" y="85" width="42" height="10" rx="5" fill="#5F7C8A"/>
+              <rect x="200" y="86.5" width="8" height="7" rx="2" fill="#3F5560"/>
+              <circle cx="226" cy="90" r="2.2" fill="#F58A2E"/>
+            </g>
+          </svg>
         </div>
 
         <div class="std">
@@ -334,7 +373,7 @@
 
         <div class="maker">
           제작 · <b>보라라샘</b> · 전주서신중학교 교사 · siaawase@gmail.com<br>
-          제작일 2026.06.11 · <span id="lastMod">최종 수정 2026.10.05 03:00</span>
+          제작일 2026.06.11 · <span id="lastMod">최종 수정 2026.10.08 12:25</span>
         </div>
 
         <div class="privacy" id="privacyOffline">
@@ -455,7 +494,7 @@
             <span class="after-label">✅ 이렇게 재구성하면 좋아요</span>
             <div class="after-stage" id="afterStage"></div>
           </div>
-          <div class="credit">제작 · 보라라샘 / 2026.06.11</div>
+          <div class="credit">제작 · 보라라샘 · 2026.06.11</div>
         </div>
       </div>
     </div>
@@ -478,7 +517,6 @@
           <div class="dbox"><h4>👍 잘하는 유형</h4><div class="row" id="goodTypes"></div></div>
           <div class="dbox"><h4>🔧 보완이 필요한 유형</h4><div class="row" id="badTypes"></div></div>
         </div>
-        <div class="advice" id="advice"></div>
 
         <div class="fields">
           <div class="field"><label>이름 <span style="color:#D2483F">*필수</span></label><input id="noteName" placeholder="이름을 적어요" maxlength="10"></div>
@@ -513,7 +551,7 @@
 </div>
 <script>
 const MADE_DATE = "2026.06.11";
-const LAST_MOD  = "2026.10.05 03:00";
+const LAST_MOD  = "2026.10.08 12:25";
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -906,6 +944,7 @@ function beginGame(key){
     return {...it, _opts:shuffle(opts), _correct:correct};
   });
   state.idx = 0; state.score = 0; state.combo = 0; state.best = 0;
+  clearTimeout(state.autoT); state.run = (state.run || 0) + 1; state.done = false;
   state.answered = new Array(state.items.length).fill(null);
   state.max = maxScoreOf(state.items.length);
   state.startAt = Date.now();
@@ -946,7 +985,11 @@ function renderQuestion(){
       const el = document.createElement("button"); el.className = "opt";
       el.innerHTML = '<span class="lt">'+letters[i]+'</span><span>'+text+'</span>';
       if(locked){ el.classList.add("locked"); if(text === it._correct) el.classList.add("correct"); else el.classList.add("dim"); }
-      else el.addEventListener("click", () => choose(i, el));
+      else {
+        const rec = state.answered[state.idx];
+        if(rec && rec.wrongOpts && rec.wrongOpts.includes(text)) el.classList.add("dim");   // 이미 틀린 보기
+        el.addEventListener("click", () => choose(i, el));
+      }
       box.appendChild(el);
     });
   }
@@ -971,8 +1014,10 @@ function choose(i, el){
   const it = state.items[state.idx];
   if(isResolved(state.idx)) return;
   const text = it._opts[i], ok = (text === it._correct);
+  const rec = state.answered[state.idx];
+  if(!ok && rec && rec.wrongOpts && rec.wrongOpts.includes(text)) return;   // 이미 틀린 보기를 다시 눌러도 또 감점하지 않음
   if(ok){ el.classList.add("correct"); lockOptions(); markCorrect(it, text); }
-  else markWrong(it, () => { el.classList.add("wrong"); setTimeout(() => el.classList.remove("wrong"), 420); });
+  else markWrong(it, () => { el.classList.add("wrong"); setTimeout(() => { el.classList.remove("wrong"); el.classList.add("dim"); }, 420); }, text);
 }
 
 function submitFill(){
@@ -981,11 +1026,15 @@ function submitFill(){
   const val = $("fillInput").value.trim(); if(!val) return;
   const norm = s => s.replace(/[\s·.,]/g, "").toLowerCase();
   const ok = it.accept.some(a => norm(a) === norm(val));
+  const rec = state.answered[state.idx];
+  if(!ok && rec && rec.wrongOpts && rec.wrongOpts.includes(norm(val))){   // 방금 틀린 답을 그대로 다시 내면 또 감점하지 않음
+    const inp = $("fillInput"); inp.classList.add("shake"); setTimeout(() => inp.classList.remove("shake"), 420); return;
+  }
   if(ok){
     $("fillInput").disabled = true; $("fillSubmit").disabled = true; $("chosungHint").style.display = "none";
     const blank = document.querySelector(".fill-blank"); if(blank) blank.textContent = it.answer;
     markCorrect(it, val);
-  } else markWrong(it, () => { const inp = $("fillInput"); inp.classList.add("shake"); setTimeout(() => inp.classList.remove("shake"), 420); });
+  } else markWrong(it, () => { const inp = $("fillInput"); inp.classList.add("shake"); setTimeout(() => inp.classList.remove("shake"), 420); }, norm(val));
 }
 
 function markCorrect(it, chosen){
@@ -1001,14 +1050,16 @@ function markCorrect(it, chosen){
   const c = state.combo;
   if(firstOk && (c === 3 || (c >= 5 && c % 5 === 0))) comboBanner(c, g);
   else correctBanner(g, firstOk);
+  checkAllDone();
 }
 
-function markWrong(it, shakeFn){
+function markWrong(it, shakeFn, wrongText){
   playSound(false); state.combo = 0;
   state.score = Math.max(0, state.score - PENALTY);
   const rec = state.answered[state.idx];
   const tries = (rec ? rec.tries : 0) + 1;
-  state.answered[state.idx] = {chosen:"", ok:false, firstOk:false, tries:tries, revealed:false};
+  const wrongOpts = (rec && rec.wrongOpts ? rec.wrongOpts : []).concat(wrongText != null ? [wrongText] : []);
+  state.answered[state.idx] = {chosen:"", ok:false, firstOk:false, tries:tries, revealed:false, wrongOpts:wrongOpts};
   const fb = $("feedback"); fb.style.display = "block";
   if(tries >= 2){
     state.answered[state.idx].revealed = true;
@@ -1019,6 +1070,7 @@ function markWrong(it, shakeFn){
     } else lockOptions(true);
     $("hintBtn").style.display = "none";
     showResolved(it, true);
+    checkAllDone();
   } else {
     fb.innerHTML = '<div class="fb-hint"><b>❌ 다시 생각해 봐요.</b> ' + it.hint + '<br><span style="font-size:12.5px;opacity:.85">한 번 더 틀리면 정답과 해설을 보여 줄게요.</span></div>';
   }
@@ -1093,17 +1145,37 @@ $("fillSubmit").addEventListener("click", submitFill);
 $("fillInput").addEventListener("keydown", e => { if(e.key === "Enter"){ e.stopPropagation(); submitFill(); } });
 
 /* ── 내비게이션 ── */
+function allResolved(){ return state.items.every((_, i) => isResolved(i)); }
+/* 모든 문항이 채점되면 약 2초 뒤 자동으로 결과 화면 (다시 풀기를 기다리는 문항이 있으면 기다린다). 판이 바뀌면 무효 */
+function checkAllDone(){
+  if(!allResolved()) return;
+  clearTimeout(state.autoT); const run = state.run;
+  state.autoT = setTimeout(() => { if(state.run === run && !state.done && $("gameScreen").classList.contains("active")) finishStage(); }, 2000);
+}
+function askFinish(){
+  if(state.done) return;
+  const left = state.answered.filter(a => !a).length;
+  const msg = left > 0 ? "아직 " + left + "문항이 남았어요. 게임을 끝낼까요?\n(남은 문항은 미응답으로 기록돼요)" : "게임을 끝내고 결과를 볼까요?";
+  if(confirm(msg)) finishStage();
+}
 function goPrev(){ if(state.idx > 0){ state.idx--; renderQuestion(); } }
-function goNext(){ hideBanner(); if(state.idx < state.items.length-1){ state.idx++; renderQuestion(); } else finishStage(); }
+function goNext(fromKey){
+  hideBanner();
+  if(state.idx < state.items.length-1){ state.idx++; renderQuestion(); }
+  else if(allResolved()) finishStage();
+  else if(!fromKey) askFinish();          // 마지막 문항 '결과 보기': 남은 문항이 있으면 한 번 확인
+}
 $("btnPrev").addEventListener("click", goPrev);
-$("btnNext").addEventListener("click", goNext);
-$("btnQuit").addEventListener("click", () => { if(confirm("게임을 끝내고 결과를 볼까요?")) finishStage(); });
+$("btnNext").addEventListener("click", () => goNext(false));
+$("btnQuit").addEventListener("click", askFinish);
+/* 마우스로 누른 버튼에 포커스가 남아 Enter·Space로 다시 눌리지 않게 */
+document.addEventListener("click", e => { const b = e.target && e.target.closest && e.target.closest("button"); if(b && e.detail > 0) b.blur(); }, true);
 document.addEventListener("keydown", e => {
   if(!$("gameScreen").classList.contains("active")) return;
   if(document.activeElement && document.activeElement.id === "fillInput") return;
   if(e.key === "Enter" || e.key === " " || e.key === "ArrowRight"){
     e.preventDefault();
-    if(isResolved(state.idx)) goNext();
+    if(isResolved(state.idx)) goNext(true);
     else { const it = state.items[state.idx]; if(it.kind === "fill") $("fillInput").focus(); }
   } else if(e.key === "ArrowLeft"){ e.preventDefault(); goPrev(); }
 });
@@ -1148,29 +1220,39 @@ function verdictOf(acc){
   return "다시 한 번 도전해요";
 }
 let R = {};
+/* 총평 (화면연출표준 7장): 채점 0개 / 중간 종료 / 끝까지 */
+function midVerdictOf(acc){
+  return acc >= 70 ? "잘하고 있어요! 남은 문제까지 풀며 좀 더 연습해 보면 어떨까요?"
+                   : "좀 더 연습해 보면 어떨까요? 남은 문제까지 풀어 보면 감이 잡혀요.";
+}
 function finishStage(){
+  if(state.done) return;
+  state.done = true; clearTimeout(state.autoT);
   hideBanner();
   const stage = STAGES[state.stageKey], total = state.items.length;
   state.elapsed = Date.now() - state.startAt;
   const answered = state.answered.filter(a => a).length;
   const firstOk  = state.answered.filter(a => a && a.firstOk).length;
   const retryOk  = state.answered.filter(a => a && a.ok && !a.firstOk).length;
-  const miss     = state.answered.filter(a => a && !a.ok).length;
+  const miss     = state.answered.filter(a => a && !a.ok).length;   // 첫 시도에 틀리고 다시 풀지 않은 문항 포함 = 못 맞힘
   const skipped  = total - answered;
   const acc = answered ? Math.round(firstOk/answered*100) : 0;
+  const accStr = answered ? acc + "%" : "–";
   const mins = Math.floor(state.elapsed/60000), secs = Math.round(state.elapsed/1000)%60;
+  const status = !answered ? "none" : (skipped ? "mid" : "full");
+  const titleTail = status === "none" ? "풀어 본 문제가 없어요" : (status === "mid" ? "여기까지 풀었어요" : "정비 완료!");
+  const verdict = status === "none" ? "풀어 본 문제가 없어요" : (status === "mid" ? midVerdictOf(acc) : verdictOf(acc));
+  const skipNote = (answered && skipped) ? "끝까지 풀지 않았어요 (" + skipped + "문항 남음)" : "";
 
   const stats = catStats();
-  const good = [], bad = [];
+  const good = [];
   Object.keys(stats).forEach(c => {
     const s = stats[c]; if(s.n < 2) return;               // 1문항뿐인 유형은 표시하지 않음
-    const rate = s.ok/s.n;
-    if(rate === 1) good.push({c, s});
-    else if(rate < 0.5) bad.push({c, s});
+    if(s.ok/s.n === 1) good.push({c, s});
   });
   let focus = null, allLow = false;
   const multi = Object.keys(stats).filter(c => stats[c].n >= 2);
-  if(multi.length && multi.every(c => stats[c].ok/stats[c].n < 0.5)) allLow = true;
+  if(multi.length >= 2 && multi.every(c => stats[c].ok/stats[c].n < 0.5)) allLow = true;   // 판정한 유형이 하나뿐이면 넘겨짚지 않음
   const cands = multi.map(c => ({c, wrong:stats[c].n-stats[c].ok, rate:stats[c].ok/stats[c].n, n:stats[c].n}))
                      .filter(x => x.wrong > 0)
                      .sort((a,b) => b.wrong-a.wrong || a.rate-b.rate || b.n-a.n);
@@ -1179,58 +1261,64 @@ function finishStage(){
   const wrongs = []; state.items.forEach((it,i) => { const a = state.answered[i]; if(a && !a.firstOk) wrongs.push(it); });
   const wrongIds = wrongs.map(it => it.id);   // 오답노트와 같은 범위(첫 시도에 틀린 문항)
 
-  R = {stage, total, answered, firstOk, retryOk, miss, skipped, acc, mins, secs, stats, good, bad, focus, allLow, wrongs};
+  R = {stage, total, answered, firstOk, retryOk, miss, skipped, acc, accStr, mins, secs, stats, good, focus, allLow, wrongs,
+       status, titleTail, verdict, skipNote};
   window._wrongs = wrongs;
 
   /* 화면 채우기 */
-  $("endTitle").textContent = stage.ico + " " + stage.short + " — 정비 완료!";
+  $("endTitle").textContent = stage.ico + " " + stage.short + " — " + titleTail;
   $("endRight").textContent = stage.ico + " " + stage.short + " · " + (state.level === "easy" ? "쉬움" : "어려움");
   $("finalScore").textContent = state.score; $("maxScore").textContent = state.max;
-  $("finalAcc").textContent = acc + "%"; $("finalCombo").textContent = state.best;
+  $("finalAcc").textContent = accStr; $("finalCombo").textContent = state.best;
   $("finalTime").textContent = mins + "분 " + secs + "초";
-  let v = (skipped ? '끝까지 풀지 않았어요 ('+skipped+'문항 남음)<br>' : '') + verdictOf(acc);
+  let v = (skipNote ? skipNote + '<br>' : '') + verdict;
   v += '<div class="sub">첫 시도 정답 '+firstOk+' · 다시 풀어 맞힘 '+retryOk+' · 못 맞힘 '+miss+
        (skipped ? ' · 미응답 '+skipped : '') + '</div>';
   $("verdict").innerHTML = v;
   $("goodTypes").innerHTML = good.length
     ? good.map(g => CATEGORIES[g.c].ico+' <b>'+CATEGORIES[g.c].label+'</b> '+g.s.ok+'/'+g.s.n).join("<br>")
     : '<span style="color:#6E7B8A">아직 완벽하게 맞힌 유형이 없어요.</span>';
-  $("badTypes").innerHTML = bad.length
-    ? bad.map(g => CATEGORIES[g.c].ico+' <b>'+CATEGORIES[g.c].label+'</b> '+g.s.ok+'/'+g.s.n).join("<br>")
-    : '<span style="color:#6E7B8A">특별히 보완할 유형이 없어요.</span>';
-  $("advice").innerHTML = adviceHTML();
+  const wk = weakInfo();
+  $("badTypes").innerHTML = wk.head
+    ? CATEGORIES[R.focus].ico+' <b>'+wk.head+'</b><br><span style="color:#6E7B8A">'+wk.text+'</span>'
+    : '<span style="color:#6E7B8A">'+wk.text+'</span>';
 
   $("noteName").value = IS_ONLINE && STUDENT.verified ? STUDENT.name : "";
   if(IS_ONLINE && STUDENT.verified){ $("noteName").readOnly = true; $("noteName").style.background = "#F4F0E4"; }
 
-  /* 연동 모드: 결과 전송 */
+  /* 연동 모드: 결과 전송 (한 판에 한 번) */
+  document.querySelectorAll("#endScreen .sendmsg").forEach(el => el.remove());
   if(IS_ONLINE && STUDENT.verified){
-    submitResult({
+    R.payload = {
       studentId:STUDENT.id, studentName:STUDENT.name, className:STUDENT.className,
       stage:stage.short + " / " + (state.level === "easy" ? "쉬움" : "어려움"),
       totalQuestions:total, answeredCount:answered, skippedCount:skipped,
       correctCount:firstOk, retryCorrectCount:retryOk, score:state.score, maxScore:state.max,
       accuracy:acc, bestCombo:state.best, elapsedSeconds:Math.round(state.elapsed/1000),
       wrongItems:wrongIds.join(","), reflection:""
-    }).then(res => {
-      const el = document.createElement("div"); el.className = "sendmsg";
-      if(res.status === "ok"){ el.style.background = "#e8f5e9"; el.style.color = "#2e7d32"; el.textContent = "✅ 결과가 선생님께 전송되었습니다."; }
-      else { el.style.background = "#ffebee"; el.style.color = "#c62828";
-        el.innerHTML = '❌ 전송 실패 <button onclick="this.parentElement.remove();finishStage();" style="margin-left:8px;padding:4px 12px;border:1px solid #c62828;border-radius:6px;background:#fff;color:#c62828;cursor:pointer;font-size:12px;font-family:inherit">재전송</button>'; }
-      const p = $("endPrivacy"); if(p) p.before(el);
-    });
+    };
+    sendResult();
   }
   show("endScreen");
 }
-function adviceText(){
-  if(R.allLow) return "유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.";
-  if(!R.focus) return "약점이 보이지 않아요. 다음 사례에 도전해 보세요.";
-  const c = CATEGORIES[R.focus];
-  return c.label + " — " + c.tip;
+function sendResult(){
+  if(!R.payload) return;
+  document.querySelectorAll("#endScreen .sendmsg").forEach(el => el.remove());
+  submitResult(R.payload).then(res => {
+    const el = document.createElement("div"); el.className = "sendmsg";
+    if(res.status === "ok"){ el.style.background = "#e8f5e9"; el.style.color = "#2e7d32"; el.textContent = "✅ 결과가 선생님께 전송되었습니다."; }
+    else { el.style.background = "#ffebee"; el.style.color = "#c62828";
+      el.innerHTML = '❌ 전송 실패 <button onclick="sendResult();" style="margin-left:8px;padding:4px 12px;border:1px solid #c62828;border-radius:6px;background:#fff;color:#c62828;cursor:pointer;font-size:12px;font-family:inherit">재전송</button>'; }
+    const p = $("endPrivacy"); if(p) p.before(el);
+  });
 }
-function adviceHTML(){
-  const t = adviceText();
-  return '<b>🎯 가장 먼저 공부할 것</b><br>' + t;
+/* '보완이 필요한 유형' 한 칸 (화면연출표준 8-2 v3.3): 가장 먼저 공부할 유형 하나 + 판단 방법(tip) */
+function weakInfo(){
+  if(R.allLow) return {head:"", text:"유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요."};
+  if(R.focus){ const c = CATEGORIES[R.focus], s = R.stats[R.focus]; return {head:c.label + " " + s.ok + "/" + s.n, text:c.tip}; }
+  if(R.wrongs.length) return {head:"", text:"뚜렷하게 약한 유형은 없어요. 틀린 문제는 오답노트의 해설을 확인해 보세요."};
+  if(R.skipped) return {head:"", text:"남은 문제를 마저 풀어 보세요."};
+  return {head:"", text:"약점이 보이지 않아요. 다른 사례에도 도전해 보세요."};
 }
 
 /* ══ 종료 화면 버튼 ══ */
@@ -1303,14 +1391,24 @@ function downloadNote(){
   ctx.fillStyle = "#333A45"; ctx.font = "15px "+SF;
   ctx.fillText("사례 · " + stage.short + " (" + lvl + ")    이름 · " + name + "    완료 · " + st.ymd + " " + st.hm, pad, 88);
   ctx.fillStyle = "#6E7B8A"; ctx.font = "14px "+SF;
-  ctx.fillText("점수 " + state.score + " / " + state.max + "점 · 첫 시도 정답률 " + R.acc + "%", pad, 114);
+  ctx.fillText("점수 " + state.score + " / " + state.max + "점 · 첫 시도 정답률 " + R.accStr + (R.skipNote ? " · " + R.skipNote : ""), pad, 114);
   ctx.strokeStyle = "#E8D6A8"; ctx.beginPath(); ctx.moveTo(pad,134); ctx.lineTo(W-pad,134); ctx.stroke();
   let y = 162;
   if(!wrongs.length){
-    ctx.fillStyle = "#2F9E57"; ctx.font = "bold 20px "+SF;
-    ctx.fillText("🎉 축하해요! 모든 문제를 첫 시도에 맞혔어요.", pad, y+36);
-    ctx.fillStyle = "#1F6E3E"; ctx.font = "16px "+SF;
-    ctx.fillText(stage.short + " 자료를 보는 안목이 훌륭해요!", pad, y+66);
+    if(R.status === "none"){          // 채점 0개: 칭찬 없음
+      ctx.fillStyle = "#6E7B8A"; ctx.font = "bold 20px "+SF;
+      ctx.fillText("풀어 본 문제가 없어요.", pad, y+36);
+    } else if(R.status === "mid"){    // 중간 종료: 칭찬·완료 문구 없음
+      ctx.fillStyle = "#1B3A5C"; ctx.font = "bold 20px "+SF;
+      ctx.fillText("푼 문제는 모두 첫 시도에 맞혔어요.", pad, y+36);
+      ctx.fillStyle = "#6E7B8A"; ctx.font = "16px "+SF;
+      ctx.fillText(R.skipNote, pad, y+66);
+    } else {
+      ctx.fillStyle = "#2F9E57"; ctx.font = "bold 20px "+SF;
+      ctx.fillText("🎉 축하해요! 모든 문제를 첫 시도에 맞혔어요.", pad, y+36);
+      ctx.fillStyle = "#1F6E3E"; ctx.font = "16px "+SF;
+      ctx.fillText(stage.short + " 자료를 보는 안목이 훌륭해요!", pad, y+66);
+    }
   } else blocks.forEach(b => {
     ctx.fillStyle = "#FFFFFF"; ctx.strokeStyle = "#FBE9B8"; roundBox(ctx,pad,y,W-2*pad,b.h,12); ctx.fill(); ctx.stroke();
     ctx.fillStyle = "#D2483F"; ctx.fillRect(pad,y,5,b.h);
@@ -1334,12 +1432,19 @@ function downloadReport(){
   const lvl = state.level === "easy" ? "쉬움" : "어려움";
   const W = 860, pad = 40, cv = document.createElement("canvas"), ctx = cv.getContext("2d");
   const inner = W - 2*pad - 32;
-  const advL = wrap(ctx, adviceText(), inner, "14px "+SF);
   const refL = ref ? wrap(ctx, ref, inner, "14px "+SF) : [];
   const achL = wrap(ctx, ACH_CODE + " " + ACH_TEXT, W-2*pad, "12px "+SF);
-  const goodN = Math.max(1, R.good.length), badN = Math.max(1, R.bad.length);
-  const H = 150 + 92 + 66 + (74 + Math.max(goodN,badN)*24) + (54 + advL.length*21)
-          + (ref ? 46 + refL.length*21 : 0) + 30 + achL.length*18 + 46;
+  const vLine = (R.skipNote ? R.skipNote + " · " : "") + R.verdict;
+  const vL = wrap(ctx, vLine, W-2*pad-32, "bold 17px "+SF);
+  const vh = 20 + vL.length*24 + 24;
+  /* 유형 분석: '잘하는 유형' + '보완이 필요한 유형'(가장 먼저 공부할 유형 하나 + tip) 두 칸 */
+  const bw = (W - 2*pad - 12)/2;
+  const wk = weakInfo();
+  const wkL = wrap(ctx, wk.text, bw-32, "14px "+SF);
+  const goodN = Math.max(1, R.good.length);
+  const bh = Math.max(50 + goodN*24, 50 + (wk.head ? 24 : 0) + wkL.length*21);
+  const H = 150 + 92 + (vh + 10) + (bh + 14)
+          + (ref ? 44 + refL.length*21 : 0) + 30 + achL.length*18 + 46;
   cv.width = W; cv.height = H;
   ctx.fillStyle = "#FFFBEC"; ctx.fillRect(0,0,W,H);
   ctx.fillStyle = "#F58A2E"; ctx.fillRect(0,0,W,10);
@@ -1351,7 +1456,7 @@ function downloadReport(){
 
   /* 요약 수치 */
   let y = 126;
-  const cells = [["점수", state.score + " / " + state.max], ["첫 시도 정답률", R.acc + "%"],
+  const cells = [["점수", state.score + " / " + state.max], ["첫 시도 정답률", R.accStr],
                  ["최고 콤보", state.best], ["소요 시간", R.mins + "분 " + R.secs + "초"]];
   const cw = (W - 2*pad - 3*10)/4;
   cells.forEach((c,i) => {
@@ -1363,34 +1468,31 @@ function downloadReport(){
   });
   y += 92;
   /* 총평 */
-  ctx.fillStyle = "#FFF3E2"; ctx.strokeStyle = "#FBE9B8"; roundBox(ctx,pad,y,W-2*pad,56,12); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = "#FFF3E2"; ctx.strokeStyle = "#FBE9B8"; roundBox(ctx,pad,y,W-2*pad,vh,12); ctx.fill(); ctx.stroke();
   ctx.fillStyle = "#1B3A5C"; ctx.font = "bold 17px "+SF;
-  ctx.fillText((R.skipped ? "끝까지 풀지 않았어요 (" + R.skipped + "문항 남음) · " : "") + verdictOf(R.acc), pad+16, y+24);
+  vL.forEach((l,k) => ctx.fillText(l, pad+16, y+26+k*24));
   ctx.fillStyle = "#6E7B8A"; ctx.font = "13px "+SF;
   ctx.fillText("첫 시도 정답 " + R.firstOk + " · 다시 풀어 맞힘 " + R.retryOk + " · 못 맞힘 " + R.miss +
-               (R.skipped ? " · 미응답 " + R.skipped : ""), pad+16, y+45);
-  y += 66;
+               (R.skipped ? " · 미응답 " + R.skipped : ""), pad+16, y+26+vL.length*24+4);
+  y += vh + 10;
   /* 유형 분석 */
-  const bw = (W - 2*pad - 12)/2, bh = 50 + Math.max(goodN,badN)*24;
-  [["👍 잘하는 유형", R.good, "#2F9E57", "특별히 완벽한 유형이 없어요."],
-   ["🔧 보완이 필요한 유형", R.bad, "#D2483F", "특별히 보완할 유형이 없어요."]].forEach((col,i) => {
+  [0,1].forEach(i => {
     const x = pad + i*(bw+12);
     ctx.fillStyle = "#FFFFFF"; ctx.strokeStyle = "#FBE9B8"; roundBox(ctx,x,y,bw,bh,12); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = "#1B3A5C"; ctx.font = "bold 14px "+SF; ctx.fillText(col[0], x+16, y+26);
+    ctx.fillStyle = "#1B3A5C"; ctx.font = "bold 14px "+SF; ctx.fillText(i ? "🔧 보완이 필요한 유형" : "👍 잘하는 유형", x+16, y+26);
     ctx.font = "14px "+SF;
-    if(col[1].length){ ctx.fillStyle = col[2];
-      col[1].forEach((g,k) => ctx.fillText(CATEGORIES[g.c].label + "  " + g.s.ok + "/" + g.s.n, x+16, y+52+k*24)); }
-    else { ctx.fillStyle = "#9AA6B2"; ctx.fillText(col[3], x+16, y+52); }
+    if(i === 0){
+      if(R.good.length){ ctx.fillStyle = "#2F9E57";
+        R.good.forEach((g,k) => ctx.fillText(CATEGORIES[g.c].label + "  " + g.s.ok + "/" + g.s.n, x+16, y+52+k*24)); }
+      else { ctx.fillStyle = "#9AA6B2"; ctx.fillText("특별히 완벽한 유형이 없어요.", x+16, y+52); }
+    } else {
+      let yy = y+52;
+      if(wk.head){ ctx.fillStyle = "#D2483F"; ctx.font = "bold 14px "+SF; ctx.fillText(wk.head, x+16, yy); yy += 24; }
+      ctx.fillStyle = wk.head ? "#333A45" : "#6E7B8A"; ctx.font = "14px "+SF;
+      wkL.forEach((l,k) => ctx.fillText(l, x+16, yy+k*21));
+    }
   });
   y += bh + 14;
-  /* 가장 먼저 공부할 것 */
-  const ah = 34 + advL.length*21;
-  ctx.fillStyle = "#FFF4D6"; ctx.strokeStyle = "#F0DCA8"; roundBox(ctx,pad,y,W-2*pad,ah,12); ctx.fill(); ctx.stroke();
-  ctx.fillStyle = "#E8B43C"; ctx.fillRect(pad,y,5,ah);
-  ctx.fillStyle = "#6E5410"; ctx.font = "bold 14px "+SF; ctx.fillText("🎯 가장 먼저 공부할 것", pad+18, y+22);
-  ctx.fillStyle = "#8A6D1F"; ctx.font = "14px "+SF;
-  advL.forEach((l,k) => ctx.fillText(l, pad+18, y+44+k*21));
-  y += ah + 14;
   /* 학습 소감 */
   if(ref){
     const rh = 30 + refL.length*21;
@@ -1414,8 +1516,9 @@ function downloadReport(){
 
 /* ══ 교사용 학습 데이터 목록 (엑셀) ══ */
 function xesc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
-function xrow(cells, style){
-  return "<Row>" + cells.map(c => '<Cell'+(style?' ss:StyleID="'+style+'"':'')+'><Data ss:Type="String">'+xesc(c)+'</Data></Cell>').join("") + "</Row>";
+function xrow(cells, style){   // style: 줄 전체 스타일 문자열 또는 칸별 배열
+  return "<Row>" + cells.map((c,i) => { const st = Array.isArray(style) ? style[i] : style;
+    return '<Cell'+(st?' ss:StyleID="'+st+'"':'')+'><Data ss:Type="String">'+xesc(c)+'</Data></Cell>'; }).join("") + "</Row>";
 }
 function xsheet(title, rows){
   return '<Worksheet ss:Name="'+xesc(title)+'"><Table>'+
@@ -1429,7 +1532,7 @@ function downloadTeacherXls(){
     rows.push(xrow(["원본 id","유형","문제(예문)","정답","해설"], "hd"));
     items.forEach(it => {
       const q = (it.card ? "[" + it.card.type + " · " + it.card.ttl + " / " + it.card.src + "] " + it.card.body + "  ▶ " : "") + qTextOf(it);
-      rows.push(xrow([it.id, CATEGORIES[it.cat].label, q, ansOf(it), it.explain]));
+      rows.push(xrow([it.id, CATEGORIES[it.cat].label, q, ansOf(it), it.explain], [null, null, null, "ans", null]));   // 정답 열 빨간 굵은 글씨
     });
     rows.push(xrow([""]));
     rows.push(xrow(["성취기준", ACH_CODE + " " + ACH_TEXT]));
@@ -1457,7 +1560,7 @@ function downloadTeacherXls(){
 
   const xml = '<?xml version="1.0" encoding="UTF-8"?>\n<?mso-application progid="Excel.Sheet"?>\n' +
     '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">' +
-    '<Styles><Style ss:ID="hd"><Font ss:Bold="1"/><Interior ss:Color="#FBE9B8" ss:Pattern="Solid"/></Style></Styles>' +
+    '<Styles><Style ss:ID="hd"><Font ss:Bold="1"/><Interior ss:Color="#FBE9B8" ss:Pattern="Solid"/></Style><Style ss:ID="ans"><Font ss:Bold="1" ss:Color="#E00000"/></Style></Styles>' +
     sheets.join("") + '</Workbook>';
   const d = new Date(), p = n => String(n).padStart(2,"0");
   const fn = GAME_CONFIG.gameCode + "_발표자료정비소_학습데이터목록_" + d.getFullYear() + p(d.getMonth()+1) + p(d.getDate()) + ".xls";

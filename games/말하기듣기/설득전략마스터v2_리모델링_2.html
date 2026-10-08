@@ -2,7 +2,8 @@
 <html lang="ko">
 <!-- 리모델링 기록
   2026.10.01 15:00 6차: 킹 연설 교과서 해설문을 채점(밑줄)에서 빼고 '연설 배경'으로 분리(#21 삭제), #25 해설에 판단 근거 추가(#25·#26은 교사 결정으로 교과서 판정 유지), "우리 반뿐 아니라" 맞춤법, 답하기 전 →키로 넘어가던 버그 수정 (3단계 9문항)
-     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 -->
+     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
+     2026.10.08 12:25 12차: 테마층(연설 무대, 보조색 먹) + 실제 조작 버그 검사·수정 — 중간 종료 총평·보완 칸 하나·끝내기 확인·자동 종료·못 맞힘·엑셀 정답 빨강, OX는 다시 풀기 없이 바로 정답 공개, '파란 밑줄' 안내를 '밑줄 친'으로(실제 밑줄은 주황) -->
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -180,11 +181,19 @@ mark.hl{background:linear-gradient(180deg,transparent 55%,rgba(245,138,46,.30) 5
  .opts3{grid-template-columns:1fr}
  .rules{grid-template-columns:1fr 1fr}
 }
+/* ═══ 게임 테마층 · 연설 무대 (2026.10.08) ═══
+   커튼이 열린 무대 가운데 연단과 마이크가 놓인 장면(사람·글자 없음). 보조색 먹 #3D3D4A. 영역 팔레트·헤더 띠·정답/오답 색·흰 문제 카드·정답 카드는 그대로.
+   유형 색(인성 파랑·이성 초록·감성 분홍·종합 보라)과 빨강은 그림에 쓰지 않음. 이 블록과 시작 화면 SVG를 지우면 원래 모습 */
+:root{--th:#3D3D4A}
+.hero .keyArt{margin-left:auto;flex:none;height:118px;width:auto}
+@media (max-width:860px){.hero .keyArt{display:none}}
+#start .box{border-left:4px solid var(--th)}
+#start .box-t{color:var(--th)}
 </style>
 </head>
 <body>
 <div id="toast"></div>
-<div class="ingame-credit" id="ingameCredit" style="display:none">제작 · 보라라샘 / 2026.07.16</div>
+<div class="ingame-credit" id="ingameCredit" style="display:none">제작 · 보라라샘 · 2026.07.16</div>
 
 <div class="wrap">
 
@@ -202,6 +211,30 @@ mark.hl{background:linear-gradient(180deg,transparent 55%,rgba(245,138,46,.30) 5
     <div class="h-title">연설문 설득 전략 마스터</div>
     <div class="h-sub">중학교 3학년 국어 · 연설문을 듣고 설득 전략을 비판적으로 분석하기</div>
    </div>
+   <svg class="keyArt" viewBox="0 0 250 118" aria-hidden="true">
+    <defs><clipPath id="s301stage"><rect x="2" y="2" width="246" height="114" rx="10"/></clipPath></defs>
+    <rect x="2" y="2" width="246" height="114" rx="10" fill="#F1F1F4"/>
+    <g clip-path="url(#s301stage)">
+     <path d="M125 14 L78 100 H172 Z" fill="#FFF6DD"/>
+     <rect x="0" y="98" width="250" height="20" fill="#DCDCE3"/>
+     <rect x="0" y="98" width="250" height="3" fill="#3D3D4A" opacity=".35"/>
+     <path d="M0 0 H66 C60 26 58 48 64 70 C68 84 58 96 40 104 H0 Z" fill="#3D3D4A"/>
+     <path d="M250 0 H184 C190 26 192 48 186 70 C182 84 192 96 210 104 H250 Z" fill="#3D3D4A"/>
+     <g fill="none" stroke="#6E6E7C" stroke-width="2" stroke-linecap="round">
+      <path d="M18 10 C16 40 18 70 14 100"/><path d="M36 10 C34 40 38 68 30 102"/><path d="M52 10 C48 36 48 60 52 80"/>
+      <path d="M232 10 C234 40 232 70 236 100"/><path d="M214 10 C216 40 212 68 220 102"/><path d="M198 10 C202 36 202 60 198 80"/>
+     </g>
+     <path d="M0 0 H250 V14 Q237 24 224 14 Q211 24 198 14 Q185 24 172 14 Q159 24 146 14 Q133 24 120 14 Q107 24 94 14 Q81 24 68 14 Q55 24 42 14 Q29 24 16 14 Q8 20 0 14 Z" fill="#3D3D4A"/>
+     <path d="M0 14 Q8 20 16 14 Q29 24 42 14 Q55 24 68 14 Q81 24 94 14 Q107 24 120 14 Q133 24 146 14 Q159 24 172 14 Q185 24 198 14 Q211 24 224 14 Q237 24 250 14" fill="none" stroke="#6E6E7C" stroke-width="1.5"/>
+     <path d="M127 58 C127 46 133 40 140 37" fill="none" stroke="#3D3D4A" stroke-width="2.5" stroke-linecap="round"/>
+     <rect x="136" y="29" width="11" height="15" rx="5.5" transform="rotate(40 141.5 36.5)" fill="#3D3D4A"/>
+     <rect x="100" y="56" width="50" height="8" rx="2.5" fill="#3D3D4A"/>
+     <path d="M105 64 H145 L140 99 H110 Z" fill="#fff" stroke="#3D3D4A" stroke-width="2.5" stroke-linejoin="round"/>
+     <circle cx="125" cy="78" r="7" fill="none" stroke="#3D3D4A" stroke-width="2"/>
+     <rect x="104" y="98" width="42" height="4" rx="1.5" fill="#3D3D4A"/>
+    </g>
+    <rect x="2" y="2" width="246" height="114" rx="10" fill="none" stroke="#3D3D4A" stroke-width="2"/>
+   </svg>
   </div>
 
   <div class="box std">
@@ -222,7 +255,7 @@ mark.hl{background:linear-gradient(180deg,transparent 55%,rgba(245,138,46,.30) 5
     <div class="box">
      <div class="box-t">🎮 게임 방법</div>
      <p>1단계는 개념 문제를 풉니다.</p>
-     <p>2·3단계는 연설문에서 파란 밑줄 부분에 쓰인 설득 전략을 찾습니다.</p>
+     <p>2·3단계는 연설문에서 밑줄 친 부분에 쓰인 설득 전략을 찾습니다.</p>
      <p>4단계는 연설문을 쓸 때 어떤 문장이 어느 전략인지 고릅니다.</p>
      <p>단답형은 직접 입력합니다. 힌트는 점수에 영향을 주지 않습니다.</p>
      <div class="rules">
@@ -257,7 +290,7 @@ mark.hl{background:linear-gradient(180deg,transparent 55%,rgba(245,138,46,.30) 5
 
   <div class="credit">
    제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-   제작일 2026.07.16 · <span id="lastMod">최종 수정 2026.10.05 03:00</span>
+   제작일 2026.07.16 · <span id="lastMod">최종 수정 2026.10.08 12:25</span>
   </div>
 
  </div></div>
@@ -307,7 +340,7 @@ mark.hl{background:linear-gradient(180deg,transparent 55%,rgba(245,138,46,.30) 5
      <div class="nav" id="navB">
       <button class="nbtn" onclick="go(-1)">◀ 이전</button>
       <button class="nbtn" onclick="go(1)">다음 ▶</button>
-      <button class="nbtn fin" onclick="finish()">게임 끝내기</button>
+      <button class="nbtn fin" onclick="askFinish()">게임 끝내기</button>
      </div>
     </div>
 
@@ -321,7 +354,7 @@ mark.hl{background:linear-gradient(180deg,transparent 55%,rgba(245,138,46,.30) 5
      </div>
      <div class="qcard">
       <div><span class="qtag" id="tagS">유형</span></div>
-      <div class="qtext" id="textS">← 파란 밑줄 부분에 사용된 설득 전략은?</div>
+      <div class="qtext" id="textS">← 밑줄 친 부분에 사용된 설득 전략은?</div>
       <div id="ansS"></div>
       <div class="hint" id="hintS"></div>
       <div class="fb" id="fbS"></div>
@@ -329,7 +362,7 @@ mark.hl{background:linear-gradient(180deg,transparent 55%,rgba(245,138,46,.30) 5
       <div class="nav row" id="navS">
        <button class="nbtn" onclick="go(-1)">◀ 이전</button>
        <button class="nbtn" onclick="go(1)">다음 ▶</button>
-       <button class="nbtn fin" onclick="finish()">끝내기</button>
+       <button class="nbtn fin" onclick="askFinish()">게임 끝내기</button>
       </div>
      </div>
     </div>
@@ -388,7 +421,7 @@ mark.hl{background:linear-gradient(180deg,transparent 55%,rgba(245,138,46,.30) 5
 
 <script>
 function $(id){return document.getElementById(id)}
-const MADE_DATE='2026.07.16', LAST_MOD='2026.10.05 03:00';
+const MADE_DATE='2026.07.16', LAST_MOD='2026.10.08 12:25';
 
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
@@ -595,7 +628,7 @@ const HINT1={'인성적':'💡 화자가 어떤 사람인지, 어떤 경험을 �
 const HINT2={'인성적':'💡💡 첫 글자는 "인"입니다.','이성적':'💡💡 첫 글자는 "이"입니다.','감성적':'💡💡 첫 글자는 "감"입니다.'};
 
 /* ══════════ 상태 ══════════ */
-let S={stage:0,qs:[],idx:0,score:0,combo:0,maxCombo:0,st:[],elapsed:0,start:0,speech:false,max:170};
+let S={stage:0,qs:[],idx:0,score:0,combo:0,maxCombo:0,st:[],elapsed:0,start:0,speech:false,max:170,done:true,autoT:null};
 
 /* ══════════ 사운드 ══════════ */
 const AC=window.AudioContext||window.webkitAudioContext;let actx;
@@ -651,8 +684,9 @@ function startStage(n){
  doStartStage(n);
 }
 function doStartStage(n){
- S.stage=n; S.qs=buildQs(n); S.idx=0; S.score=0; S.combo=0; S.maxCombo=0;
- S.st=S.qs.map(()=>({status:null,tries:0,my:'',hint:0}));
+ clearTimeout(S.autoT); closeBanner();
+ S.stage=n; S.qs=buildQs(n); S.idx=0; S.score=0; S.combo=0; S.maxCombo=0; S.done=false; S.autoT=null;
+ S.st=S.qs.map(()=>({status:null,tries:0,my:'',hint:0,open:false,wv:null}));
  S.speech=(n===1||n===2); S.start=Date.now(); S.elapsed=0;
  S.max=maxScoreOf(S.qs.length);
  show('play');
@@ -666,7 +700,7 @@ function show(id){
  if(id!=='play')$('ingameCredit').style.display='none';
  window.scrollTo({top:0});
 }
-function goStart(){show('start')}
+function goStart(){clearTimeout(S.autoT);S.done=true;show('start')}
 function againStage(){doStartStage(S.stage)}
 function nextStage(){doStartStage(S.stage+1)}
 
@@ -681,7 +715,7 @@ function render(){
   const sp=SP[q.sid];
   $('spTitle').textContent=sp.title;$('spAuthor').textContent=sp.author;$('spSrc').textContent=sp.src;
   $('spBody').innerHTML=renderBody(sp.body,q.id);
-  $('textS').textContent='← 파란 밑줄 부분에 사용된 설득 전략은?';
+  $('textS').textContent='← 밑줄 친 부분에 사용된 설득 전략은?';
   setTimeout(()=>{const m=document.querySelector('mark.hl');if(m&&m.scrollIntoView)m.scrollIntoView({behavior:'smooth',block:'center'})},120);
  }else{
   $('textB').innerHTML=esc(q.text).replace(/\n/g,'<br>');
@@ -690,6 +724,7 @@ function render(){
  const inp=$('sinp'+sf); if(inp)inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();submitShort(sf)}});
  $('hint'+sf).className='hint';$('fb'+sf).className='fb';$('det'+sf).className='det';
  const st=S.st[S.idx];
+ if(st.status==='pending')st.open=false;
  if(st.hint>0)showHint(sf,st.hint,q);
  if(st.status!==null)replay(q,sf,st);
 }
@@ -701,25 +736,25 @@ function renderBody(body,activeId){
 }
 function answerHTML(q,sf){
  if(q.type==='mc3')return `<div class="opts3">
-  <button class="opt o1" onclick="pick('인성적')"><div class="oi">🔵</div><div class="ol">인성적</div><div class="od">신뢰감·경험</div></button>
-  <button class="opt o2" onclick="pick('이성적')"><div class="oi">🟢</div><div class="ol">이성적</div><div class="od">통계·논리</div></button>
-  <button class="opt o3" onclick="pick('감성적')"><div class="oi">🩷</div><div class="ol">감성적</div><div class="od">감정·공감</div></button></div>`;
+  <button class="opt o1" data-v="인성적" onclick="pick('인성적')"><div class="oi">🔵</div><div class="ol">인성적</div><div class="od">신뢰감·경험</div></button>
+  <button class="opt o2" data-v="이성적" onclick="pick('이성적')"><div class="oi">🟢</div><div class="ol">이성적</div><div class="od">통계·논리</div></button>
+  <button class="opt o3" data-v="감성적" onclick="pick('감성적')"><div class="oi">🩷</div><div class="ol">감성적</div><div class="od">감정·공감</div></button></div>`;
  if(q.type==='ox')return `<div class="opts2">
-  <button class="optox" onclick="pick('O')" style="color:#3B86C9">⭕ O (맞다)</button>
-  <button class="optox" onclick="pick('X')" style="color:#D4718F">❌ X (틀리다)</button></div>`;
+  <button class="optox" data-v="O" onclick="pick('O')" style="color:#3B86C9">⭕ O (맞다)</button>
+  <button class="optox" data-v="X" onclick="pick('X')" style="color:#D4718F">❌ X (틀리다)</button></div>`;
  if(q.type==='short')return `<div class="shortrow">
   <input class="sinp" id="sinp${sf}" type="text" placeholder="예: ○○적 설득 전략" maxlength="20">
   <button class="sbtn2" onclick="submitShort('${sf}')">확인</button>
   <button class="hbtn" id="hbtn${sf}" onclick="useHint('${sf}')">💡 힌트</button></div>`;
  if(q.type==='pick')return `<div class="optpick">`+q.opts.map((o,i)=>
-  `<button class="pk" onclick="pickIdx(${i})"><b>${'①②③④⑤'.charAt(i)}</b>${esc(o)}</button>`).join('')+`</div>`;
+  `<button class="pk" data-v="${i}" onclick="pickIdx(${i})"><b>${'①②③④⑤'.charAt(i)}</b>${esc(o)}</button>`).join('')+`</div>`;
  return '';
 }
 function lockAns(sf,on){document.querySelectorAll('#ans'+sf+' button,#ans'+sf+' input').forEach(e=>e.disabled=on)}
 
 /* ══════════ 채점 ══════════ */
-function pick(v){const q=S.qs[S.idx];grade(v===q.answer,v,q)}
-function pickIdx(i){const q=S.qs[S.idx];grade(i===q.answer,'①②③④⑤'.charAt(i),q)}
+function pick(v){const q=S.qs[S.idx];grade(v===q.answer,v,q,v)}
+function pickIdx(i){const q=S.qs[S.idx];grade(i===q.answer,'①②③④⑤'.charAt(i),q,String(i))}
 function submitShort(sf){
  const inp=$('sinp'+sf); if(!inp||inp.disabled)return;
  const v=inp.value.trim(); if(!v){toast('답을 입력해 주세요.');return}
@@ -728,10 +763,11 @@ function submitShort(sf){
  const ok=(cl===q.answer||cl===q.answer+'적'||cl===q.answer+'설득전략'||cl===q.answer+'적설득전략'||cl===q.answer+'전략');
  grade(ok,v,q);
 }
-function grade(ok,my,q){
+function grade(ok,my,q,wv){
  const st=S.st[S.idx], sf=S.speech?'S':'B';
- if(st.status!==null&&st.status!=='pending')return;
- st.my=my;
+ if(S.done)return;
+ if(st.status!==null&&!(st.status==='pending'&&st.open))return;
+ st.my=my; st.open=false;
  if(ok){
   const first=(st.tries===0);
   if(first){
@@ -750,10 +786,11 @@ function grade(ok,my,q){
  }else{
   S.combo=0;
   S.score=Math.max(0,S.score-PENALTY);
-  st.tries++;
+  st.tries++; st.wv=(wv===undefined?null:wv);
   sndNG();
   const card=$('ans'+sf); card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
-  if(st.tries===1){
+  // OX(보기 2개)는 다시 풀기 없이 바로 정답·해설 (지침 3-6)
+  if(st.tries===1&&q.type!=='ox'){
    st.status='pending';
    lockAns(sf,true);
    feedback(sf,false,'아쉬워요! −'+PENALTY+'점 · 한 번 더 풀어 볼까요?');
@@ -766,11 +803,20 @@ function grade(ok,my,q){
    detail(sf,q); updHud();
   }
  }
+ // 모든 문항이 채점되면 약 2초 뒤 자동으로 끝낸다 (다시 풀기를 기다리는 문항이 있으면 기다린다)
+ if(S.st.every(x=>x.status==='correct'||x.status==='retry'||x.status==='wrong')){
+  clearTimeout(S.autoT);
+  const run=S.start;
+  S.autoT=setTimeout(()=>{if(!S.done&&S.start===run&&$('play').classList.contains('on'))finishGame()},ok?2300:2600);
+ }
 }
 function retryQ(){
  const sf=S.speech?'S':'B', q=S.qs[S.idx], st=S.st[S.idx];
- st.status=null;
+ if(S.done||st.status!=='pending'||st.open)return;
+ // 다시 풀기 중에도 상태는 'pending'(한 번 틀림)으로 둔다 → 그대로 떠나거나 끝내면 '못 맞힘'으로 센다
+ st.open=true;
  $('ans'+sf).innerHTML=answerHTML(q,sf);
+ if(st.wv!==null)document.querySelectorAll('#ans'+sf+' button[data-v]').forEach(b=>{if(b.dataset.v===String(st.wv))b.disabled=true});
  const inp=$('sinp'+sf); if(inp){inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();submitShort(sf)}});inp.focus()}
  if(st.hint>0)showHint(sf,st.hint,q);
  $('fb'+sf).className='fb';
@@ -846,7 +892,7 @@ document.addEventListener('keydown',e=>{
   e.preventDefault();
   if(cbShown()){closeBanner();
    if(S.idx<S.qs.length-1)go(1); return}
-  if(st.status==='pending'){retryQ();return}
+  if(st.status==='pending'){if(!st.open)retryQ();return}
   if(st.status!==null)go(1);
   else if(e.key==='ArrowRight')toast('먼저 답을 골라 주세요.');
  }
@@ -880,15 +926,37 @@ function elapsedText(){
 }
 
 /* ══════════ 종료 ══════════ */
-function finish(){
+// 총평 (화면연출표준 7장): 채점 0개 / 중간 종료 / 끝까지 — 화면·리포트·오답노트가 모두 이 결과를 쓴다
+function summary(){
+ const t=tally();
+ t.acc=t.answered>0?t.c/t.answered:0;
+ if(!t.answered){t.emoji='📭';t.title='풀어 본 문제가 없어요';t.verdict='';t.rateText='–'}
+ else if(t.sk>0){t.emoji='✏️';t.title='여기까지 풀었어요';
+  t.verdict=t.acc>=.70?'잘하고 있어요! 남은 문제까지 풀며 좀 더 연습해 보면 어떨까요?':'좀 더 연습해 보면 어떨까요? 남은 문제까지 풀어 보면 감이 잡혀요.';t.rateText=t.rate+'%'}
+ else{t.emoji=gradeEmoji(t.rate);t.title=gradeText(t.rate);t.verdict='';t.rateText=t.rate+'%'}
+ return t;
+}
+function askFinish(){
+ if(S.done)return;
+ const left=S.st.filter(x=>x.status===null).length;
+ const msg=left>0?'아직 '+left+'문항이 남았어요. 게임을 끝낼까요?\n(남은 문항은 미응답으로 기록돼요)':'지금까지 푼 결과로 게임을 끝낼까요?';
+ if(!confirm(msg))return;
+ finishGame();
+}
+function finishGame(){
+ if(S.done)return;
+ S.done=true; clearTimeout(S.autoT);
  closeBanner();
+ // 한 번 틀리고 다시 풀기를 하지 않은(또는 다시 풀기를 열어 놓고 떠난) 문항은 '못 맞힘'
+ S.st.forEach(x=>{if(x.status==='pending'){x.status='wrong';x.open=false}});
  S.elapsed=Date.now()-S.start;
- const t=tally(), total=S.qs.length, right=t.c+t.r;
+ const t=summary();
  $('endStageLbl').textContent=STAGE_INFO[S.stage].label;
- $('endEmoji').textContent=gradeEmoji(t.rate);
- $('endTitle').textContent=gradeText(t.rate);
+ $('endEmoji').textContent=t.emoji;
+ $('endTitle').textContent=t.title;
  $('endDesc').innerHTML=(t.sk>0?'끝까지 풀지 않았어요 ('+t.sk+'문항 남음)<br>':'')+
-  '정답률 '+t.rate+'% · 소요 시간 '+elapsedText();
+  (t.verdict?esc(t.verdict)+'<br>':'')+
+  '정답률 '+t.rateText+' · 소요 시간 '+elapsedText();
  $('endScore').textContent=S.score+'점';
  $('endScoreSub').textContent=S.max+'점 만점에 '+S.score+'점';
  $('stC').textContent=t.c;$('stR').textContent=t.r;$('stW').textContent=t.w;$('stS').textContent=t.sk;$('stK').textContent=S.maxCombo;
@@ -896,28 +964,36 @@ function finish(){
  const bn=$('btnNext'), ba=$('btnAgain');
  bn.style.display=hasNext?'':'none';
  ba.className=hasNext?'eb sec':'eb';
-
- // ── 연동 모드: 결과 전송 ──
+ document.querySelectorAll('.sendMsg').forEach(el=>el.remove());
  if(IS_ONLINE&&STUDENT.verified){
   const nameInput=$('inName');nameInput.value=STUDENT.name;nameInput.readOnly=true;nameInput.style.background='#FBF3E2';
-  const wrongItems=S.qs.map((q,idx)=>(S.st[idx].status==='wrong'||S.st[idx].status==='pending')?q.id:null).filter(x=>x!==null).join(',');
-  submitResult({
+  S.result={
    studentId:STUDENT.id,studentName:STUDENT.name,className:STUDENT.className,
    stage:STAGE_INFO[S.stage].label,
-   totalQuestions:total,answeredCount:t.answered,skippedCount:t.sk,
-   correctCount:right,firstTryCorrect:t.c,retryCorrect:t.r,
+   totalQuestions:S.qs.length,answeredCount:t.answered,skippedCount:t.sk,
+   correctCount:t.c+t.r,firstTryCorrect:t.c,retryCorrect:t.r,
    score:S.score,maxScore:S.max,accuracy:t.rate,maxCombo:S.maxCombo,
-   elapsedSeconds:Math.round(S.elapsed/1000),wrongItems:wrongItems,reflection:''
-  }).then(res=>{
-   const el=document.createElement('div');
-   el.style.cssText='margin-top:8px;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:600;text-align:center;';
-   if(res.status==='ok'){el.style.background='#e8f5e9';el.style.color='#2e7d32';el.textContent='✅ 결과가 선생님께 전송되었습니다.'}
-   else{el.style.background='#ffebee';el.style.color='#c62828';
-    el.innerHTML='❌ 전송 실패 <button onclick="this.parentElement.remove();finish();" style="margin-left:8px;padding:4px 12px;border:1px solid #c62828;border-radius:6px;background:#fff;color:#c62828;cursor:pointer;font-size:12px;">재전송</button>'}
-   const p=$('endPrivacy');if(p)p.before(el);
-  });
+   elapsedSeconds:Math.round(S.elapsed/1000),
+   wrongItems:S.qs.map((q,idx)=>S.st[idx].status==='wrong'?q.id:null).filter(x=>x!==null).join(','),
+   reflection:''
+  };
+  sendResult();
  }
  show('end');
+}
+// ── 연동 모드: 결과 전송 (한 판에 한 번. 실패하면 '재전송'으로 같은 값을 다시 보낸다) ──
+function sendResult(){
+ if(!S.result)return;
+ document.querySelectorAll('.sendMsg').forEach(el=>el.remove());
+ submitResult(S.result).then(res=>{
+  document.querySelectorAll('.sendMsg').forEach(el=>el.remove());
+  const el=document.createElement('div');el.className='sendMsg';
+  el.style.cssText='margin-top:8px;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:600;text-align:center;';
+  if(res.status==='ok'){el.style.background='#e8f5e9';el.style.color='#2e7d32';el.textContent='✅ 결과가 선생님께 전송되었습니다.'}
+  else{el.style.background='#ffebee';el.style.color='#c62828';
+   el.innerHTML='❌ 전송 실패 <button onclick="sendResult()" style="margin-left:8px;padding:4px 12px;border:1px solid #c62828;border-radius:6px;background:#fff;color:#c62828;cursor:pointer;font-size:12px;">재전송</button>'}
+  const p=$('endPrivacy');if(p)p.before(el);
+ });
 }
 
 /* ══════════ 학생용 복습 모달 ══════════ */
@@ -984,13 +1060,13 @@ function dlWrong(){
  c.fillText('📝 오답노트 · 연설문 설득 전략 마스터',pad,37);
  c.fillStyle='#1B3A5C';c.font='bold 17px '+SYSF;
  c.fillText(STAGE_INFO[S.stage].label+'  |  '+name+'  |  '+s.disp,pad,86);
- const t=tally();
+ const t=summary();
  c.fillStyle='#7A6A52';c.font='15px '+SYSF;
  c.fillText('첫 시도 정답 '+t.c+' · 다시 풀어 맞힘 '+t.r+' · 못 맞힌 문항 '+t.w+' · 미응답 '+t.sk+'  |  '+S.score+' / '+S.max+'점',pad,112);
  let y=150;
  if(!wl.length){
   c.fillStyle='#2E9B79';c.font='bold 24px '+SYSF;
-  c.fillText('🎊 틀린 문항이 없습니다. 아주 잘했어요!',pad,y+30);
+  c.fillText(!t.answered?'풀어 본 문제가 없어요.':t.sk>0?'푼 문제 가운데 틀린 문항은 없어요. 남은 문제를 마저 풀어 보세요.':'🎊 틀린 문항이 없습니다. 아주 잘했어요!',pad,y+30);
  }else{
   c.fillStyle='#A63E5C';c.font='bold 19px '+SYSF;
   c.fillText('틀린 문항 '+wl.length+'개',pad,y);y+=26;
@@ -1024,28 +1100,32 @@ function dlWrong(){
 function dlReport(){
  const name=needName(); if(!name)return;
  const cmt=$('inCmt').value.trim(), s=stamp(), W=1240, pad=44;
- const t=tally(), cs=catStats();
- const good=[],bad=[];
- Object.keys(cs).forEach(k=>{
-  const d=cs[k]; if(d.n<2)return;
-  const r=d.c/d.n;
-  if(r===1)good.push(k+' '+d.c+'/'+d.n);
-  else if(r<0.5)bad.push(k+' '+d.c+'/'+d.n);
- });
- // 가장 먼저 공부할 유형
+ const t=summary(), cs=catStats();
+ const judged=Object.keys(cs).filter(k=>cs[k].n>=2);
+ const good=judged.filter(k=>cs[k].c===cs[k].n).map(k=>k+' '+cs[k].c+'/'+cs[k].n);
+ const totalWrong=Object.keys(cs).reduce((a,k)=>a+cs[k].w,0);
+ // '보완이 필요한 유형' 한 칸 = 가장 먼저 공부할 유형 하나(오답 최다) + 그 유형의 판단 방법(tip)
  let focus=null;
- const cands=Object.keys(cs).filter(k=>cs[k].n>=2&&cs[k].w>0);
+ const cands=judged.filter(k=>cs[k].w>0);
  if(cands.length){
   cands.sort((a,b)=>cs[b].w-cs[a].w || (cs[a].c/cs[a].n)-(cs[b].c/cs[b].n) || cs[b].n-cs[a].n);
   focus=cands[0];
  }
- const allLow=Object.keys(cs).filter(k=>cs[k].n>=2).every(k=>cs[k].c/cs[k].n<0.5)&&Object.keys(cs).some(k=>cs[k].n>=2);
+ const allLow=judged.length>=2&&judged.every(k=>cs[k].c/cs[k].n<0.5);   // 판정한 유형이 하나뿐이면 쓰지 않는다
+ const noWeak=t.sk>0?'남은 문제를 마저 풀어 보세요.':(S.stage<STAGES.length-1?'약점이 보이지 않아요. 다음 단계에 도전해 보세요.':'약점이 보이지 않아요. 다른 단계에도 도전해 보세요.');
+ let weakHead='📝 보완이 필요한 유형', weakText;
+ if(allLow)weakText='유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.';
+ else if(focus){weakHead+=' · '+CATEGORIES[focus].icon+' '+CATEGORIES[focus].label+' '+cs[focus].c+'/'+cs[focus].n;weakText=CATEGORIES[focus].tip}
+ else weakText=totalWrong>0?'뚜렷하게 약한 유형은 없어요. 틀린 문제는 오답노트의 해설을 확인해 보세요.':noWeak;
  const cv=document.createElement('canvas');const c=cv.getContext('2d');
  c.font='15px '+SYSF;
- const tipLines=focus?wrapT(c,CATEGORIES[focus].tip,W-pad*2-24):[];
+ const weakLines=wrapT(c,weakText,W-pad*2-24);
  const cmtLines=cmt?wrapT(c,cmt,W-pad*2-24):[];
- const barCats=Object.keys(cs).filter(k=>cs[k].n>=2);
- let H=250 + 40 + barCats.length*40 + 120 + tipLines.length*24 + (cmt?40+cmtLines.length*24:0) + 110;
+ c.font='16px '+SYSF;
+ const verdictLines=t.verdict?wrapT(c,t.verdict,W-pad*2):[];
+ const barCats=judged;
+ const yEnd=126+72+36+verdictLines.length*26+12+barCats.length*40+14+32+28+weakLines.length*24+14+(cmt?24+cmtLines.length*24:0);
+ const H=yEnd+80;
  cv.width=W;cv.height=H;
  c.fillStyle='#FFFBEC';c.fillRect(0,0,W,H);
  c.fillStyle='#F58A2E';c.fillRect(0,0,W,60);
@@ -1059,13 +1139,14 @@ function dlReport(){
  c.fillStyle='#1B3A5C';c.font='bold 22px '+SYSF;
  c.fillText(S.max+'점 만점에 '+S.score+'점',pad+16,y+2);
  c.fillStyle='#7A6A52';c.font='15px '+SYSF;
- c.fillText('정답률 '+t.rate+'%  ·  첫 시도 정답 '+t.c+'  ·  다시 풀어 맞힘 '+t.r+'  ·  못 맞힘 '+t.w+
+ c.fillText('정답률 '+t.rateText+'  ·  첫 시도 정답 '+t.c+'  ·  다시 풀어 맞힘 '+t.r+'  ·  못 맞힘 '+t.w+
   '  ·  미응답 '+t.sk+'  ·  최고 콤보 '+S.maxCombo+'  ·  소요 시간 '+elapsedText(),pad+16,y+28);
  y+=72;
  // 총평
  c.fillStyle='#1E6E55';c.font='bold 20px '+SYSF;
- c.fillText((t.sk>0?'끝까지 풀지 않았어요 ('+t.sk+'문항 남음) · ':'')+gradeEmoji(t.rate)+' '+gradeText(t.rate),pad,y);
+ c.fillText((t.sk>0?'끝까지 풀지 않았어요 ('+t.sk+'문항 남음) · ':'')+t.emoji+' '+t.title,pad,y);
  y+=36;
+ if(verdictLines.length){c.fillStyle='#333';c.font='16px '+SYSF;verdictLines.forEach(l=>{c.fillText(l,pad,y-6);y+=26})}
  // 유형별 막대
  c.fillStyle='#1B3A5C';c.font='bold 18px '+SYSF;c.fillText('📈 유형별 정답률 (첫 시도 기준)',pad,y);y+=12;
  const colmap={'인성적':'#3B86C9','이성적':'#2E9B79','감성적':'#D4718F','종합':'#7C5CBF'};
@@ -1081,24 +1162,13 @@ function dlReport(){
   y+=40;
  });
  y+=14;
- // 잘하는 / 보완
+ // 잘하는 유형 / 보완이 필요한 유형(한 칸)
  c.fillStyle='#1E6E55';c.font='bold 16px '+SYSF;
- c.fillText('✨ 잘하는 유형: '+(good.length?good.join('  ·  '):'아직 없어요'),pad,y);y+=26;
- c.fillStyle='#A63E5C';
- c.fillText('📝 보완이 필요한 유형: '+(bad.length?bad.join('  ·  '):'없어요'),pad,y);y+=32;
- // 가장 먼저 공부할 것
- c.fillStyle='#1B3A5C';c.font='bold 18px '+SYSF;c.fillText('🎯 가장 먼저 공부할 것',pad,y);y+=26;
- c.font='15px '+SYSF;c.fillStyle='#333';
- if(allLow){
-  wrapT(c,'유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.',W-pad*2).forEach(l=>{c.fillText(l,pad,y);y+=24});
- }else if(!focus){
-  wrapT(c,'약점이 보이지 않아요. 다음 단계에 도전해 보세요.',W-pad*2).forEach(l=>{c.fillText(l,pad,y);y+=24});
- }else{
-  c.fillStyle=colmap[focus]||'#F58A2E';c.font='bold 16px '+SYSF;
-  c.fillText(CATEGORIES[focus].icon+' '+CATEGORIES[focus].label,pad,y);y+=24;
-  c.fillStyle='#333';c.font='15px '+SYSF;
-  tipLines.forEach(l=>{c.fillText(l,pad,y);y+=24});
- }
+ c.fillText('✨ 잘하는 유형: '+(good.length?good.join('  ·  '):'아직 없어요'),pad,y);y+=32;
+ c.fillStyle='#A63E5C';c.font='bold 18px '+SYSF;
+ c.fillText(weakHead,pad,y);y+=28;
+ c.fillStyle='#333';c.font='15px '+SYSF;
+ weakLines.forEach(l=>{c.fillText(l,pad,y);y+=24});
  y+=14;
  if(cmt){
   c.fillStyle='#1B3A5C';c.font='bold 16px '+SYSF;c.fillText('💬 학습 소감',pad,y);y+=24;
@@ -1120,12 +1190,13 @@ function dlReport(){
 /* ══════════ 교사용 학습 데이터 목록 (엑셀) ══════════ */
 function xEsc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function xCell(v){return '<Cell><Data ss:Type="String">'+xEsc(v)+'</Data></Cell>'}
+function xCellAns(v){return '<Cell ss:StyleID="ans"><Data ss:Type="String">'+xEsc(v)+'</Data></Cell>'}   // 정답 칸: 빨간 굵은 글씨
 function downloadTeacherXls(){
  let ws='';
  STAGES.forEach((arr,si)=>{
   let rows='<Row>'+['원본 id','유형','문제(예문)','정답','해설'].map(xCell).join('')+'</Row>';
   arr.forEach(q=>{
-   rows+='<Row>'+[String(q.id),CATEGORIES[q.cat].label,qBodyStatic(q),ansLabelStatic(q),q.detail].map(xCell).join('')+'</Row>';
+   rows+='<Row>'+[String(q.id),CATEGORIES[q.cat].label,qBodyStatic(q)].map(xCell).join('')+xCellAns(ansLabelStatic(q))+xCell(q.detail)+'</Row>';
   });
   rows+='<Row></Row>';
   rows+='<Row>'+[ '성취기준', STD_CODE+' '+STD_TEXT ].map(xCell).join('')+'</Row>';
@@ -1146,7 +1217,8 @@ function downloadTeacherXls(){
  ws+='<Worksheet ss:Name="유형별 요약"><Table>'+srows+'</Table></Worksheet>';
 
  const xml='<?xml version="1.0"?>\n<?mso-application progid="Excel.Sheet"?>\n'+
-  '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">'+ws+'</Workbook>';
+  '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">'+
+  '<Styles><Style ss:ID="ans"><Font ss:Bold="1" ss:Color="#E00000"/></Style></Styles>'+ws+'</Workbook>';
  const d=new Date(),p=n=>String(n).padStart(2,'0');
  const fn='S301_연설문설득전략마스터_학습데이터목록_'+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'.xls';
  const blob=new Blob(['\ufeff'+xml],{type:'application/vnd.ms-excel'});
@@ -1168,7 +1240,7 @@ function ansLabelStatic(q){
  trigger.style.cursor='default';
  trigger.addEventListener('click',downloadTeacherXls);
 })();
-$('ingameCredit').textContent='제작 · 보라라샘 / '+MADE_DATE;
+$('ingameCredit').textContent='제작 · 보라라샘 · '+MADE_DATE;
 </script>
 </body>
 </html>

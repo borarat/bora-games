@@ -3,7 +3,8 @@
 <!-- 리모델링 2026.10.01 17:00 (7차)
      진단 D2·D5·D6 대사에 '게임 설정(원작에 없음)' 표시 · D6 대사를 일반화형 하나로만 풀리게 고침 · 조립 교란 카드 유형 이름을 5유형으로 맞춤
      W4에 어른 도움 안내 한 줄 · 서술 채점: 요청 칸 '앞으로' 통과 제거, W3 '입'→'입장' 오인 제거, '원래'·'다시는' 정상 문장 감점 제거
-     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 -->
+     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
+     2026.10.08 12:25 12차: 테마층(온도계) + 실제 조작 버그 검사·수정 — 중간 종료 총평·보완 칸 하나·엑셀 빨강·자동 종료·못 맞힘·포커스·배너 중 띄어쓰기, 크레딧 옛 제작 도구 표기 빼기, 모바일 등급 M1(교사 결정), 플레이 크레딧 제작일 2026.09.02로 -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -287,6 +288,14 @@ button:focus-visible,input:focus-visible,.slot:focus-visible{outline:3px solid v
  #siBody div{white-space:normal!important}
  #siBody div[style*="grid"]{grid-template-columns:1fr!important}
 }
+/* ═══ 게임 테마층 · 온도계 (2026.10.08) ═══
+   차가운 말풍선이 온도계를 지나 따뜻한 말풍선으로 바뀌는 장면(말풍선 안 글자 없음). 보조색 하늘 #3B86C9. 영역 팔레트·헤더 띠·정답/오답 색·흰 문제 카드·정답 카드는 그대로.
+   이 블록과 시작 화면 SVG를 지우면 원래 모습 */
+:root{--th:#3B86C9}
+.head .keyArt{margin-left:auto;flex:none;height:116px;width:auto}
+@media (max-width:860px){.head .keyArt{display:none}}
+#start .box{border-left:4px solid var(--th)}
+#start .box h3{color:var(--th)}
 </style>
 </head>
 <body>
@@ -301,6 +310,31 @@ button:focus-visible,input:focus-visible,.slot:focus-visible{outline:3px solid v
     <h1 class="ttl">말의 온도를 바꿔라</h1>
     <div class="sub">문학 속 인물이 되어 갈등을 조정하는 대화 연습하기</div>
    </div>
+   <svg class="keyArt" viewBox="0 0 264 120" aria-hidden="true">
+    <!-- 차가운 말풍선 -->
+    <path d="M22 14 h56 a14 14 0 0 1 14 14 v28 a14 14 0 0 1 -14 14 h-34 l-14 13 l2 -13 h-10 a14 14 0 0 1 -14 -14 v-28 a14 14 0 0 1 14 -14 z" fill="#E6F1FA" stroke="#3B86C9" stroke-width="2.5" stroke-linejoin="round"/>
+    <g stroke="#3B86C9" stroke-width="2.4" stroke-linecap="round">
+     <line x1="50" y1="28" x2="50" y2="56"/><line x1="37.9" y1="35" x2="62.1" y2="49"/><line x1="37.9" y1="49" x2="62.1" y2="35"/>
+     <path d="M45 30 l5 4 l5 -4 M45 54 l5 -4 l5 4" fill="none"/>
+    </g>
+    <!-- 화살표 -->
+    <path d="M98 44 h14 m-5 -5 l5 5 l-5 5" fill="none" stroke="#5B6F86" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M152 44 h14 m-5 -5 l5 5 l-5 5" fill="none" stroke="#5B6F86" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- 온도계 -->
+    <defs><linearGradient id="thLiq" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#3B86C9"/><stop offset=".42" stop-color="#3B86C9"/><stop offset=".58" stop-color="#F58A2E"/><stop offset="1" stop-color="#F58A2E"/></linearGradient></defs>
+    <rect x="122" y="8" width="20" height="88" rx="10" fill="#fff" stroke="#1B3A5C" stroke-width="2.4"/>
+    <circle cx="132" cy="100" r="15" fill="#fff" stroke="#1B3A5C" stroke-width="2.4"/>
+    <rect x="127" y="22" width="10" height="80" rx="5" fill="url(#thLiq)"/>
+    <circle cx="132" cy="100" r="10" fill="#3B86C9"/>
+    <g stroke="#1B3A5C" stroke-width="1.6" stroke-linecap="round"><line x1="142" y1="26" x2="148" y2="26"/><line x1="142" y1="42" x2="146" y2="42"/><line x1="142" y1="58" x2="148" y2="58"/><line x1="142" y1="74" x2="146" y2="74"/></g>
+    <!-- 따뜻한 말풍선 -->
+    <path d="M186 14 h56 a14 14 0 0 1 14 14 v28 a14 14 0 0 1 -14 14 h-10 l2 13 l-14 -13 h-34 a14 14 0 0 1 -14 -14 v-28 a14 14 0 0 1 14 -14 z" fill="#FEEBD8" stroke="#F58A2E" stroke-width="2.5" stroke-linejoin="round"/>
+    <circle cx="214" cy="42" r="8" fill="#F58A2E"/>
+    <g stroke="#F58A2E" stroke-width="2.4" stroke-linecap="round">
+     <line x1="214" y1="24" x2="214" y2="28"/><line x1="214" y1="56" x2="214" y2="60"/><line x1="196" y1="42" x2="200" y2="42"/><line x1="228" y1="42" x2="232" y2="42"/>
+     <line x1="201.3" y1="29.3" x2="204.1" y2="32.1"/><line x1="223.9" y1="51.9" x2="226.7" y2="54.7"/><line x1="201.3" y1="54.7" x2="204.1" y2="51.9"/><line x1="223.9" y1="32.1" x2="226.7" y2="29.3"/>
+    </g>
+   </svg>
   </div>
 
   <div class="cols">
@@ -339,7 +373,7 @@ button:focus-visible,input:focus-visible,.slot:focus-visible{outline:3px solid v
     </div>
     <div class="box credit">
      제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-     제작일 2026.09.02 · <span class="dl-hook">최종 수정</span> 2026.10.05 03:00 · Made with Claude
+     제작일 2026.09.02 · <span class="dl-hook">최종 수정</span> 2026.10.08 12:25
     </div>
    </div>
   </div>
@@ -390,11 +424,11 @@ button:focus-visible,input:focus-visible,.slot:focus-visible{outline:3px solid v
     <div class="stat combo" id="sComboBox"><div class="n" id="sCombo">0</div><div class="l">🔥 연속<span class="dsk"> 정답</span></div></div>
     <button class="nav" id="bPrev" onclick="go(-1)">◀ 이전</button>
     <button class="nav" id="bNext" onclick="go(1)">다음 ▶</button>
-    <button class="nav fin" onclick="askFinish()">게임 끝내기</button>
+    <button class="nav fin" onclick="askFinish(true)">게임 끝내기</button>
     <div id="sideFb"></div>
    </div>
   </div>
-  <div class="mark">제작 · 보라라샘 · 2026.09.15</div>
+  <div class="mark">제작 · 보라라샘 · 2026.09.02</div>
  </div>
 </div>
 
@@ -427,7 +461,7 @@ button:focus-visible,input:focus-visible,.slot:focus-visible{outline:3px solid v
  <div class="band"><span class="area">🗣️ 말하기·듣기</span><span class="goal">말의 온도를 바꿔라 · 1~3단계 결과</span></div>
  <div class="ewrap">
   <div class="etop">
-   <h2>학습을 마쳤습니다</h2>
+   <h2 id="eTitle">학습을 마쳤습니다</h2>
    <div class="big" id="eScore">0</div>
    <div class="of" id="eOf"></div>
    <div class="acc" id="eAcc"></div>
@@ -459,18 +493,18 @@ button:focus-visible,input:focus-visible,.slot:focus-visible{outline:3px solid v
    <button class="btn gh" onclick="openToday()">📖 오늘 나온 문제 모두 보기</button>
    <button class="btn gh" onclick="location.reload()">처음으로</button>
   </div>
-  <div class="end-credit">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.09.02 · <span class="dl-hook">최종 수정</span> 2026.10.05 03:00 · Made with Claude</div>
+  <div class="end-credit">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.09.02 · <span class="dl-hook">최종 수정</span> 2026.10.08 12:25</div>
  </div>
 </div>
 
 <script>
 const MADE_DATE = '2026.09.02';
-const MOD_DATE  = '2026.10.05 03:00';
-const DATE_LINE = '제작일 ' + MADE_DATE + ' · 최종 수정 ' + MOD_DATE + ' · Made with Claude';
+const MOD_DATE  = '2026.10.08 12:25';
+const DATE_LINE = '제작일 ' + MADE_DATE + ' · 최종 수정 ' + MOD_DATE + '';
 const STD_LINE  = '(2022) [9국01-04] 상대의 말을 경청하고 상대의 감정과 입장에 공감하는 반응을 보이며 대화한다.(교과서 단원) / (2022) [9국01-09] 서로의 감정이나 바라는 바를 진솔하게 표현하면서 갈등을 조정한다.(게임이 다루는 내용)';
 
 // ── 게임 설정 (보라쌤 결정: 점수가 최대한 많이 쌓이는 방식) ──
-const MOBILE_GRADE = 'M2';   // M1 노트북·모바일 / M2 노트북 권장 / M3 노트북 전용
+const MOBILE_GRADE = 'M1';   // M1 노트북·모바일 / M2 노트북 권장 / M3 노트북 전용
 const RETRY_RATE   = 0.7;    // 다시 풀어 맞힌 점수 비율 (표준은 0.5)
 const PENALTY      = 0;      // 두 번 다 틀렸을 때 감점 (원래 3점)
 const WR_OK        = 45;     // 서술: 첫 시도 이 점수 이상이면 '첫 시도 정답'(연속 정답 인정)
@@ -671,7 +705,7 @@ document.querySelectorAll('.vMax').forEach(e=>e.textContent=MAX_SCORE);
 document.querySelectorAll('.vRate').forEach(e=>e.textContent=Math.round(RETRY_RATE*100));
 document.querySelectorAll('.vRetry10').forEach(e=>e.textContent=Math.round(10*RETRY_RATE));
 
-const S={i:0,score:0,streak:0,bestStreak:0,t0:0,elapsed:0,
+const S={i:0,score:0,streak:0,bestStreak:0,t0:0,elapsed:0,ended:false,
   res:ITEMS.map(it=>({done:false,got:0,max:MAXP[it.kind],tries:0,ans:null,detail:null,status:null}))};
 
 /* 조립 카드 고정 셔플 */
@@ -810,6 +844,7 @@ function pickType(i){
     sNO(); banner('no','❌ 오답입니다','정답은 '+d.answer); paintDiag(d,r);
   }
   $('sSc').textContent=S.score;
+  if(r.done) checkAllDone();
 }
 function hintFor(d){
   const h={
@@ -888,6 +923,7 @@ function checkAsm(){
   else { celebrate('no','❌ 오답입니다',got+' / 30점',gain); shake(document.querySelector('.main')); }
   if(got===0) penalize();
   drawAsm(d,r); paintAsm(d,r); $('sSc').textContent=S.score;
+  checkAllDone();
 }
 function paintAsmRetry(d,r){
   const prev=r.firstAns||(r.firstAns=r.ans.slice());
@@ -983,6 +1019,7 @@ function checkWr(){
   if(got<=10) penalize();
   document.activeElement && document.activeElement.blur && document.activeElement.blur();
   paintWr(d,r,false); $('sSc').textContent=S.score;
+  checkAllDone();
 }
 function paintWr(d,r,retry){
   d.blanks.forEach((b,i)=>{
@@ -1033,19 +1070,31 @@ function addScore(got,comboOk){
 }
 function go(n){
   hideBanner();
-  if(S.i===N_ITEMS-1&&n===1){askFinish();return;}
+  if(S.i===N_ITEMS-1&&n===1){askFinish(false);return;}
   S.i=Math.max(0,Math.min(N_ITEMS-1,S.i+n)); render();
   window.scrollTo({top:0,behavior:REDUCED?'auto':'smooth'});
 }
-function askFinish(){
+/* 게임 끝내기(fromQuit)·마지막 문항 '결과 보기' — 남은 문항이 있으면 한 번 확인, 게임 끝내기는 다 풀었어도 한 번 확인 */
+function askFinish(fromQuit){
   const left=S.res.filter(r=>!r.done).length;
-  if(left>0&&!confirm('아직 풀지 않은 문항이 '+left+'개 있습니다. 정말 끝낼까요?\n(풀지 않은 문항은 오답이 아니라 미응답으로 따로 표시됩니다.)'))return;
+  const untouched=S.res.filter(r=>!r.done&&!r.tries).length;
+  if(left>0){ if(!confirm('아직 풀지 않은 문항이 '+left+'개 있습니다. 정말 끝낼까요?'+(untouched>0?'\n(풀지 않은 문항은 오답이 아니라 미응답으로 따로 표시됩니다.)':'')))return; }
+  else if(fromQuit){ if(!confirm('게임을 끝내고 결과를 볼까요?'))return; }
   finish();
+}
+/* 모든 문항이 채점되면 약 2초 뒤 결과 화면 (그사이 끝났거나 화면이 바뀌면 무효) */
+let autoT=null;
+function checkAllDone(){
+  if(S.ended || S.res.some(r=>!r.done)) return;
+  clearTimeout(autoT);
+  autoT=setTimeout(()=>{ autoT=null; if(!S.ended && $('play').classList.contains('on') && S.res.every(r=>r.done)) finish(); },2000);
 }
 
 /* ══════════ 키보드 ══════════ */
 document.addEventListener('keydown',e=>{
-  if(bannerOn()){ hideBanner(); if(['Enter',' ','ArrowRight','ArrowLeft'].includes(e.key)) e.preventDefault(); return; }
+  if(bannerOn()){ hideBanner();
+    // 입력칸에 쓰는 중이면 배너만 닫고 글자·띄어쓰기는 그대로 들어가게 (2026.10.08)
+    if(((document.activeElement&&document.activeElement.tagName)||'')!=='INPUT'){ if(['Enter',' ','ArrowRight','ArrowLeft'].includes(e.key)) e.preventDefault(); return; } }
   if($('todayModal').style.display==='flex'){ if(e.key==='Escape') closeToday(); return; }
   if(!$('play').classList.contains('on'))return;
   if(introOn()){ if(e.key==='Enter'||e.key===' '||e.key==='Escape'){ e.preventDefault(); closeStageIntro(); } return; }
@@ -1077,6 +1126,11 @@ document.addEventListener('keydown',e=>{
   }
   if(e.key==='ArrowLeft'){e.preventDefault();go(-1);}
 });
+/* 마우스로 누른 버튼에 포커스가 남아 Enter·Space로 다시 눌리지 않게 (2026.10.08) */
+document.addEventListener('click',e=>{
+  const b=e.target&&e.target.closest?e.target.closest('button'):null;
+  if(b&&e.detail>0) setTimeout(()=>{ if(document.activeElement===b) b.blur(); },0);
+},true);
 
 /* ══════════ 시작 ══════════ */
 let pendingStage = 1;
@@ -1161,9 +1215,14 @@ function diagnose(A){
   const cand=judged.filter(a=>a.acc<1).sort((x,y)=>(y.miss/y.total)-(x.miss/x.total)||x.acc-y.acc);
   let focus=cand[0]||null, msg='';
   const answered=A.some(a=>a.total>0);
+  const anyWrong=A.some(a=>a.first<a.total);
+  const skipped=S.res.some(r=>!r.done);
+  // '보완이 필요한 영역' 한 칸 = 가장 먼저 공부할 영역 하나 + 학습 조언(tip) (화면연출표준 8-2 v3.3)
   if(!answered) msg='푼 문항이 없어 분석할 수 없습니다.';
-  else if(!cand.length) msg='판단할 수 있는 모든 영역을 첫 시도에 해결했습니다. 3단계 모범 답안과 내 답을 비교하며 표현을 다듬어 보세요.';
-  else if(judged.length && weak.length===judged.length) msg='모든 영역이 아직 50% 미만입니다. 1단계의 신호 낱말부터 차근차근 다시 살펴봅시다.';
+  else if(judged.length>=2 && weak.length===judged.length){ focus=null; msg='모든 영역이 아직 50% 미만입니다. 1단계의 신호 낱말부터 차근차근 다시 살펴봅시다.'; }   // 판정한 영역이 하나뿐이면 넘겨짚지 않는다
+  else if(focus) msg='';
+  else if(anyWrong) msg='뚜렷하게 약한 영역은 없어요. 틀린 문제는 오답노트의 해설을 확인해 보세요.';
+  else msg = skipped ? '남은 문제를 마저 풀어 보세요.' : '약점이 보이지 않아요. 3단계 모범 답안과 내 답을 비교하며 표현을 다듬어 보세요.';
   return {good,weak,hold,focus,msg};
 }
 function overall(){
@@ -1173,10 +1232,15 @@ function overall(){
   const miss=done.filter(r=>r.status==='miss').length;
   const skipped=N_ITEMS-done.length;
   const acc=done.length? Math.round(first/done.length*100):0;
-  return {answered:done.length,first,retry,miss,skipped,acc};
+  const accTxt=done.length? acc+'%' : '–';
+  // 총평 (화면연출표준 7장): 채점 0개 / 중간 종료 / 끝까지
+  const title=!done.length?'풀어 본 문제가 없어요':skipped?'여기까지 풀었어요':'학습을 마쳤습니다';
+  const note=(done.length&&skipped)?'끝까지 풀지 않았어요 ('+skipped+'문항 남음)':'';
+  return {answered:done.length,first,retry,miss,skipped,acc,accTxt,title,note};
 }
 function cheerOf(o){
   if(!o.answered) return {e:'🌰',t:'다음에는 한 문항이라도 풀어 봅시다.'};
+  if(o.skipped) return {e:'✏️',t:o.acc>=70?'잘하고 있어요! 남은 문제까지 풀며 좀 더 연습해 보면 어떨까요?':'좀 더 연습해 보면 어떨까요? 남은 문제까지 풀어 보면 감이 잡혀요.'};
   if(o.acc>=90) return {e:'🌳',t:'말의 온도를 능숙하게 조절하는군요!'};
   if(o.acc>=70) return {e:'🌿',t:'갈등을 조정하는 말이 몸에 붙고 있어요.'};
   if(o.acc>=40) return {e:'🌱',t:'조금만 더 연습하면 훨씬 자연스러워질 거예요.'};
@@ -1186,12 +1250,27 @@ function cheerOf(o){
 /* ══════════ 종료 ══════════ */
 function fmtDate(d){ const p=n=>String(n).padStart(2,'0'); return d.getFullYear()+'.'+p(d.getMonth()+1)+'.'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes()); }
 let END_AT=null;
+/* 끝낼 때: 첫 시도에 틀리고 다시 풀지 않은 문항은 미응답이 아니라 '못 맞힘'(0점) */
+function settlePending(){
+  S.res.forEach(r=>{
+    if(r.done || !r.tries) return;
+    r.done=true; r.got=0; r.status='miss'; r.retry=false;
+    if(r.ans==null && r.firstPick!=null) r.ans=r.firstPick;
+  });
+}
 function finish(){
+  if(S.ended) return;
+  S.ended=true; clearTimeout(autoT); autoT=null;
   hideBanner();
+  settlePending();
   S.elapsed=Date.now()-S.t0; END_AT=new Date();
   const o=overall();
-
-  // ── 연동 모드: 결과 전송 ──
+  sendResult(o);
+  renderEnd(o);
+}
+// ── 연동 모드: 결과 전송 (재전송 버튼도 이 함수) ──
+function sendResult(o){
+  o=o||overall();
   if(IS_ONLINE&&STUDENT.verified){
     const nameInput=$('inName');nameInput.value=STUDENT.name;nameInput.readOnly=true;
     const wrongItems=ITEMS.map((it,idx)=>{const r=S.res[idx];return r.done&&r.status!=='first'?it.d.id:null;}).filter(x=>x!==null).join(',');
@@ -1205,15 +1284,17 @@ function finish(){
       el.style.cssText='margin-top:8px;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:600;text-align:center;';
       if(res.status==='ok'){ el.style.background='#e8f5e9';el.style.color='#2e7d32';el.textContent='✅ 결과가 선생님께 전송되었습니다.'; }
       else { el.style.background='#ffebee';el.style.color='#c62828';
-        el.innerHTML='❌ 전송 실패 <button onclick="this.parentElement.remove();finish();" style="margin-left:8px;padding:4px 12px;border:1px solid #c62828;border-radius:6px;background:#fff;color:#c62828;cursor:pointer;font-size:12px;">재전송</button>'; }
+        el.innerHTML='❌ 전송 실패 <button onclick="this.parentElement.remove();sendResult();" style="margin-left:8px;padding:4px 12px;border:1px solid #c62828;border-radius:6px;background:#fff;color:#c62828;cursor:pointer;font-size:12px;">재전송</button>'; }
       const p=document.getElementById('endPrivacy');if(p)p.before(el);
     });
   }
-
+}
+function renderEnd(o){
+  $('eTitle').textContent=o.title;
   $('eScore').textContent=S.score+'점';
   $('eOf').textContent='만점 '+MAX_SCORE+'점 (기본 '+BASE_MAX+' + 연속 정답 보너스 '+BONUS_MAX+') · 최고 연속 정답 '+S.bestStreak;
-  $('eAcc').innerHTML='정답률 <b>'+o.acc+'%</b> &nbsp;— 첫 시도 '+o.first+' · 다시 풀어 맞힘 '+o.retry+' · 못 맞힘 '+o.miss+(o.skipped?' · <b>미응답 '+o.skipped+'문항</b>':'');
-  const ch=cheerOf(o); $('eCheer').textContent=ch.e+' '+ch.t;
+  $('eAcc').innerHTML='정답률 <b>'+o.accTxt+'</b> &nbsp;— 첫 시도 '+o.first+' · 다시 풀어 맞힘 '+o.retry+' · 못 맞힘 '+o.miss+(o.skipped?' · <b>미응답 '+o.skipped+'문항</b>':'');
+  const ch=cheerOf(o); $('eCheer').textContent=(o.note?o.note+' · ':'')+ch.e+' '+ch.t;
 
   const A=areaStats(), D=diagnose(A);
   $('eAnalysis').innerHTML=A.map(a=>
@@ -1222,11 +1303,10 @@ function finish(){
   let h='';
   if(o.answered){
   h+='<b style="color:var(--pt)">○ 잘하는 영역</b> — '+(D.good.length?esc(D.good.map(a=>a.name).join(' · ')):'아직 없습니다')+'<br>';
-  h+='<b style="color:var(--ng)">▲ 보완이 필요한 영역</b> — '+(D.weak.length?esc(D.weak.map(a=>a.name).join(' · ')):'없습니다')+'<br>';
   if(D.hold.length) h+='<b style="color:var(--ink2)">판단 보류</b> — '+esc(D.hold.map(a=>a.name).join(' · '))+'<br>';
-  }
-  if(D.focus) h+='<div class="tipbox"><b>가장 먼저 공부할 영역: '+esc(D.focus.name)+'</b><br>'+esc(D.focus.tip)+'</div>';
-  if(D.msg) h+='<div class="tipbox">'+esc(D.msg)+'</div>';
+  // '보완이 필요한 영역' 한 칸 = 가장 먼저 공부할 영역 하나 + 학습 조언 (표준 8-2 v3.3)
+  h+='<div class="tipbox"><b style="color:var(--ng)">▲ 보완이 필요한 영역</b>'+(D.focus?' — <b>'+esc(D.focus.name)+' '+D.focus.first+'/'+D.focus.total+'</b><br>'+esc(D.focus.tip):'<br>'+esc(D.msg))+'</div>';
+  } else h+='<div class="tipbox">'+esc(D.msg)+'</div>';
   $('eSummary').innerHTML=h;
 
   $('inDate').value=fmtDate(END_AT);
@@ -1323,7 +1403,8 @@ function dlWrong(){
     y+=26;
     if(v.f){ c.fillStyle='#5B6F86';c.font='400 13px '+CF; y=wrap2(c,'학습 소감: '+v.f,40,y,W-80,19,paint); }
     y+=16;
-    if(!bad.length){ c.fillStyle='#2e7d6b';c.font='700 18px '+CF; if(paint)c.fillText('✓ 푼 문항 중 틀린 문항이 없습니다. 훌륭합니다!',48,y+10); y+=44; }
+    if(!bad.length){ const o0=overall(); c.fillStyle=o0.answered?'#2e7d6b':'#5B6F86';c.font='700 18px '+CF;
+      if(paint)c.fillText(!o0.answered?'풀어 본 문제가 없어요.':o0.skipped?'푼 문제는 모두 첫 시도에 맞혔어요.':'✓ 푼 문항 중 틀린 문항이 없습니다. 훌륭합니다!',48,y+10); y+=44; }
     bad.forEach(b=>{
      const block=(paint)=>{
       const y0=y; y+=6;
@@ -1389,7 +1470,8 @@ function dlReport(){
     }
     let y=196;
     c.fillStyle='#1B3A5C';c.font='700 15px '+CF;
-    y=wrap2(c,'정답률 '+o.acc+'%  —  첫 시도 '+o.first+' · 다시 풀어 맞힘 '+o.retry+' · 못 맞힘 '+o.miss+(o.skipped?' · 미응답 '+o.skipped+'문항':''),40,y,W-80,22,paint);
+    y=wrap2(c,'정답률 '+o.accTxt+'  —  첫 시도 '+o.first+' · 다시 풀어 맞힘 '+o.retry+' · 못 맞힘 '+o.miss+(o.skipped?' · 미응답 '+o.skipped+'문항':''),40,y,W-80,22,paint);
+    if(o.title!=='학습을 마쳤습니다'){ c.font='700 15px '+CF;c.fillStyle='#b45309'; y=wrap2(c,o.title+(o.note?' · '+o.note:''),40,y+2,W-80,22,paint); }
     c.font='400 14px '+CF;c.fillStyle='#5B6F86';
     y=wrap2(c,ch.e+' '+ch.t,40,y+2,W-80,20,paint);
     y+=18;
@@ -1416,11 +1498,11 @@ function dlReport(){
     };
     if(o.answered){
     box('○ 잘하는 영역', D.good.length?D.good.map(a=>a.name).join('  ·  '):'아직 없습니다', '#e6f4ef','#1f5f50');
-    box('▲ 보완이 필요한 영역', D.weak.length?D.weak.map(a=>a.name).join('  ·  '):'없습니다', '#fbeceb','#c0392b');
     if(D.hold.length) box('판단 보류', D.hold.map(a=>a.name+' '+areaLabel(a)).join('  ·  '), '#FFFBEC','#5B6F86');
-    }
-    if(D.focus) box('가장 먼저 공부할 영역: '+D.focus.name, D.focus.tip, '#FFFBEC','#1B3A5C');
-    if(D.msg) box('총평', D.msg, '#FFFBEC','#1B3A5C');
+    // '보완이 필요한 영역' 한 칸 = 가장 먼저 공부할 영역 하나 + 학습 조언 (표준 8-2 v3.3)
+    if(D.focus) box('▲ 보완이 필요한 영역 · '+D.focus.name+' '+D.focus.first+'/'+D.focus.total, D.focus.tip, '#fbeceb','#c0392b');
+    else box('▲ 보완이 필요한 영역', D.msg, '#fbeceb','#c0392b');
+    } else box('총평', D.msg, '#FFFBEC','#1B3A5C');
     if(v.f) box('학습 소감', v.f, '#FFFBEC','#1B3A5C');
     return footer(c,W,y+8,paint);
   };
@@ -1450,9 +1532,9 @@ function zipStore(files){
 }
 function xesc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g,'');}
 function colName(i){let s='';i++;while(i){const m=(i-1)%26;s=String.fromCharCode(65+m)+s;i=Math.floor((i-1)/26);}return s;}
-function sheetXml(rows,widths,headRow){
+function sheetXml(rows,widths,headRow,ans){
   const cols='<cols>'+widths.map((w,i)=>'<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+w+'" customWidth="1"/>').join('')+'</cols>';
-  const body=rows.map((r,ri)=>'<row r="'+(ri+1)+'">'+r.map((v,ci)=>'<c r="'+colName(ci)+(ri+1)+'" t="inlineStr" s="'+(ri===headRow?1:2)+'"><is><t xml:space="preserve">'+xesc(v)+'</t></is></c>').join('')+'</row>').join('');
+  const body=rows.map((r,ri)=>'<row r="'+(ri+1)+'">'+r.map((v,ci)=>'<c r="'+colName(ci)+(ri+1)+'" t="inlineStr" s="'+(ri===headRow?1:(ans&&ri>headRow&&ans.includes(ci))?3:2)+'"><is><t xml:space="preserve">'+xesc(v)+'</t></is></c>').join('')+'</row>').join('');
   return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>'+cols+'<sheetData>'+body+'</sheetData></worksheet>';
 }
 function buildXlsx(sheets){
@@ -1461,9 +1543,9 @@ function buildXlsx(sheets){
    {name:'_rels/.rels',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'},
    {name:'xl/workbook.xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>'+sheets.map((s,i)=>'<sheet name="'+xesc(s.name)+'" sheetId="'+(i+1)+'" r:id="rId'+(i+1)+'"/>').join('')+'</sheets></workbook>'},
    {name:'xl/_rels/workbook.xml.rels',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+sheets.map((s,i)=>'<Relationship Id="rId'+(i+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet'+(i+1)+'.xml"/>').join('')+'<Relationship Id="rId'+(sheets.length+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>'},
-   {name:'xl/styles.xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="10"/><name val="맑은 고딕"/></font><font><b/><sz val="10"/><name val="맑은 고딕"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFBE9B8"/></patternFill></fill></fills><borders count="1"><border/></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="3"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>'}
+   {name:'xl/styles.xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="3"><font><sz val="10"/><name val="맑은 고딕"/></font><font><b/><sz val="10"/><name val="맑은 고딕"/></font><font><b/><sz val="10"/><color rgb="FFE00000"/><name val="맑은 고딕"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFBE9B8"/></patternFill></fill></fills><borders count="1"><border/></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="4"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf><xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>'}
   ];
-  sheets.forEach((s,i)=>files.push({name:'xl/worksheets/sheet'+(i+1)+'.xml',data:sheetXml(s.rows,s.widths,s.headRow)}));
+  sheets.forEach((s,i)=>files.push({name:'xl/worksheets/sheet'+(i+1)+'.xml',data:sheetXml(s.rows,s.widths,s.headRow,s.ans)}));
   return zipStore(files);
 }
 function downloadDataXlsx(){
@@ -1513,7 +1595,7 @@ function downloadDataXlsx(){
   common.push(['원인 칸 복붙 검사','① 상황 칸과 8글자 이상 겹침','⑤ 원인 칸: 있으면 절반']);
 
   const blob=buildXlsx([
-    {name:'문항목록',rows,widths:[11,8,22,56,44,48,44],headRow:0},
+    {name:'문항목록',rows,widths:[11,8,22,56,44,48,44],headRow:0,ans:[4]},   // 정답 열(E)은 빨간 굵은 글씨
     {name:'공통 채점 낱말',rows:common,widths:[24,80,56],headRow:0}
   ]);
   const a=document.createElement('a');
