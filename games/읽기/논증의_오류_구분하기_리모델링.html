@@ -3,7 +3,8 @@
 <!-- 리모델링 기록
   2026.10.01 15:00 (6차): 기준표 6-3에 맞춰 1단계 2·21번, 2단계 26번, 3단계 4·14번 예문을 한 가지 오류만 드러나게 고침
      2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
-     2026.10.08 11:05 11차: 테마층(법정) + 실제 조작 버그 검사·수정 — 중간 종료 총평·보완 칸 하나·끝내기 확인·못 맞힘·→ 키·엑셀 정답 빨강, 크레딧의 옛 제작 도구 표기 빼기, 마스코트를 투명 배경으로 -->
+     2026.10.08 11:05 11차: 테마층(법정) + 실제 조작 버그 검사·수정 — 중간 종료 총평·보완 칸 하나·끝내기 확인·못 맞힘·→ 키·엑셀 정답 빨강, 크레딧의 옛 제작 도구 표기 빼기, 마스코트를 투명 배경으로
+     2026.10.08 11:40 교사 결정: 문항 순서 판마다 섞기, 시작 화면 '방향키' 안내 삭제, 맞춤법(3-13 '웃기는 데', 결과 제목 '잘했어요!') -->
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
@@ -319,7 +320,7 @@ main{position:relative;z-index:10;width:100%;max-width:900px;padding:12px 8px 10
     <p>예문을 읽고 9가지 오류 유형 중 해당하는 버튼을 클릭하세요.<br>
     첫 시도에 맞히면 +10점, 콤보 보너스(3~4연속 +5점, 5연속 이상 +10점)가 붙습니다.<br>
     틀리면 -10점(0점 하한)이며, 다시 풀어 맞히면 절반인 +5점을 받습니다.<br>
-    이전·다음 버튼이나 방향키로 자유롭게 이동할 수 있습니다.</p>
+    이전·다음 버튼으로 자유롭게 이동할 수 있습니다.</p>
   </div>
   <div class="concept-box">
     <div class="concept c1"><div class="concept-title">🔵 성급한 일반화</div><div class="concept-desc">적은 사례로 전체를 단정짓는 오류</div></div>
@@ -339,7 +340,7 @@ main{position:relative;z-index:10;width:100%;max-width:900px;padding:12px 8px 10
       <button class="stage-btn s2" onclick="startGame(1)">2단계 · 심화<div class="stage-badge">조금 더 길고 맥락 있는 예문<br>비슷한 오류와 헷갈릴 수 있어요</div></button>
       <button class="stage-btn s3" onclick="startGame(2)">3단계 · 고급<div class="stage-badge">길고 복잡한 예문<br>경계선상 오류 포함</div></button>
     </div>
-    <div class="start-creator">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.06.09 · <span class="dl-hook">최종 수정</span> 2026.10.08 11:05</div>
+    <div class="start-creator">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.06.09 · <span class="dl-hook">최종 수정</span> 2026.10.08 11:40</div>
   </div>
   <div class="privacy-box" id="privacyOffline">🔒 <strong>개인정보 보호 안내</strong><br>본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다. 게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.</div>
   <div class="privacy-box" id="privacyOnline" style="display:none">🔒 <strong>개인정보 보호 안내</strong><br>본 게임의 학습 결과(학번, 이름, 점수, 오답 정보, 학습 소감)는 담당 선생님의 학습 관리용 스프레드시트에 안전하게 전송·저장됩니다. 수집된 정보는 학습 지도 목적으로만 사용되며, 제3자에게 제공되지 않습니다.</div>
@@ -451,7 +452,7 @@ main{position:relative;z-index:10;width:100%;max-width:900px;padding:12px 8px 10
     <button class="next-stage-btn" id="next-stage-btn" onclick="goNextStage()" style="display:none">▶ 다음 단계로</button>
   </div>
   <div class="wrong-report" id="wrong-report"></div>
-  <div class="end-creator">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.06.09 · <span class="dl-hook">최종 수정</span> 2026.10.08 11:05</div>
+  <div class="end-creator">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.06.09 · <span class="dl-hook">최종 수정</span> 2026.10.08 11:40</div>
 </div>
 </main>
 <div class="ingame-credit" id="ingame-credit">제작 · 보라라샘 · 2026.06.09</div>
@@ -565,7 +566,7 @@ const STAGES=[
   {id:10,answer:'인신공격의 오류',text:'그 사람이 평화와 비폭력을 외치고 있는데, 젊을 때 싸움꾼에 문제아였다고 동네에서 유명하다던데요. 그런 과거가 있는 사람 말을 믿을 수 있겠어요?',detail:'🟡 인신공격의 오류 — 평화 주장의 내용은 따지지 않고 과거 행동을 근거로 공격하는 오류예요.'},
   {id:11,answer:'성급한 일반화의 오류',text:'내가 읽은 한국 소설 두 권이 모두 결말이 슬프게 끝나던데, 한국 소설은 전부 비극으로 끝나는 것 같아. 한국인 정서가 원래 그런 게 아닐까?',detail:'🔵 성급한 일반화의 오류 — 두 권의 소설로 한국 소설 전체의 경향을 단정하는 오류예요. 문화적 원인까지 확대하면 오류가 더욱 커져요.'},
   {id:12,answer:'미끄러운 비탈길의 오류',text:'청소년에게 밤 10시까지 외출을 허용하면 곧 11시, 12시로 늘어날 것이고, 그러다 보면 밤새 거리를 배회하는 아이들이 넘쳐나 청소년 범죄가 폭증하고 결국 사회 질서가 완전히 무너지고 말 것입니다.',detail:'🔴 미끄러운 비탈길의 오류 — 작은 허용(10시 외출)이 단계를 거쳐 반드시 극단적 파국(사회 질서 붕괴)에 이른다고 단정하는 오류예요. 흑백논리와 달리 두 극단이 아니라 연쇄적 악화가 핵심이에요.'},
-  {id:13,answer:'순환논증의 오류',text:'그 영화는 정말 관객을 웃기는데 천재적이야. 왜냐하면 영화 모든 장면이 다 엄청나게 코믹하거든.',detail:'🟣 순환논증의 오류 — "웃긴다"는 주장의 근거가 "코믹하다"로, 결국 같은 말을 반복하는 오류예요.'},
+  {id:13,answer:'순환논증의 오류',text:'그 영화는 정말 관객을 웃기는 데 천재적이야. 왜냐하면 영화 모든 장면이 다 엄청나게 코믹하거든.',detail:'🟣 순환논증의 오류 — "웃긴다"는 주장의 근거가 "코믹하다"로, 결국 같은 말을 반복하는 오류예요.'},
   {id:14,answer:'흑백논리의 오류',text:'식습관은 딱 두 가지야. 고기를 챙겨 먹고 건강하게 살든가, 고기를 끊고 건강을 포기하든가. 너는 고기를 안 먹는다며? 그럼 건강은 포기한 거네.',detail:'🟢 흑백논리의 오류 — "고기를 먹어 건강하거나, 고기를 끊어 건강을 포기하거나" 두 가지밖에 없다고 전제하는 이분법의 오류예요. 영양을 고루 챙긴 채식처럼 그 사이의 경우를 무시했어요.'},
   {id:15,answer:'피장파장의 오류',text:'"거짓말은 나쁜 거야. 한번 거짓말하면 계속 거짓말을 해야 해." → "형도 어제 친구한테 아프다고 거짓말하고 집에서 게임했잖아."',detail:'🟠 피장파장의 오류 — 거짓말 금지 주장에 대해 상대방의 동일한 행동을 들어 주장을 무력화하는 오류예요.'},
   {id:16,answer:'권위 이용의 오류',text:'이 정책이 옳다는 것은 분명합니다. 국민 모두가 존경하는 원로 예술가 한 분이 이 정책을 강력히 지지한다고 공개적으로 말씀하셨습니다. 그런 훌륭한 분이 지지하는데 무슨 반대가 필요하겠습니까?',detail:'👑 권위 이용의 오류 — 정책의 내용·근거 대신, 정책과 전문성이 무관한 예술가의 존경받는 지위에 기대어 정당화하는 오류예요. 인신공격이 사람을 깎아내려 주장을 무너뜨린다면, 권위 이용은 반대로 명성을 치켜세워 옹호해요.'},
@@ -669,7 +670,8 @@ function startGame(si){
 function doStartGame(si){
   gameStartTime=Date.now();
   clearTimeout(autoT);gameToken++;gameDone=false;
-  currentStage=si;questions=STAGES[si];
+  currentStage=si;questions=STAGES[si].slice();   // 문항 순서를 판마다 섞는다(Fisher-Yates, 교사 결정 2026.10.08)
+  for(let i=questions.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[questions[i],questions[j]]=[questions[j],questions[i]];}
   current=0;score=0;combo=0;maxCombo=0;
   answered=new Array(questions.length).fill(null);usedRetry=new Array(questions.length).fill(false);
   $('score-val').textContent='0';
@@ -800,7 +802,7 @@ function endSummary(){
   if(zero){emoji='📭';title='풀어 본 문제가 없어요';verdict='풀어 본 문제가 없어요';}
   else if(mid){emoji='✏️';title='여기까지 풀었어요';
     verdict=acc>=70?'잘하고 있어요! 남은 문제까지 풀며 좀 더 연습해 보면 어떨까요?':'좀 더 연습해 보면 어떨까요? 남은 문제까지 풀어 보면 감이 잡혀요.';}
-  else{emoji=acc>=90?'🏆':acc>=70?'🎉':acc>=50?'😊':'💪';title=acc>=90?'완벽해요!':acc>=70?'잘 했어요!':acc>=50?'절반 이상!':'다시 도전!';
+  else{emoji=acc>=90?'🏆':acc>=70?'🎉':acc>=50?'😊':'💪';title=acc>=90?'완벽해요!':acc>=70?'잘했어요!':acc>=50?'절반 이상!':'다시 도전!';
     verdict=acc>=90?'✅ 논증의 오류를 정확하게 구분하고 있어요! 훌륭합니다.'
       :acc>=70?'✅ 대부분 잘 구분하고 있어요. 흔들린 유형만 다지면 완벽해질 거예요.'
       :acc>=50?'⚠️ 절반 이상 맞혔어요. 헷갈리는 유형을 가려내 정리해보세요.'
