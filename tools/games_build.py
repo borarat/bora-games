@@ -5,7 +5,7 @@ import os
 HERE=os.path.dirname(os.path.abspath(__file__))
 rows=json.load(open(os.path.join(HERE,'catalog.json'),encoding='utf8'))
 FIX={'훈민정음 제자 원리 익히기':'G211','사랑손님과 어머니 시뮬레이션':'L401'}
-HIDE={'조건 사냥꾼'}  # 미완성 — 리모델링 뒤 다시 넣는다 (교사 결정 2026.10.08)
+HIDE={'조건 사냥꾼'}  # 폐기 — 서술형 평가 게임 초판 (교사 결정 2026.10.08 15:06)
 rows=[r for r in rows if r['title'] not in HIDE]
 for r in rows:
     if not r['code']: r['code']=FIX[r['title']]
