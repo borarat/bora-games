@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 <!-- 리모델링 2026.10.01 15:00 (6차): 귀납 사례 2개 문항 4개를 사례 3개 이상으로, 귀납 tip '여러 사례'로, 2단계 2번 연역에 숨은 전제 보충
-     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 -->
+     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
+     2026.10.08 11:05 11차: 테마층(천칭 실험대, 보조색 먹 — 주황은 귀납 컵 색과 겹쳐 바꿈) + 실제 조작 버그 검사·수정 — 중간 종료 총평·보완 칸 하나·엑셀 정답 빨강·끝내기 확인·포커스·자동 종료 타이머 -->
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -655,6 +656,15 @@
   .sa-input { min-height: 48px; background: #fff; color: var(--text); }
   @media (max-width: 560px) { .sentence-card { padding-left: 12px; padding-right: 12px; } }
 
+/* ═══ 게임 테마층 · 천칭 실험대 (2026.10.08) ═══
+   실험대 위 균형 잡힌 천칭과 양쪽 접시의 작은 추 — 근거와 결론의 무게를 달아 보는 장면. 보조색 먹 #3D3D4A. 영역 팔레트·헤더 띠·정답/오답 색·흰 문제 카드·정답 카드·컵 색은 그대로.
+   이 블록과 시작 화면 SVG를 지우면 원래 모습 */
+:root{--th:#3D3D4A}
+header .keyArt{margin-left:auto;flex:none;height:110px;width:auto}
+body.started header .keyArt{display:none}
+@media (max-width:860px){header .keyArt{display:none}}
+#start-screen .info-box{border-left:4px solid var(--th)}
+#start-screen .info-box h3{color:var(--th)}
 </style>
 </head>
 <body>
@@ -677,6 +687,24 @@
     <div class="game-title">논증방법 컵스 <span class="trophy">🏆</span></div>
     <div class="game-subtitle">예문을 읽고 연역·귀납·유추로 구별해 봅시다!</div>
   </div>
+  <svg class="keyArt" viewBox="0 0 240 120" aria-hidden="true">
+   <rect x="2" y="2" width="236" height="116" rx="12" fill="#F4F4F7" stroke="#D3D3DC" stroke-width="1.5"/>
+   <rect x="14" y="104" width="212" height="5" rx="2.5" fill="#C9C9D3"/>
+   <path d="M98 104 L104 94 L136 94 L142 104 Z" fill="#3D3D4A"/>
+   <rect x="117" y="30" width="6" height="66" rx="2" fill="#3D3D4A"/>
+   <circle cx="120" cy="24" r="6" fill="#fff" stroke="#3D3D4A" stroke-width="2.5"/>
+   <rect x="40" y="31" width="160" height="6" rx="3" fill="#3D3D4A"/>
+   <path d="M114 44 L120 37 L126 44 Z" fill="#8A8A99"/>
+   <circle cx="48" cy="34" r="3.2" fill="#fff" stroke="#3D3D4A" stroke-width="2"/>
+   <circle cx="192" cy="34" r="3.2" fill="#fff" stroke="#3D3D4A" stroke-width="2"/>
+   <g stroke="#3D3D4A" stroke-width="1.6" fill="none"><path d="M48 37 L24 78 M48 37 L72 78"/><path d="M192 37 L168 78 M192 37 L216 78"/></g>
+   <path d="M18 78 Q48 98 78 78 Z" fill="#E6E6EC" stroke="#3D3D4A" stroke-width="2"/>
+   <path d="M162 78 Q192 98 222 78 Z" fill="#E6E6EC" stroke="#3D3D4A" stroke-width="2"/>
+   <g fill="#3D3D4A"><rect x="30" y="62" width="17" height="16" rx="2.5"/><rect x="35.5" y="57" width="6" height="5" rx="1.5"/></g>
+   <g fill="#8A8A99"><rect x="51" y="68" width="13" height="10" rx="2"/><rect x="55" y="64.5" width="5" height="3.5" rx="1"/></g>
+   <g fill="#8A8A99"><rect x="174" y="66" width="14" height="12" rx="2"/><rect x="178.5" y="62.5" width="5" height="3.5" rx="1"/></g>
+   <g fill="#3D3D4A"><rect x="192" y="64" width="15" height="14" rx="2.5"/><rect x="197" y="59.5" width="5" height="4.5" rx="1.5"/></g>
+  </svg>
 </header>
 
 <main>
@@ -733,7 +761,7 @@
           ② 문제를 읽고 답을 고르거나(1·2·3 키) 입력해 제출합니다.<br>
           ③ 채점 후 예문의 짜임(대전제·소전제·결론 / 사례·일반화 / 유사성·근거·결론)을 풀어 줍니다.<br>
           ④ <strong>정답이면</strong> Enter·Space·→ 로 다음 문제, <strong>틀리면</strong> Enter·Space로 다시 풀기, ← 로 이전 문제.<br>
-          ⑤ 오른쪽 <strong>이전 / 다음 / 단계 종료</strong> 버튼으로 언제든 이동할 수 있습니다.<br>
+          ⑤ 오른쪽 <strong>이전 / 다음 / 게임 끝내기</strong> 버튼으로 언제든 이동할 수 있습니다.<br>
           ⑥ 문제 순서는 매번 섞입니다.
         </p>
       </div>
@@ -751,7 +779,7 @@
         </div>
         <div class="credit-box">
           제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-          제작일 2026.05.20 · <span class="dl-hook">최종 수정</span> 2026.10.05 03:00 · Made with Claude
+          제작일 2026.05.20 · <span class="dl-hook">최종 수정</span> 2026.10.08 11:05
         </div>
       </div>
     </div>
@@ -810,7 +838,7 @@
     <div class="nav-sidebar">
       <button class="nav-btn" id="prev-btn" onclick="navigate(-1)">◀<br>이전</button>
       <button class="nav-btn" id="next-btn" onclick="navigate(1)">다음<br>▶</button>
-      <button class="nav-btn finish-btn" id="finish-btn" onclick="finishStage()">단계<br>종료</button>
+      <button class="nav-btn finish-btn" id="finish-btn" onclick="finishStage()">게임<br>끝내기</button>
     </div>
   </div>
 
@@ -874,7 +902,7 @@
 
 <footer>
   제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-  제작일 2026.05.20 · <span class="dl-hook">최종 수정</span> 2026.10.05 03:00 · Made with Claude
+  제작일 2026.05.20 · <span class="dl-hook">최종 수정</span> 2026.10.08 11:05
 </footer>
 
 <div id="play-credit">제작 · 보라라샘 · 2026.05.20</div>
@@ -1196,7 +1224,7 @@ const STAGE_DEFS = {
 
 const GAME_NAME = '논증방법 컵스';
 const CREDIT_LINE = '제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com';
-const DATE_LINE = '제작일 2026.05.20 · 최종 수정 2026.10.05 03:00 · Made with Claude';
+const DATE_LINE = '제작일 2026.05.20 · 최종 수정 2026.10.08 11:05';
 const STANDARD_CODE = '9국02-05';
 const STANDARD_TEXT = '글에 사용된 다양한 설명 방법과 논증 방법을 파악하고, 그 타당성을 평가하며 읽는다.';
 const LEARNING_GOAL = '예문을 읽고 연역·귀납·유추를 구별하고, 논증의 타당성을 평가한다.';
@@ -1608,7 +1636,8 @@ function handleAnswer(chosen, isCorrect){
   }
   updateNextHint();
   const allDone = S.answered.every(a=>a==='correct'||a==='wrong-final');
-  if(allDone) setTimeout(()=>{ if(S && !S.completed) showComplete(); },1500);
+  // 자동 종료: 그 사이 다른 판이 시작되거나 화면이 바뀌면 무효
+  if(allDone){ const s0=S; setTimeout(()=>{ if(S===s0 && !S.completed && $('game-area').classList.contains('show')) showComplete(); },1500); }
 }
 
 function showFeedback(correct,msg,animate){
@@ -1642,7 +1671,7 @@ function navigate(dir){
   hideBanner();
   const next=S.current+dir;
   if(next<0 || next>=S.n){
-    showToast(dir<0 ? '첫 번째 문제입니다.' : '마지막 문제입니다. 「단계 종료」를 눌러 결과를 확인하세요.');
+    showToast(dir<0 ? '첫 번째 문제입니다.' : '마지막 문제입니다. 「게임 끝내기」를 눌러 결과를 확인하세요.');
     return;
   }
   restoreReview(S.current);
@@ -1671,12 +1700,12 @@ document.addEventListener('keydown',(e)=>{
   }
   if(S && S.answered[S.current]==='wrong'){
     if(key==='Enter'||key===' '||key==='Spacebar'){ if(inInput) return; e.preventDefault(); retryQuestion(); return; }
-    if(key==='ArrowRight'){ e.preventDefault(); navigate(1); return; }
+    if(key==='ArrowRight'){ e.preventDefault(); return; }   // 채점이 끝나기 전에는 → 로 넘어가지 않는다(지침 6-1)
     if(key==='ArrowLeft'){ e.preventDefault(); navigate(-1); return; }
     return;
   }
   if(inInput){ return; }
-  if(key==='ArrowRight'){ e.preventDefault(); navigate(1); return; }
+  if(key==='ArrowRight'){ e.preventDefault(); return; }     // 답하기 전 → 무시(지침 6-1)
   if(key==='ArrowLeft'){ e.preventDefault(); navigate(-1); return; }
   if(q && (q.kind==='cup'||q.kind==='mc')){
     if(key==='1'||key==='2'||key==='3'){
@@ -1687,9 +1716,18 @@ document.addEventListener('keydown',(e)=>{
   }
 });
 
-/* ─── 단계 수동 종료 ─── */
+// 마우스로 누른 버튼에 포커스가 남아 Enter·Space로 다시 눌리지 않게 (키보드로 누른 클릭은 detail=0이라 그대로 둔다)
+document.addEventListener('click',(e)=>{
+  if(!e.detail) return;
+  const b=e.target && e.target.closest ? e.target.closest('button,a') : null;
+  if(b && document.activeElement===b) b.blur();
+});
+
+/* ─── 게임 끝내기 ─── */
 function finishStage(){
   if(S.completed) return;
+  const left=S.firstResult.filter(r=>r===null).length;
+  if(left>0 && !confirm('아직 '+left+'문항이 남았어요. 게임을 끝낼까요?\n(남은 문항은 미응답으로 기록돼요)')) return;
   S.qs.forEach((_,i)=>restoreReview(i));
   S.answered = S.answered.map(a=> a==='wrong' ? 'wrong-final' : a);
   showComplete();
@@ -1711,7 +1749,7 @@ function calcStats(){
   const acc = answered ? Math.round(first/answered*100) : null;
   return { answered, first, retryOk, failed, skipped, acc };
 }
-function accText(st){ return st.acc===null ? '—' : st.acc+'%'; }
+function accText(st){ return st.acc===null ? '–' : st.acc+'%'; }
 
 // 오답노트 대상: 첫 시도에 틀린 문항 (미응답 제외)
 function getWrongItems(){
@@ -1742,11 +1780,25 @@ function diagnose(){
     .sort((a,b)=>TYPE_ORDER.indexOf(a.type)-TYPE_ORDER.indexOf(b.type));
   const strong=rows.filter(r=>r.rate===100);
   const weak=rows.filter(r=>r.rate<50);
-  const cand=rows.filter(r=>r.rate<100).sort((a,b)=>a.rate-b.rate || b.total-a.total);
+  // 가장 먼저 공부할 유형 = 첫 시도 오답이 가장 많은 유형(같으면 정답률 낮은 쪽) — '보완이 필요한 유형' 한 칸에 이것 하나만 (화면연출표준 8-2, v3.3)
+  const cand=rows.filter(r=>r.rate<100).sort((a,b)=>(b.total-b.correct)-(a.total-a.correct) || a.rate-b.rate || b.total-a.total);
   const priority=cand.length?cand[0]:null;
+  const en=encourage(st);
+  const totalWrong=st.answered-st.first;
+  const allLow=rows.length>=2 && rows.every(r=>r.rate<50);
+  let weakCell=null;   // { head, desc, text, tip }
+  if(st.answered>0){
+    if(allLow && totalWrong>0) weakCell={ text:'유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.' };
+    else if(priority){ const m=TYPE_MASTER[priority.type];
+      weakCell={ head:catColor(priority.type).icon+' '+priority.type+' '+priority.correct+'/'+priority.total, desc:m.desc, text:m.tip, tip:true }; }
+    else if(totalWrong>0) weakCell={ text:'뚜렷하게 약한 유형은 없어요. 틀린 문제는 오답노트의 해설을 확인해 보세요.' };
+    else weakCell={ text: en.partial ? '남은 문제를 마저 풀어 보세요.'
+      : (STAGE_DEFS[S.stageId+1] ? '약점이 보이지 않아요. 다음 단계에 도전해 보세요.' : '약점이 보이지 않아요. 다른 단계에도 도전해 보세요.') };
+  }
 
   let summary;
   if(st.answered===0) summary='풀어 본 문제가 없어 진단할 수 없어요. 문제를 풀고 다시 확인해 보세요.';
+  else if(en.partial) summary=en.lead+' · '+en.verdict;
   else if(st.first===st.answered) summary = S.stageId<3
       ? '틀린 문제 없이 모두 첫 시도에 맞혔어요! 다음 단계에 도전해 보세요.'
       : '틀린 문제 없이 모두 첫 시도에 맞혔어요! 논증 방법을 정확하게 구별하고 있어요.';
@@ -1755,10 +1807,14 @@ function diagnose(){
   else if(st.acc>=90) summary='대부분 정확하게 구별하고 있어요. 아래 유형만 한 번 더 다지면 완벽해요.';
   else if(st.acc>=70) summary='잘 이해하고 있어요. 아래 유형의 판단 방법을 떠올리며 틀린 문항을 다시 보세요.';
   else summary='헷갈리는 유형이 있어요. 아래 유형부터 판단 방법을 익힌 뒤 다시 풀어 보세요.';
-  return { st, rows, strong, weak, priority, summary };
+  return { st, rows, strong, weak, priority, weakCell, summary };
 }
+// 총평 (화면연출표준 7장 · 2026.10.06 교사 결정) — 채점 0개 / 중간 종료(미응답 있음)에는 칭찬·완료 문구를 쓰지 않는다
 function encourage(st){
-  if(st.acc===null) return { emoji:'📝', title:'풀어 본 문제가 없어요' };
+  if(st.acc===null) return { emoji:'📝', title:'풀어 본 문제가 없어요', zero:true };
+  if(st.skipped>0) return { emoji:'✏️', title:'여기까지 풀었어요', partial:true,
+    lead:'끝까지 풀지 않았어요 ('+st.skipped+'문항 남음)',
+    verdict: st.acc>=70 ? '잘하고 있어요! 남은 문제까지 풀며 좀 더 연습해 보면 어떨까요?' : '좀 더 연습해 보면 어떨까요? 남은 문제까지 풀어 보면 감이 잡혀요.' };
   if(st.acc>=90) return { emoji:'🏆', title:'완벽해요!' };
   if(st.acc>=70) return { emoji:'🎉', title:'잘 했어요!' };
   if(st.acc>=50) return { emoji:'😊', title:'절반 이상 맞혔어요!' };
@@ -1789,7 +1845,8 @@ function showComplete(){
   $('stat-combo').textContent=S.maxCombo;
   $('complete-emoji').textContent = en.emoji;
   $('complete-title').textContent = en.title;
-  $('complete-desc').innerHTML = `${S.def.name}<br>결과를 확인하고 오답노트·리포트를 저장해 보세요.`;
+  $('complete-desc').innerHTML = en.partial ? `${en.lead}<br>${en.verdict}` : `${S.def.name}<br>결과를 확인하고 오답노트·리포트를 저장해 보세요.`;
+  const tr=document.querySelector('.trophy'); if(tr) tr.style.display = (en.partial||en.zero) ? 'none' : '';
 
   const nb=$('next-stage-btn');
   if(STAGE_DEFS[S.stageId+1]){ nb.style.display='block'; nb.textContent=`다음 단계로 → ${STAGE_DEFS[S.stageId+1].name}`; }
@@ -1856,12 +1913,11 @@ function renderReportOnScreen(){
     });
     html+=`</div>`;
     html+=`<div class="analysis-line good">💪 잘하는 유형 : ${D.strong.length ? D.strong.map(r=>r.type).join(', ') : '아직 없음 (100% 맞힌 유형이 생기면 표시돼요)'}</div>`;
-    html+=`<div class="analysis-line weak">📌 보완이 필요한 유형 : ${D.weak.length ? D.weak.map(r=>`${r.type} (${r.rate}%)`).join(', ') : '없음 (모든 유형 50% 이상)'}</div>`;
   }
   html+=`<div class="analysis-line advice">${D.summary}</div>`;
-  if(D.priority){
-    const m=TYPE_MASTER[D.priority.type];
-    html+=`<div class="priority-box"><b>🎯 가장 먼저 공부할 유형 : ${catColor(D.priority.type).icon} ${D.priority.type}</b> <span style="color:var(--text-muted);font-size:0.88rem">(${m.desc})</span><div class="tip">💡 ${m.tip}</div></div>`;
+  if(D.weakCell){
+    const w=D.weakCell;
+    html+=`<div class="priority-box"><b>📌 보완이 필요한 유형${w.head?' : '+w.head:''}</b>${w.desc?` <span style="color:var(--text-muted);font-size:0.88rem">(${w.desc})</span>`:''}<div class="tip">${w.tip?'💡 ':''}${w.text}</div></div>`;
   }
   html+=`</div>`;
   el.innerHTML=html;
@@ -1874,7 +1930,7 @@ function renderWrongOnScreen(){
   const st=calcStats();
   const skipNote = st.skipped ? `<div style="margin-top:8px;font-size:0.88rem;color:var(--text-muted)">※ 미응답 ${st.skipped}문항은 오답노트에 넣지 않았어요.</div>` : '';
   if(wrongList.length===0){
-    const msg = st.answered ? '🎊 첫 시도에 틀린 문제가 없어요!' : '풀어 본 문제가 없어요.';
+    const msg = !st.answered ? '풀어 본 문제가 없어요.' : (st.skipped ? '푼 문제는 모두 첫 시도에 맞혔어요.' : '🎊 첫 시도에 틀린 문제가 없어요!');
     el.innerHTML=`<div class="result-title note-title">📝 오답노트</div><div style="text-align:center;padding:14px;background:var(--green-light);border-radius:10px;color:#2e8b57;font-weight:800;">${msg}</div>${skipNote}`;
     return;
   }
@@ -1971,7 +2027,7 @@ function buildXlsx(rows, widths){
     const r=ri+1;
     const cells=row.cells.map((v,ci)=>{
       if(v===null||v===undefined||v==='') return '';
-      const ref=colName(ci)+r, s=row.style||0;
+      const ref=colName(ci)+r, s=(row.cellStyles && row.cellStyles[ci]!=null) ? row.cellStyles[ci] : (row.style||0);   // 3 = 정답 열(빨간 굵은 글씨)
       if(typeof v==='number') return `<c r="${ref}" s="${s}"><v>${v}</v></c>`;
       return `<c r="${ref}" s="${s}" t="inlineStr"><is><t xml:space="preserve">${xmlEsc(v)}</t></is></c>`;
     }).join('');
@@ -1984,7 +2040,7 @@ function buildXlsx(rows, widths){
     { name:'_rels/.rels', text:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>` },
     { name:'xl/workbook.xml', text:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="${NS}" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="문항목록" sheetId="1" r:id="rId1"/></sheets></workbook>` },
     { name:'xl/_rels/workbook.xml.rels', text:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>` },
-    { name:'xl/styles.xml', text:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="${NS}"><fonts count="2"><font><sz val="11"/><name val="맑은 고딕"/></font><font><b/><sz val="11"/><name val="맑은 고딕"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFE4F0FB"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="3"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>` },
+    { name:'xl/styles.xml', text:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="${NS}"><fonts count="3"><font><sz val="11"/><name val="맑은 고딕"/></font><font><b/><sz val="11"/><name val="맑은 고딕"/></font><font><b/><sz val="11"/><color rgb="FFE00000"/><name val="맑은 고딕"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFE4F0FB"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="4"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf><xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>` },
     { name:'xl/worksheets/sheet1.xml', text:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="${NS}"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols>${cols}</cols><sheetData>${sheetRows}</sheetData></worksheet>` },
   ];
   return zipStore(files);
@@ -1999,7 +2055,7 @@ function downloadDataXlsx(){
       const exp = q.detail.rows
         ? methodTitle(q.detail.type)+'\n'+q.detail.rows.map(r=>`[${r.tag}] ${r.text}`).join('\n')
         : q.detail.explain;
-      rows.push({ cells:[def.name, q.id, typeOf(q), text, answerText(q), (q.answers||[]).join(', '), exp], style:2 });
+      rows.push({ cells:[def.name, q.id, typeOf(q), text, answerText(q), (q.answers||[]).join(', '), exp], style:2, cellStyles:[2,2,2,2,3,3,2] });
     });
     stageInfo.push(`${def.short} ${def.data.length}문항 · 만점 ${maxScoreOf(def.data.length)}점`);
   });
@@ -2117,12 +2173,14 @@ function paintNote(g,info,dry){
   g.font='15px '+SANS; if(!dry) g.fillStyle='#5f6d82';
   y=wrapText(g,'이름 '+info.name+'   ·   '+dateStr+' '+timeStr+'   ·   소요 시간 '+elapsedText(),padX,y,maxW,24,dry);
   y=wrapText(g,'점수 '+S.score+'점 (만점 '+S.maxScore+'점)  ·  정답률 '+accText(st)+'  ·  첫 시도 '+st.first+' · 다시 풀어 맞힘 '+st.retryOk+' · 못 맞힘 '+st.failed+(st.skipped?' · 미응답 '+st.skipped+'문항':''),padX,y,maxW,24,dry);
+  const en=encourage(st);
+  if(en.partial){ g.font='bold 15px '+SANS; if(!dry) g.fillStyle='#b5761f'; y=wrapText(g,en.lead+' · '+en.verdict,padX,y,maxW,24,dry); }
   y+=6;
   if(!dry){ g.strokeStyle='#d6e5f3'; g.lineWidth=1; g.beginPath(); g.moveTo(padX,y); g.lineTo(W-padX,y); g.stroke(); }
   y+=20;
   if(items.length===0){
     g.font='bold 21px '+SANS; if(!dry) g.fillStyle='#2e8b57';
-    y=wrapText(g, st.answered?'🎊 첫 시도에 틀린 문제가 없어요!':'풀어 본 문제가 없어요.', padX, y+18, maxW, 30, dry);
+    y=wrapText(g, !st.answered?'풀어 본 문제가 없어요.':(st.skipped?'푼 문제는 모두 첫 시도에 맞혔어요.':'🎊 첫 시도에 틀린 문제가 없어요!'), padX, y+18, maxW, 30, dry);
     y+=20;
   } else {
     items.forEach(it=>{
@@ -2181,7 +2239,7 @@ function paintReport(g,info,dry){
   y+=30;
   if(D.rows.length===0){
     g.font='15px '+SANS; if(!dry) g.fillStyle='#66758a';
-    y=wrapText(g,'표시할 유형이 없어요.',padX,y,maxW,24,dry);
+    y=wrapText(g,'표시할 유형이 없어요.',padX,y,maxW,24,dry); y+=16;
   }
   D.rows.forEach(r=>{
     const col=catColor(r.type);
@@ -2200,27 +2258,25 @@ function paintReport(g,info,dry){
   if(D.rows.length){
     if(!dry) g.fillStyle='#2e7d52';
     y=wrapText(g,'💪 잘하는 유형 : '+(D.strong.length?D.strong.map(r=>r.type).join(', '):'아직 없음'),padX,y,maxW,26,dry);
-    if(!dry) g.fillStyle='#b04040';
-    y=wrapText(g,'📌 보완이 필요한 유형 : '+(D.weak.length?D.weak.map(r=>r.type+' ('+r.rate+'%)').join(', '):'없음 (모든 유형 50% 이상)'),padX,y,maxW,26,dry);
   }
   if(!dry) g.fillStyle='#4c5670';
   y=wrapText(g,D.summary,padX,y+4,maxW,26,dry);
-  if(D.priority){
-    const m=TYPE_MASTER[D.priority.type];
+  if(D.weakCell){
+    const w=D.weakCell;
     y+=10;
     const top=y;
     const inner=(dryRun)=>{
       let yy=top+30;
-      g.font='bold 17px '+SANS; if(!dryRun) g.fillStyle='#2B6CA8';
-      yy=wrapText(g,'🎯 가장 먼저 공부할 유형 : '+catColor(D.priority.type).icon+' '+D.priority.type+' ('+m.desc+')',padX+20,yy,maxW-40,26,dryRun);
+      g.font='bold 17px '+SANS; if(!dryRun) g.fillStyle='#b04040';
+      yy=wrapText(g,'📌 보완이 필요한 유형'+(w.head?' : '+w.head+' ('+w.desc+')':''),padX+20,yy,maxW-40,26,dryRun);
       g.font='16px '+SANS; if(!dryRun) g.fillStyle='#34405a';
-      yy=wrapText(g,'💡 '+m.tip,padX+20,yy+2,maxW-40,26,dryRun);
-      return yy+8;
+      yy=wrapText(g,(w.tip?'💡 ':'')+w.text,padX+20,yy+2,maxW-40,26,dryRun);
+      return yy-6;   // 칸 아래 여백을 위 여백과 비슷하게
     };
     const bottom=inner(true);
     if(!dry){ g.fillStyle='#ffffff'; g.fillRect(padX,top,maxW,bottom-top); g.fillStyle='#3B86C9'; g.fillRect(padX,top,6,bottom-top);
       g.strokeStyle='#BFD9F1'; g.lineWidth=1.5; g.strokeRect(padX,top,maxW,bottom-top); inner(false); }
-    y=bottom;
+    y=bottom+16;   // 다음 제목(학습 소감)이 칸 테두리에 붙지 않게
   }
   y+=18;
   if(info.feeling){

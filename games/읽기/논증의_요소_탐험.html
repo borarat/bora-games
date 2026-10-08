@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 <!-- 리모델링 2026.10.01 15:00 (6차): 재도전은 그대로 두고, 점수는 한 문항(1단계 문항·2단계 문장·3단계 카드)에 한 번만 주도록 안전장치 추가
-     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이 -->
+     2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
+     2026.10.08 11:05 11차: 테마층(논증 건축물) + 실제 조작 버그 검사·수정 — 중간 종료 총평·보완 칸·끝내기 확인·자동 종료·못 맞힘·같은 오답 재감점·포커스·엑셀 빨강 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -273,6 +274,14 @@ h1{font-size:clamp(28px,4vw,40px); font-weight:700; margin:0 0 6px; letter-spaci
   .ebody{padding:22px 16px;} .endbtns .ebtn{min-width:100%;}
   .cred-mini{display:none;}
 }
+/* ═══ 게임 테마층 · 논증 건축물 (2026.10.08) ═══
+   지붕·기둥·주춧돌이 위아래로 서로 떠받치는 단순한 건물. 보조색 머스터드 #C99A2E. 영역 팔레트·헤더 띠·정답/오답 색·흰 문제 카드·정답 카드는 그대로.
+   이 블록과 시작 화면 SVG를 지우면 원래 모습 */
+:root{--th:#C99A2E}
+.titlerow .keyArt{margin-left:auto;flex:none;height:116px;width:auto}
+@media (max-width:860px){.titlerow .keyArt{display:none}}
+#start .box{border-left:4px solid var(--th)}
+#start .box h3{color:var(--th)}
 </style>
 </head>
 
@@ -292,6 +301,34 @@ h1{font-size:clamp(28px,4vw,40px); font-weight:700; margin:0 0 6px; letter-spaci
       <h1>논증의 요소 탐험</h1>
       <p class="subttl">주장 · 이유 · 근거 · 예상 반론 · 반박을 익히는 3단계 게임</p>
      </div>
+     <svg class="keyArt" viewBox="0 0 240 122" aria-hidden="true">
+      <!-- 지붕 -->
+      <path d="M24 42 L120 6 L216 42 Z" fill="#C99A2E"/>
+      <path d="M50 37 L120 13 L190 37 Z" fill="#F2E6C4"/>
+      <rect x="18" y="42" width="204" height="9" rx="2" fill="#8A6A20"/>
+      <!-- 기둥 넷 -->
+      <g fill="#FFFDF7" stroke="#C99A2E" stroke-width="1.6">
+       <rect x="38" y="57" width="20" height="42"/><rect x="86" y="57" width="20" height="42"/>
+       <rect x="134" y="57" width="20" height="42"/><rect x="182" y="57" width="20" height="42"/>
+      </g>
+      <g fill="#C99A2E">
+       <rect x="33" y="51" width="30" height="6" rx="1.5"/><rect x="81" y="51" width="30" height="6" rx="1.5"/>
+       <rect x="129" y="51" width="30" height="6" rx="1.5"/><rect x="177" y="51" width="30" height="6" rx="1.5"/>
+      </g>
+      <g stroke="#E3CF96" stroke-width="1.2">
+       <line x1="44.5" y1="60" x2="44.5" y2="96"/><line x1="51.5" y1="60" x2="51.5" y2="96"/>
+       <line x1="92.5" y1="60" x2="92.5" y2="96"/><line x1="99.5" y1="60" x2="99.5" y2="96"/>
+       <line x1="140.5" y1="60" x2="140.5" y2="96"/><line x1="147.5" y1="60" x2="147.5" y2="96"/>
+       <line x1="188.5" y1="60" x2="188.5" y2="96"/><line x1="195.5" y1="60" x2="195.5" y2="96"/>
+      </g>
+      <!-- 주춧돌·기단 -->
+      <g fill="#8A6A20">
+       <rect x="34" y="99" width="28" height="5" rx="1.5"/><rect x="82" y="99" width="28" height="5" rx="1.5"/>
+       <rect x="130" y="99" width="28" height="5" rx="1.5"/><rect x="178" y="99" width="28" height="5" rx="1.5"/>
+      </g>
+      <rect x="22" y="104" width="196" height="7" rx="2" fill="#C99A2E"/>
+      <rect x="12" y="111" width="216" height="8" rx="2" fill="#E3CF96"/>
+     </svg>
     </div>
 
     <div class="cols">
@@ -329,7 +366,7 @@ h1{font-size:clamp(28px,4vw,40px); font-weight:700; margin:0 0 6px; letter-spaci
 
     <div class="maker">
      <b>제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com</b><br>
-     제작일 2026.06.17 · <span id="lastMod">최종 수정 2026.10.05 03:00</span>
+     제작일 2026.06.17 · <span id="lastMod">최종 수정 2026.10.08 11:05</span>
     </div>
 
     <div class="privacy" id="privacyOffline">
@@ -382,10 +419,10 @@ h1{font-size:clamp(28px,4vw,40px); font-weight:700; margin:0 0 6px; letter-spaci
     <div class="gside">
      <button class="navb" onclick="Game.prev()">◀ 이전</button>
      <button class="navb" id="bNext" onclick="Game.next()">다음 ▶</button>
-     <button class="navb end" onclick="Game.finish()">게임 끝내기</button>
+     <button class="navb end" onclick="Game.tryFinish(true)">게임 끝내기</button>
     </div>
    </div>
-   <div class="cred-mini">제작 · 보라라샘 / 2026.06.17</div>
+   <div class="cred-mini">제작 · 보라라샘 · 2026.06.17</div>
   </div>
  </div>
 </section>
@@ -412,7 +449,7 @@ h1{font-size:clamp(28px,4vw,40px); font-weight:700; margin:0 0 6px; letter-spaci
 
 <script>
 const MADE_DATE = '2026.06.17';
-const LAST_MOD  = '2026.10.05 03:00';
+const LAST_MOD  = '2026.10.08 11:05';
 const STD_CODE  = '[9국02-05]';
 const STD_TEXT  = '글에 사용된 다양한 설명 방법과 논증 방법을 파악하고, 그 타당성을 평가하며 읽는다.';
 
@@ -731,6 +768,7 @@ function clearFx(){ cbHide(); }
 const Game = {
   stage:1, idx:0, score:0, combo:0, maxCombo:0, items:[], wrong:[], wrongIds:new Set(),
   answered:0, firstRight:0, retryRight:0, catStat:{}, startAt:0, elapsed:0, maxScore:170, scored:new Set(),
+  ended:false, runId:0, autoT:null,
   $:(id)=>document.getElementById(id),
   show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on')); Game.$(id).classList.add('on'); window.scrollTo(0,0); },
 
@@ -739,10 +777,12 @@ const Game = {
     Game.stage=stage; Game.idx=0; Game.score=0; Game.combo=0; Game.maxCombo=0;
     Game.wrong=[]; Game.wrongIds=new Set(); Game.answered=0; Game.firstRight=0; Game.retryRight=0; Game.scored=new Set();
     Game.catStat={}; Game.startAt=Date.now(); Game.elapsed=0;
+    Game.ended=false; Game.runId++; clearTimeout(Game.autoT); Game.autoT=null;
     Game.maxScore=maxScoreOf(STAGES[stage-1].units);
-    if(stage===1) Game.items=shuffle(STAGE1).map(d=>({d, done:false, ok:false, tries:0, picked:null}));
-    if(stage===2) Game.items=shuffle(STAGE2).map(d=>({d, segState:d.seg.map(()=>({done:false,tries:0})), selSeg:null}));
-    if(stage===3) Game.items=shuffle(STAGE3).map(d=>({d, order:shuffle(d.cards.map((c,i)=>i)), placed:{}, colPair:{}, selCard:null, done:false, everWrong:new Set()}));
+    // wrongTry: 이미 틀린 보기·요소·자리 — 다시 눌러도 또 감점하지 않는다
+    if(stage===1) Game.items=shuffle(STAGE1).map(d=>({d, done:false, ok:false, tries:0, picked:null, wrongTry:new Set()}));
+    if(stage===2) Game.items=shuffle(STAGE2).map(d=>({d, segState:d.seg.map(()=>({done:false,tries:0,wrongTry:new Set()})), selSeg:null}));
+    if(stage===3) Game.items=shuffle(STAGE3).map(d=>({d, order:shuffle(d.cards.map((c,i)=>i)), placed:{}, colPair:{}, selCard:null, done:false, everWrong:new Set(), wrongTry:new Set()}));
     Game.updateHud(); Game.show('game'); Game.render();
   },
 
@@ -817,14 +857,19 @@ const Game = {
   },
   pickMC(i){
     const it=Game.items[Game.idx], d=it.d; if(it.done) return;
+    if(i!==d.ans && it.wrongTry.has(i)){   // 이미 틀린 보기 — 다시 감점하지 않음
+      const el=Game.$('op'+i); if(el){ el.classList.add('wrong','shake'); setTimeout(()=>el.classList.remove('shake','wrong'),450); }
+      Game.showHint(it); return;
+    }
     it.tries++;
+    if(i!==d.ans) it.wrongTry.add(i);
     if(i===d.ans){
       it.done=true; it.ok=true; it.picked=i;
       Game.$('op'+i).classList.add('correct','pop');
       Game.award(it.tries===1, d.cat, true, 's1:'+d.id);
       if(it.tries>1) Game.addWrong(d.id,d.cat,stripTags(d.q),ansTextMC(d),d.exp);
       Game.lockQ();
-      const hb=Game.$('hb'); hb.className='hintbox done show'; hb.innerHTML=`✅ <b>정답!</b> ${d.exp}`;
+      const hb=Game.$('hb'); hb.className='hintbox done show'; hb.innerHTML=`✅ <b>정답!</b> ${d.exp}`; Game.checkAllDone();
     } else {
       const el=Game.$('op'+i); el.classList.add('wrong','shake');
       setTimeout(()=>el.classList.remove('shake','wrong'),450);
@@ -833,13 +878,20 @@ const Game = {
   },
   submitSH(){
     const it=Game.items[Game.idx], d=it.d, inp=Game.$('shIn'); if(!inp||it.done) return;
+    const nv=norm(inp.value);
+    if(!nv){ inp.focus(); return; }                      // 빈칸은 채점하지 않음
+    if(!matchSH(inp.value,d) && it.wrongTry.has(nv)){    // 이미 틀린 답을 그대로 다시 냄 — 다시 감점하지 않음
+      inp.classList.add('no','shake'); setTimeout(()=>inp.classList.remove('shake','no'),450);
+      Game.showHint(it); return;
+    }
     it.tries++;
+    if(!matchSH(inp.value,d)) it.wrongTry.add(nv);
     if(matchSH(inp.value,d)){
       it.done=true; it.ok=true; it.picked=inp.value;
       inp.classList.add('ok'); inp.disabled=true;
       Game.award(it.tries===1, d.cat, true, 's1:'+d.id);
       if(it.tries>1) Game.addWrong(d.id,d.cat,stripTags(d.q),ansTextSH(d),d.exp);
-      const hb=Game.$('hb'); hb.className='hintbox done show'; hb.innerHTML=`✅ <b>정답!</b> ${d.exp}`;
+      const hb=Game.$('hb'); hb.className='hintbox done show'; hb.innerHTML=`✅ <b>정답!</b> ${d.exp}`; Game.checkAllDone();
     } else {
       inp.classList.add('no','shake'); setTimeout(()=>inp.classList.remove('shake','no'),450);
       Game.penalize(); Game.showHint(it);
@@ -857,7 +909,7 @@ const Game = {
     if(d.type==='mc'){ Game.$('op'+d.ans).classList.add('correct'); Game.lockQ(); }
     else { const inp=Game.$('shIn'); inp.value=ansTextSH(d); inp.classList.add('ok'); inp.disabled=true; }
     const hb=Game.$('hb'); hb.className='hintbox done show'; hb.innerHTML=`<b>정답</b> · ${d.exp}`;
-    Game.$('rv').classList.remove('show');
+    Game.$('rv').classList.remove('show'); Game.checkAllDone();
   },
   lockQ(){
     const it=Game.items[Game.idx], d=it.d;
@@ -893,14 +945,21 @@ const Game = {
     if(it.selSeg==null){ const h=Game.$('s2h'); if(h) h.textContent='먼저 위에서 문장을 하나 눌러 주세요.'; return; }
     const i=it.selSeg, st=it.segState[i], s=d.seg[i];
     if(st.done){ it.selSeg=null; return; }
+    if(k!==s.e && st.wrongTry.has(k)){   // 이 문장에 이미 틀린 요소 — 다시 감점하지 않음
+      const ch=Game.$('chip_'+k); if(ch){ch.classList.add('shake'); setTimeout(()=>ch.classList.remove('shake'),450);}
+      const h=Game.$('s2h');
+      if(h) h.innerHTML=`<span style="color:var(--bad);font-weight:600">❌ 아니에요. 이 문장이 무엇을 하는지 다시 살펴보세요.</span> <span style="color:var(--sub)">(${EL[k].lab}: ${EL[k].def})</span>`;
+      return;
+    }
     st.tries++;
+    if(k!==s.e) st.wrongTry.add(k);
     if(k===s.e){
       st.done=true; it.selSeg=null;
       const allDone=it.segState.every(x=>x.done);
       Game.award(st.tries===1, s.e, allDone, 's2:'+d.ttl+':'+i);
       if(st.tries>1) Game.addWrong(s.id, s.e, `[${d.ttl}] ${s.t}`, `${EL[s.e].lab}`, `${EL[s.e].lab} — ${EL[s.e].def}`);
       if(allDone) SFX.done();
-      Game.renderText();
+      Game.renderText(); Game.checkAllDone();
     } else {
       Game.penalize();
       Game.addWrong(s.id, s.e, `[${d.ttl}] ${s.t}`, `${EL[s.e].lab}`, `${EL[s.e].lab} — ${EL[s.e].def}`);
@@ -967,8 +1026,11 @@ const Game = {
       const allDone = Object.keys(it.placed).length===d.cards.length;
       Game.award(!it.everWrong.has(ci), card.tier, allDone, 's3:'+d.ttl+':'+ci);
       if(allDone){ it.done=true; it._fb=null; SFX.done(); } else it._fb='ok';
-      Game.renderTower();
+      Game.renderTower(); Game.checkAllDone();
     } else {
+      const wkey = reason==='pair' ? ci+'|'+key : ci+'|'+tier;
+      if(it.wrongTry.has(wkey)){ it._fb = reason==='pair'?'pair':'no'; Game.renderTower(); return; }   // 같은 자리에 또 놓음 — 다시 감점하지 않음
+      it.wrongTry.add(wkey);
       Game.penalize(); it.everWrong.add(ci);
       const partner = card.tier==='근거'?'이유':'근거';
       const ansTxt = reason==='pair' ? `${card.tier} 칸 중 짝이 맞는 ${partner}와 같은 세로줄` : `${card.tier} 칸`;
@@ -986,11 +1048,42 @@ const Game = {
   next(){
     hideBanner();
     if(Game.idx<Game.items.length-1){ Game.idx++; Game.render(); }
-    else Game.finish();
+    else Game.tryFinish(false);
   },
   advance(){
     if(cbShown()){ hideBanner(); return; }
     Game.next();
+  },
+  /* 지금 화면의 문항(1단계 문항·2단계 지문·3단계 지문)이 채점을 마쳤는지 */
+  curDone(){
+    const it=Game.items[Game.idx]; if(!it) return false;
+    if(Game.stage===1) return it.done;
+    if(Game.stage===2) return it.segState.every(s=>s.done);
+    return it.done;
+  },
+  /* 채점 단위(1단계 문항·2단계 문장·3단계 카드) 세기: 맞힘(또는 정답 확인) / 틀린 채로 남음 / 손대지 않음 */
+  unitProgress(){
+    let done=0, pend=0, left=0;
+    Game.items.forEach(it=>{
+      if(Game.stage===1){ if(it.done) done++; else if(it.tries>0) pend++; else left++; }
+      else if(Game.stage===2){ it.segState.forEach(s=>{ if(s.done) done++; else if(s.tries>0) pend++; else left++; }); }
+      else { const placed=new Set(Object.values(it.placed));
+        it.d.cards.forEach((c,ci)=>{ if(placed.has(ci)) done++; else if(it.everWrong.has(ci)) pend++; else left++; }); }
+    });
+    return {done,pend,left};
+  },
+  /* 모든 단위가 채점되면 약 2초 뒤 결과 화면 (그사이 화면이 바뀌면 무효) */
+  checkAllDone(){
+    const u=Game.unitProgress(); if(u.pend||u.left) return;
+    const run=Game.runId; clearTimeout(Game.autoT);
+    Game.autoT=setTimeout(()=>{ if(run===Game.runId && !Game.ended && Game.$('game').classList.contains('on')) Game.finish(); },2000);
+  },
+  /* 게임 끝내기(fromQuit)·마지막 문항 '결과 보기' — 남은 문항이 있으면 한 번 확인 */
+  tryFinish(fromQuit){
+    const u=Game.unitProgress(), n=u.pend+u.left;
+    if(n>0){ if(!confirm('아직 '+n+'문항이 남았어요. 게임을 끝낼까요?'+(u.left>0?'\n(남은 문항은 미응답으로 기록돼요)':''))) return; }
+    else if(fromQuit){ if(!confirm('게임을 끝내고 결과를 볼까요?')) return; }
+    Game.finish();
   }
 };
 
@@ -1022,8 +1115,9 @@ document.addEventListener('keydown',e=>{
   const typing = tag==='INPUT'||tag==='TEXTAREA';
   if(cbShown() && (e.key==='Enter'||e.key===' '||e.key==='ArrowRight')){ e.preventDefault(); hideBanner(); return; }
   if(!document.getElementById('game').classList.contains('on')) return;
-  if(typing && e.key!=='ArrowRight') return;
-  if(e.key==='ArrowRight'){ e.preventDefault(); Game.next(); return; }
+  if(typing) return;
+  if(tag==='BUTTON' && (e.key==='Enter'||e.key===' ')) return;   // Tab으로 고른 버튼은 그 버튼이 눌린다 (마우스로 누른 버튼은 아래에서 포커스를 놓는다)
+  if(e.key==='ArrowRight'){ e.preventDefault(); if(Game.curDone()) Game.next(); return; }   // 채점이 끝난 뒤에만 넘어간다
   if(e.key==='ArrowLeft'){ e.preventDefault(); Game.prev(); return; }
   if(e.key==='Enter'||e.key===' '){
     const it=Game.items[Game.idx];
@@ -1042,6 +1136,11 @@ document.addEventListener('keydown',e=>{
     else if(Game.stage===2){ const keys=Object.keys(EL); if(n<keys.length){ e.preventDefault(); Game.pickEl(keys[n]); } }
   }
 });
+/* 마우스로 누른 버튼에 포커스가 남아 Enter·Space로 다시 눌리지 않게 (2026.10.08) */
+document.addEventListener('click',e=>{
+  const b=e.target&&e.target.closest?e.target.closest('button'):null;
+  if(b&&e.detail>0) setTimeout(()=>{ if(document.activeElement===b) b.blur(); },0);
+},true);
 
 /* =========================================================
    결과 분석
@@ -1051,13 +1150,14 @@ function analyze(){
   const answered=Game.answered, skipped=units-answered;
   const rate = answered? Game.firstRight/answered : 0;
   const missed = answered - Game.firstRight - Game.retryRight;
-  let verdict;
-  if(!answered) verdict='아직 푼 문항이 없어요';
-  else if(rate>=.95) verdict='완벽해요!';
-  else if(rate>=.85) verdict='아주 잘했어요';
-  else if(rate>=.70) verdict='잘하고 있어요';
-  else if(rate>=.50) verdict='기본은 잡혔어요';
-  else verdict='다시 한 번 도전해요';
+  // 총평 (화면연출표준 7장): 채점 0개 / 중간 종료 / 끝까지
+  let verdict, title, em;
+  const grade = rate>=.95?['🏆','완벽해요!'] : rate>=.85?['😄','아주 잘했어요'] : rate>=.70?['🎉','잘하고 있어요'] : rate>=.50?['👍','기본은 잡혔어요'] : ['💪','다시 한 번 도전해요'];
+  if(!answered){ em='📭'; title='풀어 본 문제가 없어요'; verdict='풀어 본 문제가 없어요'; }
+  else if(skipped>0){ em='✏️'; title='여기까지 풀었어요';
+    verdict = rate>=.70 ? '잘하고 있어요! 남은 문제까지 풀며 좀 더 연습해 보면 어떨까요?' : '좀 더 연습해 보면 어떨까요? 남은 문제까지 풀어 보면 감이 잡혀요.'; }
+  else { em=grade[0]; title=STAGES[Game.stage-1].name+' 완료!'; verdict=grade[1]; }
+  const rateTxt = answered ? Math.round(rate*100)+'%' : '–';
   const all=Object.keys(Game.catStat).map(c=>{
     const s=Game.catStat[c];
     return {cat:c, total:s.total, first:s.first, wrong:s.total-s.first, rate:s.first/s.total};
@@ -1065,63 +1165,78 @@ function analyze(){
   const rows=all.filter(r=>r.total>=2);          // 1문항뿐인 유형은 진단에서 제외
   const strong=rows.filter(r=>r.rate===1);
   const weak=rows.filter(r=>r.rate<0.5);
+  // '보완이 필요한 유형' 한 칸 = 가장 먼저 공부할 유형 하나 + 판단 방법(tip) (표준 8-2 v3.3)
   let focus=null, focusMsg='';
   const wrongRows=rows.filter(r=>r.wrong>0);
-  if(rows.length && rows.every(r=>r.rate<0.5)){
-    focusMsg='유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 요소 설명을 먼저 읽어 보세요.';
-  } else if(!wrongRows.length){
-    focusMsg = all.some(r=>r.wrong>0)
-      ? '틀린 문항이 있지만, 유형별로 판단할 만큼 문항이 많지 않아요. 오답노트의 해설을 한 번 더 읽어 보세요.'
-      : '약점이 보이지 않아요. 다음 단계에 도전해 보세요.';
-  } else {
+  if(rows.length>=2 && rows.every(r=>r.rate<0.5)){   // 판정한 유형이 하나뿐이면 넘겨짚지 않는다
+    focusMsg='유형 구분 자체를 다시 익힐 단계예요. 시작 화면의 유형 설명을 먼저 읽어 보세요.';
+  } else if(wrongRows.length){
     wrongRows.sort((a,b)=> b.wrong-a.wrong || a.rate-b.rate || b.total-a.total);
     focus=wrongRows[0];
+  } else if(all.some(r=>r.wrong>0)){
+    focusMsg='뚜렷하게 약한 유형은 없어요. 틀린 문제는 오답노트의 해설을 확인해 보세요.';
+  } else {
+    focusMsg = skipped>0 ? '남은 문제를 마저 풀어 보세요.'
+      : (Game.stage<STAGES.length ? '약점이 보이지 않아요. 다음 단계에 도전해 보세요.' : '약점이 보이지 않아요. 다른 단계에도 도전해 보세요.');
   }
-  return {units,answered,skipped,rate,missed,verdict,strong,weak,focus,focusMsg};
+  return {units,answered,skipped,rate,rateTxt,missed,verdict,title,em,strong,weak,focus,focusMsg};
 }
 
 /* =========================================================
    종료 화면
 ========================================================= */
+/* 끝낼 때: 첫 시도에 틀리고 다시 풀지 않은 단위는 미응답이 아니라 '못 맞힘' */
+Game.settlePending=function(){
+  if(Game.stage===1) Game.items.forEach(it=>{ const d=it.d;
+    if(!it.done && it.tries>0){ it.done=true; it.ok=false; Game.markAnsweredWrong(d.cat);
+      Game.addWrong(d.id,d.cat,stripTags(d.q),d.type==='mc'?ansTextMC(d):ansTextSH(d),d.exp); } });
+  if(Game.stage===2) Game.items.forEach(it=>it.segState.forEach((st,i)=>{
+    if(!st.done && st.tries>0){ st.done=true; st.missed=true; Game.markAnsweredWrong(it.d.seg[i].e); } }));
+  if(Game.stage===3) Game.items.forEach(it=>{ const placed=new Set(Object.values(it.placed));
+    it.d.cards.forEach((c,ci)=>{ if(!placed.has(ci) && it.everWrong.has(ci)) Game.markAnsweredWrong(c.tier); }); });
+};
 Game.finish=function(){
+  if(Game.ended) return;
+  Game.ended=true; Game.runId++; clearTimeout(Game.autoT);
   hideBanner(); clearFx();
+  Game.settlePending();
   Game.elapsed=Math.round((Date.now()-Game.startAt)/1000);
   Game.show('end'); Game.renderEnd(); sendResultIfOnline();
 };
 Game.renderEnd=function(){
   const a=analyze(), st=STAGES[Game.stage-1], ts=nowStamp();
-  const pct=Math.round(a.rate*100);
-  const em = a.rate>=.95?'🏆' : a.rate>=.85?'😄' : a.rate>=.70?'🎉' : a.answered?'👍':'💪';
-  const skipLine = a.skipped>0 ? `<div class="endhead"><div class="note">끝까지 풀지 않았어요 (${a.skipped}문항 남음)</div></div>` : '';
+  const em = a.em;
+  const skipLine = (a.answered && a.skipped>0) ? `<div class="endhead"><div class="note">끝까지 풀지 않았어요 (${a.skipped}문항 남음)</div></div>` : '';
   const chipLine=(arr,empty)=> arr.length
       ? arr.map(r=>`<div class="li"><span style="color:${catColor(r.cat)};font-weight:700">${CATEGORIES[r.cat].icon} ${CATEGORIES[r.cat].label}</span> ${r.first}/${r.total}</div>`).join('')
       : `<div class="li" style="color:var(--sub)">${empty}</div>`;
+  // '보완이 필요한 유형' 한 칸 = 가장 먼저 공부할 유형 하나 + 판단 방법(tip) (표준 8-2 v3.3)
   const focusHtml = a.focus
-    ? `<h4>🎯 가장 먼저 공부할 것 — ${CATEGORIES[a.focus.cat].icon} ${CATEGORIES[a.focus.cat].label} (${a.focus.first}/${a.focus.total})</h4><p>${CATEGORIES[a.focus.cat].tip}</p>`
-    : `<h4>🎯 가장 먼저 공부할 것</h4><p>${a.focusMsg}</p>`;
+    ? `<div class="li"><span style="color:${catColor(a.focus.cat)};font-weight:700">${CATEGORIES[a.focus.cat].icon} ${CATEGORIES[a.focus.cat].label}</span> ${a.focus.first}/${a.focus.total}</div><div class="li">${CATEGORIES[a.focus.cat].tip}</div>`
+    : `<div class="li" style="color:var(--sub)">${a.focusMsg}</div>`;
   const hasNext = Game.stage < STAGES.length;
   Game.$('endBody').innerHTML=`
     <div class="endhead">
       <div class="em">${em}</div>
-      <h2>${st.name} 완료!</h2>
-      <div class="note">${st.sub} · ${ts.date} ${ts.time}</div>
+      <h2>${a.title}</h2>
+      <div class="note">${a.answered&&!a.skipped?'':st.name+' · '}${st.sub} · ${ts.date} ${ts.time}</div>
     </div>
     ${skipLine}
     <div class="stats">
       <div class="stat"><b>${Game.score}</b><span>${Game.maxScore}점 만점</span></div>
-      <div class="stat"><b>${pct}%</b><span>정답률</span></div>
+      <div class="stat"><b>${a.rateTxt}</b><span>정답률</span></div>
       <div class="stat"><b>${Game.firstRight}</b><span>첫 시도 정답</span></div>
       <div class="stat"><b>${Game.retryRight}</b><span>다시 풀어 맞힘</span></div>
       <div class="stat"><b>${a.missed}</b><span>못 맞힘</span></div>
+      <div class="stat"><b>${a.skipped}</b><span>미응답</span></div>
       <div class="stat"><b>${Game.maxCombo}</b><span>최고 콤보</span></div>
       <div class="stat"><b>${mmss(Game.elapsed)}</b><span>소요 시간</span></div>
     </div>
     <div class="verdict">${a.verdict}</div>
     <div class="anz">
       <div class="anzbox"><h4>👍 잘하는 유형</h4>${chipLine(a.strong,'아직 없어요. 다시 도전해 보세요.')}</div>
-      <div class="anzbox"><h4>📌 보완이 필요한 유형</h4>${chipLine(a.weak,'보완이 필요한 유형이 없어요.')}</div>
+      <div class="anzbox"><h4>📌 보완이 필요한 유형</h4>${focusHtml}</div>
     </div>
-    <div class="tipbox">${focusHtml}</div>
     <div class="fields">
       <div><label for="inName">학생 이름 (필수)</label><input id="inName" maxlength="12" placeholder="실명을 입력하세요"></div>
       <div><label for="inRef">학습 소감 (선택)</label><textarea id="inRef" rows="2" maxlength="120" placeholder="오늘 배운 점이나 어려웠던 점을 써 보세요"></textarea></div>
@@ -1219,17 +1334,18 @@ Game.saveNote=function(){
   x.fillStyle='#F3F8FD'; x.fillRect(0,0,W,H);
   x.fillStyle='#FFFFFF'; roundBox(x,pad-16,26,cw+32,H-92,18);
   x.fillStyle='#3B86C9'; x.font=`700 13px ${SF}`; x.fillText('읽기 · 논증의 요소 탐험', pad, 56);
-  x.fillStyle='#185FA5'; x.font=`700 23px ${SF}`; x.fillText(`${st.name} · ${Game.wrong.length?'오답노트':'칭찬 노트'}`, pad, 88);
+  const praise = !Game.wrong.length && a.answered>0 && a.skipped===0;   // 끝까지 풀고 틀린 문제가 없을 때만 칭찬 노트
+  x.fillStyle='#185FA5'; x.font=`700 23px ${SF}`; x.fillText(`${st.name} · ${praise?'칭찬 노트':'오답노트'}`, pad, 88);
   x.fillStyle='#6B7686'; x.font=`14px ${SF}`;
-  x.fillText(`이름 ${name}   |   완료 ${ts.date} ${ts.time}   |   ${Game.score} / ${Game.maxScore}점   |   정답률 ${Math.round(a.rate*100)}%`, pad, 116);
+  x.fillText(`이름 ${name}   |   완료 ${ts.date} ${ts.time}   |   ${Game.score} / ${Game.maxScore}점   |   정답률 ${a.rateTxt}`, pad, 116);
   x.strokeStyle='#E3EFFA'; x.lineWidth=1; x.beginPath(); x.moveTo(pad,132); x.lineTo(pad+cw,132); x.stroke();
   let y=HEADER;
   if(!Game.wrong.length){
     x.fillStyle='#E6F6EF'; roundBox(x,pad,y,cw,120,14);
     x.textAlign='center'; x.fillStyle='#179F6B'; x.font=`700 25px ${SF}`;
-    x.fillText('참 잘했어요!', W/2, y+48);
+    x.fillText(praise?'참 잘했어요!':(a.answered?'푼 문제는 모두 첫 시도에 맞혔어요.':'풀어 본 문제가 없어요.'), W/2, y+48);
     x.fillStyle='#2F6F56'; x.font=`15px ${SF}`;
-    x.fillText('주장·이유·근거·예상 반론·반박을 정확히 구분했습니다.', W/2, y+82);
+    x.fillText(praise?'주장·이유·근거·예상 반론·반박을 정확히 구분했습니다.':'남은 문제를 마저 풀어 보세요.', W/2, y+82);
     x.textAlign='left';
   } else {
     blocks.forEach(b=>{
@@ -1252,7 +1368,7 @@ Game.saveNote=function(){
   }
   x.fillStyle='#9AA6B4'; x.font=`11.5px ${SF}`;
   footerLines().forEach((l,i)=>x.fillText(l,pad,H-46+i*18));
-  saveCanvas(cv,`${name}_${Game.wrong.length?'오답노트':'칭찬노트'}_${st.name.replace(/[ ·]/g,'')}_${ts.file}.jpg`);
+  saveCanvas(cv,`${name}_${praise?'칭찬노트':'오답노트'}_${st.name.replace(/[ ·]/g,'')}_${ts.file}.jpg`);
 };
 
 /* ---------- 학습 리포트 JPG ---------- */
@@ -1266,17 +1382,18 @@ Game.saveReport=function(){
   const listTxt=arr=>arr.length? arr.map(r=>`${CATEGORIES[r.cat].label} ${r.first}/${r.total}`).join('   ·   ') : '—';
   x.font=`14px ${SF}`;
   const strongL=wrapText(x,listTxt(a.strong),cw-40);
-  const weakL  =wrapText(x,listTxt(a.weak),cw-40);
-  const tipText = a.focus ? `${CATEGORIES[a.focus.cat].label} (${a.focus.first}/${a.focus.total}) — ${CATEGORIES[a.focus.cat].tip}` : a.focusMsg;
+  // '보완이 필요한 유형' 한 칸 = 가장 먼저 공부할 유형 하나 + 판단 방법(tip) (표준 8-2 v3.3)
+  const tipText = a.focus ? `${CATEGORIES[a.focus.cat].label} ${a.focus.first}/${a.focus.total} — ${CATEGORIES[a.focus.cat].tip}` : a.focusMsg;
   x.font=`14px ${SF}`; const tipL=wrapText(x,tipText,cw-40);
+  const vText = (a.answered && a.skipped>0) ? `끝까지 풀지 않았어요 (${a.skipped}문항 남음)  ·  ${a.verdict}` : a.verdict;
+  x.font=`700 17px ${SF}`; const vL=wrapText(x,vText,cw-40);
   const refL = ref? wrapText(x,ref,cw-40):[];
   x.font=`12px ${SF}`; const stdL=wrapText(x,`${STD_CODE} ${STD_TEXT}`,cw-10);
   let H=150;                       // 머리말
   H+=112;                          // 요약 수치 2줄
-  H+=56;                           // 총평
+  H+=vL.length*24+16+16;           // 총평
   H+=30+strongL.length*22+14;      // 잘하는 유형
-  H+=30+weakL.length*22+14;        // 보완 유형
-  H+=32+tipL.length*22+18;         // 학습 조언
+  H+=tipL.length*22+42+18;         // 보완이 필요한 유형 (유형 하나 + 학습 조언)
   if(ref) H+=30+refL.length*22+14; // 소감
   H+=stdL.length*17+104;           // 성취기준 + 꼬리말
   cv.height=H;
@@ -1291,7 +1408,7 @@ Game.saveReport=function(){
   // 요약 수치
   const cells=[
     [`${Game.score} / ${Game.maxScore}점`,'최종 점수'],
-    [`${Math.round(a.rate*100)}%`,'정답률'],
+    [a.rateTxt,'정답률'],
     [`${Game.firstRight}개`,'첫 시도 정답'],
     [`${Game.retryRight}개`,'다시 풀어 맞힘'],
     [`${a.missed}개`,'못 맞힘'],
@@ -1308,10 +1425,11 @@ Game.saveReport=function(){
   });
   y+=chh*2+8+18;
   // 총평
-  x.fillStyle='#E3EFFA'; roundBox(x,pad,y,cw,40,10);
+  const vh=vL.length*24+16;
+  x.fillStyle='#E3EFFA'; roundBox(x,pad,y,cw,vh,10);
   x.fillStyle='#185FA5'; x.font=`700 17px ${SF}`; x.textAlign='center';
-  x.fillText(a.skipped>0? `${a.verdict}  ·  끝까지 풀지 않았어요 (${a.skipped}문항 남음)` : a.verdict, W/2, y+26);
-  x.textAlign='left'; y+=56;
+  vL.forEach((l,i)=>x.fillText(l, W/2, y+26+i*24));
+  x.textAlign='left'; y+=vh+16;
   const section=(title,lines,color)=>{
     x.fillStyle=color; x.font=`700 14px ${SF}`; x.fillText(title,pad,y+16);
     x.fillStyle='#46505F'; x.font=`14px ${SF}`;
@@ -1319,10 +1437,9 @@ Game.saveReport=function(){
     y+=30+lines.length*22+14;
   };
   section('👍 잘하는 유형',strongL,'#179F6B');
-  section('📌 보완이 필요한 유형',weakL,'#D34A43');
-  // 학습 조언
+  // 보완이 필요한 유형 — 유형 하나 + 학습 조언
   x.fillStyle='#FFF7E8'; roundBox(x,pad,y,cw,tipL.length*22+42,12);
-  x.fillStyle='#8A6320'; x.font=`700 14px ${SF}`; x.fillText('🎯 가장 먼저 공부할 것',pad+14,y+22);
+  x.fillStyle='#D34A43'; x.font=`700 14px ${SF}`; x.fillText('📌 보완이 필요한 유형',pad+14,y+22);
   x.fillStyle='#7A5A1E'; x.font=`14px ${SF}`;
   let ty=y+44; tipL.forEach(l=>{x.fillText(l,pad+14,ty); ty+=22;});
   y+=tipL.length*22+42+18;
@@ -1345,9 +1462,10 @@ Game.saveReport=function(){
    교사용 학습 데이터 목록 (엑셀)
 ========================================================= */
 function xesc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function xrow(cells){ return '<Row>'+cells.map(c=>`<Cell><Data ss:Type="String">${xesc(c)}</Data></Cell>`).join('')+'</Row>'; }
-function xsheet(name,rows){
-  return `<Worksheet ss:Name="${xesc(name)}"><Table>${rows.map(xrow).join('')}</Table></Worksheet>`;
+// ansCols: 정답 열 번호 — 머리줄을 뺀 그 칸은 빨간 굵은 글씨(ss:StyleID="ans", 교사용 정답 표시 관례)
+function xrow(cells,ansCols,isHead){ return '<Row>'+cells.map((c,i)=>`<Cell${!isHead&&ansCols&&ansCols.includes(i)?' ss:StyleID="ans"':''}><Data ss:Type="String">${xesc(c)}</Data></Cell>`).join('')+'</Row>'; }
+function xsheet(name,rows,ansCols){
+  return `<Worksheet ss:Name="${xesc(name)}"><Table>${rows.map((r,i)=>xrow(r,ansCols,i===0)).join('')}</Table></Worksheet>`;
 }
 function downloadTeacherXls(){
   const head=['원본 id','유형','문제(예문)','정답','해설'];
@@ -1374,7 +1492,8 @@ function downloadTeacherXls(){
   const xml='<?xml version="1.0" encoding="UTF-8"?>\n'+
     '<?mso-application progid="Excel.Sheet"?>\n'+
     '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">'+
-    xsheet('1단계 개념퀴즈',s1)+xsheet('2단계 요소찾기',s2)+xsheet('3단계 논증의탑',s3)+xsheet('유형별 요약',sum)+
+    '<Styles><Style ss:ID="ans"><Font ss:Bold="1" ss:Color="#E00000"/></Style></Styles>'+
+    xsheet('1단계 개념퀴즈',s1,[3])+xsheet('2단계 요소찾기',s2,[4])+xsheet('3단계 논증의탑',s3,[4])+xsheet('유형별 요약',sum)+
     '</Workbook>';
   const t=new Date();
   const fname=`${GAME_CONFIG.gameCode}_${GAME_CONFIG.gameName}_학습데이터목록_${t.getFullYear()}${pad2(t.getMonth()+1)}${pad2(t.getDate())}.xls`;
