@@ -3,7 +3,8 @@
 <!-- 리모델링 2026.10.01 15:00 (6차): 재도전은 그대로 두고, 점수는 한 문항(1단계 문항·2단계 문장·3단계 카드)에 한 번만 주도록 안전장치 추가
      2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
      2026.10.08 11:05 11차: 테마층(논증 건축물) + 실제 조작 버그 검사·수정 — 중간 종료 총평·보완 칸·끝내기 확인·자동 종료·못 맞힘·같은 오답 재감점·포커스·엑셀 빨강
-     2026.10.08 13:25 문항(교사 승인): 반박 첫 낱말 그러나·하지만·그렇지만으로 나눔, 근거 4문장을 법 조항·전문가의 말·표지 없는 사실로, 반박·근거 tip -->
+     2026.10.08 13:25 문항(교사 승인): 반박 첫 낱말 그러나·하지만·그렇지만으로 나눔, 근거 4문장을 법 조항·전문가의 말·표지 없는 사실로, 반박·근거 tip
+     2026.10.08 14:25 문항(교사 승인): 1단계 보기 4문항 조정, 1단계 객관식 보기 순서 섞기(정답 위치를 1~4번에 고르게) -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -367,7 +368,7 @@ h1{font-size:clamp(28px,4vw,40px); font-weight:700; margin:0 0 6px; letter-spaci
 
     <div class="maker">
      <b>제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com</b><br>
-     제작일 2026.06.17 · <span id="lastMod">최종 수정 2026.10.08 13:25</span>
+     제작일 2026.06.17 · <span id="lastMod">최종 수정 2026.10.08 14:25</span>
     </div>
 
     <div class="privacy" id="privacyOffline">
@@ -450,7 +451,7 @@ h1{font-size:clamp(28px,4vw,40px); font-weight:700; margin:0 0 6px; letter-spaci
 
 <script>
 const MADE_DATE = '2026.06.17';
-const LAST_MOD  = '2026.10.08 13:25';
+const LAST_MOD  = '2026.10.08 14:25';
 const STD_CODE  = '[9국02-05]';
 const STD_TEXT  = '글에 사용된 다양한 설명 방법과 논증 방법을 파악하고, 그 타당성을 평가하며 읽는다.';
 
@@ -532,21 +533,21 @@ function catColor(c){return getComputedStyle(document.documentElement).getProper
 /* ---- STAGE 1: 개념 퀴즈 ---- */
 const STAGE1 = [
   {id:1, cat:'구조', type:'mc', q:"‘논증’의 뜻으로 알맞은 것은?",
-   opts:["자신의 감정을 솔직하게 표현하는 것","이유와 근거를 들어 주장이 참임을 증명하는 것","대상의 특징을 자세히 풀어 설명하는 것","사건을 시간 순서대로 전달하는 것"],
+   opts:["자신의 생각과 감정을 솔직하고 생생하게 드러내는 것","이유와 근거를 들어 주장이 참임을 증명하는 것","대상의 특징을 예를 들어 가며 자세히 풀어 설명하는 것","겪은 일을 일어난 순서대로 실감 나게 전달하는 것"],
    ans:1, hint:"논증은 ‘이유’와 ‘근거’를 들어 주장이 참임을 ‘증명’하는 것이에요.",
    exp:"논증 = 이유와 근거를 들어 주장이 참임을 증명하는 것."},
   {id:2, cat:'주장', type:'sh', q:"‘어떤 주제에 대한 글쓴이의 생각이나 입장’을 가리키는 논증 요소는?",
    accept:["주장"], hint:"글에서 글쓴이가 ‘~해야 한다’처럼 내세우는 핵심 입장입니다.",
    exp:"생각이나 입장을 내세우는 요소는 ‘주장’."},
   {id:3, cat:'이유', type:'mc', q:"이유와 근거에 대한 설명으로 알맞은 것은?",
-   opts:["이유는 객관적 자료, 근거는 주관적 생각이다","이유와 근거는 같은 말이다","이유는 주관적 요인, 근거는 객관적 사실·자료이다","근거는 주장을 반대하는 의견이다"],
+   opts:["이유는 객관적 자료, 근거는 주관적 생각이다","이유와 근거는 모두 주장을 뒷받침하므로 같은 뜻이다","이유는 주관적 요인, 근거는 객관적 사실·자료이다","근거는 주장에 대해 예상되는 반대 의견을 말한다"],
    ans:2, hint:"이유는 ‘주관적’ 까닭, 근거는 ‘객관적’ 사실·자료예요.",
    exp:"이유=주관적 까닭, 근거=객관적 사실·자료."},
   {id:4, cat:'근거', type:'sh', q:"통계, 헌법 조항, 전문가의 연구처럼 주장을 뒷받침하는 ‘객관적 자료’를 무엇이라 하는가?",
    accept:["근거"], hint:"누구나 사실로 확인할 수 있는 객관적 자료를 말합니다.",
    exp:"객관적 사실·자료는 ‘근거’."},
   {id:5, cat:'예상반론', type:'mc', q:"‘예상 반론’에 대한 설명으로 알맞은 것은?",
-   opts:["내 주장을 강화하는 객관적 자료","상대가 제기할 것으로 예상되는 반대 의견","주장을 처음 제시하는 문장","글의 결론을 요약한 문장"],
+   opts:["내 주장을 더 튼튼하게 해 주는 객관적인 사실과 자료","상대가 제기할 것으로 예상되는 반대 의견","글쓴이가 처음에 내세우는 생각이나 입장","앞에서 나온 반대 의견에 다시 맞서는 말"],
    ans:1, hint:"‘이런 반대가 나올 수 있다’고 미리 떠올려 보는 반대 의견이에요.",
    exp:"예상 반론 = 논증에 대해 예상되는 반대 의견."},
   {id:6, cat:'반박', type:'sh', q:"예상되는 반론에 대해 다시 반대하며 자신의 주장을 지키는 논증 요소는?",
@@ -564,7 +565,7 @@ const STAGE1 = [
    ans:1, hint:"‘주관적인 까닭’이 핵심! 객관적 자료인 근거와 헷갈리지 마세요.",
    exp:"주장을 뒷받침하는 주관적 까닭은 ‘이유’."},
   {id:10, cat:'구조', type:'mc', q:"논증 요소들의 ‘뒷받침 관계’로 알맞은 것은?",
-   opts:["근거 → 이유 → 주장 순으로 뒷받침한다","주장이 근거를 뒷받침한다","반박은 주장을 반대하는 의견이다","이유가 근거를 반박한다"],
+   opts:["근거 → 이유 → 주장 순으로 뒷받침한다","주장 → 이유 → 근거 순으로 뒷받침한다","이유와 근거는 서로 관계없이 주장을 따로 뒷받침한다","반박은 글쓴이의 주장을 반대하는 의견이다"],
    ans:0, hint:"맨 아래 근거가 이유를, 이유가 다시 주장을 떠받칩니다.",
    exp:"근거가 이유를, 이유가 주장을 뒷받침함."}
 ];
@@ -781,7 +782,7 @@ const Game = {
     Game.ended=false; Game.runId++; clearTimeout(Game.autoT); Game.autoT=null;
     Game.maxScore=maxScoreOf(STAGES[stage-1].units);
     // wrongTry: 이미 틀린 보기·요소·자리 — 다시 눌러도 또 감점하지 않는다
-    if(stage===1) Game.items=shuffle(STAGE1).map(d=>({d, done:false, ok:false, tries:0, picked:null, wrongTry:new Set()}));
+    if(stage===1) Game.items=placeOptsMC(shuffle(STAGE1)).map(d=>({d, done:false, ok:false, tries:0, picked:null, wrongTry:new Set()}));
     if(stage===2) Game.items=shuffle(STAGE2).map(d=>({d, segState:d.seg.map(()=>({done:false,tries:0,wrongTry:new Set()})), selSeg:null}));
     if(stage===3) Game.items=shuffle(STAGE3).map(d=>({d, order:shuffle(d.cards.map((c,i)=>i)), placed:{}, colPair:{}, selCard:null, done:false, everWrong:new Set(), wrongTry:new Set()}));
     Game.updateHud(); Game.show('game'); Game.render();
@@ -1091,6 +1092,16 @@ const Game = {
 /* =========================================================
    HELPERS
 ========================================================= */
+/* 보기 섞기 (교사 결정 2026.10.08) — 1단계 객관식의 정답 위치를 1~4번에 고르게 나눈 뒤 나머지 보기를 섞는다.
+   원본(STAGE1)은 그대로 두고 복사본을 쓴다(교사용 엑셀은 원본 순서) */
+function placeOptsMC(list){
+  const mc=list.filter(d=>d.type==='mc'), cyc=shuffle([0,1,2,3]), pos=shuffle(mc.map((_,k)=>cyc[k%4]));
+  return list.map(d=>{
+    if(d.type!=='mc') return d;
+    const p=pos[mc.indexOf(d)], order=shuffle(d.opts.map((_,i)=>i).filter(i=>i!==d.ans)); order.splice(p,0,d.ans);
+    return Object.assign({},d,{opts:order.map(i=>d.opts[i]), ans:p});
+  });
+}
 function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
 function stripTags(s){ return s.replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim(); }
 function norm(s){ return (s||'').replace(/\s+/g,'').replace(/[,，·、/]/g,'').replace(/그리고|와|과|및/g,''); }
