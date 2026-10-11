@@ -9,7 +9,8 @@
      2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
      2026.10.08 01:05 10차: 테마층(답안 점검대) + 실제 조작 버그 검사·수정 — 중간 종료 총평·끝내기 확인·포커스·엑셀 '최종 수정' 진입·정답 빨강
      2026.10.08 10:30 문항(교사 승인): 진단 보기 19개 길이 조정 — 가장 긴 보기가 정답 7/9→3/9, 2-2 인용을 답안 문구로
-     2026.10.11 16:10 13차: 남은 확인 목록 반영(버그·표준·설계 결정) · 실제 조작 검사 통과 -->
+     2026.10.11 16:10 13차: 남은 확인 목록 반영(버그·표준·설계 결정) · 실제 조작 검사 통과
+     2026.10.11 16:14 배점 상향(교사 결정): 진단 10·고쳐 쓰기 20/40, 다시 풀어 맞힘 80%(8점), 떠난 진단 0점, 콤보 +5/+10, 빈칸 채우기 70% → 만점 380 -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -478,14 +479,14 @@ textarea.pulse{box-shadow:0 0 0 4px rgba(212,113,143,.35)!important; border-colo
    <div class="flow">
     <div class="st"><b>① 읽기</b><span>지문·문제·조건과 어떤 학생의 답안을 읽습니다</span></div>
     <div class="ar">▶</div>
-    <div class="st"><b>② 진단</b><span>답안이 부족한 곳을 <b>모두</b> 고릅니다 (5점)</span></div>
+    <div class="st"><b>② 진단</b><span>답안이 부족한 곳을 <b>모두</b> 고릅니다 (10점)</span></div>
     <div class="ar">▶</div>
     <div class="st"><b>③ 고쳐 쓰기</b><span>조건에 맞게 직접 고쳐 씁니다</span></div>
    </div>
    <p style="margin-top:12px">🔍 진단은 <span class="kw">해당하는 것을 모두</span> 골라야 합니다. 답안이 잘한 부분까지 고르면 감점이에요.</p>
-   <p>💡 진단이 틀리면 힌트를 보고 한 번 더 고를 수 있어요. 다시 풀어 맞히면 절반 점수입니다.</p>
+   <p>💡 진단이 틀리면 힌트를 보고 한 번 더 고를 수 있어요. 다시 풀어 맞히면 8점이에요. 다시 풀지 않고 넘어가면 0점이에요.</p>
    <p>✍️ <span class="kw">고쳐 쓰기는 몇 번이든</span> 다시 할 수 있고 감점이 없어요. 혼자 힘으로 조건을 다 채우면 <b>배점 그대로</b> 받아요.</p>
-   <p>🪜 막히면 <span class="kw">난이도 낮추기(빈칸 채우기)</span>를 고를 수 있어요. 모범 답안의 짜임을 따라 빈칸만 채우는 대신 <b>최고 점수가 절반</b>이에요.</p>
+   <p>🪜 막히면 <span class="kw">난이도 낮추기(빈칸 채우기)</span>를 고를 수 있어요. 모범 답안의 짜임을 따라 빈칸만 채우는 대신 <b>최고 점수가 배점의 70%</b>예요.</p>
    <p>📖 모범 답안은 만점을 받거나, 두 번 채점하거나, 빈칸 채우기를 마친 뒤에 볼 수 있어요. 보고 나면 그 문제 점수는 확정돼요.</p>
    <p>📝 답안은 <span class="kw">'-다'로 끝나는 문어체</span>, <span class="kw">두 문장 이상</span>으로 써요. 한 문장에 너무 많은 내용을 넣으면 비문이 되기 쉬워요. 지문을 16자 넘게 그대로 옮기면 경고가 뜹니다.</p>
   </div>
@@ -500,22 +501,22 @@ textarea.pulse{box-shadow:0 0 0 4px rgba(212,113,143,.35)!important; border-colo
   <div class="stagegrid">
    <div class="stagecard">
     <b>🐢 1단계 · 조건 2~3개</b>
-    <span>옛이야기로 연습합니다. 5문제 · 문제당 진단 5점 + 고쳐 쓰기 10점</span>
+    <span>옛이야기로 연습합니다. 5문제 · 문제당 진단 10점 + 고쳐 쓰기 20점</span>
     <button class="btn sec" onclick="startStage(1)">1단계 시작</button>
    </div>
    <div class="stagecard">
     <b>🦉 2단계 · 논술형, 조건 3~5개</b>
-    <span>주장·근거·반박, 자료 활용. 4문제 · 문제당 진단 5점 + 고쳐 쓰기 20점</span>
+    <span>주장·근거·반박, 자료 활용. 4문제 · 문제당 진단 10점 + 고쳐 쓰기 40점</span>
     <button class="btn sec" onclick="startStage(2)">2단계 시작</button>
    </div>
   </div>
-  <p style="font-size:13px;color:var(--ink2);margin-top:8px"><b>만점 <span id="maxLabel">181</span>점</b> — 기본 <span id="baseLabel">175</span>점 + 진단 연속 보너스 <span id="comboLabel">6</span>점</p>
+  <p style="font-size:13px;color:var(--ink2);margin-top:8px"><b>만점 <span id="maxLabel">380</span>점</b> — 기본 <span id="baseLabel">350</span>점 + 진단 연속 보너스 <span id="comboLabel">30</span>점</p>
 
   <div class="startrow"><button class="btn" onclick="startStage(1)">🔧 1단계부터 정비 시작하기</button></div>
 
   <div class="credit">
    제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-   제작일 2026.09.27 · <span id="lastMod">최종 수정 2026.10.11 16:10</span>
+   제작일 2026.09.27 · <span id="lastMod">최종 수정 2026.10.11 16:14</span>
   </div>
   <div class="privacy" id="privacyOffline">
    <b>🔒 개인정보 보호 안내</b><br>
@@ -570,7 +571,7 @@ textarea.pulse{box-shadow:0 0 0 4px rgba(212,113,143,.35)!important; border-colo
 <div class="wrap" id="end">
  <div class="band"><span>쓰기 · 정비 결과</span><span class="badge" id="endBadge">1단계</span></div>
  <div class="pad">
-  <div class="scoreBig"><b id="endScore">0</b><span> / <span class="endMax">181</span>점</span></div>
+  <div class="scoreBig"><b id="endScore">0</b><span> / <span class="endMax">380</span>점</span></div>
   <div class="verdict" id="endVerdict"></div>
   <div class="sum" id="endStats"></div>
   <div class="box" id="typeReport"></div>
@@ -596,7 +597,7 @@ textarea.pulse{box-shadow:0 0 0 4px rgba(212,113,143,.35)!important; border-colo
   </div>
   <div class="credit">
    제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-   제작일 2026.09.27 · 최종 수정 2026.10.11 16:10
+   제작일 2026.09.27 · 최종 수정 2026.10.11 16:14
   </div>
  </div>
 </div>
@@ -1058,7 +1059,7 @@ if(typeof module!=='undefined') module.exports={gradeText,copyHit,checkCond,eval
    서논술형 답안 정비소 v11 — 엔진
    ══════════════════════════════════════════════════════════ */
 const MADE_DATE = '2026.09.27';
-const MOD_DATE  = '2026.10.11 16:10';
+const MOD_DATE  = '2026.10.11 16:14';
 
 const GAME_CONFIG = {
   gameCode: "W401",
@@ -1091,15 +1092,16 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
 /* ══════════ 점수 ══════════ */
-const DIAG_PT = 5;
-const FIX_PT  = {1:10, 2:20};
-const CLOZE_CAP = 0.5;      // 빈칸 채우기로 완성한 답안의 최고 점수 비율
+const DIAG_PT = 10;
+const FIX_PT  = {1:20, 2:40};
+const RETRY_RATE = 0.8;     // 진단 다시 풀어 맞힌 점수 비율(첫 시도 점수의 80%) — 2026.10.11 배점 상향(교사 결정: 점수를 후하게)
+const CLOZE_CAP = 0.7;      // 빈칸 채우기로 완성한 답안의 최고 점수 비율(2026.10.11 0.5 → 0.7)
 const STAGES  = [
   { n:1, name:'1단계', goal:'조건 2~3개 · 답안을 진단하고 고쳐 쓴다', items:ITEMS.filter(q=>q.stage===1) },
   { n:2, name:'2단계', goal:'논술형 · 조건을 빠짐없이 담아 고쳐 쓴다', items:ITEMS.filter(q=>q.stage===2) }
 ];
 const itemPt = q => DIAG_PT + FIX_PT[q.stage];
-function comboBonus(s){ return s>=5?2 : s>=3?1 : 0; }
+function comboBonus(s){ return s>=5?10 : s>=3?5 : 0; }   // 지침 5-4 콤보 보너스(3~4번째 +5, 5번째부터 +10)
 let COMBO_MAX=0; STAGES.forEach(st=>{ for(let k=1;k<=st.items.length;k++) COMBO_MAX+=comboBonus(k); });
 const BASE_TOTAL = ITEMS.reduce((a,q)=>a+itemPt(q),0);
 const MAX_TOTAL  = BASE_TOTAL + COMBO_MAX;
@@ -1272,13 +1274,13 @@ function submitDiag(){
       (missed.length?'놓친 것 '+missed.length+'개':'')+(missed.length&&wrong.length?', ':'')+(wrong.length?'잘못 고른 것 '+wrong.length+'개':'')+'.';
     if(wrong.length) h+='<div class="hsub"><b>고른 것 중 다시 볼 것</b>'+wrong.map(k=>'<div class="hrow">"'+esc(q.opts[k][0])+'" → '+hintRich(q.opts[k][4])+'</div>').join('')+'</div>';
     if(missed.length) h+='<div class="hsub"><b>아직 못 찾은 것 — 이렇게 확인해 보세요</b>'+missed.map(k=>'<div class="hrow">'+hintRich(q.opts[k][4])+'</div>').join('')+'</div>';
-    h+='<span style="font-size:12.5px">선택을 고친 뒤 다시 제출하세요. 이번에 맞히면 '+Math.round(DIAG_PT/2)+'점입니다.</span></div>';
+    h+='<span style="font-size:12.5px">선택을 고친 뒤 다시 제출하세요. 이번에 맞히면 '+Math.round(DIAG_PT*RETRY_RATE)+'점입니다.</span></div>';
     $('fb').innerHTML=h;
     $('diagBtn').innerHTML='다시 제출 (<span id="selN">'+r.sel.length+'</span>개 선택)';
     $('fb').scrollIntoView({block:'nearest',behavior:'smooth'});
     return;
   }
-  r.dGot = e===0 ? Math.round(DIAG_PT/2) : Math.max(0,Math.round((DIAG_PT-2*e)/2));
+  r.dGot = e===0 ? Math.round(DIAG_PT*RETRY_RATE) : Math.max(0,Math.round((DIAG_PT-2*e)*RETRY_RATE));
   r.dDone=true; r.dRetryOk=(e===0); S.score+=r.dGot; paintDiag(q,r); hud();
   if(e===0){ sPart(); cbShow('다시 풀어 맞힘','+'+r.dGot,'retry'); }
   else { sNO(); cbShow('해설을 확인해요','진단 '+r.dGot+'점','info',850); }
@@ -1464,7 +1466,7 @@ function applyCloze(){ const q=S.list[S.i], r=R[q.id];
 /* ══════════ 이동 ══════════ */
 function finalizePending(){
   const q=S.list[S.i], r=R[q.id];
-  if(!r.dDone && r.dTries===1){ r.dGot=Math.round(r.dFirst/2); r.dDone=true; S.score+=r.dGot; hud(); }
+  if(!r.dDone && r.dTries===1){ r.dGot=0; r.dDone=true; hud(); }   // 첫 시도에 틀리고 다시 풀지 않고 떠나면 못 맞힘 0점(지침, 2026.10.11 교사 결정)
 }
 function goNext(){
   if(cbShown()) closeBanner();
@@ -1734,8 +1736,8 @@ function dlTeacherXls(){
   Object.keys(TAGS).forEach(k=>{ let n=0; ITEMS.forEach(q=>q.opts.forEach(o=>{ if(o[1]&&o[3]===k) n++; }));
     r2.push([k,TAGS[k].label,TAGS[k].tip,n]); });
   r2.push([]);
-  r2.push(['배점 규칙','1단계 문제당 진단 5 + 고쳐 쓰기 10 = 15점 × '+STAGES[0].items.length+' / 2단계 문제당 진단 5 + 고쳐 쓰기 20 = 25점 × '+STAGES[1].items.length+' → 기본 '+BASE_TOTAL+'점 + 진단 연속 보너스 '+COMBO_MAX+'점 = 만점 '+MAX_TOTAL+'점']);
-  r2.push(['진단 채점','정답 선택지를 모두 고르고 잘못 고른 것이 없으면 5점. 틀린 선택 하나당 −2점(최저 0). 재시도는 절반']);
+  r2.push(['배점 규칙','1단계 문제당 진단 10 + 고쳐 쓰기 20 = 30점 × '+STAGES[0].items.length+' / 2단계 문제당 진단 10 + 고쳐 쓰기 40 = 50점 × '+STAGES[1].items.length+' → 기본 '+BASE_TOTAL+'점 + 진단 연속 보너스 '+COMBO_MAX+'점 = 만점 '+MAX_TOTAL+'점']);
+  r2.push(['진단 채점','정답 선택지를 모두 고르고 잘못 고른 것이 없으면 10점. 틀린 선택 하나당 −2점(최저 0). 재시도는 80%(맞히면 8점), 다시 풀지 않고 떠나면 0점. 연속 정답 3~4번째 +5 · 5번째부터 +10']);
   r2.push(['고쳐 쓰기','조건 칸마다 같은 배점. 몇 번이든 다시 쓸 수 있고 최고점 유지. 지문을 '+COPY_MIN+'자 이상 그대로 옮기면 경고']);
   r2.push(['출제','순차 출제 (난이도 순)']);
   r2.push(['총 문항 수',ITEMS.length]);
