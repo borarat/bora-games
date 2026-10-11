@@ -9,7 +9,8 @@
      화면 2026.10.02 14:11: 게임 테마층 '낱말 블록과 퍼즐'(CSS 끝 블록 + 시작 화면 SVG). 문항·채점·로직 변경 없음
      2026.10.05 03:00 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
      2026.10.06 17:25 실제 조작 버그 검사·수정: '다음'·'게임 끝내기'를 마우스로 누른 뒤 Enter·Space로 문제가 넘어가거나 게임이 끝나던 버그, 다시 하기 직후 '게임 끝내기' 한 번에 끝나던 버그, 중간 종료 제목·총평, 채점 0개 판 정답률 –, 플레이 크레딧 가운뎃점
-     2026.10.07 13:58 끝낸 게임 다시 훑기(실제 조작 재검사): 끝내기 확인창, 오답 뒤 끝낸 문항=못 맞힘, 같은 틀린 컵 재감점 없앰, 보완 칸 하나, 엑셀 빨간 글씨 -->
+     2026.10.07 13:58 끝낸 게임 다시 훑기(실제 조작 재검사): 끝내기 확인창, 오답 뒤 끝낸 문항=못 맞힘, 같은 틀린 컵 재감점 없앰, 보완 칸 하나, 엑셀 빨간 글씨
+     2026.10.11 16:10 13차: 남은 확인 목록 반영(버그·표준·설계 결정) · 실제 조작 검사 통과 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -326,7 +327,7 @@ img.mascot{height:90px;border-radius:12px;-webkit-touch-callout:none;user-select
    </div>
    <div class="credit">
     제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>
-    제작일 2025.09.05 · <span id="lastMod">최종 수정 2026.10.07 13:58</span>
+    제작일 2025.09.05 · <span id="lastMod">최종 수정 2026.10.11 16:10</span>
    </div>
    <div class="privacy" id="privacyOffline">
     <b>🔒 개인정보 보호 안내</b><br>
@@ -452,7 +453,7 @@ img.mascot{height:90px;border-radius:12px;-webkit-touch-callout:none;user-select
 
 <script>
 const MADE_DATE = '2025.09.05';
-const LAST_MOD = '2026.10.07 13:58';
+const LAST_MOD = '2026.10.11 16:10';
 // ═══════════════════════════════════════════
 // ★ Apps Script 연동 설정
 // ═══════════════════════════════════════════

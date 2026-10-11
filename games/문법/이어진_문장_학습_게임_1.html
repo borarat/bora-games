@@ -20,7 +20,8 @@
      2026.10.05 02:40 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
      2026.10.07 08:45 실제 조작 버그 검사: '게임 종료' → '게임 끝내기', 중간 종료 제목·총평(칭찬 대신 연습 권유)
      2026.10.07 13:58 끝낸 게임 다시 훑기(실제 조작 재검사): 보완 칸 하나, 엑셀 정답 빨간 글씨, 자동 종료 타이머 가드, 채점 0개 정답률 –
-     2026.10.09 13차: 오답노트(화면·JPG)에 다시 풀어 맞힌 문제 포함(처음 쓴 답 표시), 마지막 단계 빈 문구 '다른 단계에도', 전송 retryCorrectCount·maxScore 추가 -->
+     2026.10.09 13차: 오답노트(화면·JPG)에 다시 풀어 맞힌 문제 포함(처음 쓴 답 표시), 마지막 단계 빈 문구 '다른 단계에도', 전송 retryCorrectCount·maxScore 추가
+     2026.10.11 16:10 13차: 남은 확인 목록 반영(버그·표준·설계 결정) · 실제 조작 검사 통과 -->
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -387,7 +388,7 @@ textarea.report-input{height:60px;resize:vertical}
     </div>
   </div>
 
-  <div class="credit-box">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2025.08.12 · <span id="lastMod">최종 수정 2026.10.07 13:58</span></div>
+  <div class="credit-box">제작 · 보라라샘 · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2025.08.12 · <span id="lastMod">최종 수정 2026.10.11 16:10</span></div>
 <div class="privacy-box" id="privacyOffline">
   <strong>🔒 개인정보 보호 안내</strong><br>
   본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다. 게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.
@@ -483,7 +484,7 @@ textarea.report-input{height:60px;resize:vertical}
 
 <script>
 /* ===== Apps Script 연동 설정 ===== */
-const MADE_DATE='2025.08.12', MOD_DATE='2026.10.07 13:58';
+const MADE_DATE='2025.08.12', MOD_DATE='2026.10.11 16:10';
 const GAME_CONFIG = {
   gameCode: "G304",
   gameName: "이어진문장 학습 게임",

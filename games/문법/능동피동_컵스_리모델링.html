@@ -13,7 +13,8 @@
      테마층 '시소'(연두 #7FB539): 같은 장면에서 앞에 오는 말(주어)이 바뀌면 양 끝 자리가 바뀐다
      2026.10.06 16:15 6차 피동 묶음: 위 화면 표준 v3 맞춤 + 테마층, 실제 조작 버그 검사 통과
      2026.10.06 17:10 교사 요청: 문장을 먼저 누르지 않고 컵만 누르면 채점, 10초 타이머 없앰(시간 초과 오답 없음) — 실제 조작 검사 27/27 다시 통과
-     2026.10.07 13:58 끝낸 게임 다시 훑기(실제 조작 재검사): 보완 칸 하나, 엑셀 정답 빨강, 건너뛴 문항까지 채점하면 자동 종료, 결과 보기 확인 -->
+     2026.10.07 13:58 끝낸 게임 다시 훑기(실제 조작 재검사): 보완 칸 하나, 엑셀 정답 빨강, 건너뛴 문항까지 채점하면 자동 종료, 결과 보기 확인
+     2026.10.11 16:10 13차: 남은 확인 목록 반영(버그·표준·설계 결정) · 실제 조작 검사 통과 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -193,7 +194,7 @@ button{font-family:inherit}
 
    <div class="stage-row"><button class="btn big" id="btnStart" onclick="startGame()">게임 시작하기 ▶<small>58문항</small></button></div>
 
-   <div class="maker">제작 · <b>보라라샘</b> · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.04.16 · <span id="lastMod">최종 수정 2026.10.07 13:58</span></div>
+   <div class="maker">제작 · <b>보라라샘</b> · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.04.16 · <span id="lastMod">최종 수정 2026.10.11 16:10</span></div>
    <div class="privacy" id="privacyOffline"><b>🔒 개인정보 보호 안내</b><br>본 게임은 별도의 서버로 데이터를 전송하거나 저장하지 않습니다.<br>게임 중 입력하는 이름, 활동 소감 등의 정보는 오직 사용자 기기 내부에서 리포트 이미지를 다운로드하는 용도로만 안전하게 처리됩니다.</div>
    <div class="privacy" id="privacyOnline" style="display:none"><b>🔒 개인정보 보호 안내</b><br>본 게임의 학습 결과(학번, 이름, 점수, 오답 정보, 학습 소감)는 담당 선생님의 학습 관리용 스프레드시트에 안전하게 전송·저장됩니다.<br>수집된 정보는 학습 지도 목적으로만 사용되며, 제3자에게 제공되지 않습니다.</div>
   </div>
@@ -270,7 +271,7 @@ button{font-family:inherit}
     <button class="btn sec" onclick="goHome()">⌂ 시작화면으로</button>
    </div>
    <div class="privacy" style="text-align:left" id="endPrivacy">입력하신 이름과 소감은 서버에 저장되지 않으며, 리포트 이미지(JPG) 생성용으로만 쓰입니다.</div>
-   <div class="maker" style="margin-top:12px">제작 · <b>보라라샘</b> · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.04.16 · 최종 수정 2026.10.07 13:58</div>
+   <div class="maker" style="margin-top:12px">제작 · <b>보라라샘</b> · 전주서신중학교 교사 · siaawase@gmail.com<br>제작일 2026.04.16 · 최종 수정 2026.10.11 16:10</div>
   </div>
  </div>
 </section>
@@ -282,7 +283,7 @@ button{font-family:inherit}
 
 <script>
 const MADE_DATE='2026.04.16';
-const LAST_MOD='2026.10.07 13:58';
+const LAST_MOD='2026.10.11 16:10';
 // ===== Apps Script 연동 설정 =====
 const GAME_CONFIG = {
   gameCode: "G208",
