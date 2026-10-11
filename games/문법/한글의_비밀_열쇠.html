@@ -1642,7 +1642,7 @@ function renderQ(){
     });
   }else{
     $('saBtn').addEventListener('click',submitSA);
-    $('saIn').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); e.stopPropagation(); if(S.qs[S.i].done) goNext(); else submitSA(); } });
+    $('saIn').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); e.stopPropagation(); const cq=S.qs[S.i]; if(cq.done&&!cq.lock) goNext(); else submitSA(); } });
     if(!q.done) setTimeout(()=>{ const el=$('saIn'); if(el) el.focus(); },40);
   }
   $('btnPrev').disabled=(S.i===0);
@@ -1710,17 +1710,17 @@ function autoFinishIfAllDone(){
 function penalize(){ S.combo=0; S.score=Math.max(0,S.score-5); updateHUD(); sNG(); }
 
 function pickMC(idx){
-  const q=S.qs[S.i]; if(q.done) return; if(q.wrong.indexOf(idx)>=0) return;
+  const q=S.qs[S.i]; if(q.done||q.lock) return; if(q.wrong.indexOf(idx)>=0) return;   // lock: 오답 잠금 시간(힌트가 뜨기 전) 안의 재입력은 무시 — 감점은 한 번
   q.tries++;
   if(idx===q.a){ q.myAns=q.opts[idx]; award(q); return; }
   q.wrong.push(idx); q.myAns=q.opts[idx]; penalize();
   const el=optEl(idx); if(el){ el.classList.remove('ng'); void el.offsetWidth; el.classList.add('ng'); }
-  const cur=q;
-  if(q.tries>=2){ q.done=true; q.correct=false; setTimeout(()=>{ if(S.qs[S.i]===cur) renderQ(); },430); autoFinishIfAllDone(); }
-  else setTimeout(()=>{ if(S.qs[S.i]===cur && !cur.done) paintHint(cur); },430);
+  const cur=q; q.lock=true;
+  if(q.tries>=2){ q.done=true; q.correct=false; setTimeout(()=>{ cur.lock=false; if(S.qs[S.i]===cur) renderQ(); },430); autoFinishIfAllDone(); }
+  else setTimeout(()=>{ cur.lock=false; if(S.qs[S.i]===cur && !cur.done) paintHint(cur); },430);
 }
 function submitSA(){
-  const q=S.qs[S.i]; if(q.done) return; const el=$('saIn'); const raw=el.value.trim();
+  const q=S.qs[S.i]; if(q.done||q.lock) return; const el=$('saIn'); const raw=el.value.trim();   // lock: 오답 잠금 시간 안의 Enter 연타는 무시 — 감점은 한 번
   if(!raw){ el.focus(); return; }
   if(/\?$/.test(raw)){ el.classList.remove('ng'); void el.offsetWidth; el.classList.add('ng'); $('fb').innerHTML='<div class="msg hint"><b class="hl">안내</b>물음표(?)로 끝나는 답은 채점되지 않아요. 낱말만 입력해 주세요.</div>'; return; }
   q.tries++;
@@ -1728,9 +1728,9 @@ function submitSA(){
   if(accept.indexOf(mine)>=0){ q.myAns=raw; award(q); return; }
   if(q.wrong.indexOf(raw)<0) q.wrong.push(raw); q.myAns=raw; penalize();
   el.classList.remove('ng'); void el.offsetWidth; el.classList.add('ng');
-  const cur=q;
-  if(q.tries>=2){ q.done=true; q.correct=false; setTimeout(()=>{ if(S.qs[S.i]===cur) renderQ(); },450); autoFinishIfAllDone(); }
-  else setTimeout(()=>{ if(S.qs[S.i]===cur && !cur.done){ paintHint(cur); const e2=$('saIn'); if(e2) e2.focus(); } },450);
+  const cur=q; q.lock=true;
+  if(q.tries>=2){ q.done=true; q.correct=false; setTimeout(()=>{ cur.lock=false; if(S.qs[S.i]===cur) renderQ(); },450); autoFinishIfAllDone(); }
+  else setTimeout(()=>{ cur.lock=false; if(S.qs[S.i]===cur && !cur.done){ paintHint(cur); const e2=$('saIn'); if(e2) e2.focus(); } },450);
 }
 
 /* ================= 배너 연출 ================= */
@@ -1784,7 +1784,7 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Enter'||e.key===' '||e.key==='Spacebar'||e.key==='ArrowRight'){
     if(typing && !q.done) return; if(e.key===' '&&typing) return;
     const ae=document.activeElement; if(ae&&ae.tagName==='BUTTON') e.preventDefault();   // 포커스가 남은 버튼이 다시 눌리지 않게
-    if(!q.done) return;              /* 채점 전에는 넘기지 않는다 (지침 6-1) — 답하기 전 Enter로 문항이 잠기던 버그 수정 */
+    if(!q.done||q.lock) return;      /* 채점 전(정답 공개 잠금 시간 포함)에는 넘기지 않는다 (지침 6-1) — 답하기 전 Enter로 문항이 잠기던 버그 수정 */
     e.preventDefault(); goNext();
   }else if(e.key==='ArrowLeft'){ if(typing) return; e.preventDefault(); goPrev(); }
 });
@@ -1806,6 +1806,7 @@ function stats(){
   const acc=answered?Math.round(firstCorrect/answered*100):0;
   return {total,answered,firstCorrect,retryCorrect,missed,skipped,acc};
 }
+function noteItems(){ return S.qs.filter(q=>!q.correct || !q.firstTry); }   // 오답노트 대상: 못 맞힘 + 미응답 + 다시 풀어 맞힘 (한 곳에서 계산)
 function verdictText(st){
   if(!st.answered) return '풀어 본 문제가 없어요';
   if(st.skipped) return st.acc>=70 ? '잘하고 있어요! 남은 문제까지 풀며 좀 더 연습해 보면 어떨까요?' : '좀 더 연습해 보면 어떨까요? 남은 문제까지 풀어 보면 감이 잡혀요.';
@@ -1834,11 +1835,12 @@ function finish(){
 
   /* 오답노트 리스트 (번호 없이 유형 라벨) */
   const wl=$('wrongList'); wl.innerHTML='';
-  const wrongs=S.qs.filter(q=>!q.correct);
+  const wrongs=noteItems();   // 못 맞힌 문항 + 다시 풀어 맞힌 문항 (지침 5-5 — 결과 화면의 '다시 풀어 맞힘 n'과 같은 수)
   if(!wrongs.length){ wl.innerHTML='<div class="perfect">🎉 틀린 문항이 하나도 없어요!<br>한글의 창제 원리와 가치를 완벽하게 이해했습니다.</div>'; }
   else wrongs.forEach(q=>{
     const mine=q.skipped?'답하지 않음':'내 답 <s>'+(q.t==='mc'?q.wrong.map(i=>q.opts[i]).join(', '):q.wrong.join(', '))+'</s>';
-    wl.insertAdjacentHTML('beforeend','<div class="witem'+(q.skipped?' skip':'')+'"><div class="wq"><span class="lbl">'+catLabel(q.cat)+'</span>'+stripTags(q.q)+(q.sub?' <span style="color:#7a8399;font-weight:500">'+stripTags(q.sub)+'</span>':'')+'</div><span class="wtag">'+mine+' → 정답 <b>'+answerText(q)+'</b></span><div class="wex">'+q.ex+'</div></div>');
+    const retry=q.correct?'<b style="color:#1c7ed6">다시 풀어 맞힘</b> · ':'';
+    wl.insertAdjacentHTML('beforeend','<div class="witem'+(q.skipped?' skip':'')+'"><div class="wq"><span class="lbl">'+catLabel(q.cat)+'</span>'+stripTags(q.q)+(q.sub?' <span style="color:#7a8399;font-weight:500">'+stripTags(q.sub)+'</span>':'')+'</div><span class="wtag">'+retry+mine+' → 정답 <b>'+answerText(q)+'</b></span><div class="wex">'+q.ex+'</div></div>');
   });
 
   /* 종료 버튼 위계 — 다음 단계로(primary, 마지막 단계 숨김) · 이 단계 다시 하기 · 시작화면으로 */
@@ -1924,11 +1926,11 @@ function memoBox(ctx,y,memo,W){
 /* ── 오답노트 ── */
 $('btnNote').addEventListener('click',()=>{
   const info=checkName(); if(!info) return;
-  const W=1040, wrongs=S.qs.filter(q=>!q.correct);
+  const W=1040, wrongs=noteItems();
   const cv=document.createElement('canvas'), ctx=cv.getContext('2d'); ctx.font=F(17);
   const blocks=wrongs.map(q=>{
     const qt='['+catLabel(q.cat)+'] '+stripTags(q.q)+(q.sub?'  '+stripTags(q.sub):'');
-    const mine=q.skipped?'답하지 않음':'내 답 '+(q.t==='mc'?q.wrong.map(i=>q.opts[i]).join(', '):q.wrong.join(', '));
+    const mine=q.skipped?'답하지 않음':(q.correct?'[다시 풀어 맞힘] ':'')+'내 답 '+(q.t==='mc'?q.wrong.map(i=>q.opts[i]).join(', '):q.wrong.join(', '));
     ctx.font=F(18,'bold'); const qL=wrap(ctx,qt,W-140); ctx.font=F(16.5); const eL=wrap(ctx,q.ex,W-140);
     return {q,qL,eL,tag:mine+'    →    정답 '+answerText(q)};
   });
@@ -1937,16 +1939,16 @@ $('btnNote').addEventListener('click',()=>{
   ctx.fillStyle='#fbf8f1'; ctx.fillRect(0,0,W,H);
   headerBand(ctx,W,GAME_NAME+' — 오답노트',STAGES[S.stage].full);
   let y=140; metaRow(ctx,y,info,W); y+=54+30;
-  ctx.fillStyle='#3c3489'; ctx.font=F(20,'bold'); ctx.fillText('틀리거나 넘어간 문항 ('+wrongs.length+'개)',44,y+8); y+=40;
+  ctx.fillStyle='#3c3489'; ctx.font=F(20,'bold'); ctx.fillText('다시 볼 문항 ('+wrongs.length+'개) — 못 맞힘 · 미응답 · 다시 풀어 맞힘',44,y+8); y+=40;
   if(!wrongs.length){
     ctx.fillStyle='#e9f8ef'; ctx.strokeStyle='#a9dcbf'; ctx.lineWidth=2; ctx.fillRect(44,y,W-88,84); ctx.strokeRect(44,y,W-88,84);
     ctx.fillStyle='#166b40'; ctx.font=F(22,'bold'); ctx.fillText('틀린 문항이 하나도 없습니다. 아주 훌륭해요!',80,y+50); y+=84+24;
   }else blocks.forEach(b=>{
     const h=26+b.qL.length*28+30+b.eL.length*25;
     ctx.fillStyle='#ffffff'; ctx.fillRect(44,y,W-88,h); ctx.strokeStyle='#e3dbc9'; ctx.lineWidth=1.5; ctx.strokeRect(44,y,W-88,h);
-    ctx.fillStyle=b.q.skipped?'#b9a15f':'#cf4340'; ctx.fillRect(44,y,7,h);
+    ctx.fillStyle=b.q.skipped?'#b9a15f':b.q.correct?'#1c7ed6':'#cf4340'; ctx.fillRect(44,y,7,h);
     let ty=y+32; ctx.fillStyle='#3c3489'; ctx.font=F(18,'bold'); b.qL.forEach(l=>{ctx.fillText(l,68,ty);ty+=28;}); ty+=4;
-    ctx.font=F(16.5); ctx.fillStyle='#9c322f'; ctx.fillText(b.tag,68,ty); ty+=26;
+    ctx.font=F(16.5); ctx.fillStyle=b.q.correct?'#1c5fa8':'#9c322f'; ctx.fillText(b.tag,68,ty); ty+=26;
     ctx.fillStyle='#4d5a76'; ctx.font=F(16.5); b.eL.forEach(l=>{ctx.fillText(l,68,ty);ty+=25;}); y+=h+18;
   });
   y+=6; ctx.fillStyle='#8b8570'; ctx.font=F(12.5);
@@ -2039,8 +2041,9 @@ function downloadTeacherXls(){
   const summaryRows=[]; const sumHead=rowOf(cellS('단계')+cellS('유형코드')+cellS('유형')+cellS('문항수'));
   STAGE_ORDER.forEach(n=>{
     const qs=BANK[n];
-    let rows=rowOf(cellS('원본 id')+cellS('유형')+cellS('문제')+cellS('예문')+cellS('정답')+cellS('해설'));
-    qs.forEach(q=>{ rows+=rowOf(cellN(q.id)+cellS(catLabel(q.cat))+cellS(stripTags(q.q))+cellS(stripTags(q.sub||''))+cellS(q.t==='mc'?q.opts[q.a]:q.ans,'ans')+cellS(stripTags(q.ex))); });
+    let rows=rowOf(cellS('원본 id')+cellS('유형')+cellS('문제')+cellS('예문')+cellS('정답')+cellS('인정 답')+cellS('해설'));
+    /* 인정 답: 단답형의 다른 인정 답(동의어·다른 표기) — 정답 열과 같이 빨간 굵은 글씨. 객관식·인정 답 없는 문항은 빈칸 */
+    qs.forEach(q=>{ const alt=(q.t==='sa'&&q.alt&&q.alt.length)?q.alt.join(' / '):''; rows+=rowOf(cellN(q.id)+cellS(catLabel(q.cat))+cellS(stripTags(q.q))+cellS(stripTags(q.sub||''))+cellS(q.t==='mc'?q.opts[q.a]:q.ans,'ans')+cellS(alt,alt?'ans':'')+cellS(stripTags(q.ex))); });
     sheets+=sheetOf(STAGES[n].label+'_'+STAGES[n].desc.slice(0,10),rows);
     /* 유형별 요약 */
     const cnt={}; qs.forEach(q=>{cnt[q.cat]=(cnt[q.cat]||0)+1;});

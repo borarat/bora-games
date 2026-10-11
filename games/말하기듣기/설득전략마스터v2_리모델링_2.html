@@ -985,9 +985,9 @@ function finishGame(){
   const nameInput=$('inName');nameInput.value=STUDENT.name;nameInput.readOnly=true;nameInput.style.background='#FBF3E2';
   S.result={
    studentId:STUDENT.id,studentName:STUDENT.name,className:STUDENT.className,
-   stage:STAGE_INFO[S.stage].label,
+   stage:S.stage+1,   /* 단계 번호 숫자 1~4 (2026.10.09 전송 stage 숫자 통일) */
    totalQuestions:S.qs.length,answeredCount:t.answered,skippedCount:t.sk,
-   correctCount:t.c+t.r,firstTryCorrect:t.c,retryCorrect:t.r,
+   correctCount:t.c+t.r,firstTryCorrect:t.c,retryCorrect:t.r,retryCorrectCount:t.r,   /* retryCorrectCount: 다시 풀어 맞힌 수 — 지침 7-2 공통 필드 (2026.10.09) */
    score:S.score,maxScore:S.max,accuracy:t.rate,maxCombo:S.maxCombo,
    elapsedSeconds:Math.round(S.elapsed/1000),
    wrongItems:S.qs.map((q,idx)=>S.st[idx].status==='wrong'?q.id:null).filter(x=>x!==null).join(','),

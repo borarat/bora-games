@@ -1865,7 +1865,7 @@ function sendResult(){
   const wrongIds = wrongOriginalIds().join(',');
   submitResult({
     studentId: STUDENT.id, studentName: STUDENT.name, className: STUDENT.className,
-    stage: END.label, totalQuestions: END.total, correctCount: END.firstRight,
+    stage: END.stage, totalQuestions: END.total, correctCount: END.firstRight,
     answeredCount: END.answered, skippedCount: END.skipped,
     retryCorrectCount: END.retryRight, accuracy: END.acc,
     score: S.score, maxScore: END.max,

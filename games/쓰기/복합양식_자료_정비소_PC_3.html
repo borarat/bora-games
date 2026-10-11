@@ -703,14 +703,28 @@ function doStartStage(n){
   for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]];}
   S={stageIdx:n,items:order.map(i=>stage.items[i]),order,idx:0,score:0,combo:0,maxCombo:0,
      answered:new Array(order.length).fill(null),startTime:Date.now(),elapsed:0,max:maxScore(order.length)};
-  shuffleMap=[];
+  shuffleMap=assignAnswerPositions(S.items);
   $("sideIco").textContent=stage.ico;$("sideName").textContent=stage.name;
   $("goalLine").textContent="· "+stage.goal;
   show("gameScreen");renderQuestion();
 }
 
-/* ═══ 선택지 셔플 ═══ */
+/* ═══ 선택지 셔플 ═══
+   한 판의 정답 위치를 ①②③④에 고르게 배정한다(지침 3-2: 한 번호 35% 이하, 2026.10.09).
+   위치 목록 [0,1,2,3,0,1,2,3,…]을 섞어 문항마다 하나씩 주고, 오답 보기는 따로 섞어 그 자리를 비워 둔 채 채운다 */
 let shuffleMap=[];
+function assignAnswerPositions(items){
+  const n=items.length,pos=[];
+  for(let i=0;i<n;i++)pos.push(i%4);
+  for(let i=pos.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pos[i],pos[j]]=[pos[j],pos[i]];}
+  return items.map((it,idx)=>{
+    const k=it.opts.length,p=Math.min(pos[idx],k-1);
+    const wrong=it.opts.map((_,i)=>i).filter(i=>i!==it.answer);
+    for(let i=wrong.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[wrong[i],wrong[j]]=[wrong[j],wrong[i]];}
+    const order=wrong.slice();order.splice(p,0,it.answer);
+    return{order,answerShuffled:p};
+  });
+}
 function getShuffled(idx){
   if(shuffleMap[idx])return shuffleMap[idx];
   const it=S.items[idx],indices=it.opts.map((_,i)=>i);
@@ -957,7 +971,8 @@ function finishStage(){
     const wrongItems=S.items.map((it,i)=>{const a=S.answered[i];return(a&&!a.firstOk)?it.id:null}).filter(x=>x!==null).join(",");
     submitResult({
       studentId:STUDENT.id,studentName:STUDENT.name,className:STUDENT.className,
-      stage:stage.label,totalQuestions:S.items.length,answeredCount:st.answered,skippedCount:st.skipped,
+      stage:S.stageIdx+1,   // 단계 번호 숫자(1·2) — 2026.10.09 교사 결정
+      totalQuestions:S.items.length,answeredCount:st.answered,skippedCount:st.skipped,
       correctCount:st.firstOk,retryCorrectCount:st.retryOk,score:S.score,maxScore:S.max,
       accuracy:st.acc,maxCombo:S.maxCombo,elapsedSeconds:Math.round(S.elapsed/1000),
       wrongItems:wrongItems,reflection:""

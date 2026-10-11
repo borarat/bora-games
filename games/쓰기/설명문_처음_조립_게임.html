@@ -323,7 +323,7 @@ button{font-family:inherit}
       <div class="box">
         <h3>🏅 점수 규칙</h3>
         <p>· 첫 시도에 맞히면 +15점.<br>
-        · 다시 풀어 맞히면 +8점(콤보는 복구되지 않아요).<br>
+        · 다시 풀기는 1회 — 다시 풀어 맞히면 +8점(콤보는 복구되지 않아요). 또 틀리면 정답이 공개돼요.<br>
         · 틀리면 3점 감점, 0점 아래로는 내려가지 않아요.<br>
         · 3연속부터 +5점, 5연속부터 +10점 보너스.<br>
         · 만점은 기본 단계 <b>95점</b>, 심화 단계 <b>120점</b>이에요.</p>
@@ -826,6 +826,14 @@ function checkAnswer(){
   }else{
     q.lastWrongSig=sig;
     playWrong();S.combo=0;S.score=Math.max(0,S.score-PENALTY);updateBand();
+    // 다시 풀기는 1회 — 두 번째도 틀리면 정답 공개·해설 (0점, 못 맞힘)
+    if(q.attempts>=2){
+      q.status='skipped';q.gained=0;
+      if(!q.roleResult&&!isOrder)q.roleResult=roleSnapshot;
+      loadTopic();
+      showResultOverlay(q,'skipped',0,0);
+      return;
+    }
     let msg;
     if(isOrder)msg='문장의 순서가 아직 맞지 않아요. 접속어를 단서로 다시 살펴봐요. (−'+PENALTY+'점)';
     else if(isRole)msg='문장의 역할 구분이 아직 맞지 않아요. (−'+PENALTY+'점)';
@@ -835,7 +843,8 @@ function checkAnswer(){
     showFB(false,msg);
     const h=$('wrong-hint');let hh='<b>💡 이런 점을 다시 살펴봐요</b><br>';
     if(isOrder||(!orderOk&&!isRole))hh+='• <b>순서</b> — 접속어(이처럼·그렇다면·하지만·또한·먼저)가 있는 문장은 앞 문장을 받는 문장이에요.<br>';
-    if(isRole||(!roleOk&&!isOrder))hh+='• <b>역할</b> — 감정·경험 호소 → 흥미 유발 / "~은/는 ~이다" → 개념 정의 / 장단점·통계 → 배경 정보 / 다룰 낱말이 들어 있음 → 방향 안내';
+    if(isRole||(!roleOk&&!isOrder))hh+='• <b>역할</b> — 감정·경험 호소 → 흥미 유발 / "~은/는 ~이다" → 개념 정의 / 장단점·통계 → 배경 정보 / 다룰 낱말이 들어 있음 → 방향 안내<br>';
+    hh+='<span style="color:#a07a2a">※ 다시 풀기는 1회예요. 또 틀리면 정답이 공개돼요.</span>';
     h.innerHTML=hh;h.classList.add('show');
     $('giveup-btn').style.display='';
   }
@@ -965,9 +974,9 @@ function finishGame(force){
     const wrongItems=S.qs.filter(q=>q.status==='skipped'||q.status==='partial').map(q=>q.id).join(',');
     submitResult({
       studentId:STUDENT.id,studentName:STUDENT.name,className:STUDENT.className,
-      stage:STAGES[S.stage-1].name+' ('+MODE_NAMES[S.mode]+')',
+      stage:S.stage,   // 단계 번호 숫자 (2026.10.09 교사 결정)
       totalQuestions:S.qs.length,answeredCount:st.answered,skippedCount:st.unanswered,
-      correctCount:st.perfect,score:S.score,maxScore:S.max,
+      correctCount:st.perfect,retryCorrectCount:st.partial,score:S.score,maxScore:S.max,
       elapsedSeconds:Math.round(S.elapsed/1000),wrongItems:wrongItems,
       reflection:($('inReview').value||'').trim()
     }).then(res=>{
@@ -1191,7 +1200,7 @@ function downloadTeacherXls(){
   Object.keys(CATEGORIES).forEach(k=>{h+='<tr><td>'+CATEGORIES[k].label+'</td><td>'+esc(CATEGORIES[k].desc)+'</td><td>'+(cnt[k]||0)+'</td><td>'+esc(CATEGORIES[k].tip)+'</td></tr>'});
   h+='</table><br><table border="1">'+
      '<tr><td>성취기준</td><td>[9국03-01] 대상의 특성에 적합한 설명 방법을 활용하여 글을 쓴다. / [9국03-08] 쓰기 과정과 전략을 점검·조정하며 글을 쓰고, 독자를 고려하여 글을 고쳐 쓴다.</td></tr>'+
-     '<tr><td>배점 규칙</td><td>첫 시도 정답 +'+BASE_PT+'점 / 재시도 정답 +'+RETRY_PT+'점 / 오답 −'+PENALTY+'점(하한 0) / 3연속 +5, 5연속 +10</td></tr>'+
+     '<tr><td>배점 규칙</td><td>첫 시도 정답 +'+BASE_PT+'점 / 재시도(1회) 정답 +'+RETRY_PT+'점 / 오답 −'+PENALTY+'점(하한 0) / 3연속 +5, 5연속 +10</td></tr>'+
      '<tr><td>총 주제 수</td><td>'+(STAGES[0].questions.length+STAGES[1].questions.length)+'주제 (기본 '+STAGES[0].questions.length+' / 심화 '+STAGES[1].questions.length+')</td></tr>'+
      '<tr><td>만점</td><td>기본 '+maxScoreOf(STAGES[0].questions.length)+'점 / 심화 '+maxScoreOf(STAGES[1].questions.length)+'점</td></tr>'+
      '<tr><td>게임 코드</td><td>'+GAME_CONFIG.gameCode+'</td></tr>'+

@@ -645,8 +645,18 @@ function blockMobile(){
 function doStartStage(n){
  const st=STAGES[n-1];
  clearTimeout(S.autoT); closeBanner();
- S={stage:n,qs:shuffle(st.items).map(it=>({it:it,tries:0,done:false,first:false,retry:false,picked:null,wrongs:[],
-    order:st.type==='mc'?shuffle(it.opts.map((o,i)=>i)):null})),
+ // 객관식(2단계): 한 판의 정답 위치를 ①②③④에 고르게 배정한 뒤 문항 순서를 섞는다 (한 번호 35% 이하, 지침 3-2)
+ const items=shuffle(st.items);
+ let slots=null;
+ if(st.type==='mc'){ slots=[]; for(let i=0;i<items.length;i++) slots.push(i%4); slots=shuffle(slots); }
+ S={stage:n,qs:items.map((it,qi)=>{
+    let order=null;
+    if(st.type==='mc'){
+      const others=shuffle(it.opts.map((o,i)=>i).filter(i=>i!==it.a));
+      const pos=Math.min(slots[qi],it.opts.length-1);
+      others.splice(pos,0,it.a); order=others;
+    }
+    return {it:it,tries:0,done:false,first:false,retry:false,picked:null,wrongs:[],order:order};}),
     idx:0,score:0,combo:0,maxCombo:0,t0:Date.now(),elapsed:0,locked:false,autoT:null,finished:false};
  show('play'); renderQ();
 }
@@ -981,7 +991,9 @@ function sendResult(){
       className:STUDENT.className,
       totalQuestions:S.qs.length,
       correctCount:st.first,
+      retryCorrectCount:st.retry,
       score:S.score,
+      maxScore:PERFECT[S.stage-1],
       elapsedSeconds:Math.round(S.elapsed/1000),
       answeredCount:st.answered,
       skippedCount:st.skipped,
@@ -1086,7 +1098,8 @@ function saveWrongNote(){
    roundRect(ctx,PAD,y,CW,b.h,12,true,true);
    let ty=y+30;
    ctx.fillStyle='#D4718F'; ctx.font='bold 13px '+CFONT;
-   ctx.fillText(CATEGORIES[b.q.it.category].icon+' '+CATEGORIES[b.q.it.category].label,PAD+16,ty); ty+=22;
+   // 다시 풀어 맞힌 문항은 '다시 풀어 맞힘' 표시 (화면연출표준 8-2 · 결과 화면 숫자와 같은 목록)
+   ctx.fillText(CATEGORIES[b.q.it.category].icon+' '+CATEGORIES[b.q.it.category].label+(b.q.retry?'   ·   🔁 다시 풀어 맞힘':''),PAD+16,ty); ty+=22;
    ctx.fillStyle='#333'; ctx.font='15px '+CFONT;
    b.qL.forEach(l=>{ctx.fillText(l,PAD+16,ty);ty+=24;}); ty+=6;
    ctx.fillStyle='#14624a'; ctx.font='bold 15px '+CFONT;
@@ -1219,10 +1232,14 @@ function closeOv(id){ $(id).classList.remove('on'); }
 const ANS_TD='<td style="color:#E00000;font-weight:bold">';   // 정답 열은 빨간 굵은 글씨 (교사용 자료 관례)
 function dataTable(n){
  const items=n===1?S1:S2;
- let h='<table class="dt"><tr><th>id</th><th>유형</th><th>문제(예문)</th><th>정답</th><th>해설</th></tr>';
+ // 열: 원본 id · 유형 · 문제 · 정답 · 오답 보기 · 해설 · 힌트 (정답 열만 빨강)
+ const MC_HINT='다른 선택지는 무엇을 감추거나 꾸미고 있는지 살펴보세요.';
+ let h='<table class="dt"><tr><th>원본 id</th><th>유형</th><th>문제(예문)</th><th>정답</th><th>오답 보기</th><th>해설</th><th>힌트</th></tr>';
  items.forEach(it=>{
+  const wrongOpts=it.opts?it.opts.filter((o,i)=>i!==it.a).join(' / '):CAT_ORDER.filter(k=>k!==it.category).map(k=>CATEGORIES[k].label).join(' / ');
+  const hint=it.opts?MC_HINT:HINTS[it.category];
   h+='<tr><td>'+it.id+'</td><td>'+CATEGORIES[it.category].label+'</td><td>'+it.text+'</td>'+ANS_TD+
-     answerText(it)+'</td><td>'+it.detail+'</td></tr>';
+     answerText(it)+'</td><td>'+wrongOpts+'</td><td>'+it.detail+'</td><td>'+hint+'</td></tr>';
  });
  return h+'</table>';
 }

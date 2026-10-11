@@ -1257,7 +1257,7 @@ function sendResult(){
   if(S.kind==='word')wrongItems.sort((a,b)=>a-b);
   submitResult({
     studentId:STUDENT.id,studentName:STUDENT.name,className:STUDENT.className,
-    stage:stageTag(),totalQuestions:c.total,answeredCount:c.graded,skippedCount:c.skip,
+    stage:STAGES[S.stage].no,totalQuestions:c.total,answeredCount:c.graded,skippedCount:c.skip,
     correctCount:c.first,retryCorrectCount:c.retry,
     score:S.kind==='word'?S.score:c.first+c.retry,maxScore:S.kind==='word'?W_MAX:c.total,
     elapsedSeconds:c.sec,wrongItems:wrongItems.join(','),reflection:$('inRefl').value.trim()

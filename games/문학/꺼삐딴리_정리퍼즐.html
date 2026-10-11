@@ -160,15 +160,16 @@
   @media(max-width:600px){#gamefoot{display:none!important;}}
   #gamefoot{display:none;position:fixed;right:14px;bottom:10px;z-index:40;font-size:.82rem;color:var(--txt2);opacity:.55;text-align:right;line-height:1.4;pointer-events:none;}
 
-  /* ---------- 오답/힌트 토스트 ---------- */
-  #toast{visibility:hidden;position:fixed;top:0;left:50%;transform:translate(-50%,-120%);z-index:100;padding:12px 30px;border-radius:0 0 16px 16px;
-    text-align:center;box-shadow:0 8px 26px rgba(0,0,0,.2);pointer-events:none;min-width:200px;color:#fff;}
-  #toast.show{visibility:visible;animation:drop 1.3s cubic-bezier(.2,.8,.3,1) forwards;}
-  #toast.wrong{background:linear-gradient(180deg,#e0524a,#c33028);}
-  #toast.info{background:linear-gradient(180deg,#e2a93a,#c78d1f);}
-  #toast .big{font-size:1.25rem;font-weight:700;letter-spacing:2px;}
-  #toast .small{font-size:.88rem;opacity:.95;margin-top:2px;}
-  @keyframes drop{0%{transform:translate(-50%,-120%);}15%{transform:translate(-50%,0);}80%{transform:translate(-50%,0);}100%{transform:translate(-50%,-120%);}}
+  /* ---------- 오답·안내 메시지 상자 (문제 화면 안 고정 위치 · 짝 게임 빈칸 채우기의 .fb와 같은 꼴) ----------
+     옛 토스트(위에서 떨어짐)는 2026.10.09에 없앴다. 오답은 빨강 상자 + ❌ + 흔들림, 안내(힌트·이미 찾은 단어)는 회색 상자 */
+  #fb{min-height:2.7em;margin:0 0 8px;border-radius:10px;font-size:.9rem;line-height:1.5;padding:0;color:transparent;transition:background .15s;}
+  #fb.ng,#fb.info{padding:7px 12px;}
+  #fb.ng{background:var(--ng-soft);color:#9b2c2c;border:1px solid #f3c4c1;}
+  #fb.info{background:#f1f5f9;color:#334155;border:1px solid #e2e8f0;}
+  #fb b{font-weight:700;}
+  #fb .pen{opacity:.75;font-size:.85em;margin-left:4px;}
+  #fb.shake{animation:shake .35s;}
+  .cell.bad{animation:shake .35s;}
 
   @keyframes spin{to{transform:rotate(360deg);}}
 /* ═══ 정답 배너 — 깔끔한 카드형 (2026.10.05 교사 결정) ═══
@@ -202,6 +203,7 @@
   @keyframes pop{0%{transform:scale(.6);opacity:0;}60%{transform:scale(1.08);}100%{transform:scale(1);opacity:1;}}
   .feedback{min-height:20px;font-size:.9rem;color:var(--ng);margin-top:6px;font-weight:700;}
   .feedback.ok{color:var(--ink);}
+  .feedback.shake,#msginput.shake{animation:shake .35s;}
   .endrow{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px;}
 
   /* ---------- END ---------- */
@@ -257,7 +259,6 @@
 </style>
 </head>
 <body>
-<div id="toast"><div class="big"></div><div class="small"></div></div>
 <div id="cbn"></div><canvas id="cbnFx"></canvas>
 <div id="comboHud">🔥 <span id="comboN">0</span></div>
 <div id="gamefoot">제작 · 보라라샘<br>2026.05.31</div>
@@ -405,6 +406,7 @@
             </div>
           </div>
           <p class="panelnote" id="panelnote">문장 속 빈칸을 클릭해 답을 입력하고 Enter를 누르세요. (옆의 💡는 힌트)</p>
+          <div id="fb" aria-live="polite"></div>
           <div id="clues"></div>
         </div>
 
@@ -650,7 +652,7 @@ function resetState(){
   $("msgstage").style.display="none"; $("cluepanel").style.display="block";
   $("reveal").style.display="none"; $("reveal").textContent="";
   $("msgfeedback").textContent=""; $("msgfeedback").className="feedback";
-  $("msginput").value=""; $("msginput").disabled=false;
+  $("msginput").value=""; $("msginput").disabled=false; showMsg("","");
   $("btnReveal").style.display=""; $("btnToEnd").style.display="none";
   $("comboHud").style.display="none";
   $("solvedCount").textContent="0"; $("timeVal").textContent="0:00";
@@ -768,9 +770,9 @@ function evaluate(sel){
   if(match){ solveWord(match); }
   else{
     // 이미 찾은 정답 단어를 다시 고른 것은 틀린 것이 아니므로 감점·오답 기록 없이 알려만 준다
-    if(WORDS.some(w=>solvedWords.has(w.word)&&cellsEqualSet(sel,w))){ showToast("info","이미 찾은 단어","다른 단어를 찾아보세요"); return; }
+    if(WORDS.some(w=>solvedWords.has(w.word)&&cellsEqualSet(sel,w))){ showMsg("info","이미 찾은 단어","다른 단어를 찾아보세요"); return; }
     const lk=sel.map(x=>x[0]+","+x[1]).sort().join("|");
-    if(easyTriedWrong.has(lk)){ showToast("info","이미 고른 자리","다른 곳을 찾아보세요"); return; }   // 같은 틀린 자리를 다시 골라도 또 감점하지 않음
+    if(easyTriedWrong.has(lk)){ showMsg("info","이미 고른 자리","다른 곳을 찾아보세요"); return; }   // 같은 틀린 자리를 다시 골라도 또 감점하지 않음
     easyTriedWrong.add(lk);
     easyPendingWrong++;
     penalizeWrong("그 자리에는 정답이 없어요");
@@ -846,13 +848,13 @@ function completeClue(clue){
   }else if(r.wrong===0 && !r.hinted){
     r.status="first"; combo++; maxCombo=Math.max(maxCombo,combo);
     gained=BASE+comboBonus(combo); score+=gained;
-    row.classList.add("done"); mark.textContent="✅"; setClueHint(n,"","");
+    row.classList.add("done"); mark.textContent="✅"; setClueHint(n,"",""); showMsg("","");
     updateComboHud();
     if(combo===3||combo===5||(combo>=10&&combo%5===0)) showComboBanner(combo,gained); else showCorrectBanner(gained);
     beep("ok");
   }else{
     r.status="retry"; gained=RETRY_PT; score+=gained;
-    row.classList.add("done"); mark.textContent="✅"; setClueHint(n,"","");
+    row.classList.add("done"); mark.textContent="✅"; setClueHint(n,"",""); showMsg("","");
     showRetryBanner(gained);
     beep("ok");
   }
@@ -868,7 +870,7 @@ function fillBlankEasy(clue){
 function penalizeWrong(msg){
   combo=0; updateComboHud();
   score=Math.max(0,score-WRONG_PEN);
-  showToast("wrong","오답!", msg+"  (−"+WRONG_PEN+"점)");
+  showMsg("ng","❌ 오답! "+msg, "−"+WRONG_PEN+"점");
   beep("ng"); updateHud();
 }
 function updateComboHud(){
@@ -888,7 +890,7 @@ function updateHud(){
 /* ===== 힌트 ===== */
 function useHint(n){
   if(gameOver) return;
-  if(difficulty==="normal"&&hintsLeft<=0){ showToast("info","힌트 없음","힌트를 모두 사용했어요"); return; }
+  if(difficulty==="normal"&&hintsLeft<=0){ showMsg("info","힌트 없음","힌트를 모두 사용했어요"); return; }
   const target=WORDS.find(w=>w.clue===n&&!solvedWords.has(w.word));
   if(!target) return;
   rec(n).hinted=true;
@@ -902,16 +904,17 @@ function useHint(n){
     const inp=$("ans-"+n+"-"+i);
     if(inp && !inp.readOnly){ inp.value=target.word[0]; inp.focus(); }
   }
-  showToast("info","💡 힌트","첫 글자와 위치를 알려줄게요  (−"+HINT_PEN+"점)");
+  showMsg("info","💡 힌트 · 첫 글자와 위치를 알려줄게요", "−"+HINT_PEN+"점");
   updateHud();
 }
 
-/* ===== 토스트 (오답·힌트) ===== */
-let toastTimer=null;
-function showToast(type,big,small){
-  const b=$("toast"); b.className=""; void b.offsetWidth; b.classList.add(type,"show");
-  b.querySelector(".big").textContent=big; b.querySelector(".small").textContent=small||"";
-  clearTimeout(toastTimer); toastTimer=setTimeout(()=>b.classList.remove("show"),1300);
+/* ===== 메시지 상자 (오답·안내) — 문제 화면 안 #fb 한 곳에만 쓴다. 숨은 메시지 단계는 #msgfeedback이 따로 있다 ===== */
+function showMsg(type,main,sub){
+  const b=$("fb"); b.className=""; b.innerHTML="";
+  if(!type){ return; }
+  const m=document.createElement("b"); m.textContent=main; b.appendChild(m);
+  if(sub){ const s=document.createElement("span"); s.className="pen"; s.textContent="("+sub+")"; b.appendChild(s); }
+  void b.offsetWidth; b.className=type+(type==="ng"?" shake":"");
 }
 
 /* ===== 정답 · 콤보 배너 ===== */
@@ -970,8 +973,10 @@ function checkMessage(){
   }else{
     msgWrong++;
     penalizeWrong("글자들을 다시 배열해 봐요");
-    if(msgWrong>=2){ fb.className="feedback"; fb.textContent="두 번 틀렸어요. 정답을 공개할게요."; revealNow(false); }
-    else { fb.className="feedback"; fb.textContent="조금 더! 첫 글자는 ‘"+MESSAGE_ANSWER[0]+"’이에요. 남은 글자를 다시 조합해 보세요."; }
+    if(msgWrong>=2){ fb.className="feedback"; fb.textContent="❌ 두 번 틀렸어요. 정답을 공개할게요. (−"+WRONG_PEN+"점)"; revealNow(false); }
+    else { fb.className="feedback"; fb.textContent="❌ 조금 더! 첫 글자는 ‘"+MESSAGE_ANSWER[0]+"’이에요. 남은 글자를 다시 조합해 보세요. (−"+WRONG_PEN+"점)"; }
+    void fb.offsetWidth; fb.classList.add("shake");   // 오답 연출(빨강 + ❌ + 흔들림)을 문제 화면의 #fb와 맞춘다
+    $("msginput").classList.remove("shake"); void $("msginput").offsetWidth; $("msginput").classList.add("shake");
   }
 }
 function revealNow(correct){
@@ -1057,8 +1062,8 @@ function finish(){
     const wrongItems=CLUES.filter(c=>{const s=clueRecord[c.n]&&clueRecord[c.n].status; return s==="retry"||s==="fail";}).map(c=>c.n).join(",");
     submitResult({
       studentId:STUDENT.id, studentName:STUDENT.name, className:STUDENT.className,
-      stage:lbl, totalQuestions:TOTAL, answeredCount:S.answered, skippedCount:S.st.skip.length,
-      correctCount:S.st.first.length, score:score, maxScore:MAX_SCORE,
+      stage:1, totalQuestions:TOTAL, answeredCount:S.answered, skippedCount:S.st.skip.length,   // 단계가 없는 게임 → 1 (난이도는 stage에 넣지 않는다, 2026.10.09 교사 결정)
+      correctCount:S.st.first.length, retryCorrectCount:S.st.retry.length, score:score, maxScore:MAX_SCORE,
       elapsedSeconds:elapsedSec, wrongItems:wrongItems, reflection:""
     }).then(res=>{
       const el=document.createElement("div");
@@ -1178,7 +1183,8 @@ function saveWrongNote(){
   g.strokeStyle="#DDF2E9"; g.beginPath(); g.moveTo(PAD,118); g.lineTo(W-PAD,118); g.stroke();
   let y=150;
   if(review.length===0){
-    g.fillStyle="#0F6E56"; font(g,20,true); g.fillText(S.answered?(S.complete?"🎊 다시 볼 오답이 없어요. 핵심어를 모두 한 번에 찾았습니다!":"다시 볼 오답이 없어요."):"풀어 본 문제가 없어요",PAD,y+16); y+=70;
+    // 빈 문구는 G304 꼴(2026.10.09): 끝까지 하면 '🎊 첫 시도에 모두 맞혔어요! …', 중간 종료면 '남은 문제를 마저 풀어 보세요.' (단계가 없는 게임 → '다른 난이도')
+    g.fillStyle="#0F6E56"; font(g,20,true); g.fillText(!S.answered?"풀어 본 문제가 없어요.":(S.st.skip.length?"푼 문제는 모두 첫 시도에 맞혔어요. 남은 문제를 마저 풀어 보세요.":"🎊 첫 시도에 모두 맞혔어요! 다른 난이도에도 도전해 보세요."),PAD,y+16); y+=70;
   }else{
     g.fillStyle="#0F6E56"; font(g,18,true); g.fillText("다시 볼 문항 ("+review.length+"개)",PAD,y); y+=30;
     review.forEach(c=>{

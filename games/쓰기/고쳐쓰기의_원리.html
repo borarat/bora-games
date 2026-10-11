@@ -799,11 +799,13 @@ function doStartStage(n){
   S.stage=n; S.idx=0; S.score=0; S.combo=0; S.maxCombo=0; S.ended=false;
   S.t0=Date.now(); S.elapsed=0;
   const g=stage();
+  // 한 판의 정답 위치를 ①②③④에 고르게 배정(지침 3-2: 한 번호 35% 이하, 2026.10.09) — 위치 목록을 섞어 문항마다 하나씩 준 뒤 오답 보기만 따로 섞는다
+  const positions=shuffle(g.data.map((_,i)=>i%4));
   if(g.key==='basic'){
-    S.items=shuffle(g.data).map(q=>{const order=shuffle([0,1,2,3]);return {...q,order,ansPos:order.indexOf(q.ans)};});
+    S.items=shuffle(g.data).map((q,i)=>{const p=positions[i];const order=shuffle([0,1,2,3].filter(x=>x!==q.ans));order.splice(p,0,q.ans);return {...q,order,ansPos:p};});
     S.st=S.items.map(()=>({revealed:false,picked:null,tries:0,result:null,done:false}));
   }else{
-    S.items=shuffle(g.data).map(q=>{const opts=shuffle([q.prob,...q.dist]);return {...q,opts,ansPos:opts.indexOf(q.prob)};});
+    S.items=shuffle(g.data).map((q,i)=>{const p=Math.min(positions[i],q.dist.length);const opts=shuffle(q.dist);opts.splice(p,0,q.prob);return {...q,opts,ansPos:p};});
     S.st=S.items.map(()=>({s1:{tries:0,solved:false,shown:false,bad:-1},s2:{tries:0,solved:false,shown:false,val:'',bad:''},result:null,done:false}));
   }
   show('play'); updateBar(); render();
@@ -1150,9 +1152,10 @@ function finish(){
   if(S.ended){show('end');return;}
   S.ended=true; hideBanner(); sEnd(); clearTimeout(S.autoT);
   // 한 번 틀린 뒤 다시 풀지 않고 끝낸 문항은 '미응답'이 아니라 '못 맞힘'
+  // 2단계는 문제점만 맞히고(첫 시도 포함) 원리를 안 쓴 채 끝내도 채점이 시작된 문항이므로 '못 맞힘' (2026.10.09)
   S.st.forEach(st=>{
     if(st.done)return;
-    const tried = stage().key==='basic' ? st.tries>0 : (st.s1.tries>(st.s1.solved&&!st.s1.shown?1:0) || st.s2.tries>0 || st.s1.shown);
+    const tried = stage().key==='basic' ? st.tries>0 : (st.s1.tries>0 || st.s2.tries>0);
     if(tried){ st.done=true; st.result='miss'; }
   });
   S.elapsed=Math.round((Date.now()-S.t0)/1000);
@@ -1169,7 +1172,7 @@ function finish(){
     const nameInput=$('inName'); nameInput.value=STUDENT.name; nameInput.readOnly=true; nameInput.style.background='#f4eef1';
     const wrongItems=S.items.map((q,i)=>(S.st[i].result&&S.st[i].result!=='first')?q.id:null).filter(x=>x!==null).sort((a,b)=>a-b).join(',');
     submitResult({
-      stage:g.name,
+      stage:S.stage,   // 단계 번호 숫자(1·2) — 2026.10.09 교사 결정
       studentId:STUDENT.id,
       studentName:STUDENT.name,
       className:STUDENT.className,
@@ -1334,6 +1337,7 @@ function drawDoc(blocks,W,pad,filename){
       ctx.fillStyle=b.tagColor;roundBox(ctx,pad+14,y+12,72,24,7);ctx.fill();
       ctx.font=F(700,13);ctx.fillStyle='#ffffff';ctx.textAlign='center';
       ctx.fillText(b.tag,pad+14+36,y+29);ctx.textAlign='left';
+      if(b.mark){ctx.font=F(700,13);ctx.fillStyle='#3B86C9';ctx.fillText(b.mark,pad+14+72+10,y+29);}   // '다시 풀어 맞힘' 표시(표준 8-2)
       let ty=y+40;
       parts.forEach(({L,col,lh})=>{ctx.font=F(500,lh===20?13:15);ctx.fillStyle=col;
         L.forEach(ln=>{ctx.fillText(ln,pad+14,ty+15);ty+=lh;});});
@@ -1391,7 +1395,8 @@ function downloadNote(){
         bl.push(['정답 ','고쳐쓰기 원리 — '+C.label,'#2E9B79']);
       }
       bl.push(['해설 ',q.e,'#64748b']);
-      blocks.push({t:'card',tag:C.label,tagColor:C.color,blocks:bl});
+      const r=S.st[S.items.indexOf(q)].result;
+      blocks.push({t:'card',tag:C.label,tagColor:C.color,mark:r==='retry'?'다시 풀어 맞힘':'',blocks:bl});
     });
   }
   blocks.push({t:'rule'});

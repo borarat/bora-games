@@ -276,6 +276,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .wronglist{max-height:300px;overflow-y:auto;padding-right:5px}
 .witem{background:#fff;border:1px solid var(--line);border-left:5px solid var(--ng);border-radius:11px;padding:9px 13px;margin-bottom:8px}
 .witem.skip{border-left-color:#b9a15f}
+.witem.retry{border-left-color:#1c7ed6}
+.witem .wretry{font-style:normal;font-size:11.5px;font-weight:700;color:#1c7ed6;background:#e7f1fd;border-radius:6px;padding:1px 6px;margin-left:4px}
 .witem .wq{font-size:19px;font-weight:700;display:inline-block;margin-right:9px;vertical-align:middle}
 .witem .wq.serif{font-family:'Gungsuh','궁서','Batang','바탕','Nanum Myeongjo',serif;font-size:23px}
 .witem .wq.draw{width:26px;height:26px;padding:0}
@@ -1381,6 +1383,10 @@ function stats(){
   return {answered,first,retry,miss,skipped,acc,cats,shown,good,weak,firstStudy,allWeak};
 }
 
+/* 오답노트 항목: 못 맞힘 → 다시 풀어 맞힘 → 미응답 (화면·JPG 공통) */
+function noteItems(){
+  return S.qs.filter(q=>q.answered&&!q.correct).concat(S.qs.filter(q=>q.answered&&q.correct&&!q.firstTry)).concat(S.qs.filter(q=>!q.answered));
+}
 function finish(){
   if(cbShown()) closeBanner();
   S.elapsed=Date.now()-S.t0;
@@ -1413,16 +1419,16 @@ function finish(){
 
   /* 오답노트 목록 */
   const wl=$('wrongList'); wl.innerHTML='';
-  const bad=S.qs.filter(q=>q.answered&&!q.correct).concat(S.qs.filter(q=>!q.answered));
+  const bad=noteItems();   // 못 맞힘 + 다시 풀어 맞힘 + 미응답 (지침 5-5: 결과 화면 숫자와 오답노트 항목 수가 맞아야 한다)
   if(!bad.length){ wl.innerHTML='<div class="perfect">🎉 틀린 문항이 하나도 없어요! 한글 창제 원리를 완벽하게 이해했습니다.</div>'; }
   else bad.forEach(q=>{
     const gs=jamoSVG(q.ch);
     wl.insertAdjacentHTML('beforeend',
-      '<div class="witem'+(!q.answered?' skip':'')+'">'+
+      '<div class="witem'+(!q.answered?' skip':q.correct?' retry':'')+'">'+
       '<span class="wcat">'+CATLABEL(q.cat)+'</span>'+
       '<span class="wq'+(ST().serif?' serif':'')+(gs?' draw':'')+'">'+(gs||q.ch)+'</span>'+
       '<span class="wtag">'+(!q.answered?'답하지 않음':'내 답 <s>'+q.wrong.map(c=>ansName(q,c)).join(', ')+'</s>')+
-      ' → 정답 <b>'+ansName(q,q.cat)+'</b></span>'+
+      ' → 정답 <b>'+ansName(q,q.cat)+'</b>'+(q.correct?' <em class="wretry">다시 풀어 맞힘</em>':'')+'</span>'+
       '<div class="wex">'+q.ex+'</div></div>');
   });
 
@@ -1432,7 +1438,7 @@ function finish(){
     const wrongItems=S.qs.filter(q=>q.answered&&!q.correct).map(q=>q.id).join(',');
     submitResult({
       studentId:STUDENT.id, studentName:STUDENT.name, className:STUDENT.className,
-      stage:ST().label, totalQuestions:S.qs.length,
+      stage:S.stage, totalQuestions:S.qs.length,
       answeredCount:K.answered.length, skippedCount:K.skipped.length,
       correctCount:K.first.length, retryCorrectCount:K.retry.length,
       maxScore:S.max, score:S.score, bestCombo:S.best,
@@ -1660,7 +1666,7 @@ $('btnNote').addEventListener('click',()=>{
   const info=checkInput(); if(!info) return;
   const K=stats();
   const W=1000;
-  const bad=S.qs.filter(q=>q.answered&&!q.correct).concat(S.qs.filter(q=>!q.answered));
+  const bad=noteItems();
   const cv=document.createElement('canvas'); const ctx=cv.getContext('2d');
   ctx.font=F(17);
   const blocks=bad.map(q=>({q,lines:wrapT(ctx,q.ex,W-230)}));
@@ -1674,7 +1680,7 @@ $('btnNote').addEventListener('click',()=>{
   headerBand(ctx,W,GAME_NAME+' — 오답노트',ST().full+'  ·  '+info.name+'  ·  '+nowStr());
   let y=140; y=metaRow(ctx,y,info,W,K)+30;
   ctx.fillStyle='#3C3489'; ctx.font=F(20,'bold');
-  ctx.fillText('다시 볼 문항 ('+K.miss.length+'개 오답 · '+K.skipped.length+'개 미응답)',44,y+8); y+=40;
+  ctx.fillText('다시 볼 문항 ('+K.miss.length+'개 오답 · '+K.retry.length+'개 다시 풀어 맞힘 · '+K.skipped.length+'개 미응답)',44,y+8); y+=40;
   if(!bad.length){
     ctx.fillStyle='#e9f8ef'; ctx.strokeStyle='#a9dcbf'; ctx.lineWidth=2;
     ctx.fillRect(44,y,W-88,84); ctx.strokeRect(44,y,W-88,84);
@@ -1686,7 +1692,7 @@ $('btnNote').addEventListener('click',()=>{
       const h=74+b.lines.length*26;
       ctx.fillStyle='#ffffff'; ctx.fillRect(44,y,W-88,h);
       ctx.strokeStyle='#e3dbc9'; ctx.lineWidth=1.5; ctx.strokeRect(44,y,W-88,h);
-      ctx.fillStyle=(!b.q.answered)?'#b9a15f':'#cf4340'; ctx.fillRect(44,y,7,h);
+      ctx.fillStyle=(!b.q.answered)?'#b9a15f':b.q.correct?'#1c7ed6':'#cf4340'; ctx.fillRect(44,y,7,h);
       drawGlyph(ctx,b.q.ch,64,y+12,46);
       /* 유형 라벨 (문항 번호 대신) */
       const lab=CATLABEL(b.q.cat);
@@ -1696,7 +1702,7 @@ $('btnNote').addEventListener('click',()=>{
       ctx.font=F(16); ctx.fillStyle='#6f7c98';
       const al=ansName(b.q,b.q.cat);
       const t=(!b.q.answered)?'답하지 않음  →  정답 '+al
-                            :'내 답 '+b.q.wrong.map(c=>ansName(b.q,c)).join(', ')+'  →  정답 '+al;
+                            :'내 답 '+b.q.wrong.map(c=>ansName(b.q,c)).join(', ')+'  →  정답 '+al+(b.q.correct?'   (다시 풀어 맞힘)':'');
       ctx.fillText(t,132+lw+12,y+31);
       ctx.fillStyle='#64748b'; ctx.font=F(14);
       b.lines.forEach((l,i)=>ctx.fillText(l,132,y+62+i*26));
@@ -1728,7 +1734,8 @@ $('btnReport').addEventListener('click',()=>{
   else weakTxt=K.skipped.length?'남은 문제를 마저 풀어 보세요.':S.stage<STAGES.length?'약점이 보이지 않아요. 다음 단계에 도전해 보세요.':'약점이 보이지 않아요. 다른 단계에도 도전해 보세요.';
 
   const gL=wrapT(ctx,goodTxt,W-160).length, wL=wrapT(ctx,weakTxt,W-160).length;
-  const chartH=K.shown.length*54+30;
+  const chartH=(K.shown.length||1)*54+30;   // 보일 유형이 없으면 안내 한 줄 자리
+  const chartEmpty=!K.answered.length?'풀어 본 문제가 없어요.':'2문항 이상 푼 유형이 아직 없어요. 조금 더 풀면 유형별 정답률이 나타나요.';
   const memoH=info.memo?memoBlockH(ctx,info.memo,W)+26:0;
   ctx.font=F(14); const fH=footerH(ctx,W,true);
   const vbH=K.skipped.length?102:86;   // 중간 종료면 총평 상자가 세 줄
@@ -1757,6 +1764,7 @@ $('btnReport').addEventListener('click',()=>{
   /* 유형별 정답률 */
   ctx.fillStyle='#3C3489'; ctx.font=F(20,'bold'); ctx.fillText('유형별 정답률 (첫 시도 기준)',44,y+8); y+=40;
   const bx=290, bw=W-bx-130;
+  if(!K.shown.length){ ctx.fillStyle='#7f8aa3'; ctx.font=F(16); ctx.fillText(chartEmpty,68,y+28); y+=54; }
   K.shown.forEach(c=>{
     ctx.fillStyle='#3d4a6b'; ctx.font=F(16); ctx.textAlign='right';
     ctx.fillText(CATLABEL(c.cat),bx-18,y+26); ctx.textAlign='left';

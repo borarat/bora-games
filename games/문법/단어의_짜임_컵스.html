@@ -986,7 +986,12 @@ function quitGame(){
   if(S.finished) return;
   finish();
 }
-function buildStMenu(){ $('stMenu').innerHTML=STAGES.map((st,n)=>`<button class="${n===S.stage?'cur':''}" onclick="startStage(${n})">${n}단계 · ${st.name}</button>`).join(''); }
+function buildStMenu(){ $('stMenu').innerHTML=STAGES.map((st,n)=>`<button class="${n===S.stage?'cur':''}" onclick="goStage(${n})">${n}단계 · ${st.name}</button>`).join(''); }
+// 단계 이동: 채점한 문항이 있으면 확인창 한 번 (기록이 없으면 묻지 않음). 취소하면 포커스를 풀어 Enter·Space로 다시 눌리지 않게
+function goStage(n){
+  if(S && !S.finished && S.qs.some(isDone) && !confirm('다른 단계로 이동할까요? 지금까지 푼 기록은 사라집니다.')){ closeStMenu(); if(document.activeElement) document.activeElement.blur(); return; }
+  startStage(n);
+}
 function toggleStMenu(e){ e.stopPropagation(); $('stMenu').classList.toggle('on'); }
 function closeStMenu(){ const m=$('stMenu'); if(m) m.classList.remove('on'); }
 document.addEventListener('click',closeStMenu);
@@ -1079,9 +1084,10 @@ function finish(){
       studentId:STUDENT.id,
       studentName:STUDENT.name,
       className:STUDENT.className,
-      stage:stageLabel(S.stage),
+      stage:S.stage+1,   // 단계 번호 숫자(1~5). 화면의 0~4단계 = 전송 1~5 (지침 7-2: 0부터 세는 값 금지)
       totalQuestions:S.qs.length,
       correctCount:R.first,
+      retryCorrectCount:R.retry,
       answeredCount:R.graded,
       skippedCount:R.skipped,
       score:S.score,
@@ -1185,7 +1191,7 @@ function downloadWrongNote(){
   if(!wrong.length && (!R0.graded || R0.skipped)){   // 채점 0개·중간 종료면 칭찬 문구를 쓰지 않는다 (화면연출표준 7장)
     doc.box(b=>{ b.text(!R0.graded?'풀어 본 문제가 없어요.':'남은 문제를 마저 풀어 보세요.',{size:18,bold:true,color:'#5b5670'}); },{bg:'#f3f3f6',border:'#e0e0ea'});
   } else if(!wrong.length){
-    doc.box(b=>{ b.text('🎉 틀린 문항이 없어요!',{size:22,bold:true,color:'#3C3489'}); b.text('모든 문항을 첫 시도에 맞혔어요. 다음 단계에 도전해 보세요.',{size:15}); },{bg:'#eefaf2',border:'#bfe6cc'});
+    doc.box(b=>{ b.text('🎉 틀린 문항이 없어요!',{size:22,bold:true,color:'#3C3489'}); b.text('모든 문항을 첫 시도에 맞혔어요. '+(S.stage<STAGES.length-1?'다음 단계에 도전해 보세요.':'다른 단계에도 도전해 보세요.'),{size:15}); },{bg:'#eefaf2',border:'#bfe6cc'});
   } else {
     doc.text(`다시 볼 문항 ${wrong.length}개`,{size:16,bold:true,color:'#3C3489',gap:8});
     wrong.forEach(q=>{

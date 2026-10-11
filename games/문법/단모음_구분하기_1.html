@@ -960,7 +960,7 @@ function sendResult() {
   const R = calcResult();
   submitResult({
     studentId: STUDENT.id, studentName: STUDENT.name, className: STUDENT.className,
-    totalQuestions: R.total, correctCount: R.first, score: score,
+    totalQuestions: R.total, correctCount: R.first, retryCorrectCount: R.retryOk, score: score,
     answeredCount: R.graded, skippedCount: R.skipped,
     elapsedSeconds: elapsedSec(),
     stage: currentStage + 1, wrongItems: R.wrongIdx.map(i => questions[i].id).join(','), reflection: ''

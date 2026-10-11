@@ -893,8 +893,8 @@ body.started header .keyArt{display:none}
 
     <div class="complete-btns">
       <button class="next-stage-btn" id="next-stage-btn" onclick="goNextStage()">다음 단계로 →</button>
+      <button class="sub-btn" id="restart-stage-btn" onclick="restartStage()">🔄 이 단계 다시 하기</button>
       <button class="sub-btn" onclick="openQList()">📖 오늘 나온 문제 모두 보기</button>
-      <button class="sub-btn" onclick="restartStage()">🔄 이 단계 다시 풀기</button>
       <button class="sub-btn" onclick="backToSelect()">🏠 단계 선택으로</button>
       <a class="sub-btn" href="https://docs.google.com/forms/d/e/1FAIpQLScaweYOGLd1QaPIeY4_-fVG80EZmlJD4kPa90gmw9YTvgE0LA/viewform?usp=publish-editor" target="_blank">📋 만족도 조사</a>
     </div>
@@ -1849,9 +1849,12 @@ function showComplete(){
   $('complete-desc').innerHTML = en.partial ? `${en.lead}<br>${en.verdict}` : `${S.def.name}<br>결과를 확인하고 오답노트·리포트를 저장해 보세요.`;
   const tr=document.querySelector('.trophy'); if(tr) tr.style.display = (en.partial||en.zero) ? 'none' : '';
 
-  const nb=$('next-stage-btn');
-  if(STAGE_DEFS[S.stageId+1]){ nb.style.display='block'; nb.textContent=`다음 단계로 → ${STAGE_DEFS[S.stageId+1].name}`; }
+  // 버튼 위계(화면연출표준 7장): 다음 단계가 있으면 '다음 단계로'가 색 채움, 마지막 단계면 '이 단계 다시 하기'가 색 채움
+  const nb=$('next-stage-btn'), rb=$('restart-stage-btn');
+  const hasNext=!!STAGE_DEFS[S.stageId+1];
+  if(hasNext){ nb.style.display='block'; nb.textContent=`다음 단계로 → ${STAGE_DEFS[S.stageId+1].name}`; }
   else nb.style.display='none';
+  rb.className = hasNext ? 'sub-btn' : 'next-stage-btn';
 
   if(IS_ONLINE&&STUDENT.verified){
     const nameInput=$('name-input'); nameInput.value=STUDENT.name; nameInput.readOnly=true; nameInput.style.background='#f0ede5';
@@ -1871,12 +1874,14 @@ function sendResult(){
     studentId:STUDENT.id,
     studentName:STUDENT.name,
     className:STUDENT.className,
-    stage:S.stageId,
+    stage:S.stageId,                 // 단계 번호 숫자(1·2·3)
     totalQuestions:S.n,
     answeredCount:st.answered,
     skippedCount:st.skipped,
     correctCount:st.first,
+    retryCorrectCount:st.retryOk,    // 다시 풀어 맞힘 (지침 7-2)
     score:S.score,
+    maxScore:S.maxScore,
     elapsedSeconds:Math.round(((S.finishedAt||new Date()).getTime()-S.startedAt)/1000),
     wrongItems:wrongItems,
     reflection:''

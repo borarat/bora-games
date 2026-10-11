@@ -19,7 +19,8 @@
      문항·채점 2026.10.02 15:51: 33문항에 힌트 추가(교사 승인 '이대로'), 다시 풀기 1회 — 1단계 직접 쓰기·2단계 2차 세부 유형·3단계 4지선다. 2단계 1차(대등/종속, 보기 2개)는 바로 공개. 다시 풀어 맞히면 +5, 콤보 없음, 정답률에서 빼고 따로 셈
      2026.10.05 02:40 정답 배너를 깔끔한 카드형으로(교사 결정): 화면 어둡게·광선·색종이·이모지 낙하 없앰, 5·10연속에만 작은 색종이
      2026.10.07 08:45 실제 조작 버그 검사: '게임 종료' → '게임 끝내기', 중간 종료 제목·총평(칭찬 대신 연습 권유)
-     2026.10.07 13:58 끝낸 게임 다시 훑기(실제 조작 재검사): 보완 칸 하나, 엑셀 정답 빨간 글씨, 자동 종료 타이머 가드, 채점 0개 정답률 – -->
+     2026.10.07 13:58 끝낸 게임 다시 훑기(실제 조작 재검사): 보완 칸 하나, 엑셀 정답 빨간 글씨, 자동 종료 타이머 가드, 채점 0개 정답률 –
+     2026.10.09 13차: 오답노트(화면·JPG)에 다시 풀어 맞힌 문제 포함(처음 쓴 답 표시), 마지막 단계 빈 문구 '다른 단계에도', 전송 retryCorrectCount·maxScore 추가 -->
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -651,6 +652,7 @@ function fmtDur(sec){const m=Math.floor(sec/60),x=sec%60;return m?`${m}분 ${x}�
 let questions=[], current=0, score=0, combo=0, maxCombo=0, correctCount=0, wrongCount=0;
 let answered=[], userAnswers=[], currentStage=0;
 let pend=[]; // 1 = 한 번 틀려 '다시 풀기' 대기, 2 = 다시 푸는 중. answered: null 미완료 / true 첫 시도 정답 / 'r' 다시 풀어 맞힘 / false 못 맞힘
+let firstAns=[]; // 첫 시도에 틀린 답(글자) — 다시 풀어 맞힌 문제를 오답노트에 실을 때 '처음 쓴 답'으로 보여 준다
 let gameStartTime=null;
 
 /* ===== Audio ===== */
@@ -689,7 +691,7 @@ function doStartGame(si){
   questions=shuffle(STAGES[si]);
   current=0;score=0;combo=0;maxCombo=0;correctCount=0;wrongCount=0;
   answered=new Array(questions.length).fill(null);pend=new Array(questions.length).fill(0);
-  userAnswers=new Array(questions.length).fill('');
+  userAnswers=new Array(questions.length).fill('');firstAns=new Array(questions.length).fill('');
   gameStartTime=new Date();tLast=0;endAt=null;
   document.getElementById('combo-badge').classList.add('hidden');
   document.getElementById('bandGoal').textContent=' · '+GOALS[si];
@@ -913,7 +915,7 @@ function processAnswer(isCorrect,q,canRetry){
     answered[i]='r';pend[i]=0;score+=RETRY_PT;playCorrect();
     fbMsg=`다시 풀어 맞혔어요! +${RETRY_PT}점`;
   } else {
-    if(!isR){combo=0;wrongCount++;score=Math.max(0,score-PENALTY);document.getElementById('combo-badge').classList.add('hidden')}
+    if(!isR){combo=0;wrongCount++;score=Math.max(0,score-PENALTY);document.getElementById('combo-badge').classList.add('hidden');firstAns[i]=myText(i)}
     playWrong();
     if(!isR&&canRetry){pend[i]=1;fbMsg=`틀렸어요! −${PENALTY}점 — 힌트를 보고 다시 풀어 보세요. (Enter)`}
     else{answered[i]=false;pend[i]=0;fbMsg=isR?'다시 틀렸어요 — 정답과 해설을 확인하세요.':`틀렸어요! −${PENALTY}점 — 정답과 해설을 확인하세요.`}
@@ -995,6 +997,11 @@ function calcStats(){
   S.rate=S.graded?Math.round(S.first/S.graded*100):0;
   return S;
 }
+// 오답노트 항목 = 첫 시도 정답을 뺀 모든 문항(다시 풀어 맞힘 · 못 맞힘 · 미응답). 화면·JPG가 같은 목록을 쓴다
+function wrongNoteList(){return questions.map((q,i)=>({q,i})).filter(x=>answered[x.i]!==true)}
+function noteStatus(i){return answered[i]==null?'미응답':answered[i]==='r'?'다시 풀어 맞힘':'못 맞힘'}
+// 오답이 하나도 없을 때 — 마지막 단계면 '다음 단계'가 없으므로 '다른 단계'
+function ALL_OK_MSG(){return '🎊 첫 시도에 모두 맞혔어요! '+(currentStage<STAGES.length-1?'다음 단계에 도전해 보세요.':'다른 단계에도 도전해 보세요.')}
 function verdict(S){
   if(!S.graded)return{emoji:'📝',title:'풀어 본 문제가 없어요'};
   const r=S.first/S.graded;
@@ -1008,7 +1015,7 @@ function sendResult(){
   const wrongItems=questions.filter((q,i)=>answered[i]!=null&&answered[i]!==true).map(q=>q.id).join(',');
   submitResult({
     studentId:STUDENT.id,studentName:STUDENT.name,className:STUDENT.className,
-    totalQuestions:S.total,correctCount:S.first,score:score,
+    totalQuestions:S.total,correctCount:S.first,retryCorrectCount:S.retryOk,score:score,maxScore:S.max,
     elapsedSeconds:gameStartTime?Math.max(0,Math.round(((tLast||Date.now())-gameStartTime)/1000)):0,
     answeredCount:S.graded,skippedCount:S.skipped,stage:currentStage+1,
     wrongItems:wrongItems,reflection:''
@@ -1048,29 +1055,30 @@ function showComplete(){
   document.getElementById('complete-emoji').textContent=V.emoji;
   document.getElementById('complete-title').textContent=V.head||V.title;
 
-  // 못 맞힌 문제 + 미응답 목록
-  const wrongList=questions.map((q,i)=>({q,i})).filter(x=>answered[x.i]!==true&&answered[x.i]!=='r');
+  // 다시 풀어 맞힘 + 못 맞힌 문제 + 미응답 목록 — 첫 시도에 맞힌 문제만 뺀다(지침 5-5: '다시 풀어 맞힘' 수와 항목 수가 같아야 한다)
+  const wrongList=wrongNoteList();
   const reportEl=document.getElementById('wrong-report');
   reportEl.innerHTML='';
   if(!S.graded){
     reportEl.innerHTML='<div style="text-align:center;padding:14px;background:var(--orange-l);border-radius:10px;color:#a0602a;font-weight:900">풀어 본 문제가 없어요.</div>';
   } else if(!wrongList.length){
-    reportEl.innerHTML='<div style="text-align:center;padding:14px;background:var(--green-l);border-radius:10px;color:#3a8f60;font-weight:900">🎊 틀리거나 남긴 문제가 없어요!</div>';
+    reportEl.innerHTML=`<div style="text-align:center;padding:14px;background:var(--green-l);border-radius:10px;color:#3a8f60;font-weight:900">${ALL_OK_MSG()}</div>`;
   } else {
     const t=document.createElement('div');t.className='wrong-report-title';
-    t.innerHTML=`❌ 못 맞힌 문제 · 미응답 다시 보기 <span style="font-size:.8rem;font-weight:400;color:var(--muted)">(못 맞힘 ${S.miss} · 미응답 ${S.skipped})</span>`;
+    t.innerHTML=`❌ 다시 볼 문제 <span style="font-size:.8rem;font-weight:400;color:var(--muted)">(다시 풀어 맞힘 ${S.retryOk} · 못 맞힘 ${S.miss} · 미응답 ${S.skipped})</span>`;
     reportEl.appendChild(t);
     wrongList.forEach(({q,i:idx})=>{
       const item=document.createElement('div');item.className='wrong-item';
-      let myAns=answered[idx]==null?'미응답':(userAnswers[idx]||'미입력');
+      const isRetry=answered[idx]==='r';
+      let myAns=answered[idx]==null?'미응답':isRetry?(firstAns[idx]||'미입력'):(userAnswers[idx]||'미입력');
       if(typeof myAns==='object')myAns=`${myAns.step1||'?'} → ${myAns.step2||'?'}`;
       let correctAns='';
       if(currentStage===0)correctAns=q.type==='B'?q.blank:q.answer;
       else if(currentStage===1)correctAns=`${q.step1} → ${q.step2}`;
       else correctAns=q.answer;
-      item.innerHTML=`<div class="wrong-item-num">${typeKey(q)}${answered[idx]==null?' · 미응답':''}</div>
+      item.innerHTML=`<div class="wrong-item-num">${typeKey(q)} · ${noteStatus(idx)}</div>
         <div class="wrong-item-text">${currentStage===0?q.sent1+' + '+q.sent2+' ('+q.emi+')':currentStage===1?q.sentence:q.sent1+' + '+q.sent2+' ['+q.reqType+']'}</div>
-        <div class="wrong-item-answer"><span class="wa-wrong">내 답: ${myAns}</span> → <span class="wa-correct">정답: ${correctAns}</span></div><div class="wrong-item-detail">${q.detail}</div>`;
+        <div class="wrong-item-answer"><span class="wa-wrong">${isRetry?'처음 쓴 답':'내 답'}: ${myAns}</span> → <span class="wa-correct">정답: ${correctAns}</span></div><div class="wrong-item-detail">${q.detail}</div>`;
       reportEl.appendChild(item);
     });
   }
@@ -1117,16 +1125,17 @@ function ansText(q){return currentStage===0?(q.type==='B'?`${q.emi} → ${q.disp
 function myText(i){let a=userAnswers[i];if(a&&typeof a==='object')a=`${a.step1||'?'} → ${a.step2||'(고르지 않음)'}`;return a||'미입력'}
 function downloadWrongNote(){
   const nm=document.getElementById('inp-name').value.trim();if(!nm){document.getElementById('inp-name').focus();return}
-  const S=calcStats(),d=endAt||new Date(),wl=questions.map((q,i)=>({q,i})).filter(x=>answered[x.i]!==true&&answered[x.i]!=='r');
+  const S=calcStats(),d=endAt||new Date(),wl=wrongNoteList();
   const B=[{t:`📝 오답노트 — ${GAME_CONFIG.gameName} · ${STAGE_NAMES[currentStage]}`,f:`bold 20px ${FF}`,lh:28,c:'#5a3d9e',gap:4},
     {t:`이름 ${nm} · 완료 ${fmtDT(d)} · 점수 ${score}점 / 만점 ${S.max}점`,f:`14px ${FF}`,lh:20},
     {t:`첫 시도 정답 ${S.first} · 다시 풀어 맞힘 ${S.retryOk} · 못 맞힘 ${S.miss} · 미응답 ${S.skipped}`,f:`14px ${FF}`,lh:20,gap:10}];
   if(!S.graded)B.push({t:'풀어 본 문제가 없어요.',f:`bold 16px ${FF}`,lh:24,c:'#c06020',rule:1});
-  else if(!wl.length)B.push({t:'🎊 틀리거나 남긴 문제가 없어요! 다음 단계에 도전해 보세요.',f:`bold 16px ${FF}`,lh:24,c:'#3a8f60',rule:1});
+  else if(!wl.length)B.push({t:ALL_OK_MSG(),f:`bold 16px ${FF}`,lh:24,c:'#3a8f60',rule:1});
   else wl.forEach(({q,i})=>{
-    B.push({t:`[${typeKey(q)}]${answered[i]==null?' · 미응답':''}`,f:`bold 14px ${FF}`,lh:20,c:'#c05050',rule:1});
+    B.push({t:`[${typeKey(q)}] · ${noteStatus(i)}`,f:`bold 14px ${FF}`,lh:20,c:answered[i]==='r'?'#2f6fb0':'#c05050',rule:1});
     B.push({t:qText(q),f:`15px ${FF}`,lh:22,gap:2});
-    if(answered[i]!=null)B.push({t:`내 답: ${myText(i)}`,f:`13px ${FF}`,lh:19,c:'#c05050'});
+    if(answered[i]==='r')B.push({t:`처음 쓴 답: ${firstAns[i]||'미입력'}`,f:`13px ${FF}`,lh:19,c:'#c05050'});
+    else if(answered[i]!=null)B.push({t:`내 답: ${myText(i)}`,f:`13px ${FF}`,lh:19,c:'#c05050'});
     B.push({t:`✅ 정답: ${ansText(q)}`,f:`bold 15px ${FF}`,lh:22,c:'#3a8f60'});
     B.push({t:`해설: ${q.detail}`,f:`13px ${FF}`,lh:19,c:'#64748b',gap:8});
   });

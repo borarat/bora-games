@@ -1422,7 +1422,7 @@ function finish(){
     const wrongItems=S.qs.filter(q=>q.done&&!q.firstTry).map(q=>q.oid).join(',');
     submitResult({
       studentId:STUDENT.id,studentName:STUDENT.name,className:STUDENT.className,
-      stage:stageTag().full,
+      stage:S.mode,   /* 단계 번호 숫자(1~4), 전체 도전은 0 (2026.10.09 전송 stage 숫자 통일) */
       totalQuestions:S.qs.length,
       answeredCount:a,
       skippedCount:sk,

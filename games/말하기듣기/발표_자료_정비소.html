@@ -839,6 +839,7 @@ const STAGES = {
     ]
   }
 };
+const STAGE_NUM = {plant:1, dust:2};   // 온라인 전송 stage(사례 번호)
 const KIND_LABEL = {intro:"준비", diagnose:"살펴보기", prescribe:"재구성", term:"용어", fill:"정리"};
 const KIND_CLASS = {intro:"k-intro", diagnose:"k-look", prescribe:"k-build", term:"k-term", fill:"k-fill"};
 
@@ -1243,7 +1244,7 @@ function finishStage(){
   const accStr = answered ? acc + "%" : "–";
   const mins = Math.floor(state.elapsed/60000), secs = Math.round(state.elapsed/1000)%60;
   const status = !answered ? "none" : (skipped ? "mid" : "full");
-  const titleTail = status === "none" ? "풀어 본 문제가 없어요" : (status === "mid" ? "여기까지 풀었어요" : "정비 완료!");
+  const titleTail = status === "none" ? "풀어 본 문제가 없어요" : (status === "mid" ? "정비 중단 · 다음에 이어서 정비해요" : "정비 완료!");   // 중간 종료 제목은 복합양식 정비소와 같게(교사 결정)
   const verdict = status === "none" ? "풀어 본 문제가 없어요" : (status === "mid" ? midVerdictOf(acc) : verdictOf(acc));
   const skipNote = (answered && skipped) ? "끝까지 풀지 않았어요 (" + skipped + "문항 남음)" : "";
 
@@ -1294,7 +1295,7 @@ function finishStage(){
   if(IS_ONLINE && STUDENT.verified){
     R.payload = {
       studentId:STUDENT.id, studentName:STUDENT.name, className:STUDENT.className,
-      stage:stage.short + " / " + (state.level === "easy" ? "쉬움" : "어려움"),
+      stage:STAGE_NUM[state.stageKey],   // 사례 번호(반려 식물 1 · 미세 먼지 2). 난이도는 보내지 않는다
       totalQuestions:total, answeredCount:answered, skippedCount:skipped,
       correctCount:firstOk, retryCorrectCount:retryOk, score:state.score, maxScore:state.max,
       accuracy:acc, bestCombo:state.best, elapsedSeconds:Math.round(state.elapsed/1000),
@@ -1437,9 +1438,11 @@ function downloadReport(){
   const inner = W - 2*pad - 32;
   const refL = ref ? wrap(ctx, ref, inner, "14px "+SF) : [];
   const achL = wrap(ctx, ACH_CODE + " " + ACH_TEXT, W-2*pad, "12px "+SF);
-  const vLine = (R.skipNote ? R.skipNote + " · " : "") + R.verdict;
-  const vL = wrap(ctx, vLine, W-2*pad-32, "bold 17px "+SF);
-  const vh = 20 + vL.length*24 + 24;
+  /* 총평 칸: 첫 줄은 화면의 종료 제목과 같게(정비 완료! / 정비 중단 · 다음에 이어서 정비해요 / 풀어 본 문제가 없어요) */
+  const tL = wrap(ctx, stage.ico + " " + stage.short + " — " + R.titleTail, W-2*pad-32, "bold 17px "+SF);
+  const vLine = R.status === "none" ? "" : (R.skipNote ? R.skipNote + " · " : "") + R.verdict;
+  const vL = vLine ? wrap(ctx, vLine, W-2*pad-32, "15px "+SF) : [];
+  const vh = 20 + tL.length*24 + vL.length*22 + 24;
   /* 유형 분석: '잘하는 유형' + '보완이 필요한 유형'(가장 먼저 공부할 유형 하나 + tip) 두 칸 */
   const bw = (W - 2*pad - 12)/2;
   const wk = weakInfo();
@@ -1473,10 +1476,12 @@ function downloadReport(){
   /* 총평 */
   ctx.fillStyle = "#FFF3E2"; ctx.strokeStyle = "#FBE9B8"; roundBox(ctx,pad,y,W-2*pad,vh,12); ctx.fill(); ctx.stroke();
   ctx.fillStyle = "#1B3A5C"; ctx.font = "bold 17px "+SF;
-  vL.forEach((l,k) => ctx.fillText(l, pad+16, y+26+k*24));
+  tL.forEach((l,k) => ctx.fillText(l, pad+16, y+26+k*24));
+  ctx.fillStyle = "#333A45"; ctx.font = "15px "+SF;
+  vL.forEach((l,k) => ctx.fillText(l, pad+16, y+26+tL.length*24+k*22));
   ctx.fillStyle = "#6E7B8A"; ctx.font = "13px "+SF;
   ctx.fillText("첫 시도 정답 " + R.firstOk + " · 다시 풀어 맞힘 " + R.retryOk + " · 못 맞힘 " + R.miss +
-               (R.skipped ? " · 미응답 " + R.skipped : ""), pad+16, y+26+vL.length*24+4);
+               (R.skipped ? " · 미응답 " + R.skipped : ""), pad+16, y+26+tL.length*24+vL.length*22+4);
   y += vh + 10;
   /* 유형 분석 */
   [0,1].forEach(i => {

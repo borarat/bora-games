@@ -245,7 +245,7 @@
        <path d="M257 70 c-14 -10 -16 -16 -12 -21 c4 -5 10 -3 12 2 c2 -5 8 -7 12 -2 c4 5 2 11 -12 21z" fill="#d4718f"/>
       </svg>
     </div>
-    <div class="std-box">[9국05-08] 근거를 바탕으로 작품을 해석하고, 다른 해석들과 비교하여 자신의 해석을 평가한다.</div>
+    <div class="std-box">[9국05-08](2015) 근거를 바탕으로 작품을 해석하고, 다른 해석들과 비교하여 자신의 해석을 평가한다.</div>
     <div class="legend">
       <span class="chip"><span class="dot" style="background:var(--in)"></span>🔍 내재적 · 작품 자체</span>
       <span class="chip"><span class="dot" style="background:var(--ex_a)"></span>✍️ 표현론 · 작가</span>
@@ -520,7 +520,7 @@ const STAGES = [
   { n:2, key:'basic',     label:'기본', short:'2단계기본', desc:'비평 예문 읽고 관점 고르기' },
   { n:3, key:'challenge', label:'도전', short:'3단계도전', desc:'객관식 + 서답형' }
 ];
-const STD_CODE = '[9국05-08]';
+const STD_CODE = '[9국05-08](2015)';
 const STD_TEXT = '근거를 바탕으로 작품을 해석하고, 다른 해석들과 비교하여 자신의 해석을 평가한다.';
 const GAME_TITLE = '문학 비평, 네 개의 눈';
 
@@ -1072,6 +1072,7 @@ $('saveReport').onclick=()=>{
   let H=pad+90+110+40+(R.skipped.length?26:0)+(verdictLines.length-1)*26+(barRows.length?36+barRows.length*30:0)+70+30+focusLines.length*22+30;
   if(feeling) H+=36+feelLines.length*22;
   H+=36+stdLines.length*18+60;
+  if(!R.answered.length) H-=58;   // 채점 0개면 보완 칸을 그리지 않는다 (빈 상자 방지)
   cv.width=W; cv.height=H;
   ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,W,H);
   let y=header(ctx,W,pad,'📊 학습 리포트 · '+GAME_TITLE,nm);
@@ -1110,13 +1111,15 @@ $('saveReport').onclick=()=>{
     ctx.fillStyle='#0F6E56'; ctx.font="bold 14px "+FF;
     ctx.fillText('✅ 잘하는 유형: '+(R.strong.length?R.strong.map(c=>CATEGORIES[c.key].label+' '+c.first+'/'+c.total).join(', '):'아직 없어요'),pad,y); y+=4;
   }
-  /* 가장 먼저 공부할 것 */
-  y+=20;
-  const fh=30+focusLines.length*22+8;
-  ctx.fillStyle='#F2FBF7'; roundBox(ctx,pad,y,W-2*pad,fh,10); ctx.fill(); ctx.fillStyle='#2E9B79'; ctx.fillRect(pad,y+6,4,fh-12);
-  ctx.fillStyle='#0F6E56'; ctx.font="bold 14px "+FF; ctx.fillText(focusTitle,pad+16,y+22);
-  ctx.fillStyle='#333'; ctx.font="14px "+FF; let fy=y+46; focusLines.forEach(l=>{ctx.fillText(l,pad+16,fy);fy+=22;});
-  y+=fh;
+  /* 가장 먼저 공부할 것 — 채점된 문항이 있을 때만 */
+  if(R.answered.length){
+    y+=20;
+    const fh=30+focusLines.length*22+8;
+    ctx.fillStyle='#F2FBF7'; roundBox(ctx,pad,y,W-2*pad,fh,10); ctx.fill(); ctx.fillStyle='#2E9B79'; ctx.fillRect(pad,y+6,4,fh-12);
+    ctx.fillStyle='#0F6E56'; ctx.font="bold 14px "+FF; ctx.fillText(focusTitle,pad+16,y+22);
+    ctx.fillStyle='#333'; ctx.font="14px "+FF; let fy=y+46; focusLines.forEach(l=>{ctx.fillText(l,pad+16,fy);fy+=22;});
+    y+=fh;
+  }
   /* 소감 */
   if(feeling){ y+=28; ctx.fillStyle='#0F6E56'; ctx.font="bold 14px "+FF; ctx.fillText('💬 학습 소감',pad,y); y+=22;
     ctx.fillStyle='#444'; ctx.font="14px "+FF; feelLines.forEach(l=>{ctx.fillText(l,pad+10,y);y+=22;}); }

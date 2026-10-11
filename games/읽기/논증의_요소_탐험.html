@@ -820,9 +820,10 @@ const Game = {
   },
   penalize(){ Game.combo=0; Game.score=Math.max(0,Game.score-3); Game.updateHud(); SFX.no(); },
   markAnsweredWrong(cat){ Game.answered++; Game.bumpCat(cat,false); },
-  addWrong(id,cat,q,ans,exp){
-    if(Game.wrongIds.has(id)) return; Game.wrongIds.add(id);
-    Game.wrong.push({id,cat,q,ans,exp});
+  addWrong(id,cat,q,ans,exp,retry){   // retry=true: 틀렸다가 다시 풀어 맞힌 단위 (오답노트에 '다시 풀어 맞힘' 표시, 표준 8-2)
+    if(Game.wrongIds.has(id)){ if(retry){ const w=Game.wrong.find(w=>w.id===id); if(w) w.retry=true; } return; }
+    Game.wrongIds.add(id);
+    Game.wrong.push({id,cat,q,ans,exp,retry:!!retry});
   },
 
   render(){
@@ -869,7 +870,7 @@ const Game = {
       it.done=true; it.ok=true; it.picked=i;
       Game.$('op'+i).classList.add('correct','pop');
       Game.award(it.tries===1, d.cat, true, 's1:'+d.id);
-      if(it.tries>1) Game.addWrong(d.id,d.cat,stripTags(d.q),ansTextMC(d),d.exp);
+      if(it.tries>1) Game.addWrong(d.id,d.cat,stripTags(d.q),ansTextMC(d),d.exp,true);
       Game.lockQ();
       const hb=Game.$('hb'); hb.className='hintbox done show'; hb.innerHTML=`✅ <b>정답!</b> ${d.exp}`; Game.checkAllDone();
     } else {
@@ -892,7 +893,7 @@ const Game = {
       it.done=true; it.ok=true; it.picked=inp.value;
       inp.classList.add('ok'); inp.disabled=true;
       Game.award(it.tries===1, d.cat, true, 's1:'+d.id);
-      if(it.tries>1) Game.addWrong(d.id,d.cat,stripTags(d.q),ansTextSH(d),d.exp);
+      if(it.tries>1) Game.addWrong(d.id,d.cat,stripTags(d.q),ansTextSH(d),d.exp,true);
       const hb=Game.$('hb'); hb.className='hintbox done show'; hb.innerHTML=`✅ <b>정답!</b> ${d.exp}`; Game.checkAllDone();
     } else {
       inp.classList.add('no','shake'); setTimeout(()=>inp.classList.remove('shake','no'),450);
@@ -959,7 +960,7 @@ const Game = {
       st.done=true; it.selSeg=null;
       const allDone=it.segState.every(x=>x.done);
       Game.award(st.tries===1, s.e, allDone, 's2:'+d.ttl+':'+i);
-      if(st.tries>1) Game.addWrong(s.id, s.e, `[${d.ttl}] ${s.t}`, `${EL[s.e].lab}`, `${EL[s.e].lab} — ${EL[s.e].def}`);
+      if(st.tries>1) Game.addWrong(s.id, s.e, `[${d.ttl}] ${s.t}`, `${EL[s.e].lab}`, `${EL[s.e].lab} — ${EL[s.e].def}`, true);
       if(allDone) SFX.done();
       Game.renderText(); Game.checkAllDone();
     } else {
@@ -1027,6 +1028,7 @@ const Game = {
       it.placed[key]=ci; it.selCard=null;
       const allDone = Object.keys(it.placed).length===d.cards.length;
       Game.award(!it.everWrong.has(ci), card.tier, allDone, 's3:'+d.ttl+':'+ci);
+      if(it.everWrong.has(ci)){ const w=Game.wrong.find(w=>w.id===card.id); if(w) w.retry=true; }   // 틀렸던 카드를 제자리에 → 다시 풀어 맞힘
       if(allDone){ it.done=true; it._fb=null; SFX.done(); } else it._fb='ok';
       Game.renderTower(); Game.checkAllDone();
     } else {
@@ -1125,7 +1127,7 @@ function mmss(sec){ return `${Math.floor(sec/60)}분 ${pad2(sec%60)}초`; }
 document.addEventListener('keydown',e=>{
   const tag=(e.target.tagName||'').toUpperCase();
   const typing = tag==='INPUT'||tag==='TEXTAREA';
-  if(cbShown() && (e.key==='Enter'||e.key===' '||e.key==='ArrowRight')){ e.preventDefault(); hideBanner(); return; }
+  if(cbShown() && (e.key==='Enter'||e.key===' '||e.key==='ArrowRight')) hideBanner();   // 정답 카드를 닫고 그대로 아래로 이어 간다(기준 구현 G304와 같게 — 카드가 떠 있는 동안 Enter가 먹히지 않던 것 고침)
   if(!document.getElementById('game').classList.contains('on')) return;
   if(typing) return;
   if(tag==='BUTTON' && (e.key==='Enter'||e.key===' ')) return;   // Tab으로 고른 버튼은 그 버튼이 눌린다 (마우스로 누른 버튼은 아래에서 포커스를 놓는다)
@@ -1368,6 +1370,7 @@ Game.saveNote=function(){
       const lab=CATEGORIES[b.w.cat].label, lw=x.measureText(lab).width+18;
       x.fillStyle=c; roundBox(x,pad+18,y+12,lw,20,7);
       x.fillStyle='#FFFFFF'; x.fillText(lab,pad+27,y+26);
+      if(b.w.retry){ x.fillStyle='#185FA5'; x.font=`600 12px ${SF}`; x.fillText('↺ 다시 풀어 맞힘', pad+18+lw+10, y+26); }
       let yy=y+30+18;
       x.fillStyle='#46505F'; x.font=`600 ${FS}px ${SF}`;
       b.qL.forEach(l=>{x.fillText(l,pad+18,yy); yy+=LH;});

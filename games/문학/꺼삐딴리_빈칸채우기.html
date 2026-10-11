@@ -911,7 +911,9 @@ function finish(){
       className:STUDENT.className,
       totalQuestions:total,
       correctCount:right,
+      retryCorrectCount:st.retry,
       score:S.score,
+      maxScore:stage.max,
       elapsedSeconds:Math.round(S.elapsed/1000),
       wrongItems:wrongItems,
       answeredCount:st.answered,
@@ -1044,9 +1046,10 @@ function makeWrongNote(){
     let y = capHeader(p, W, `꺼삐딴 리 빈칸 채우기 · 오답노트`, `${S.stage}단계 ${stage.name} · ${u.name} · ${when}`);
     if(!items.length){
       const h=110; p.round(X,y,MW,h,16,'#ffffff','#DDF2E9');
-      const none = stats().answered===0;
-      p.text(none ? '풀어 본 문제가 없어요' : '다시 볼 문항이 없어요', W/2, y+28, F(26,'bold'), '#0F6E56','center');
-      p.text(none ? '빈칸을 채우면 틀린 문항이 여기에 모여요.' : '채운 빈칸을 모두 힌트 없이 한 번에 맞혔어요.', W/2, y+68, F(17), '#475569','center');
+      const st0 = stats(), none = st0.answered===0;   // 빈 문구는 G304 꼴 (2026.10.09): 끝까지 하면 '🎊 첫 시도에 모두 맞혔어요! 다음/다른 단계…', 중간 종료면 '남은 문제를 마저 풀어 보세요.'
+      const nextTxt = S.stage < STAGES.length ? '다음 단계에 도전해 보세요.' : '다른 단계에도 도전해 보세요.';
+      p.text(none ? '풀어 본 문제가 없어요.' : st0.skipped ? '푼 문제는 모두 첫 시도에 맞혔어요.' : '🎊 첫 시도에 모두 맞혔어요! ' + nextTxt, W/2, y+28, F(26,'bold'), '#0F6E56','center');
+      p.text(none ? '빈칸을 채우면 틀린 문항이 여기에 모여요.' : st0.skipped ? `남은 빈칸 ${st0.skipped}개는 미응답이에요. 남은 문제를 마저 풀어 보세요.` : '채운 빈칸을 모두 힌트 없이 한 번에 맞혔어요.', W/2, y+68, F(17), '#475569','center');
       y+=h+24;
     } else {
       p.text(`다시 볼 문항 ${items.length}개 — 유형 · 문제 · 정답 · 해설`, X, y, F(18,'bold'), '#0F6E56'); y+=38;

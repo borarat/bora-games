@@ -1622,9 +1622,10 @@ function finish(){
   if(IS_ONLINE&&STUDENT.verified){
     const ni=$('inName'); ni.value=STUDENT.name; ni.readOnly=true; ni.style.background='#FDF5F8';
     const wrongItems=st.graded.filter(q=>R[q.id].dFirst<DIAG_PT||(R[q.id].firstHits&&!R[q.id].firstHits.every(Boolean))).map(q=>q.id).join(',');
-    submitResult({studentId:STUDENT.id, studentName:STUDENT.name, className:STUDENT.className, stage:stageLabel(),
+    submitResult({studentId:STUDENT.id, studentName:STUDENT.name, className:STUDENT.className, stage:S.stage, /* 단계 번호 숫자 — 끝낸 단계(2026.10.09 전송 stage 숫자 통일) */
       totalQuestions:ITEMS.length, answeredCount:st.graded.length, skippedCount:st.skipped.length,
-      correctCount:st.d.exact, accuracy:st.rate, score:S.score, maxScore:MAXP, bestCombo:S.best,
+      correctCount:st.d.exact, retryCorrectCount:st.d.retry, /* 진단 다시 풀어 맞힌 수 — 지침 7-2 공통 필드 (2026.10.09) */
+      accuracy:st.rate, score:S.score, maxScore:MAXP, bestCombo:S.best,
       elapsedSeconds:Math.round(S.elapsed/1000), wrongItems:wrongItems, reflection:''
     }).then(res=>{
       const el=document.createElement('div');

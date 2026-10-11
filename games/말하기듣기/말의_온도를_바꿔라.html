@@ -1204,7 +1204,7 @@ function areaStats(){
 const MARK={good:'○',mid:'＝',weak:'▲',hold:'·',none:'–'};
 function areaLabel(a){
   if(a.total===0) return '미응답';
-  return a.first+'/'+a.total+(a.retry?' (재도전 성공 '+a.retry+')':'')+(a.cls==='hold'?' · 판단 보류':'');
+  return a.first+'/'+a.total+(a.retry?' (다시 풀어 맞힘 '+a.retry+')':'')+(a.cls==='hold'?' · 판단 보류':'');
 }
 function diagnose(A){
   const judged=A.filter(a=>a.total>=2);
@@ -1276,8 +1276,8 @@ function sendResult(o){
     const wrongItems=ITEMS.map((it,idx)=>{const r=S.res[idx];return r.done&&r.status!=='first'?it.d.id:null;}).filter(x=>x!==null).join(',');
     submitResult({
       studentId:STUDENT.id, studentName:STUDENT.name, className:STUDENT.className,
-      totalQuestions:N_ITEMS, correctCount:o.first, score:S.score,
-      answeredCount:o.answered, skippedCount:o.skipped,
+      totalQuestions:N_ITEMS, correctCount:o.first, retryCorrectCount:o.retry, score:S.score, maxScore:MAX_SCORE,
+      answeredCount:o.answered, skippedCount:o.skipped, stage:1,
       elapsedSeconds:Math.round(S.elapsed/1000), wrongItems:wrongItems, reflection:''
     }).then(res=>{
       const el=document.createElement('div');
@@ -1413,7 +1413,7 @@ function dlWrong(){
         const lost=(b.r.detail||[]).map((x,k)=>x.score<b.d.blanks[k].score?AREAS[SLOT_AREA[b.d.blanks[k].slot]].n:null).filter(Boolean);
         label=stageOf('wr')+' · 놓친 칸: '+(lost.length===5?'다섯 칸 모두':lost.join(' · '));
       } else label=AREAS[areaOfItem(ITEMS[b.no-1])].n+' · '+stageOf(b.kind);
-      const st=b.r.status==='retry'?'재도전 성공':b.r.status==='first'?'부분 감점':'못 맞힘';
+      const st=b.r.status==='retry'?'다시 풀어 맞힘':b.r.status==='first'?'부분 감점':'못 맞힘';
       c.fillStyle='#1B3A5C';c.font='700 14px '+CF;
       y=wrap2(c,label+'  ('+st+' · '+b.r.got+' / '+b.r.max+'점)',48,y+14,W-110,20,paint);
       c.font='400 13px '+CF;

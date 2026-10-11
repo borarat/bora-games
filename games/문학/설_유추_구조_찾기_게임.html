@@ -1068,8 +1068,10 @@ function finish(){
    studentId:STUDENT.id,
    studentName:STUDENT.name,
    className:STUDENT.className,
+   stage:1,                              // 단계가 없는 게임 — 단계 번호 숫자 1 (지침 7-2)
    totalQuestions:TOTAL_Q,
    correctCount:st.first.length,
+   retryCorrectCount:st.retryOk.length,  // 다시 풀어 맞힘 — stats()의 값 (지침 7-2)
    answeredCount:st.answered.length,
    skippedCount:st.skipped.length,
    score:score,

@@ -434,7 +434,7 @@
         <div class="game-side">
           <button class="btn ghost" onclick="restart()">처음부터<br>다시하기</button>
           <button class="btn ghost" onclick="backToStage()">단계 선택</button>
-          <button class="btn ghost" onclick="show('intro')">시작화면으로</button>
+          <button class="btn ghost" onclick="goIntro()">시작화면으로</button>
           <button class="btn ghost" id="endBtn" onclick="endGame()">게임 끝내기</button>
           <div class="pick-side">
             <div class="pick-side-label">선택한 카드</div>
@@ -586,7 +586,7 @@ function generatePuzzle(part,stage){const n=part.size;const cfg=part.stages[stag
 // 상태
 // ═══════════════════════════════════════════
 let DATA=PART1,currentPart=1,currentStage=1,state={};
-function freshState(){const n=DATA.size;const sol=makeSolution(n);const cfg=DATA.stages[currentStage];const fixed=makeFixed(sol,n,cfg.blanks,cfg.maxLine);state={grid:[],fixed,solution:sol,selChip:null,score:0,ok:0,no:0,combo:0,maxCombo:0,totalBlanks:0,startTime:0,elapsed:0,finished:false};for(let r=0;r<n;r++){state.grid[r]=[];for(let c=0;c<n;c++){if(fixed[r][c])state.grid[r][c]=sol[r][c];else{state.grid[r][c]=-1;state.totalBlanks++;}}};}
+function freshState(){const n=DATA.size;const sol=makeSolution(n);const cfg=DATA.stages[currentStage];const fixed=makeFixed(sol,n,cfg.blanks,cfg.maxLine);state={grid:[],fixed,solution:sol,selChip:null,score:0,ok:0,no:0,combo:0,maxCombo:0,totalBlanks:0,startTime:0,elapsed:0,finished:false,wrongSeen:{}};  /* wrongSeen: 칸별로 이미 틀린 카드 (같은 오답 재감점 금지) */for(let r=0;r<n;r++){state.grid[r]=[];for(let c=0;c<n;c++){if(fixed[r][c])state.grid[r][c]=sol[r][c];else{state.grid[r][c]=-1;state.totalBlanks++;}}};}
 
 // ═══════════════════════════════════════════
 // 타이머
@@ -693,7 +693,14 @@ function doStartGame(stage){
   show('game');startTimer();
 }
 function restart(){stopTimer();startGame(currentStage);}
-function backToStage(){stopTimer();choosePart(currentPart);}
+// 단계 이동(단계 선택·시작화면으로): 채우거나 틀린 칸이 있는 판을 떠날 때 한 번 묻는다 — 기록이 없으면 묻지 않는다 (2026.10.09, '게임 끝내기'와 같은 방식)
+function leaveOk(){
+  if(!$('game').classList.contains('active')||state.finished)return true;
+  if(!(state.ok+state.no))return true;
+  return confirm('이 판을 나갈까요? 지금까지 채운 칸 '+state.ok+'개, 오답 '+state.no+'번, 점수 '+state.score+'점이 사라져요.');
+}
+function backToStage(){if(!leaveOk())return;stopTimer();choosePart(currentPart);}
+function goIntro(){if(!leaveOk())return;show('intro');}
 
 // ═══════════════════════════════════════════
 // 셀 표시 이름
@@ -758,8 +765,11 @@ function onCellClick(r,c){
     if(bonus>0)sndCombo();else sndOk();correctBanner(state.combo,10+bonus);
     state.grid[r][c]=guess;el.classList.add('locked');el.onclick=null;checkLineBonus(r,c);
   }else{
-    state.score-=5;if(state.score<0)state.score=0;state.no++;state.combo=0;sndNo();
-    el.classList.add('flash-no');banner('오답…  −5','no');el.dataset.pending='1';
+    // 같은 칸에 같은 오답 카드를 다시 놓으면 감점·오답 수 없이 표시만 (2026.10.09 — 0.65초 잠금과 함께 재감점 금지)
+    const wk=r+','+c,seen=state.wrongSeen[wk]||(state.wrongSeen[wk]=[]),repeat=seen.indexOf(guess)!==-1;
+    if(!repeat){seen.push(guess);state.score-=5;if(state.score<0)state.score=0;state.no++;state.combo=0;}
+    sndNo();
+    el.classList.add('flash-no');banner(repeat?'이미 틀렸던 카드예요':'오답…  −5','no');el.dataset.pending='1';
     const st=state;  // 0.65초 안에 새 판을 시작하면 새 판을 건드리지 않는다 (2026.10.06)
     setTimeout(()=>{delete el.dataset.pending;if(state!==st||!el.isConnected||state.grid[r][c]!==-1)return;el.textContent='';el.className='cell empty';el.style.color='';el.onclick=()=>onCellClick(r,c);},650);
   }
@@ -845,6 +855,7 @@ function showResult(){
     $('onlineResultMsg').innerHTML='';   // 지난 판의 전송 안내가 쌓이지 않게
     submitResult({
       studentId:STUDENT.id,studentName:STUDENT.name,className:STUDENT.className,
+      stage:currentStage,   // 단계 번호 숫자 (2026.10.09 교사 결정 — PART 구분은 보내지 않음)
       totalQuestions:state.totalBlanks,correctCount:state.ok,answeredCount:state.ok,skippedCount:left,score:state.score,
       elapsedSeconds:state.elapsed,wrongItems:'',reflection:''
     }).then(res=>{

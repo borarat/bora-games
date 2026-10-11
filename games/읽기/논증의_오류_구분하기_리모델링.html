@@ -227,7 +227,7 @@ main{position:relative;z-index:10;width:100%;max-width:900px;padding:12px 8px 10
 .focus-box{background:#fff8e8;border:1.5px solid #f0d8a0;border-radius:10px;padding:11px 14px;margin-top:10px;font-size:.88rem;line-height:1.7;color:#7a5a20;word-break:keep-all}
 #toast{position:fixed;top:28px;right:24px;left:auto;transform:none;background:var(--yellow);color:#3a3a00;font-weight:800;font-size:.92rem;padding:9px 20px;border-radius:30px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;box-shadow:0 4px 16px rgba(240,200,50,.4)}
 #toast.show{opacity:1}
-@media(max-width:600px){body{zoom:1}.cups-area{grid-template-columns:1fr 1fr;gap:6px}.cup-desc{line-height:1.25}.concept-box,.stage-btns{grid-template-columns:1fr 1fr}.game-title{font-size:1.5rem}.game-subtitle{font-size:.78rem}.header-row{gap:10px}.mascot-img{height:54px}.dl-btns{grid-template-columns:1fr}.area-band .ab-goal{display:none}.area-band{font-size:.8rem;padding:7px 12px}.stats-grid{grid-template-columns:1fr 1fr}header{padding:14px 8px 0}main{padding:8px 8px 10px;gap:6px}#game-area.show{grid-template-columns:1fr;grid-template-areas:"band""progress""sentence""cups""feedback""detail""retry""sidebar"}.nav-sidebar{flex-direction:row;flex-wrap:wrap;position:static;gap:6px}.nav-sidebar button{flex:1 1 28%;min-height:46px;padding:10px 4px;font-size:.76rem!important;line-height:1.3}.nav-sidebar br{display:none}.sentence-card{padding:16px 14px 14px;min-height:0}.sentence-text{line-height:1.8;padding-top:4px}.progress-wrap{padding:8px 12px}.progress-label{font-size:.92rem}.cup-btn{padding:9px 8px;gap:7px}.cup-icon{font-size:1.4rem}.cup-label{font-size:.84rem}.cup-desc{font-size:.62rem}.complete-layout{grid-template-columns:1fr}.complete-btns{flex-direction:column}}
+@media(max-width:600px){body{zoom:1}.cups-area{grid-template-columns:1fr 1fr;gap:6px}.cup-desc{line-height:1.25}.stage-btns{grid-template-columns:1fr 1fr}.concept-box{grid-template-columns:1fr}.concept{min-width:0}.concept:nth-child(odd){border-right:none}.game-title{font-size:1.5rem}.game-subtitle{font-size:.78rem}.header-row{gap:10px}.mascot-img{height:54px}.dl-btns{grid-template-columns:1fr}.area-band .ab-goal{display:none}.area-band{font-size:.8rem;padding:7px 12px}.stats-grid{grid-template-columns:1fr 1fr}header{padding:14px 8px 0}main{padding:8px 8px 10px;gap:6px}#game-area.show{grid-template-columns:1fr;grid-template-areas:"band""progress""sentence""cups""feedback""detail""retry""sidebar"}.nav-sidebar{flex-direction:row;flex-wrap:wrap;position:static;gap:6px}.nav-sidebar button{flex:1 1 28%;min-height:46px;padding:10px 4px;font-size:.76rem!important;line-height:1.3}.nav-sidebar br{display:none}.sentence-card{padding:16px 14px 14px;min-height:0}.sentence-text{line-height:1.8;padding-top:4px}.progress-wrap{padding:8px 12px}.progress-label{font-size:.92rem}.cup-btn{padding:9px 8px;gap:7px}.cup-icon{font-size:1.4rem}.cup-label{font-size:.84rem}.cup-desc{font-size:.62rem}.complete-layout{grid-template-columns:1fr}.complete-btns{flex-direction:column}}
 @media(max-width:340px){.cups-area{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
 
@@ -488,7 +488,8 @@ function submitOnlineResult(){
   const t=tally();
   const wrongItems=questions.map((q,i)=>answered[i]==='wrong-final'?q.id:null).filter(x=>x!==null).join(',');
   submitResult({studentId:STUDENT.id,studentName:STUDENT.name,className:STUDENT.className,
-    totalQuestions:questions.length,answeredCount:t.answeredCount,skippedCount:t.skipped,
+    stage:currentStage+1,   // 단계 번호 숫자(1·2·3) — 2026.10.09 교사 결정
+    totalQuestions:questions.length,answeredCount:t.answeredCount,skippedCount:t.skipped,maxScore:MAX_SCORE,
     correctCount:t.first,retryCorrectCount:t.retry,wrongCount:t.miss,accuracy:t.acc,
     score:score,elapsedSeconds:Math.round((Date.now()-gameStartTime)/1000),wrongItems:wrongItems,reflection:''}).then(res=>{
     const el=document.createElement('div');el.className='send-msg';el.style.cssText='margin:8px 0;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:600;text-align:center;';
@@ -691,9 +692,15 @@ function doStartGame(si){
 function renderStageJumps(){
   let h='';
   for(let i=currentStage+1;i<STAGES.length;i++){
-    h+='<button class="stage-jump-btn" onclick="startGame('+i+')">'+(i+1)+'단계로<br>이동</button>';
+    h+='<button class="stage-jump-btn" onclick="jumpStage('+i+')">'+(i+1)+'단계로<br>이동</button>';
   }
   $('stage-jumps').innerHTML=h;
+}
+// 채점한 기록이 있는 판을 떠나 다른 단계로 갈 때는 '게임 끝내기'처럼 한 번 묻는다(기록이 없으면 묻지 않음)
+function hasRecord(){return answered.some(a=>a!==null);}
+function jumpStage(i){
+  if(hasRecord()&&!confirm('지금까지 푼 기록이 있어요. '+(i+1)+'단계로 가면 이 판의 기록은 지워져요.\n이동할까요?'))return;
+  startGame(i);
 }
 function renderSentences(text,elId){
   const el=$(elId);
@@ -803,11 +810,14 @@ function endSummary(){
   if(zero){emoji='📭';title='풀어 본 문제가 없어요';verdict='풀어 본 문제가 없어요';}
   else if(mid){emoji='✏️';title='여기까지 풀었어요';
     verdict=acc>=70?'잘하고 있어요! 남은 문제까지 풀며 좀 더 연습해 보면 어떨까요?':'좀 더 연습해 보면 어떨까요? 남은 문제까지 풀어 보면 감이 잡혀요.';}
-  else{emoji=acc>=90?'🏆':acc>=70?'🎉':acc>=50?'😊':'💪';title=acc>=90?'완벽해요!':acc>=70?'잘했어요!':acc>=50?'절반 이상!':'다시 도전!';
-    verdict=acc>=90?'✅ 논증의 오류를 정확하게 구분하고 있어요! 훌륭합니다.'
-      :acc>=70?'✅ 대부분 잘 구분하고 있어요. 흔들린 유형만 다지면 완벽해질 거예요.'
-      :acc>=50?'⚠️ 절반 이상 맞혔어요. 헷갈리는 유형을 가려내 정리해보세요.'
-      :'💪 아직 유형이 잘 잡히지 않았어요. 아래 조언대로 판단 기준부터 세워보세요.';}
+  else{ // 끝까지 푼 판의 등급 — 지침 5-2의 5구간(95/85/70/50). 결과 화면 제목·리포트 JPG 총평이 함께 쓴다 (2026.10.09 교사 결정)
+    emoji=acc>=95?'🏆':acc>=85?'🎉':acc>=70?'😊':acc>=50?'🙂':'💪';
+    title=acc>=95?'완벽해요!':acc>=85?'아주 잘했어요':acc>=70?'잘하고 있어요':acc>=50?'기본은 잡혔어요':'다시 한 번 도전해요';
+    verdict=acc>=95?'✅ 완벽해요! 논증의 오류를 정확하게 구분하고 있어요. 훌륭합니다.'
+      :acc>=85?'✅ 아주 잘했어요. 거의 다 구분하고 있으니 흔들린 유형만 다지면 완벽해질 거예요.'
+      :acc>=70?'✅ 잘하고 있어요. 대부분 잘 구분하고 있으니 헷갈린 유형의 판단 기준을 한 번 더 확인해 보세요.'
+      :acc>=50?'⚠️ 기본은 잡혔어요. 절반 이상 맞혔으니 헷갈리는 유형을 가려내 정리해 보세요.'
+      :'💪 다시 한 번 도전해요. 아직 유형이 잘 잡히지 않았으니 아래 조언대로 판단 기준부터 세워 보세요.';}
   const leftNote=mid?'끝까지 풀지 않았어요 ('+t.skipped+'문항 남음)':'';
   return {t,zero,mid,full:!zero&&!mid,emoji,title,verdict,leftNote,accStr:zero?'–':acc+'%'};
 }
@@ -952,15 +962,16 @@ function generateWrongNote(){
   const {dateStr,timeStr,fileDate}=getDateTimeInfo();
   const t=tally(),es=endSummary();
   const stageLabel=STAGE_INFO[currentStage].label;
-  const wrongList=questions.filter((_,i)=>answered[i]==='wrong-final');
+  // 오답노트에는 못 맞힌 문제와 '다시 풀어 맞힌 문제'가 모두 들어간다(화면연출표준 8-1 · 결과 화면의 못 맞힘+다시 풀어 맞힘 수와 항목 수가 같다)
+  const wrongList=questions.map((q,i)=>({q,retry:answered[i]==='correct-retry'})).filter((x,i)=>answered[i]==='wrong-final'||x.retry);
   const W=900,padX=40,textW=W-2*padX-20,lineH=22;
   const mc=document.createElement('canvas').getContext('2d');
   // 블록 높이 사전 계산
-  const blocks=wrongList.map(q=>{
+  const blocks=wrongList.map(({q,retry})=>{
     mc.font='14px sans-serif';const tl=wrapLines(mc,q.text,textW);
     mc.font='13px sans-serif';const dl=wrapLines(mc,'💡 해설: '+detailBody(q.detail),textW);
     const h=34+tl.length*lineH+24+dl.length*20+14;
-    return {q,tl,dl,h};
+    return {q,retry,tl,dl,h};
   });
   let bodyH=blocks.reduce((s,b)=>s+b.h+12,0);
   if(!wrongList.length)bodyH=70;
@@ -977,13 +988,13 @@ function generateWrongNote(){
   if(es.mid){g.font='bold 15px sans-serif';g.fillStyle='#9a6b1f';g.fillText('✏️ '+es.leftNote,padX,y+6);y+=midH;}
   if(!wrongList.length){
     g.font='bold 20px sans-serif';
-    if(es.full){g.fillStyle='#2f7d54';g.fillText('🎊 못 맞힌 문제가 하나도 없어요!',padX,y+24);}
+    if(es.full){g.fillStyle='#2f7d54';g.fillText('🎊 첫 시도에 모두 맞혔어요! '+(currentStage<STAGES.length-1?'다음 단계에 도전해 보세요.':'다른 단계에도 도전해 보세요.'),padX,y+24);}
     else{g.fillStyle='#4a6a86';g.fillText(es.zero?'풀어 본 문제가 없어요':'남은 문제를 마저 풀어 보세요.',padX,y+24);}
   }else{
     blocks.forEach(b=>{
-      g.fillStyle='#fdeeee';g.fillRect(padX-12,y-8,W-2*padX+24,b.h);
-      g.font='bold 15px sans-serif';g.fillStyle='#c05050';
-      g.fillText(tEmoji(b.q.answer)+' '+tLabel(b.q.answer),padX,y+14);
+      g.fillStyle=b.retry?'#fff4e2':'#fdeeee';g.fillRect(padX-12,y-8,W-2*padX+24,b.h);
+      g.font='bold 15px sans-serif';g.fillStyle=b.retry?'#c2703f':'#c05050';
+      g.fillText(tEmoji(b.q.answer)+' '+tLabel(b.q.answer)+(b.retry?' · 🔁 다시 풀어 맞힘':' · ❌ 못 맞힘'),padX,y+14);
       g.font='14px sans-serif';g.fillStyle='#475569';
       let ty=drawLines(g,b.tl,padX,y+40,lineH);
       g.font='bold 14px sans-serif';g.fillStyle='#2f7d54';g.fillText('✅ 정답: '+b.q.answer,padX,ty+10);
@@ -1072,7 +1083,7 @@ function generateReport(){
   downloadJPG(c,name+'_학습리포트_'+stageLabel.replace(/ · /,'_')+'_'+fileDate+'.jpg');
 }
 
-function goNextStage(){const n=currentStage+1;if(n<STAGES.length)startGame(n);}
+function goNextStage(){const n=currentStage+1;if(n<STAGES.length)jumpStage(n);}
 function goStart(){$('complete-screen').classList.remove('show');$('game-area').classList.remove('show');$('ingame-credit').classList.remove('show');$('start-screen').style.display=''}
 function restartGame(){startGame(currentStage)}
 

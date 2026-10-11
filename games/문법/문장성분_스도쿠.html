@@ -575,7 +575,7 @@ function freshState(){
   const fixed=makeFixed(sol,N,cfg.blanks,cfg.maxLine);
   state={grid:[],fixed,solution:sol,selChip:null,score:0,ok:0,no:0,combo:0,maxCombo:0,
     totalBlanks:0,acc:0,runStart:0,elapsed:0,finished:false,locked:{},maxScore:0,
-    wrongs:[]};  // wrongs: 틀리게 채운 칸 기록 {r,c,answer,guess} (앱스크립트 wrongItems용)
+    wrongs:[],wrongSeen:{}};  // wrongs: 틀리게 채운 칸 기록 {r,c,answer,guess} (앱스크립트 wrongItems용) · wrongSeen: 칸별로 이미 틀린 카드 (같은 오답 재감점 금지)
   for(let r=0;r<N;r++){state.grid[r]=[];for(let c=0;c<N;c++){
     if(fixed[r][c])state.grid[r][c]=sol[r][c];else{state.grid[r][c]=-1;state.totalBlanks++;}}}
   state.maxScore=calcMax(fixed,state.totalBlanks);
@@ -648,7 +648,12 @@ function show(id){
   window.scrollTo(0,0);
 }
 function finishing(){return state.finished&&$('game').classList.contains('active');}  // 다 푼 판의 완료 화면이 뜨기 전 (2026.10.06)
-function goIntro(){if(finishing())return;closeGuideSilently();show('intro');}
+function goIntro(){
+  if(finishing())return;
+  // 게임 중 채우거나 틀린 칸이 있으면 단계 이동과 같은 화면 안 확인 창을 먼저 띄운다 (2026.10.09 — 기록이 없으면 묻지 않음)
+  if($('game').classList.contains('active')&&!state.finished&&(state.ok>0||state.no>0)){if(jumpTarget===null)openJumpConfirm('intro');return;}
+  closeGuideSilently();show('intro');
+}
 
 // ═══════════════════════════════════════════
 // 연동 모드: 로그인 + 시작 래퍼
@@ -790,6 +795,10 @@ function openJumpConfirm(s){
     $('jumpTitle').textContent='게임을 끝낼까요?';
     $('jumpMsg').innerHTML='지금까지 채운 결과로 마무리해요. 채운 칸 <b>'+state.ok+'개</b>, 남은 빈칸 <b>'+(state.totalBlanks-state.ok)+'개</b>예요.';
     $('jumpOk').textContent='끝내기';
+  }else if(s==='intro'){   // '시작화면' (2026.10.09)
+    $('jumpTitle').textContent='시작화면으로 나갈까요?';
+    $('jumpMsg').innerHTML='지금 '+currentStage+'단계 판에서 채운 칸 <b>'+state.ok+'개</b>, 오답 <b>'+state.no+'번</b>, 점수 <b>'+state.score+'점</b>이 모두 사라져요.';
+    $('jumpOk').textContent='나가기';
   }else{
   $('jumpOk').textContent='이동하기';
   $('jumpTitle').textContent=(s===currentStage?s+'단계를 새 판으로 시작할까요?':s+'단계로 옮길까요?');
@@ -809,6 +818,7 @@ function confirmJump(){
   if(jumpTarget===null)return;
   const s=jumpTarget;jumpTarget=null;$('jumpConfirm').classList.remove('show');
   if(s==='end'){endGame();return;}
+  if(s==='intro'){closeGuideSilently();show('intro');return;}
   startStage(s,false);
 }
 function setHint(text,warn){const h=$('hintBox');h.textContent=text;h.className='hint-box'+(warn?' warn':'');}
@@ -836,9 +846,10 @@ function onCellClick(r,c){
     setHint(state.totalBlanks-state.ok>0?'좋아요! 남은 빈칸 '+(state.totalBlanks-state.ok)+'개':'모두 채웠어요!',false);
     checkLineBonus(r,c);
   }else{
-    state.no++;state.combo=0;state.score=Math.max(0,state.score-PT_NO);
-    state.wrongs.push({r,c,answer,guess});
-    sndNo();banner('❌ 오답<small>−'+PT_NO+'점</small>','no');
+    // 같은 칸에 같은 오답 카드를 다시 놓으면 감점·오답 수·오답 기록 없이 표시만 (2026.10.09 — 0.65초 잠금과 함께 재감점 금지, G105와 같은 방식)
+    const seen=state.wrongSeen[key]||(state.wrongSeen[key]=[]),repeat=seen.indexOf(guess)!==-1;
+    if(!repeat){seen.push(guess);state.no++;state.combo=0;state.score=Math.max(0,state.score-PT_NO);state.wrongs.push({r,c,answer,guess});}
+    sndNo();banner(repeat?'❌ 이미 틀렸던 카드예요':'❌ 오답<small>−'+PT_NO+'점</small>','no');
     el.classList.add('wrong');state.locked[key]=true;
     setHint(wrongHint(r,c,guess),true);
     const st=state;  // 그사이 새 판을 열었으면 새 판을 건드리지 않는다 (2026.10.06)
@@ -948,6 +959,7 @@ function finish(){
   if(IS_ONLINE&&STUDENT.verified){
     submitResult({
       studentId:STUDENT.id,studentName:STUDENT.name,className:STUDENT.className,
+      stage:currentStage,   // 단계 번호 숫자 (2026.10.09)
       totalQuestions:state.totalBlanks,correctCount:state.ok,answeredCount:state.ok,skippedCount:left,score:state.score,
       elapsedSeconds:state.elapsed,wrongItems:wrongItemsText(),reflection:''
     }).then(res=>{
@@ -969,7 +981,8 @@ function downloadTeacherXls(){
   let h='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"><style>td{padding:4px 8px;border:1px solid #ccc;font-size:12px;}th{background:#ece5fb;font-weight:bold;padding:6px 8px;border:1px solid #ccc;}</style></head><body>';
   h+='<h2>G302 문장 성분 스도쿠 · 학습 데이터 목록</h2>';
   h+='<h3>1. 문장 성분 7가지 (카드)</h3><table><tr><th>번호(키)</th><th>갈래</th><th>성분</th><th>모바일 약어</th><th>설명</th><th>예문 (밑줄 부분)</th></tr>';
-  PARTS.forEach((p,i)=>{h+='<tr><td>'+(i+1)+'</td><td>'+p.group+'</td><td>'+p.name+'</td><td>'+p.short+'</td><td>'+p.desc+'</td><td>'+p.ex+'</td></tr>';});
+  const A='<td style="color:#E00000;font-weight:bold">';   // 정답(칸에 들어가는 성분 카드) = 빨간 굵은 글씨 (2026.10.09, G105와 같게)
+  PARTS.forEach((p,i)=>{h+='<tr><td>'+(i+1)+'</td><td>'+p.group+'</td>'+A+p.name+'</td>'+A+p.short+'</td><td>'+p.desc+'</td><td>'+p.ex+'</td></tr>';});
   h+='</table><br>';
   h+='<h3>2. 단계 구성 (7×7 판 · 빈칸 위치는 판마다 무작위, 정답이 하나뿐인 판만 출제)</h3><table><tr><th>단계</th><th>난이도</th><th>빈칸 수 (49칸 중)</th><th>한 줄 최대 빈칸</th></tr>';
   for(let s=1;s<=STAGE_COUNT;s++){const c=STAGES[s];h+='<tr><td>'+s+'단계</td><td>'+c.label+'</td><td>'+c.blanks+'</td><td>'+c.maxLine+'</td></tr>';}

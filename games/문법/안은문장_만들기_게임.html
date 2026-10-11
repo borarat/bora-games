@@ -350,8 +350,8 @@ main{position:relative;z-index:10;width:100%;max-width:1100px;padding:12px 12px 
   <div class="nav-sidebar">
     <button class="nav-btn" id="prev-btn" onclick="navQ(-1)" disabled>◀ 이전<br>문제</button>
     <button class="nav-btn" id="next-btn" onclick="navQ(1)">다음<br>문제 ▶</button>
-    <button class="stage-jump-btn" id="jump2" onclick="startGame(1)" style="display:none">2단계로<br>이동</button>
-    <button class="stage-jump-btn" id="jump3" onclick="startGame(2)" style="display:none">3단계로<br>이동</button>
+    <button class="stage-jump-btn" id="jump2" onclick="jumpStage(1)" style="display:none">2단계로<br>이동</button>
+    <button class="stage-jump-btn" id="jump3" onclick="jumpStage(2)" style="display:none">3단계로<br>이동</button>
     <button class="nav-btn finish-btn" onclick="finishGame()">게임<br>끝내기</button>
   </div>
 </div>
@@ -559,7 +559,7 @@ function pad(n){return String(n).padStart(2,'0')}
 function fmtDT(d){return `${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`}
 function fileDT(d){return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}`}
 function fmtDur(sec){const m=Math.floor(sec/60),x=sec%60;return m?`${m}분 ${x}초`:`${x}초`}
-let ans=[],retry=[],uAns=[];
+let ans=[],retry=[],uAns=[],firstAns=[];   // firstAns: 첫 시도에 쓴 답(다시 풀어 맞힌 문제의 오답노트용)
 let t0=0;
 
 /* ========== 사운드 ========== */
@@ -628,6 +628,13 @@ function startGame(si){
   if(IS_ONLINE&&STUDENT.verified){notifyGameStart(STUDENT.id,STUDENT.name,STUDENT.className);}
   doStartGame(si);
 }
+// 채점한(또는 첫 시도에 틀린) 기록이 있는 판을 떠나 다른 단계로 갈 때는 '게임 끝내기'처럼 한 번 묻는다(기록이 없으면 묻지 않음)
+function hasRecord(){return ans.some(a=>a!==null)||retry.some(Boolean)}
+function jumpStage(si){
+  if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
+  if(hasRecord()&&!confirm('지금까지 푼 기록이 있어요. '+(si+1)+'단계로 가면 이 판의 기록은 지워져요.\n이동할까요?'))return;
+  startGame(si);
+}
 function doStartGame(si){
   t0=Date.now();runTok++;
   cStg=si;cQ=0;score=0;combo=0;maxCombo=0;okCnt=0;noCnt=0;
@@ -635,6 +642,7 @@ function doStartGame(si){
   ans=new Array(qs.length).fill(null);
   retry=new Array(qs.length).fill(false);
   uAns=new Array(qs.length).fill('');
+  firstAns=new Array(qs.length).fill('');
   document.getElementById('combo-badge').classList.add('hidden');
   document.getElementById('bandGoal').textContent=' · '+GOALS[si];
   document.getElementById('jump2').style.display=(si===0)?'':'none';
@@ -710,7 +718,7 @@ function submitM(c){process(c)}
 function process(ua){
   const qs=CUR,q=qs[cQ];
   if(ans[cQ]==='correct'||ans[cQ]==='wrong-final')return;
-  const isR=retry[cQ],ok=chk(ua,q);uAns[cQ]=ua;tLast=Date.now();
+  const isR=retry[cQ],ok=chk(ua,q);uAns[cQ]=ua;if(!isR)firstAns[cQ]=ua;tLast=Date.now();
   if(ok){
     ans[cQ]='correct';
     if(!isR){combo++;if(combo>maxCombo)maxCombo=combo;okCnt++;
@@ -823,7 +831,7 @@ function sendResult(){
   const wrongItems=qs.filter((q,i)=>ans[i]!==null&&!(ans[i]==='correct'&&!retry[i])).map(q=>q.id).join(',');
   submitResult({
     studentId:STUDENT.id,studentName:STUDENT.name,className:STUDENT.className,
-    totalQuestions:S.total,correctCount:S.first,score:score,
+    totalQuestions:S.total,correctCount:S.first,retryCorrectCount:S.retryOk,score:score,
     elapsedSeconds:Math.max(0,Math.round(((tLast||Date.now())-t0)/1000)),
     answeredCount:S.graded,skippedCount:S.skipped,stage:cStg+1,
     wrongItems:wrongItems,reflection:''
@@ -838,16 +846,23 @@ function sendResult(){
 }
 // 밑줄 친 부분(물은 부분)을 「 」로 표시 — 오답 목록·오답노트용
 function markU(s){return s.replace(/<u>/g,'「').replace(/<\/u>/g,'」')}
+// 오답노트 항목 = 첫 시도 정답을 뺀 모든 문항(다시 풀어 맞힘 · 못 맞힘 · 미응답). 화면·JPG가 같은 목록을 쓴다 (지침 5-5: 항목 수 = 다시 풀어 맞힘 + 못 맞힘 + 미응답)
+function wrongList(){return CUR.map((q,i)=>({q,i})).filter(x=>!(ans[x.i]==='correct'&&!retry[x.i]))}
+function isRetryOk(i){return ans[i]==='correct'&&retry[i]}
+function noteStatus(i){return ans[i]===null?'미응답':isRetryOk(i)?'다시 풀어 맞힘':'못 맞힘'}
+// 오답이 하나도 없을 때 — 마지막 단계면 '다음 단계'가 없으므로 '다른 단계'
+function ALL_OK_MSG(){return '🎊 첫 시도에 모두 맞혔어요! '+(cStg<STAGES.length-1?'다음 단계에 도전해 보세요.':'다른 단계에도 도전해 보세요.')}
 function renderWR(){
-  const qs=CUR,S=calcStats(),wl=qs.map((q,i)=>({q,i})).filter(x=>ans[x.i]==='wrong-final'||ans[x.i]==='wrong'||ans[x.i]===null);
+  const S=calcStats(),wl=wrongList();
   const el=document.getElementById('wrong-report');el.innerHTML='';
   if(!S.graded){el.innerHTML='<div class="all-ok" style="background:var(--orange-l);color:#c06020">풀어 본 문제가 없어요.</div>';return}
-  if(!wl.length){el.innerHTML='<div class="all-ok">🎊 틀리거나 남긴 문제가 없어요!</div>';return}
-  el.innerHTML=`<div class="wrong-report-title">❌ 못 맞힌 문제 · 미응답 다시 보기 <span style="font-size:.78rem;font-weight:400;color:var(--muted)">(못 맞힘 ${S.miss} · 미응답 ${S.skipped})</span></div>`;
+  if(!wl.length){el.innerHTML=`<div class="all-ok">${ALL_OK_MSG()}</div>`;return}
+  el.innerHTML=`<div class="wrong-report-title">❌ 다시 볼 문제 <span style="font-size:.78rem;font-weight:400;color:var(--muted)">(다시 풀어 맞힘 ${S.retryOk} · 못 맞힘 ${S.miss} · 미응답 ${S.skipped})</span></div>`;
   wl.forEach(({q,i})=>{
-    const a=q.answers?q.answers[0]:q.answer;
+    const a=q.answers?q.answers[0]:q.answer,rOk=isRetryOk(i);
     let qt=cStg===0?`홑문장: ${q.homt}<br>안은문장 틀: ${q.frame}`:markU(q.sent);
-    el.innerHTML+=`<div class="wrong-item"><div class="wrong-item-num">${q.cat}</div><div class="wrong-item-text">${qt}</div><div class="wrong-item-answer">${ans[i]===null?'<span class="wa">미응답</span>':`<span class="wa">내 답: ${uAns[i]}</span>`}<span class="ca">✅ 정답: ${a}</span></div><div style="font-size:.82rem;color:var(--muted);margin-top:4px;line-height:1.5">${q.detail}</div></div>`;
+    const my=ans[i]===null?'<span class="wa">미응답</span>':rOk?`<span class="wa">처음 쓴 답: ${firstAns[i]||'미입력'}</span>`:`<span class="wa">내 답: ${uAns[i]||'미입력'}</span>`;
+    el.innerHTML+=`<div class="wrong-item"><div class="wrong-item-num">${q.cat} · ${noteStatus(i)}</div><div class="wrong-item-text">${qt}</div><div class="wrong-item-answer">${my}<span class="ca">✅ 정답: ${a}</span></div><div style="font-size:.82rem;color:var(--muted);margin-top:4px;line-height:1.5">${q.detail}</div></div>`;
   });
 }
 function checkForm(){const n=document.getElementById('f-name').value.trim(),ok=n.length>0;document.getElementById('btn-note').disabled=!ok;document.getElementById('btn-report').disabled=!ok}
@@ -876,7 +891,6 @@ function drawDoc(blocks,W){
     c.font=b.f;c.fillStyle=b.c||'#3a3050';b.ls.forEach(l=>{c.fillText(l,P+4+(b.ind||0),y);y+=b.lh});y+=(b.gap||0)});
   return cv;
 }
-function wrongList(){return CUR.map((q,i)=>({q,i})).filter(x=>ans[x.i]==='wrong-final'||ans[x.i]==='wrong'||ans[x.i]===null)}
 function qText(q){return cStg===0?`홑문장: ${q.homt}  →  안은문장 틀: ${q.frame}`:markU(q.sent)}
 function ansOf(q){return q.answers?q.answers[0]:q.answer}
 function dlNote(){
@@ -886,11 +900,12 @@ function dlNote(){
     {t:`이름 ${nm} · 완료 ${fmtDT(d)} · 점수 ${score}점 / 만점 ${STAGE_MAX[cStg]}점`,f:`14px ${FF}`,lh:20},
     {t:`첫 시도 정답 ${S.first} · 다시 풀어 맞힘 ${S.retryOk} · 못 맞힘 ${S.miss} · 미응답 ${S.skipped}`,f:`14px ${FF}`,lh:20,gap:10}];
   if(!S.graded)B.push({t:'풀어 본 문제가 없어요.',f:`bold 16px ${FF}`,lh:24,c:'#c06020',rule:1});
-  else if(!wl.length)B.push({t:'🎊 틀리거나 남긴 문제가 없어요! 다음 단계에 도전해 보세요.',f:`bold 16px ${FF}`,lh:24,c:'#2a7a5a',rule:1});
-  else wl.forEach(({q,i},k)=>{
-    B.push({t:`[${q.cat}]${ans[i]===null?' · 미응답':''}`,f:`bold 14px ${FF}`,lh:20,c:'#d96060',rule:1});
+  else if(!wl.length)B.push({t:ALL_OK_MSG(),f:`bold 16px ${FF}`,lh:24,c:'#2a7a5a',rule:1});
+  else wl.forEach(({q,i})=>{
+    B.push({t:`[${q.cat}] · ${noteStatus(i)}`,f:`bold 14px ${FF}`,lh:20,c:isRetryOk(i)?'#2f6fb0':'#d96060',rule:1});
     B.push({t:qText(q),f:`15px ${FF}`,lh:22,gap:2});
-    if(ans[i]!==null)B.push({t:`내 답: ${uAns[i]}`,f:`13px ${FF}`,lh:19,c:'#d96060'});
+    if(isRetryOk(i))B.push({t:`처음 쓴 답: ${firstAns[i]||'미입력'}`,f:`13px ${FF}`,lh:19,c:'#d96060'});
+    else if(ans[i]!==null)B.push({t:`내 답: ${uAns[i]||'미입력'}`,f:`13px ${FF}`,lh:19,c:'#d96060'});
     B.push({t:`✅ 정답: ${ansOf(q)}`,f:`bold 15px ${FF}`,lh:22,c:'#2a7a5a'});
     B.push({t:`해설: ${q.detail}`,f:`13px ${FF}`,lh:19,c:'#64748b',gap:8});
   });
@@ -955,8 +970,8 @@ function celebrate(n,pts){if(n>=5&&n%5===0)sfxFan();else sfxCb();cbCelebrate(n,p
 function sfxFan(){try{const c=ga();[523,659,784,1047,1319].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.type='triangle';o.frequency.value=f;o.connect(g);g.connect(c.destination);g.gain.setValueAtTime(.12,c.currentTime+i*.09);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+i*.09+.25);o.start(c.currentTime+i*.09);o.stop(c.currentTime+i*.09+.26)});
   const len=c.sampleRate*.25,buf=c.createBuffer(1,len,c.sampleRate),d=buf.getChannelData(0);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*(1-i/len);const src=c.createBufferSource(),g2=c.createGain();g2.gain.value=.05;src.buffer=buf;src.connect(g2);g2.connect(c.destination);src.start(c.currentTime+.45)}catch(e){}}
 /* ========== 오늘 나온 문제 (이번 판 출제분) ========== */
-function openToday(){const st=a=>a==='correct'?'맞힘':a===null?'미응답':'못 맞힘';
-  document.getElementById('todayList').innerHTML=CUR.map((q,i)=>`<div class="rv"><span class="tg">${q.cat}</span>${st(ans[i])}<div>${cStg===0?`홑문장: ${q.homt}<br>안은문장 틀: ${q.frame}`:q.sent}</div><div class="a">✅ 정답: ${(q.answers||[q.answer]).join(' / ')}</div><div class="d">${q.detail}</div></div>`).join('');
+function openToday(){const st=i=>ans[i]==='correct'?(retry[i]?'다시 풀어 맞힘':'맞힘'):ans[i]===null?'미응답':'못 맞힘';
+  document.getElementById('todayList').innerHTML=CUR.map((q,i)=>`<div class="rv"><span class="tg">${q.cat}</span>${st(i)}<div>${cStg===0?`홑문장: ${q.homt}<br>안은문장 틀: ${q.frame}`:q.sent}</div><div class="a">✅ 정답: ${(q.answers||[q.answer]).join(' / ')}</div><div class="d">${q.detail}</div></div>`).join('');
   document.getElementById('mToday').classList.add('on')}
 function closeToday(){document.getElementById('mToday').classList.remove('on')}
 /* ========== 교사용 학습 데이터 목록 ('최종 수정' 글자 클릭) ========== */
